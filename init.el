@@ -1,3 +1,24 @@
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ace-isearch-use-jump nil)
+ '(compilation-message-face (quote default))
+ '(custom-safe-themes (quote ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+ '(diff-switches "-u")
+ '(indent-tabs-mode nil)
+ '(inhibit-default-init t)
+ '(magit-diff-use-overlays nil)
+ '(sml/mode-width (quote \0))
+ '(vc-annotate-background nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
 (package-initialize)
 
 (require 'cask "~/.cask/cask.el")
@@ -21,12 +42,13 @@
       mouse-yank-at-point t)
 ;; (set-frame-parameter (selected-frame) 'alpha '(95 95))
 
+(sml/setup)
+
 ;; Files
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-(global-set-key (kbd "C-c C-r") 'revert-buffer)
+(global-set-key (kbd "C-c r") 'revert-buffer)
 (global-auto-revert-mode 1)
 (setq vc-follow-symlinks t)
-(require 'saveplace)
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
 
@@ -38,8 +60,7 @@
 (require 'helm-config)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 
-(define-key helm-map (kbd "C-j") 'helm-execute-persistent-action)
-(define-key helm-map (kbd "C-z") 'helm-select-3rd-action)
+(define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
 
 (global-unset-key (kbd "C-x c"))
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -49,27 +70,28 @@
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
+;; (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
+(global-set-key (kbd "C-o") 'helm-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 ;; (global-set-key (kbd "M-i") 'helm-swoop)
-(global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+;; (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
 
 (helm-mode 1)
 
 ;; Editing
 
-; Delete words without adding to kill ring
-(defun delete-word-backward (arg)
-  (interactive "p")
-  (delete-region (point) (progn (backward-word arg) (point))))
-(defun delete-word-forward (arg)
-  (interactive "p")
-  (delete-region (point) (progn (forward-word arg) (point))))
-(global-set-key (kbd "<M-backspace>") 'delete-word-backward)
-(global-set-key (kbd "<C-backspace>") 'delete-word-backward)
-(global-set-key (kbd "<M-d>") 'delete-word-backward)
+;; NAWH
+;; ; Delete words without adding to kill ring
+;; (defun delete-word-backward (arg)
+;;   (interactive "p")
+;;   (delete-region (point) (progn (backward-word arg) (point))))
+;; (defun delete-word-forward (arg)
+;;   (interactive "p")
+;;   (delete-region (point) (progn (forward-word arg) (point))))
+;; (global-set-key (kbd "<M-backspace>") 'delete-word-backward)
+;; (global-set-key (kbd "<C-backspace>") 'delete-word-backward)
+;; (global-set-key (kbd "<M-d>") 'delete-word-backward)
 
-(require 'undo-tree)
 (setq undo-tree-visualizer-timestamps t)
 (setq undo-tree-visualizer-diff t)
 (global-undo-tree-mode 1)
@@ -80,7 +102,7 @@
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
-(global-set-key (kbd "M-[ a") 'comment-or-uncomment-line-or-region)
+(global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
 
 (defun exchange-point-and-mark-no-activate ()
   "Identical to \\[exchange-point-and-mark] but will not activate the region."
@@ -98,37 +120,15 @@
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
-(defun smarter-move-beginning-of-line (arg)
-  "Move point back to indentation of beginning of line.
-
-Move point to the first non-whitespace character on this line.
-If point is already there, move to the beginning of the line.
-Effectively toggle between the first non-whitespace character and
-the beginning of the line.
-
-If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-point reaches the beginning or end of the buffer, stop there."
-  (interactive "^p")
-  (setq arg (or arg 1))
-
-  ;; Move lines first
-  (when (/= arg 1)
-    (let ((line-move-visual nil))
-      (forward-line (1- arg))))
-
-  (let ((orig-point (point)))
-    (back-to-indentation)
-    (when (= orig-point (point))
-      (move-beginning-of-line 1))))
-
-(global-set-key (kbd "C-a") 'smarter-move-beginning-of-line)
+(global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
+(global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)
 
 ; can keep C-u C-SPC C-SPC C-SPC
 (setq set-mark-command-repeat-pop t)
 
-(require 'highlight-symbol)
 (define-globalized-minor-mode global-highlight-symbol-mode
   highlight-symbol-mode (lambda () (progn (highlight-symbol-mode) (highlight-symbol-nav-mode))))
+(setq highlight-symbol-idle-delay 0.5)
 (global-highlight-symbol-mode)
 
 (global-set-key (kbd "C-c s") 'toggle-truncate-lines)
@@ -146,10 +146,20 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Programming
 
-(require 'nlinum)
-;; (add-hook 'prog-mode-hook 'nlinum-mode)
+; python
+(yas-global-mode)
+(elpy-enable)
+(setq elpy-eldoc-show-current-function nil)
+
+
+(setq projectile-completion-system 'helm)
+(projectile-global-mode)
+(helm-projectile-on)
 
 (add-hook 'prog-mode-hook 'which-function-mode)
+
+(global-set-key (kbd "C-c l") 'nlinum-mode)
+
 (add-hook 'prog-mode-hook (lambda () (progn
                                        (show-paren-mode 1)
                                        (setq show-paren-delay 0))))
@@ -167,9 +177,9 @@ point reaches the beginning or end of the buffer, stop there."
 (eval-after-load 'asm-mode
   '(define-key asm-mode-map [(tab)] 'asm-indent-line))
 
-; guess offset
-(require 'dtrt-indent)
+; guess offset, but don't need the global modeline
 (dtrt-indent-mode 1)
+(add-hook 'prog-mode-hook (lambda() (delete 'dtrt-indent-mode-line-info global-mode-string)))
 
 (setq-default indent-tabs-mode nil)
 (setq c-default-style "linux"
@@ -197,25 +207,5 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Emacs server
 (setq server-use-tcp nil)
-(setq server-socket-dir "~/.emacs.d/server")
+(setq server-socket-dir (getenv "EMACS_SESSION_DIR"))
 (server-start)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ace-isearch-use-jump nil)
- '(compilation-message-face (quote default))
- '(diff-switches "-u")
- '(indent-tabs-mode nil)
- '(inhibit-default-init t)
- '(magit-diff-use-overlays nil)
- '(vc-annotate-background nil)
-)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

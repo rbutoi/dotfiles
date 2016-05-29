@@ -54,22 +54,21 @@ export HISTSIZE=
 export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
-PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"'
+PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; '#$PROMPT_COMMAND
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
-export EDITOR="emacsclient -s /home/rbutoi/.emacs.d/server/server -nw"
-export ALTERNATE_EDITOR=zile
-e() {
-    emacsclient -s /home/rbutoi/.emacs.d/server/server -n "$@" >/dev/null 2>&1
-    which tmux >/dev/null && tmux select-pane -t :0.0 \; select-window -t 0
-}
 alias l='ls -F --color=auto --group-directories-first'
 alias ll='l -lA -h'
 alias n="nano"
 alias g="grep --color=always -i"
 m() {
-    [ -f /usr/bin/less ] && less -R -M -i -S "$@" || more "$@"
+    if [ -f /usr/bin/less ]; then
+        less "$@"
+    else
+        more "$@"
+    fi
 }
+export LESS=-RMiS
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
 alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
