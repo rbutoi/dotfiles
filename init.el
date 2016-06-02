@@ -38,7 +38,13 @@
 (column-number-mode 1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(menu-bar-mode -1) ; use f10 to open
+;(unless ((eq system-type 'darwin) and (display-graphic-p)) (menu-bar-mode -1))
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (if (and (eq system-type 'darwin) (display-graphic-p)) 
+                (menu-bar-mode -1))))
+
+
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq x-select-enable-clipboard t
       x-select-enable-primary t
@@ -46,6 +52,8 @@
       apropos-do-all t
       mouse-yank-at-point t)
 (load-theme 'solarized t)
+
+; light in GUI, dark in terminal
 (add-hook 'after-make-frame-functions
           (lambda (frame)
             (let ((mode (if (display-graphic-p frame) 'light 'dark)))
@@ -57,7 +65,7 @@
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
   (setq standard-display-table display-table))
-;; (set-frame-parameter (selected-frame) 'alpha '(95 95))
+(set-frame-parameter (selected-frame) 'alpha '(95 95))
 
 ;; Status
 (rich-minority-mode 1)
@@ -220,6 +228,12 @@
 (global-set-key (kbd "M-o") 'ace-window)
 (global-set-key (kbd "C-x o") 'ace-window)
 (global-set-key (kbd "M-k") 'kill-this-buffer)
+
+(global-set-key "\e0" 'delete-window)
+(global-set-key "\e1" 'delete-other-windows)
+(global-set-key "\e2" 'split-window)
+(global-set-key "\e3" 'split-window-horizontally)
+(global-set-key "\e5" 'query-replace-regexp)
 
 ;; Emacs server
 (setq server-use-tcp nil)
