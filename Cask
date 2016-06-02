@@ -17,6 +17,7 @@
 (depends-on "let-alist")
 (depends-on "mwim")
 (depends-on "nlinum")
+(depends-on "org-journal")
 (depends-on "package-build")
 (depends-on "pallet")
 (depends-on "popup")
