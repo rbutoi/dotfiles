@@ -5,12 +5,11 @@
  ;; If there is more than one, they won't work right.
  '(ace-isearch-use-jump nil)
  '(compilation-message-face (quote default))
- '(custom-safe-themes (quote ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+ '(custom-safe-themes (quote ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(diff-switches "-u")
  '(indent-tabs-mode nil)
  '(inhibit-default-init t)
  '(magit-diff-use-overlays nil)
- '(sml/mode-width (quote \0))
  '(vc-annotate-background nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -40,12 +39,21 @@
       save-interprogram-paste-before-kill t
       apropos-do-all t
       mouse-yank-at-point t)
+(load-theme 'solarized t)
+
+; make window divider prettier
+(let ((display-table (or standard-display-table (make-display-table))))
+  (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
+  (setq standard-display-table display-table))
 ;; (set-frame-parameter (selected-frame) 'alpha '(95 95))
 
-(sml/setup)
+;; Status
+(rich-minority-mode 1)
+(setq rm-whitelist "Projectile")
 
 ;; Files
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/\\1" t)))
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-auto-revert-mode 1)
 (setq vc-follow-symlinks t)
@@ -146,17 +154,12 @@
 
 ;; Programming
 
-; python
-(yas-global-mode)
-(elpy-enable)
-(setq elpy-eldoc-show-current-function nil)
-
-
 (setq projectile-completion-system 'helm)
 (projectile-global-mode)
 (helm-projectile-on)
 
-(add-hook 'prog-mode-hook 'which-function-mode)
+;; apparently destroyed performance and caused core dumps. who woulda thunk?
+;; (add-hook 'prog-mode-hook 'which-function-mode)
 
 (global-set-key (kbd "C-c l") 'nlinum-mode)
 
