@@ -35,6 +35,7 @@ complete -F _upto upto
 
 fork() { (setsid "$@" &); }
 
+ulimit -c unlimited
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
@@ -54,7 +55,7 @@ export HISTSIZE=
 export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
-PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; '#$PROMPT_COMMAND
+PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; ' #$PROMPT_COMMAND
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 alias l='ls -F --color=auto --group-directories-first'
@@ -79,16 +80,13 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 
-export TMPDIR=$HOME/.tmux-session
-
-if [ -f /lib64/ld-linux-x86-64.so.2 ]; then
+if [ -z "$A4_CHROOT" ]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 else
-    # [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
-    :
+    export FZF_TMUX=0
+    [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
 fi
 export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 
 ### Specifics
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
-

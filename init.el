@@ -5,11 +5,14 @@
  ;; If there is more than one, they won't work right.
  '(ace-isearch-use-jump nil)
  '(compilation-message-face (quote default))
- '(custom-safe-themes (quote ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+ '(custom-safe-themes
+   (quote
+    ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(diff-switches "-u")
  '(indent-tabs-mode nil)
  '(inhibit-default-init t)
  '(magit-diff-use-overlays nil)
+ '(ns-command-modifier (quote control))
  '(vc-annotate-background nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -20,12 +23,15 @@
 
 (package-initialize)
 
-(require 'cask "~/.cask/cask.el")
+(if (eq system-type 'darwin)
+    (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
+  (require 'cask "~/.cask/cask.el"))
+  
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
 
-(load-file "~/.emacs.d/arista.el")
+(when (file-exists-p "~/.emacs.d/arista.el") (load-file "~/.emacs.d/arista.el"))
 
 ;; UI
 (setq inhibit-splash-screen t)
@@ -40,6 +46,12 @@
       apropos-do-all t
       mouse-yank-at-point t)
 (load-theme 'solarized t)
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (let ((mode (if (display-graphic-p frame) 'light 'dark)))
+              (set-frame-parameter frame 'background-mode mode)
+              (set-terminal-parameter frame 'background-mode mode))
+            (enable-theme 'solarized)))
 
 ; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -111,6 +123,7 @@
       (comment-or-uncomment-region (region-beginning) (region-end))
     (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
 (global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
+(global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
 
 (defun exchange-point-and-mark-no-activate ()
   "Identical to \\[exchange-point-and-mark] but will not activate the region."
@@ -210,5 +223,5 @@
 
 ;; Emacs server
 (setq server-use-tcp nil)
-(setq server-socket-dir (getenv "EMACS_SESSION_DIR"))
+(when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
 (server-start)
