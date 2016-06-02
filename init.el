@@ -38,12 +38,7 @@
 (column-number-mode 1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-;(unless ((eq system-type 'darwin) and (display-graphic-p)) (menu-bar-mode -1))
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (if (and (eq system-type 'darwin) (display-graphic-p)) 
-                (menu-bar-mode -1))))
-
+(unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq x-select-enable-clipboard t
