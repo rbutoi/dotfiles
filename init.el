@@ -3,11 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ace-isearch-use-jump nil)
  '(compilation-message-face (quote default))
- '(custom-safe-themes
-   (quote
-    ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
+ '(custom-safe-themes (quote ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(diff-switches "-u")
  '(indent-tabs-mode nil)
  '(inhibit-default-init t)
@@ -33,7 +30,10 @@
 
 (when (file-exists-p "~/.emacs.d/arista.el") (load-file "~/.emacs.d/arista.el"))
 
-;; UI
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; UI                                                                               ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (setq inhibit-splash-screen t)
 (column-number-mode 1)
 (tool-bar-mode -1)
@@ -46,9 +46,10 @@
       save-interprogram-paste-before-kill t
       apropos-do-all t
       mouse-yank-at-point t)
+
 (load-theme 'solarized t)
 
-; light in GUI, dark in terminal
+;; light in GUI, dark in terminal
 (add-hook 'after-make-frame-functions
           (lambda (frame)
             (let ((mode (if (display-graphic-p frame) 'light 'dark)))
@@ -56,13 +57,13 @@
               (set-terminal-parameter frame 'background-mode mode))
             (enable-theme 'solarized)))
 
-; make window divider prettier
+;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
   (setq standard-display-table display-table))
+
 (set-frame-parameter (selected-frame) 'alpha '(95 95))
 
-;; Status
 (rich-minority-mode 1)
 (setq rm-whitelist "Projectile")
 
@@ -75,16 +76,13 @@
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
 
-;; Cursor
 (blink-cursor-mode 0)
 
 ;; Helm
 (require 'helm)
 (require 'helm-config)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
-
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
-
 (global-unset-key (kbd "C-x c"))
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x C-m") 'helm-M-x)
@@ -94,14 +92,30 @@
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 ;; (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
-(global-set-key (kbd "C-o") 'helm-imenu)
+;; (global-set-key (kbd "C-o") 'helm-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 ;; (global-set-key (kbd "M-i") 'helm-swoop)
 ;; (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
 
+(setq helm-buffer-max-length nil)
 (helm-mode 1)
 
-;; Editing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editing                                                                          ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun jcs-comment-box (b e)
+  "Draw a box comment around the region but arrange for the region
+to extend to at least the fill column. Place the point after the
+comment box."
+  (interactive "r")
+  (save-restriction
+    (narrow-to-region b e)
+    (goto-char b)
+    (end-of-line)
+    (insert-char ?  (- fill-column (current-column)))
+    (comment-box b (point-max) 1)
+    (goto-char (point-max))))
 
 ;; NAWH
 ;; ; Delete words without adding to kill ring
@@ -114,6 +128,9 @@
 ;; (global-set-key (kbd "<M-backspace>") 'delete-word-backward)
 ;; (global-set-key (kbd "<C-backspace>") 'delete-word-backward)
 ;; (global-set-key (kbd "<M-d>") 'delete-word-backward)
+
+(clean-aindent-mode t)
+(define-key global-map (kbd "RET") 'newline-and-indent)
 
 (setq undo-tree-visualizer-timestamps t)
 (setq undo-tree-visualizer-diff t)
@@ -166,15 +183,31 @@
 
 (setq-default fill-column 80)
 
+(setq ace-isearch-use-jump nil)
 (global-ace-isearch-mode t)
 
-;; Programming
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Programming                                                                      ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; python
+(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+; company
+;; (add-hook 'python-mode-hook 'company-mode)
+(global-company-mode 1)
+(eval-after-load "company"
+  '(add-to-list 'company-backends 'company-anaconda))
+(setq tab-always-indent 'complete)
+(setq company-require-match nil)
+(add-hook 'prog-mode-hook (lambda () (add-to-list 'completion-at-point-functions 'company-complete))) ; because python-mode overwrites it
+
+;; Projectile
 (setq projectile-completion-system 'helm)
 (projectile-global-mode)
 (helm-projectile-on)
 
-;; apparently destroyed performance and caused core dumps. who woulda thunk?
+;; apparently destroyed performance and caused core dumps
 ;; (add-hook 'prog-mode-hook 'which-function-mode)
 
 (global-set-key (kbd "C-c l") 'nlinum-mode)
@@ -196,7 +229,7 @@
 (eval-after-load 'asm-mode
   '(define-key asm-mode-map [(tab)] 'asm-indent-line))
 
-; guess offset, but don't need the global modeline
+;; guess offset, but don't need the global modeline
 (dtrt-indent-mode 1)
 (add-hook 'prog-mode-hook (lambda() (delete 'dtrt-indent-mode-line-info global-mode-string)))
 
@@ -217,6 +250,10 @@
 
 ;; activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Misc                                                                             ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Buffers
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
