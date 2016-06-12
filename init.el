@@ -119,6 +119,12 @@
 (setq undo-tree-visualizer-diff t)
 (global-undo-tree-mode 1)
 
+;; flyspell needs location of aspell on Mac
+(setq ispell-list-command "--list")
+(when (eq system-type 'darwin)
+  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+  (setq exec-path (append exec-path '("/usr/local/bin"))))
+
 (defun comment-or-uncomment-line-or-region ()
   "Comments or uncomments the current line or region."
   (interactive)
