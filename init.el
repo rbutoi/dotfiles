@@ -10,6 +10,8 @@
  '(inhibit-default-init t)
  '(magit-diff-use-overlays nil)
  '(ns-command-modifier (quote control))
+ '(recentf-max-saved-items 100)
+ '(recentf-save-file "~/.emacs.d/recentf")
  '(vc-annotate-background nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -19,6 +21,8 @@
  )
 
 (package-initialize)
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 
 (if (eq system-type 'darwin)
     (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
@@ -92,6 +96,7 @@
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 ;; (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
+(global-set-key (kbd "C-o") 'helm-semantic)
 ;; (global-set-key (kbd "C-o") 'helm-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 ;; (global-set-key (kbd "M-i") 'helm-swoop)
@@ -190,9 +195,12 @@ comment box."
 ;; Programming                                                                      ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(semantic-mode)
+(global-semantic-stickyfunc-mode)
+
 ;; python
 (add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;; (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
 ; company
 ;; (add-hook 'python-mode-hook 'company-mode)
 (global-company-mode 1)
@@ -201,6 +209,7 @@ comment box."
 (setq tab-always-indent 'complete)
 (setq company-require-match nil)
 (add-hook 'prog-mode-hook (lambda () (add-to-list 'completion-at-point-functions 'company-complete))) ; because python-mode overwrites it
+(setq company-idle-delay nil)
 
 ;; Projectile
 (setq projectile-completion-system 'helm)
@@ -268,6 +277,5 @@ comment box."
 (global-set-key "\e5" 'query-replace-regexp)
 
 ;; Emacs server
-(setq server-use-tcp nil)
 (when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
 (server-start)
