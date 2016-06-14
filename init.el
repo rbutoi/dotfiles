@@ -41,7 +41,7 @@
 (setq inhibit-splash-screen t)
 (column-number-mode 1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+;; (scroll-bar-mode -1)
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -85,6 +85,8 @@
 ;; Helm
 (require 'helm)
 (require 'helm-config)
+(setq helm-buffer-max-length 30)
+
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
 (global-unset-key (kbd "C-x c"))
@@ -95,14 +97,13 @@
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-;; (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
-(global-set-key (kbd "C-o") 'helm-semantic)
+(global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
+;; (global-set-key (kbd "C-o") 'helm-semantic)
 ;; (global-set-key (kbd "C-o") 'helm-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 ;; (global-set-key (kbd "M-i") 'helm-swoop)
 ;; (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
 
-(setq helm-buffer-max-length nil)
 (helm-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -265,6 +266,12 @@ comment box."
 
 ;; activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
+
+(add-hook 'prog-mode-hook 'yafolding-mode)
+(define-key yafolding-mode-map (kbd "<C-S-return>") nil)
+(define-key yafolding-mode-map (kbd "<C-M-return>") nil)
+(define-key yafolding-mode-map (kbd "<C-return>") nil)
+(define-key yafolding-mode-map (kbd "M-RET") 'yafolding-toggle-element)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Misc                                                                             ;;

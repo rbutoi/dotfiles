@@ -33,3 +33,4 @@
 (depends-on "undo-tree")
 (depends-on "xterm-frobs")
 (depends-on "xterm-title")
+(depends-on "yafolding")
