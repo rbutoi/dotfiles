@@ -3,6 +3,7 @@
 
 (depends-on "ace-isearch")
 (depends-on "ace-window")
+(depends-on "ag")
 (depends-on "anaconda-mode")
 (depends-on "apu")
 (depends-on "avy")

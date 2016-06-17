@@ -34,7 +34,7 @@
 (require 'pallet)
 (pallet-mode t)
 
-(when (file-exists-p "~/.emacs.d/arista.el") (load-file "~/.emacs.d/arista.el"))
+(when (locate-library "arista") (load-library "arista"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UI                                                         ;;
@@ -103,6 +103,10 @@
 (require 'helm)
 (require 'helm-config)
 (setq helm-buffer-max-length 30)
+(setq helm-grep-default-command
+      "ack -Hn --color --smart-case --no-group %p %f"
+      helm-grep-default-recurse-command
+      "ack -H --color --smart-case --no-group %p %f")
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
@@ -115,11 +119,9 @@
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
-;; (global-set-key (kbd "C-o") 'helm-semantic)
-;; (global-set-key (kbd "C-o") 'helm-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
-;; (global-set-key (kbd "M-i") 'helm-swoop)
-;; (global-set-key (kbd "C-c M-i") 'helm-multi-swoop)
+(global-set-key (kbd "C-M-o") 'helm-swoop)
+(global-set-key (kbd "C-c C-M-o") 'helm-multi-swoop)
 
 (helm-mode 1)
 
@@ -196,10 +198,11 @@ comment box."
 ; can keep C-u C-SPC C-SPC C-SPC
 (setq set-mark-command-repeat-pop t)
 
-(define-globalized-minor-mode global-highlight-symbol-mode
-  highlight-symbol-mode (lambda () (progn (highlight-symbol-mode) (highlight-symbol-nav-mode))))
-(setq highlight-symbol-idle-delay 0.5)
-(global-highlight-symbol-mode)
+;; I have a feeling this is laggy, and its more or less replaced by occur at point
+;; (define-globalized-minor-mode global-highlight-symbol-mode
+;;   highlight-symbol-mode (lambda () (progn (highlight-symbol-mode) (highlight-symbol-nav-mode))))
+;; (setq highlight-symbol-idle-delay 0.5)
+;; (global-highlight-symbol-mode)
 
 (global-set-key (kbd "C-c s") 'toggle-truncate-lines)
 
@@ -224,8 +227,8 @@ comment box."
 ;; Programming                                                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(semantic-mode)
-(global-semantic-stickyfunc-mode)
+;; (semantic-mode)
+;; (global-semantic-stickyfunc-mode)
 
 ;; python
 (add-hook 'python-mode-hook 'anaconda-mode)
@@ -300,17 +303,16 @@ comment box."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Buffers
-(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
 (global-set-key (kbd "M-o") 'ace-window)
 (global-set-key (kbd "C-x o") 'ace-window)
 (global-set-key (kbd "M-k") 'kill-this-buffer)
 
-(global-set-key "\e0" 'delete-window)
-(global-set-key "\e1" 'delete-other-windows)
-(global-set-key "\e2" 'split-window)
-(global-set-key "\e3" 'split-window-horizontally)
-(global-set-key "\e5" 'query-replace-regexp)
+(global-set-key (kbd "M-0") 'delete-window)
+(global-set-key (kbd "M-1") 'delete-other-windows)
+(global-set-key (kbd "M-2") 'split-window-below)
+(global-set-key (kbd "M-3") 'split-window-right)
 
 ;; Emacs server
-(when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
+;; (when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
 (server-start)
