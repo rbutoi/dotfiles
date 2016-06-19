@@ -9,7 +9,6 @@
     ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(diff-switches "-u")
  '(indent-tabs-mode nil)
- '(magit-diff-use-overlays nil)
  '(ns-command-modifier (quote control))
  '(recentf-max-saved-items 100)
  '(recentf-save-file "~/.emacs.d/recentf")
@@ -69,7 +68,9 @@
 (set-frame-parameter (selected-frame) 'alpha '(95 95))
 
 (rich-minority-mode 1)
-(setq rm-whitelist "Projectile")
+;; hidden to make room for current function
+;; (setq rm-whitelist "Projectile")
+(setq rm-whitelist "nothing")
 
 ;; A small minor mode to use a big fringe
 (defvar bzg-big-fringe-mode nil)
@@ -257,8 +258,9 @@ comment box."
 (projectile-global-mode)
 (helm-projectile-on)
 
-;; apparently destroyed performance and caused core dumps
-;; (add-hook 'prog-mode-hook 'which-function-mode)
+(add-hook 'prog-mode-hook 'which-function-mode)
+
+(add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
 
 (global-set-key (kbd "C-c l") 'nlinum-mode)
 
