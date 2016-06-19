@@ -85,7 +85,8 @@
       (set-fringe-style nil)
     (set-fringe-mode
      (/ (- (frame-pixel-width)
-           (* (+ 1 fill-column) (frame-char-width)))
+           ; + 4 determined empirically
+           (* (+ 4 fill-column) (frame-char-width)))
         2))))
 
 ;; Files
@@ -204,7 +205,9 @@ comment box."
 ;; (setq highlight-symbol-idle-delay 0.5)
 ;; (global-highlight-symbol-mode)
 
-(global-set-key (kbd "C-c s") 'toggle-truncate-lines)
+(global-set-key (kbd "C-c s")   'toggle-truncate-lines)
+(global-set-key (kbd "C-c C-s") 'toggle-truncate-lines)
+(set-default 'truncate-lines t)
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
@@ -218,10 +221,12 @@ comment box."
 (setq ace-isearch-use-jump nil)
 (global-ace-isearch-mode t)
 
+;; org-journal
 (setq org-journal-date-format "%A, %d/%m/%Y")
 (setq org-journal-dir "~/Google Drive/journal/")
 (setq org-journal-hide-entries-p nil)
 (setq org-journal-find-file 'find-file)
+(add-hook 'org-journal-mode-hook 'flyspell-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming                                                ;;

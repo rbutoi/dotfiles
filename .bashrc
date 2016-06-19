@@ -57,8 +57,12 @@ export HISTFILE=~/.bash_eternal_history
 # http://superuser.com/questions/20900/bash-history-loss
 PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; ' #$PROMPT_COMMAND
 export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+# export PS1="$(tput setaf 2)\W $(tput setaf 4)\$ $(tput sgr0)"
+export PS1="\W \$ "
 
-alias l='ls -F --color=auto --group-directories-first'
+export CLICOLOR=1
+alias l='ls -F'
+[ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
 alias ll='l -lA -h'
 alias n="nano"
 alias g="grep --color=always -i"
@@ -73,7 +77,7 @@ export LESS=-RMiS
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
 alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
-alias rmdir="rmdir -p --ignore-fail-on-non-empty"
+[ `uname` == "Linux" ] && alias rmdir="rmdir -p --ignore-fail-on-non-empty"
 tree2() {
     find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
 }
