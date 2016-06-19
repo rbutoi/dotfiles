@@ -23,8 +23,6 @@
 
 (package-initialize)
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-
 (if (eq system-type 'darwin)
     (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
   (require 'cask "~/.cask/cask.el"))
@@ -33,6 +31,7 @@
 (require 'pallet)
 (pallet-mode t)
 
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 (when (locate-library "arista") (load-library "arista"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -284,8 +283,8 @@ comment box."
 (add-hook 'prog-mode-hook (lambda() (delete 'dtrt-indent-mode-line-info global-mode-string)))
 
 (setq-default indent-tabs-mode nil)
-(setq c-default-style "linux"
-      c-basic-offset 3)
+(setq c-default-style "linux")
+(if (locate-library "arista") (setq c-basic-offset 3) (setq c-basic-offset 4))
 ;; (add-to-list 'c-offsets-alist '(arglist-close . c-linup-close-paren))
 
 (defun no-ns-indent ()
