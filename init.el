@@ -9,7 +9,6 @@
     ("8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
  '(diff-switches "-u")
  '(indent-tabs-mode nil)
- '(inhibit-default-init t)
  '(magit-diff-use-overlays nil)
  '(ns-command-modifier (quote control))
  '(recentf-max-saved-items 100)
@@ -40,7 +39,6 @@
 ;; UI                                                         ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq inhibit-splash-screen t)
 (column-number-mode 1)
 (tool-bar-mode -1)
 ;; (scroll-bar-mode -1)
@@ -100,6 +98,10 @@
 
 (blink-cursor-mode 0)
 
+(define-globalized-minor-mode global-which-key-mode
+  which-key-mode (lambda () (which-key-mode)))
+(global-which-key-mode)
+
 ;; Helm
 (require 'helm)
 (require 'helm-config)
@@ -142,18 +144,6 @@ comment box."
     (insert-char ?  (- fill-column (current-column)))
     (comment-box b (point-max) 1)
     (goto-char (point-max))))
-
-;; NAWH
-;; ; Delete words without adding to kill ring
-;; (defun delete-word-backward (arg)
-;;   (interactive "p")
-;;   (delete-region (point) (progn (backward-word arg) (point))))
-;; (defun delete-word-forward (arg)
-;;   (interactive "p")
-;;   (delete-region (point) (progn (forward-word arg) (point))))
-;; (global-set-key (kbd "<M-backspace>") 'delete-word-backward)
-;; (global-set-key (kbd "<C-backspace>") 'delete-word-backward)
-;; (global-set-key (kbd "<M-d>") 'delete-word-backward)
 
 (clean-aindent-mode t)
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -207,6 +197,7 @@ comment box."
 
 (global-set-key (kbd "C-c s")   'toggle-truncate-lines)
 (global-set-key (kbd "C-c C-s") 'toggle-truncate-lines)
+(set-default 'truncate-lines t)
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
