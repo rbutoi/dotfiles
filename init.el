@@ -259,6 +259,7 @@ comment box."
 
 (add-hook 'prog-mode-hook 'which-function-mode)
 
+(add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
 
 (global-set-key (kbd "C-c l") 'nlinum-mode)
