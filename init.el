@@ -230,6 +230,9 @@ comment box."
             (define-key org-journal-mode-map (kbd "C-c w")
               (lambda () (interactive)
                 (set-frame-width (selected-frame) (+ 1 fill-column))))))
+(defun set-frame-width-interactive (arg)
+  (interactive "nFrame width: ")
+  (set-frame-width (selected-frame) arg))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
