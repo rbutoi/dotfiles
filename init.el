@@ -207,7 +207,6 @@ comment box."
 
 (global-set-key (kbd "C-c s")   'toggle-truncate-lines)
 (global-set-key (kbd "C-c C-s") 'toggle-truncate-lines)
-(set-default 'truncate-lines t)
 
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
@@ -227,6 +226,20 @@ comment box."
 (setq org-journal-hide-entries-p nil)
 (setq org-journal-find-file 'find-file)
 (add-hook 'org-journal-mode-hook 'flyspell-mode)
+; fill file before saving
+(add-hook 'org-journal-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook
+                      (lambda()
+                        (fill-region (point-min) (point-max))) nil t)))
+; whitespace-mode is fairly useless in org-journal. remap its key to set the
+; frame with to the fillcolumn + empirical value
+(add-hook 'org-journal-mode-hook
+          (lambda ()
+            (define-key org-journal-mode-map (kbd "C-c w")
+              (lambda () (interactive)
+                (set-frame-width (selected-frame) (+ 1 fill-column))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming                                                ;;

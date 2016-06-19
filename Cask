@@ -21,7 +21,6 @@
 (depends-on "helm-descbinds")
 (depends-on "helm-projectile")
 (depends-on "helm-swoop")
-(depends-on "helm-unicode")
 (depends-on "highlight-symbol")
 (depends-on "ivy")
 (depends-on "let-alist")
