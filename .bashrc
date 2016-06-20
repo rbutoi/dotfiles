@@ -60,6 +60,12 @@ export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # export PS1="$(tput setaf 2)\W $(tput setaf 4)\$ $(tput sgr0)"
 export PS1="\W \$ "
 
+e() {
+    emacsclient -n "$@" >/dev/null 2>&1
+}
+export EDITOR="emacsclient -nw"
+export ALTERNATE_EDITOR=zile
+
 export CLICOLOR=1
 alias l='ls -F'
 [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
