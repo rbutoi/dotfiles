@@ -365,6 +365,28 @@ comment box."
 ; because python-mode overwrites it
 (add-hook 'python-mode-hook
  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
+
+;; using flymake since it works with pylint < 1.0.0
+(require 'flymake)
+
+(defun flymake-pylint-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     'flymake-create-temp-inplace))
+         (local-file (file-relative-name
+                      temp-file
+                      (file-name-directory buffer-file-name))))
+    (list "epylint" (list local-file))))
+(add-to-list 'flymake-allowed-file-name-masks
+             '("\\.py\\'" flymake-pylint-init))
+(add-hook 'python-mode-hook
+          (lambda()
+            (define-prefix-command 'fake-flycheck-map)
+            (local-set-key (kbd "C-c !") 'fake-flycheck-map)
+            (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
+            (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
+            (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
+            (flymake-mode)
+))
 #+END_SRC
 
 **** Perl
@@ -414,6 +436,7 @@ comment box."
 *** Flycheck
 #+BEGIN_SRC emacs-lisp
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+(add-hook 'rust-mode-hook 'flycheck-mode)
 (add-hook 'perl-mode-hook 'flycheck-mode)
 #+END_SRC
 
