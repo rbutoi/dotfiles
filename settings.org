@@ -320,6 +320,11 @@ comment box."
 (global-ace-isearch-mode t)
 #+END_SRC
 
+*** org
+#+BEGIN_SRC emacs-lisp
+(define-key org-mode-map (kbd "C-M-u") 'org-up-element)
+#+END_SRC
+
 *** org-journal
 #+BEGIN_SRC emacs-lisp
 (setq org-journal-date-format "%A, %d/%m/%Y")
