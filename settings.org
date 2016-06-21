@@ -51,6 +51,8 @@
 (setq vc-follow-symlinks t)
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
+(setq recentf-max-saved-items 1000)
+(setq recentf-save-file "~/.emacs.d/recentf")
 #+END_SRC
 
 *** Buffers
@@ -194,6 +196,8 @@
       mouse-yank-at-point t)
 
 (blink-cursor-mode 0)
+
+(setq ns-command-modifier (quote control))
 #+END_SRC
 
 ** Editing
@@ -328,6 +332,7 @@ comment box."
 *** org-journal
 #+BEGIN_SRC emacs-lisp
 (setq org-journal-date-format "%A, %d/%m/%Y")
+(setq sorg-journal-file-format "%Y%m%d.txt")
 (setq org-journal-dir "~/Google Drive/journal/")
 (setq org-journal-hide-entries-p nil)
 (setq org-journal-find-file 'find-file)
@@ -354,6 +359,7 @@ comment box."
 (setq require-final-newline t)
 (setq-default fill-column 80)
 (delete-selection-mode 1)
+(setq diff-switches "-u")
 #+END_SRC
 
 ** Programming
@@ -463,10 +469,11 @@ comment box."
 (add-hook 'prog-mode-hook 'which-function-mode)
 #+END_SRC
 
-*** compile shortcuts
+*** compiling
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
+(setq compilation-message-face 'default)
 #+END_SRC
 
 *** Line numbers
