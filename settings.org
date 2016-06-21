@@ -241,7 +241,7 @@ comment box."
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/bin"))))
 (add-hook 'org-journal-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
 *** comment-or-uncomment-line-or-region
