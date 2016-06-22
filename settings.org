@@ -327,6 +327,7 @@ comment box."
 *** org
 #+BEGIN_SRC emacs-lisp
 (define-key org-mode-map (kbd "C-M-u") 'org-up-element)
+(setq org-startup-folded nil)
 #+END_SRC
 
 *** org-journal
@@ -525,6 +526,28 @@ comment box."
 (define-key yafolding-mode-map (kbd "M-RET") 'yafolding-toggle-element)
 #+END_SRC
 
+** Meta/misc
+
+*** When editing this file, C-c m to switch between org-mode and elisp. Yup...
+#+BEGIN_SRC emacs-lisp
+(setq switch-org-and-elisp-map (make-sparse-keymap))
+
+(define-minor-mode switch-org-and-elisp-mode
+  ""
+  nil
+  nil
+  switch-org-and-elisp-map)
+(define-key switch-org-and-elisp-map (kbd "C-c m")
+  (lambda () (interactive)
+    (if (string= 'emacs-lisp-mode major-mode)
+        (progn (org-mode) (switch-org-and-elisp-mode t))
+      (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t)))
+    ))
+
+;; Local Variables:
+;; eval: (switch-org-and-elisp-mode 1)
+;; End:
+#+END_SRC
 ** Emacs server
 #+BEGIN_SRC emacs-lisp
 ;; (when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
