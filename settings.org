@@ -151,7 +151,8 @@
 *** rich-majority-mode
 #+BEGIN_SRC emacs-lisp
 (rich-minority-mode 1)
-(setq rm-whitelist "\\[")
+; (setq rm-whitelist "\\[")
+(setq rm-whitelist "@") ; this is cool now
 ; (setq rm-whitelist "nothing")
 #+END_SRC
 
@@ -467,7 +468,7 @@ comment box."
      (if
          (file-remote-p default-directory)
          ""
-       (format "[%s]"
+       (format "\@%s"
                (projectile-project-name))))))
 (setq projectile-completion-system 'helm)
 (projectile-global-mode)
