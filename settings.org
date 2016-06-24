@@ -361,6 +361,7 @@ comment box."
 (setq-default fill-column 80)
 (delete-selection-mode 1)
 (setq diff-switches "-u")
+(put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
 ** Programming
@@ -469,7 +470,7 @@ comment box."
      (if
          (file-remote-p default-directory)
          ""
-       (format "\@%s"
+       (format " \@%s"
                (projectile-project-name))))))
 (setq projectile-completion-system 'helm)
 (projectile-global-mode)
