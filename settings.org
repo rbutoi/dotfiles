@@ -38,8 +38,6 @@
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
   (setq standard-display-table display-table))
-
-(set-frame-parameter (selected-frame) 'alpha '(95 95))
 #+END_SRC
 
 *** Files
@@ -152,7 +150,7 @@
 #+BEGIN_SRC emacs-lisp
 (rich-minority-mode 1)
 ; (setq rm-whitelist "\\[")
-(setq rm-whitelist "@") ; this is cool now
+(setq rm-blacklist "^[^@](journal)?") ; this is cool now
 ; (setq rm-whitelist "nothing")
 #+END_SRC
 
@@ -337,12 +335,7 @@ comment box."
 (setq org-journal-dir "~/Google Drive/journal/")
 (setq org-journal-hide-entries-p nil)
 (setq org-journal-find-file 'find-file)
-; fill file before saving
-(add-hook 'org-journal-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook
-                      (lambda()
-                        (fill-region (point-min) (point-max))) nil t)))
+(add-hook 'org-journal-mode-hook 'auto-fill-mode)
 ; whitespace-mode is fairly useless in org-journal. remap its key to set the
 ; frame with to the fillcolumn + empirical value
 (add-hook 'org-journal-mode-hook
