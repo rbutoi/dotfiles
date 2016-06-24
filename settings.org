@@ -57,12 +57,7 @@
 #+BEGIN_SRC emacs-lisp
 (defun switch-to-last-window ()
   (interactive)
-  (let ((win (get-mru-window t t t)))
-    (unless win (error "Last window not found."))
-    (let ((frame (window-frame win)))
-      (raise-frame frame)
-      (select-frame frame)
-      (select-window win))))
+  (select-window (get-mru-window t t t)))
 (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
 (global-set-key (kbd "M-o") 'switch-to-last-window)
 (global-set-key (kbd "C-x o") 'ace-window)
