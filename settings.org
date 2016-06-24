@@ -149,9 +149,7 @@
 *** rich-majority-mode
 #+BEGIN_SRC emacs-lisp
 (rich-minority-mode 1)
-; (setq rm-whitelist "\\[")
-(setq rm-blacklist "^[^@](journal)?") ; this is cool now
-; (setq rm-whitelist "nothing")
+(setq rm-whitelist "@")
 #+END_SRC
 
 *** big-fringe-mode
