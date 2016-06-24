@@ -53,11 +53,20 @@
 (setq recentf-save-file "~/.emacs.d/recentf")
 #+END_SRC
 
-*** Buffers
+*** Buffers and windows
 #+BEGIN_SRC emacs-lisp
+(defun switch-to-last-window ()
+  (interactive)
+  (let ((win (get-mru-window t t t)))
+    (unless win (error "Last window not found."))
+    (let ((frame (window-frame win)))
+      (raise-frame frame)
+      (select-frame frame)
+      (select-window win))))
 (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
-(global-set-key (kbd "M-o") 'ace-window)
+(global-set-key (kbd "M-o") 'switch-to-last-window)
 (global-set-key (kbd "C-x o") 'ace-window)
+(global-set-key (kbd "C-x C-o") 'ace-window)
 (global-set-key (kbd "M-k") 'kill-this-buffer)
 
 (global-set-key (kbd "M-0") 'delete-window)
