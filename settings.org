@@ -68,6 +68,7 @@
 (global-set-key (kbd "M-1") 'delete-other-windows)
 (global-set-key (kbd "M-2") 'split-window-below)
 (global-set-key (kbd "M-3") 'split-window-right)
+(global-set-key (kbd "M-=") 'balance-windows)
 #+END_SRC
 
 *** Helm
@@ -369,6 +370,9 @@ comment box."
 ; because python-mode overwrites it
 (add-hook 'python-mode-hook
  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
+(eval-after-load "company"
+  '(add-to-list 'company-backends 'company-anaconda))
+
 
 ;; using flymake since it works with pylint < 1.0.0
 (require 'flymake)
@@ -447,11 +451,27 @@ comment box."
 *** Company
 #+BEGIN_SRC emacs-lisp
 (global-company-mode 1)
-(eval-after-load "company"
-  '(add-to-list 'company-backends 'company-anaconda))
-(setq tab-always-indent 'complete)
 (setq company-require-match nil)
 (setq company-idle-delay nil)
+
+(setq tab-always-indent 'complete)
+
+(defvar completion-at-point-functions-saved nil)
+
+(defun company-indent-for-tab-command (&optional arg)
+  (interactive "P")
+  (let ((completion-at-point-functions-saved completion-at-point-functions)
+        (completion-at-point-functions '(company-complete-common-wrapper)))
+    (indent-for-tab-command arg)))
+
+(defun company-complete-common-wrapper ()
+  (let ((completion-at-point-functions completion-at-point-functions-saved))
+    (company-complete-common)))
+
+(define-key company-mode-map [remap indent-for-tab-command]
+  'company-indent-for-tab-command)
+(define-key company-mode-map [remap c-indent-line-or-region]
+  'company-indent-for-tab-command)
 #+END_SRC
 
 *** Projectile
