@@ -378,8 +378,8 @@ comment box."
 ; because python-mode overwrites it
 (add-hook 'python-mode-hook
  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
-(eval-after-load "company"
-  '(add-to-list 'company-backends 'company-anaconda))
+(eval-after-load 'company
+  '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 
 
 ;; using flymake since it works with pylint < 1.0.0
@@ -461,6 +461,7 @@ comment box."
 (global-company-mode 1)
 (setq company-require-match nil)
 (setq company-idle-delay nil)
+(setq company-dabbrev-downcase nil)
 
 (setq tab-always-indent 'complete)
 (add-to-list 'company-backends 'company-dabbrev)
