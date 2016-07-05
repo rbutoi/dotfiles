@@ -13,6 +13,8 @@
 (require 'pallet)
 (pallet-mode t)
 
+(require 'cl)
+
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (when (locate-library "arista") (load-library "arista"))
 
@@ -45,6 +47,7 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/\\1" t)))
 (global-set-key (kbd "C-c r") 'revert-buffer)
+(global-set-key (kbd "C-c C-r") 'revert-buffer)
 (global-auto-revert-mode 1)
 (setq vc-follow-symlinks t)
 (setq-default save-place t)
@@ -55,11 +58,16 @@
 
 *** Buffers and windows
 #+BEGIN_SRC emacs-lisp
-(defun switch-to-last-window ()
-  (interactive)
-  (select-window (get-mru-window t t t)))
 (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
-(global-set-key (kbd "M-o") 'switch-to-last-window)
+(global-set-key (kbd "M-o") 'other-window)
+(global-set-key (kbd "M-i") (lambda()
+                              (interactive)
+                              (other-window -1)
+                              ))
+(global-set-key (kbd "M-l") (lambda()
+                              (interactive)
+                              (select-window (get-mru-window t t t))
+                              ))
 (global-set-key (kbd "C-x o") 'ace-window)
 (global-set-key (kbd "C-x C-o") 'ace-window)
 (global-set-key (kbd "M-k") 'kill-this-buffer)
@@ -321,7 +329,7 @@ comment box."
 
 *** ace-isearch-mode
 #+BEGIN_SRC emacs-lisp
-(setq ace-isearch-use-jump nil)
+(setq ace-isearch-jump-delay 1)
 (global-ace-isearch-mode t)
 #+END_SRC
 
@@ -455,6 +463,8 @@ comment box."
 (setq company-idle-delay nil)
 
 (setq tab-always-indent 'complete)
+(add-to-list 'company-backends 'company-dabbrev)
+(setq company-dabbrev-code-other-buffers 'all)
 
 (defvar completion-at-point-functions-saved nil)
 
