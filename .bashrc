@@ -55,11 +55,19 @@ export HISTSIZE=
 export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
-PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; ' #$PROMPT_COMMAND
-export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-# export PS1="$(tput setaf 2)\W $(tput setaf 4)\$ $(tput sgr0)"
-export PS1="\W \$ "
 
+case "$TERM" in
+screen*)
+    PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; '
+    export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+    ;;
+*)
+    ;;
+esac
+export PS1="$(tput setaf 2)\W $(tput setaf 4)\$ $(tput sgr0)"
+# export PS1="\W \$ "ˆ
+
+# Aliases
 e() {
     emacsclient -n "$@" >/dev/null 2>&1
 }
@@ -90,13 +98,19 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 
-if [ -z "$A4_CHROOT" ]; then
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-else
-    export FZF_TMUX=0
-    [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
-fi
-export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+case "$TERM" in
+screen*)
+    if [ -z "$A4_CHROOT" ]; then
+        [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    else
+        export FZF_TMUX=0
+        [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
+    fi
+    export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+    ;;
+*)
+    ;;
+esac
 
-### Specifics
+# Specifics
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
