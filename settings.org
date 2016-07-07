@@ -27,14 +27,9 @@
 *** Theme
 #+BEGIN_SRC emacs-lisp
 (load-theme 'solarized t)
-
-;; light in GUI, dark in terminal
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (let ((mode (if (display-graphic-p frame) 'light 'dark)))
-              (set-frame-parameter frame 'background-mode mode)
-              (set-terminal-parameter frame 'background-mode mode))
-            (enable-theme 'solarized)))
+(set-frame-parameter nil 'background-mode 'dark)
+(set-terminal-parameter nil 'background-mode 'dark)
+(enable-theme 'solarized)
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -89,6 +84,7 @@
       "ack -Hn --color --smart-case --no-group %p %f"
       helm-grep-default-recurse-command
       "ack -H --color --smart-case --no-group %p %f")
+(setq helm-buffer-skip-remote-checking t)
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
@@ -162,7 +158,7 @@
 *** rich-majority-mode
 #+BEGIN_SRC emacs-lisp
 (rich-minority-mode 1)
-(setq rm-whitelist "@")
+(setq rm-blacklist ".*")
 #+END_SRC
 
 *** big-fringe-mode
@@ -194,7 +190,7 @@
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
-;; (scroll-bar-mode -1)
+(scroll-bar-mode -1)
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -378,8 +374,8 @@ comment box."
 ; because python-mode overwrites it
 (add-hook 'python-mode-hook
  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
-(eval-after-load 'company
-  '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
+;; (eval-after-load 'company
+;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 
 
 ;; using flymake since it works with pylint < 1.0.0
@@ -396,12 +392,13 @@ comment box."
              '("\\.py\\'" flymake-pylint-init))
 (add-hook 'python-mode-hook
           (lambda()
-            (define-prefix-command 'fake-flycheck-map)
-            (local-set-key (kbd "C-c !") 'fake-flycheck-map)
-            (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
-            (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
-            (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
-            (flymake-mode)
+            (unless (file-remote-p (buffer-file-name))
+              (define-prefix-command 'fake-flycheck-map)
+              (local-set-key (kbd "C-c !") 'fake-flycheck-map)
+              (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
+              (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
+              (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
+              (flymake-mode))
 ))
 #+END_SRC
 
@@ -442,11 +439,6 @@ comment box."
 
 ***** Find other file
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-common-hook
-          (lambda() 
-            (local-set-key (kbd "C-c o") 'projectile-find-other-file)
-            (local-set-key (kbd "C-c C-o") 'projectile-find-other-file)
-            ))
 #+END_SRC
 
 *** Flycheck
@@ -464,7 +456,7 @@ comment box."
 (setq company-dabbrev-downcase nil)
 
 (setq tab-always-indent 'complete)
-(add-to-list 'company-backends 'company-dabbrev)
+;; (add-to-list 'company-backends 'company-dabbrev)
 (setq company-dabbrev-code-other-buffers 'all)
 
 (defvar completion-at-point-functions-saved nil)
@@ -487,20 +479,21 @@ comment box."
 
 *** Projectile
 #+BEGIN_SRC emacs-lisp
-(add-hook 'projectile-mode-hook
-          (lambda ()
-            (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)))
-(setq projectile-mode-line
-   (quote
-    (:eval
-     (if
-         (file-remote-p default-directory)
-         ""
-       (format " \@%s"
-               (projectile-project-name))))))
-(setq projectile-completion-system 'helm)
-(projectile-global-mode)
-(helm-projectile-on)
+;; (add-hook 'projectile-mode-hook
+;;           (lambda ()
+;;             (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
+;;             (define-key projectile-mode-map (kbd "C-x f") 'projectile-find-file)))
+;; (setq projectile-mode-line
+;;    (quote
+;;     (:eval
+;;      (if
+;;          (file-remote-p default-directory)
+;;          ""
+;;        (format " \@%s"
+;;                (projectile-project-name))))))
+;; (setq projectile-completion-system 'helm)
+;; (projectile-global-mode)
+;; (helm-projectile-on)
 #+END_SRC
 
 *** which-function-mode
@@ -553,6 +546,12 @@ comment box."
 (define-key yafolding-mode-map (kbd "M-RET") 'yafolding-toggle-element)
 #+END_SRC
 
+*** Shell
+#+BEGIN_SRC emacs-lisp
+(setq explicit-shell-file-name "/bin/bash")
+(global-set-key (kbd "<f6>") 'shell)
+#+END_SRC
+
 ** Meta/misc
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
@@ -575,6 +574,16 @@ comment box."
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
 #+END_SRC
+*** TRAMP
+#+BEGIN_SRC emacs-lisp
+(require 'tramp)
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+(setq tramp-default-method 'ssh)
+(setq tramp-use-ssh-controlmaster-options nil)
+(global-set-key (kbd "<f5>") 'tramp-cleanup-all-connections)
+(setq auto-revert-remote-files t)
+#+END_SRC
+
 ** Emacs server
 #+BEGIN_SRC emacs-lisp
 ;; (when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
