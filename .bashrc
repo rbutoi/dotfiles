@@ -64,12 +64,37 @@ screen*)
 *)
     ;;
 esac
-export PS1="$(tput setaf 2)\W $(tput setaf 4)\$ $(tput sgr0)"
-# export PS1="\W \$ "ˆ
+
+# magic to check if we have colour
+colour=0
+if tput Co > /dev/null 2>&1
+then
+    test "`tput Co`" -gt 2 && colour=1
+elif tput colors > /dev/null 2>&1
+then
+    test "`tput colors`" -gt 2 && colour=1
+fi
+
+if [ $colour -eq 1  ]; then
+    RED="\[$(tput setaf 1)\]"
+    GREEN="\[$(tput setaf 2)\]"
+    BLUE="\[$(tput setaf 4)\]"
+    RESET="\[$(tput sgr0)\]"
+
+    export PS1="${GREEN}\W ${BLUE}\$${RESET} "
+else
+    export PS1="\W \$ "
+fi
 
 # Aliases
 e() {
-    emacsclient -n "$@" >/dev/null 2>&1
+    emacsclient "$@"
+}
+ew() {
+    emacsclient -nw "$@"
+}
+en() {
+    emacsclient -n "$@"
 }
 export EDITOR="emacsclient -nw"
 export ALTERNATE_EDITOR=zile
@@ -80,6 +105,7 @@ alias l='ls -F'
 alias ll='l -lA -h'
 alias n="nano"
 alias g="grep --color=always -i"
+alias p="ps aux|grep `whoami`"
 m() {
     if [ -f /usr/bin/less ]; then
         less "$@"
