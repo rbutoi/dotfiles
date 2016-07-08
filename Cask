@@ -3,6 +3,7 @@
 
 (depends-on "ace-isearch")
 (depends-on "ace-window")
+(depends-on "ack")
 (depends-on "ag")
 (depends-on "anaconda-mode")
 (depends-on "apu")
@@ -15,8 +16,10 @@
 (depends-on "dtrt-indent")
 (depends-on "flycheck")
 (depends-on "flycheck-rust")
+(depends-on "golden-ratio")
 (depends-on "haskell-mode")
 (depends-on "helm")
+(depends-on "helm-ack")
 (depends-on "helm-ag")
 (depends-on "helm-core")
 (depends-on "helm-descbinds")

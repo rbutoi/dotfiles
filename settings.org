@@ -35,6 +35,19 @@
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
   (setq standard-display-table display-table))
+
+;; a bit more contrast to keep track of curent window
+(set-face-attribute  'mode-line
+                 nil 
+                 :box '(:line-width 2 :style released-button))
+(set-face-attribute  'mode-line-inactive
+                 nil 
+                 :box nil
+                 )
+(require 'hl-line)
+(require 'which-func)
+(set-face-attribute 'hl-line nil :underline t)
+(set-face-attribute 'which-func nil :foreground "dark cyan")
 #+END_SRC
 
 *** Files
@@ -203,6 +216,11 @@
 (blink-cursor-mode 0)
 
 (setq ns-command-modifier (quote control))
+#+END_SRC
+
+*** Highlight current line
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode 1)
 #+END_SRC
 
 ** Editing
