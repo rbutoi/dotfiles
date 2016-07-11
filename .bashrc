@@ -124,8 +124,7 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 
-case "$TERM" in
-screen*)
+if [ "$TERM" != "dumb" ]; then
     if [ -z "$A4_CHROOT" ]; then
         [ -f ~/.fzf.bash ] && source ~/.fzf.bash
     else
@@ -133,10 +132,7 @@ screen*)
         [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
     fi
     export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
-    ;;
-*)
-    ;;
-esac
+fi
 
 # Specifics
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista

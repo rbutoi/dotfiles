@@ -23,7 +23,6 @@
 (depends-on "helm-ag")
 (depends-on "helm-core")
 (depends-on "helm-descbinds")
-(depends-on "helm-projectile")
 (depends-on "helm-swoop")
 (depends-on "helm-unicode")
 (depends-on "ivy")

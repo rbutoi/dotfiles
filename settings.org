@@ -86,7 +86,7 @@
 (global-set-key (kbd "M-3") 'split-window-right)
 (global-set-key (kbd "M-=") 'balance-windows)
 
-(global-set-key (kbd "C-z") 'zoom-window-zoom)
+(global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 #+END_SRC
 
 *** Helm
@@ -235,6 +235,7 @@
 *** Mac OS X
 #+BEGIN_SRC emacs-lisp
 (setq ns-command-modifier (quote control))
+(global-set-key (kbd "<f9>") 'toggle-frame-fullscreen)
 #+END_SRC
 
 ** Editing
@@ -580,20 +581,23 @@ comment box."
 
 *** Term
 #+BEGIN_SRC emacs-lisp
-(defun term-into-dir ()
-  (interactive)
-  (if (file-remote-p default-directory)
-      (let ((dissected (tramp-dissect-file-name default-directory)))
-        (let ((host (tramp-file-name-host dissected))
-              ;; (user (tramp-file-name-user dissected))
-              (dir  (tramp-file-name-localname dissected)))
-        (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'"))
-        ))
-    (term-run-shell-command (concat "cd " default-directory " && exec bash -l"))
-    ))
+(defun term-into-dir (arg)
+  (interactive "P")
+  (setq arg2 t)
+  (when (consp arg) (setq arg2 nil))
+   (if (file-remote-p default-directory)
+       (let ((dissected (tramp-dissect-file-name default-directory)))
+         (let ((host (tramp-file-name-host dissected))
+               ;; (user (tramp-file-name-user dissected))
+               (dir  (tramp-file-name-localname dissected)))
+           (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'") arg2)
+           ))
+     (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
+     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
 ;; (global-set-key (kbd "<f6>") (lambda () (interactive) (term "/bin/bash")))
 (global-set-key (kbd "C-<f6>") 'rename-uniquely)
+(add-hook 'term-mode-hook (lambda () (setq term-buffer-maximum-size 20000)))
 #+END_SRC
 
 ** Meta/misc
