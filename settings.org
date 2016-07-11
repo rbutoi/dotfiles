@@ -268,11 +268,12 @@ comment box."
 (define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
-*** Undo tree
+*** Undoing, undo tree
 #+BEGIN_SRC emacs-lisp
 (setq undo-tree-visualizer-timestamps t)
 (setq undo-tree-visualizer-diff t)
 (global-undo-tree-mode 1)
+(global-set-key (kbd "C-z") 'undo)
 #+END_SRC
 
 *** Flyspell
@@ -410,7 +411,6 @@ comment box."
 ;; (eval-after-load 'company
 ;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 
-
 ;; using flymake since it works with pylint < 1.0.0
 (require 'flymake)
 
@@ -510,7 +510,7 @@ comment box."
   'company-indent-for-tab-command)
 #+END_SRC
 
-*** Projectile
+*** Projectile RIP
 #+BEGIN_SRC emacs-lisp
 ;; (add-hook 'projectile-mode-hook
 ;;           (lambda ()
@@ -598,6 +598,7 @@ comment box."
 ;; (global-set-key (kbd "<f6>") (lambda () (interactive) (term "/bin/bash")))
 (global-set-key (kbd "C-<f6>") 'rename-uniquely)
 (add-hook 'term-mode-hook (lambda () (setq term-buffer-maximum-size 20000)))
+(setq term-suppress-hard-newline t)
 #+END_SRC
 
 ** Meta/misc
@@ -630,6 +631,7 @@ comment box."
 (setq tramp-use-ssh-controlmaster-options nil)
 (global-set-key (kbd "<f5>") 'tramp-cleanup-all-connections)
 (setq auto-revert-remote-files t)
+(setq tramp-connection-timeout 3)
 #+END_SRC
 
 ** Emacs server
