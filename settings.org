@@ -205,7 +205,7 @@
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 #+END_SRC
 
