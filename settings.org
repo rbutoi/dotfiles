@@ -68,14 +68,9 @@
 #+BEGIN_SRC emacs-lisp
 (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
 (global-set-key (kbd "M-o") 'other-window)
-(global-set-key (kbd "M-i") (lambda()
-                              (interactive)
-                              (other-window -1)
-                              ))
-(global-set-key (kbd "M-l") (lambda()
-                              (interactive)
-                              (select-window (get-mru-window t t t))
-                              ))
+(global-set-key (kbd "M-i") (lambda() (interactive) (other-window -1)))
+(global-set-key (kbd "M-l")
+                (lambda() (interactive) (select-window (get-mru-window t t t))))
 (global-set-key (kbd "C-x o") 'ace-window)
 (global-set-key (kbd "C-x C-o") 'ace-window)
 (global-set-key (kbd "M-k") 'kill-this-buffer)
@@ -100,6 +95,7 @@
       helm-grep-default-recurse-command
       "ack -H --color --smart-case --no-group %p %f")
 (setq helm-buffer-skip-remote-checking t)
+(setq helm-split-window-default-side 'same)
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
@@ -412,27 +408,27 @@ comment box."
 ;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 
 ;; using flymake since it works with pylint < 1.0.0
-(require 'flymake)
+;; (require 'flymake)
 
-(defun flymake-pylint-init ()
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                     'flymake-create-temp-inplace))
-         (local-file (file-relative-name
-                      temp-file
-                      (file-name-directory buffer-file-name))))
-    (list "epylint" (list local-file))))
-(add-to-list 'flymake-allowed-file-name-masks
-             '("\\.py\\'" flymake-pylint-init))
-(add-hook 'python-mode-hook
-          (lambda()
-            (unless (file-remote-p (buffer-file-name))
-              (define-prefix-command 'fake-flycheck-map)
-              (local-set-key (kbd "C-c !") 'fake-flycheck-map)
-              (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
-              (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
-              (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
-              (flymake-mode))
-))
+;; (defun flymake-pylint-init ()
+;;   (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                      'flymake-create-temp-inplace))
+;;          (local-file (file-relative-name
+;;                       temp-file
+;;                       (file-name-directory buffer-file-name))))
+;;     (list "epylint" (list local-file))))
+;; (add-to-list 'flymake-allowed-file-name-masks
+;;              '("\\.py\\'" flymake-pylint-init))
+;; (add-hook 'python-mode-hook
+;;           (lambda()
+;;             (unless (file-remote-p (buffer-file-name))
+;;               (define-prefix-command 'fake-flycheck-map)
+;;               (local-set-key (kbd "C-c !") 'fake-flycheck-map)
+;;               (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
+;;               (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
+;;               (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
+;;               (flymake-mode))
+;; ))
 #+END_SRC
 
 **** Perl
@@ -583,22 +579,30 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (defun term-into-dir (arg)
   (interactive "P")
-  (setq arg2 t)
-  (when (consp arg) (setq arg2 nil))
-   (if (file-remote-p default-directory)
-       (let ((dissected (tramp-dissect-file-name default-directory)))
-         (let ((host (tramp-file-name-host dissected))
-               ;; (user (tramp-file-name-user dissected))
-               (dir  (tramp-file-name-localname dissected)))
-           (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'") arg2)
-           ))
-     (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
-     ))
+  (let ((arg2 t))
+    (when (consp arg) (setq arg2 nil))
+    (if (file-remote-p default-directory)
+        (let ((dissected (tramp-dissect-file-name default-directory)))
+          (let ((host (tramp-file-name-host dissected))
+                ;; (user (tramp-file-name-user dissected))
+                (dir  (tramp-file-name-localname dissected)))
+            (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'") arg2)
+            ))
+      (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
+      )))
 (global-set-key (kbd "<f6>") 'term-into-dir)
-;; (global-set-key (kbd "<f6>") (lambda () (interactive) (term "/bin/bash")))
-(global-set-key (kbd "C-<f6>") 'rename-uniquely)
 (add-hook 'term-mode-hook (lambda () (setq term-buffer-maximum-size 20000)))
 (setq term-suppress-hard-newline t)
+(add-hook 'term-mode-hook (lambda () (term-set-escape-char ?\C-x)))
+(eval-after-load 'term
+  '(progn
+     (define-key term-raw-map (kbd "M-o") 'other-window)
+     (define-key term-raw-map (kbd "M-i")
+       (lambda() (interactive) (other-window -1)))
+     (define-key term-raw-map (kbd "M-l")
+       (lambda() (interactive) (select-window (get-mru-window t t t))))
+     (define-key term-mode-map (kbd "C-x C-k") 'term-char-mode)
+     ))
 #+END_SRC
 
 ** Meta/misc
