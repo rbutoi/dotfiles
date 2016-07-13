@@ -67,20 +67,21 @@
 *** Buffers and windows
 #+BEGIN_SRC emacs-lisp
 (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o))
-(global-set-key (kbd "M-o") 'other-window)
-(global-set-key (kbd "M-i") (lambda() (interactive) (other-window -1)))
-(global-set-key (kbd "M-l")
-                (lambda() (interactive) (select-window (get-mru-window t t t))))
 (global-set-key (kbd "C-x o") 'ace-window)
 (global-set-key (kbd "C-x C-o") 'ace-window)
-(global-set-key (kbd "M-k") 'kill-this-buffer)
+(defun m-buffer-binds (map)
+  (define-key map (kbd "M-o") 'other-window)
+  (define-key map (kbd "M-i") (lambda() (interactive) (other-window -1)))
+  (define-key map (kbd "M-l")
+                  (lambda() (interactive) (select-window (get-mru-window t t t))))
+  (define-key map (kbd "M-k") 'kill-this-buffer)
 
-(global-set-key (kbd "M-0") 'delete-window)
-(global-set-key (kbd "M-1") 'delete-other-windows)
-(global-set-key (kbd "M-2") 'split-window-below)
-(global-set-key (kbd "M-3") 'split-window-right)
-(global-set-key (kbd "M-=") 'balance-windows)
-
+  (define-key map (kbd "M-0") 'delete-window)
+  (define-key map (kbd "M-1") 'delete-other-windows)
+  (define-key map (kbd "M-2") 'split-window-below)
+  (define-key map (kbd "M-3") 'split-window-right)
+  (define-key map (kbd "M-=") 'balance-windows))
+(m-buffer-binds (current-global-map))
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 #+END_SRC
 
@@ -270,6 +271,7 @@ comment box."
 (setq undo-tree-visualizer-diff t)
 (global-undo-tree-mode 1)
 (global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "C-x C-u") 'undo-tree-visualize)
 #+END_SRC
 
 *** Flyspell
@@ -591,17 +593,22 @@ comment box."
       (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
       )))
 (global-set-key (kbd "<f6>") 'term-into-dir)
-(add-hook 'term-mode-hook (lambda () (setq term-buffer-maximum-size 20000)))
 (setq term-suppress-hard-newline t)
-(add-hook 'term-mode-hook (lambda () (term-set-escape-char ?\C-x)))
+(setq term-prompt-regexp "^.* [%$] ")
+(add-hook 'term-mode-hook
+          (lambda ()
+            (term-set-escape-char ?\C-x)
+            (setq term-buffer-maximum-size 20000)
+            (toggle-truncate-lines nil) 
+            ))
 (eval-after-load 'term
   '(progn
-     (define-key term-raw-map (kbd "M-o") 'other-window)
-     (define-key term-raw-map (kbd "M-i")
-       (lambda() (interactive) (other-window -1)))
-     (define-key term-raw-map (kbd "M-l")
-       (lambda() (interactive) (select-window (get-mru-window t t t))))
      (define-key term-mode-map (kbd "C-x C-k") 'term-char-mode)
+     (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
+     (define-key term-raw-map (kbd "<C-backspace>") 'term-send-backwards-delete-word)
+     (define-key term-raw-map (kbd "<M-backspace>") 'term-send-backwards-delete-word)
+     (define-key term-mode-map (kbd "TAB") (lambda () (interactive) (term-send-raw-string "\t")))
+     (m-buffer-binds term-raw-map)
      ))
 #+END_SRC
 
