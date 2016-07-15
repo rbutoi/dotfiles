@@ -322,6 +322,8 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
 (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)
+(setq mwim-beginning-of-line-function 'beginning-of-line)
+(setq mwim-end-of-line-function 'end-of-line)
 #+END_SRC
 
 *** can keep C-u C-SPC C-SPC C-SPC
@@ -392,8 +394,14 @@ comment box."
 (setq require-final-newline t)
 (setq-default fill-column 80)
 (delete-selection-mode 1)
-(setq diff-switches "-u")
 (put 'narrow-to-region 'disabled nil)
+#+END_SRC
+
+*** Copy current filename
+#+BEGIN_SRC emacs-lisp
+(defun copy-current-filename ()
+  (interactive)
+  (kill-new buffer-file-name))
 #+END_SRC
 
 ** Programming
@@ -468,8 +476,10 @@ comment box."
 (add-hook 'c++-mode-hook 'no-ns-indent)
 #+END_SRC
 
-***** Find other file
+**** Diff
 #+BEGIN_SRC emacs-lisp
+; (add-hook 'diff-mode-hook (lambda () (m-buffer-binds diff-mode-map)))
+(setq diff-switches "-u")
 #+END_SRC
 
 *** Flycheck
@@ -594,7 +604,7 @@ comment box."
       )))
 (global-set-key (kbd "<f6>") 'term-into-dir)
 (setq term-suppress-hard-newline t)
-(setq term-prompt-regexp "^.* [%$] ")
+(setq term-prompt-regexp "^.*[%$] ")
 (add-hook 'term-mode-hook
           (lambda ()
             (term-set-escape-char ?\C-x)
@@ -608,6 +618,7 @@ comment box."
      (define-key term-raw-map (kbd "<C-backspace>") 'term-send-backwards-delete-word)
      (define-key term-raw-map (kbd "<M-backspace>") 'term-send-backwards-delete-word)
      (define-key term-mode-map (kbd "TAB") (lambda () (interactive) (term-send-raw-string "\t")))
+     (define-key term-mode-map (kbd "C-x C-j") (lambda nil (interactive)))
      (m-buffer-binds term-raw-map)
      ))
 #+END_SRC
