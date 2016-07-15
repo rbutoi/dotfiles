@@ -65,25 +65,44 @@ screen*)
     ;;
 esac
 
-# magic to check if we have colour
-colour=0
-if tput Co > /dev/null 2>&1
-then
-    test "`tput Co`" -gt 2 && colour=1
-elif tput colors > /dev/null 2>&1
-then
-    test "`tput colors`" -gt 2 && colour=1
-fi
+if [ "$TERM" != "dumb" ]; then
+    # magic to check if we have colour
+    colour=0
+    if tput Co > /dev/null 2>&1
+    then
+        test "`tput Co`" -gt 2 && colour=1
+    elif tput colors > /dev/null 2>&1
+    then
+        test "`tput colors`" -gt 2 && colour=1
+    fi
 
-if [ $colour -eq 1  ]; then
-    RED="\[$(tput setaf 1)\]"
-    GREEN="\[$(tput setaf 2)\]"
-    BLUE="\[$(tput setaf 4)\]"
-    RESET="\[$(tput sgr0)\]"
+    if [ $colour -eq 1  ]; then
+        RED="\[$(tput setaf 1)\]"
+        GREEN="\[$(tput setaf 2)\]"
+        ORANGE="\[$(tput setaf 3)\]"
+        BLUE="\[$(tput setaf 4)\]"
+        PINK="\[$(tput setaf 5)\]"
+        TEAL="\[$(tput setaf 6)\]"
+        GREY="\[$(tput setaf 7)\]"
+        RESET="\[$(tput sgr0)\]"
+        BOLD="\[$(tput bold)\]"
+        UNDERLINE="\[$(tput sgr 0 1)\]"
+    else
+        RED=
+        GREEN=
+        ORANGE=
+        BLUE=
+        PINK=
+        TEAL=
+        GREY=
+        RESET=
+        BOLD=
+        UNDERLINE=
+    fi
 
-    export PS1="${GREEN}\W ${BLUE}\$${RESET} "
-else
-    export PS1="\W \$ "
+    PS1="${GREEN}\W ${BLUE}\$${RESET} "
+
+    export PS1
 fi
 
 # Aliases
