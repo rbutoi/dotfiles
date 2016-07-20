@@ -87,16 +87,24 @@
 
 *** Helm
 #+BEGIN_SRC emacs-lisp
-;; Helm
 (require 'helm)
 (require 'helm-config)
+
 (setq helm-buffer-max-length 30)
+(setq helm-buffer-skip-remote-checking t)
+(setq helm-split-window-default-side 'same)
+
 (setq helm-grep-default-command
       "ack -Hn --color --smart-case --no-group %p %f"
       helm-grep-default-recurse-command
       "ack -H --color --smart-case --no-group %p %f")
-(setq helm-buffer-skip-remote-checking t)
-(setq helm-split-window-default-side 'same)
+(setq helm-ag-base-command "ack --nocolor --nogroup --smart-case")
+(setq helm-ag-insert-at-point 'word)
+(global-set-key (kbd "C-M-s")
+                (lambda (&optional arg) (interactive "P")
+                  (if arg
+                      (helm-do-ag)
+                    (helm-do-ag default-directory))))
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
@@ -478,7 +486,7 @@ comment box."
 
 **** Diff
 #+BEGIN_SRC emacs-lisp
-; (add-hook 'diff-mode-hook (lambda () (m-buffer-binds diff-mode-map)))
+(add-hook 'diff-mode-hook (lambda () (m-buffer-binds (current-local-map))))
 (setq diff-switches "-u")
 #+END_SRC
 
@@ -581,10 +589,6 @@ comment box."
 *** yafolding-mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook 'yafolding-mode)
-(define-key yafolding-mode-map (kbd "<C-S-return>") nil)
-(define-key yafolding-mode-map (kbd "<C-M-return>") nil)
-(define-key yafolding-mode-map (kbd "<C-return>") nil)
-(define-key yafolding-mode-map (kbd "M-RET") 'yafolding-toggle-element)
 #+END_SRC
 
 *** Term
