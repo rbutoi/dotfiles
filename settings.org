@@ -102,9 +102,15 @@
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
                 (lambda (&optional arg) (interactive "P")
-                  (if arg
-                      (helm-do-ag)
-                    (helm-do-ag default-directory))))
+                  ;; (if (file-remote-p (buffer-file-name))
+                      ;; (if arg
+                          ;; (helm-ag)
+                        ;; (helm-ag default-directory))
+                    (if arg
+                        (helm-do-ag)
+                      (helm-do-ag default-directory))
+                    ;; )
+                    ))
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
@@ -330,6 +336,8 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
 (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)
+(global-set-key (kbd "<home>") 'mwim-beginning-of-code-or-line)
+(global-set-key (kbd "<end>") 'mwim-end-of-code-or-line)
 (setq mwim-beginning-of-line-function 'beginning-of-line)
 (setq mwim-end-of-line-function 'end-of-line)
 #+END_SRC
