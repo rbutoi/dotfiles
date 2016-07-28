@@ -46,7 +46,7 @@
                  )
 (require 'hl-line)
 (require 'which-func)
-(set-face-attribute 'hl-line nil :underline t)
+(set-face-attribute 'hl-line nil :underline t :inverse-video nil)
 (set-face-attribute 'which-func nil :foreground "dark cyan")
 #+END_SRC
 
@@ -413,11 +413,11 @@ comment box."
 (put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
-*** Copy current filename
+*** Copy current workspace prefix
 #+BEGIN_SRC emacs-lisp
-(defun copy-current-filename ()
+(defun copy-current-workspace-prefix ()
   (interactive)
-  (kill-new buffer-file-name))
+  (kill-new (replace-regexp-in-string "^\\(.+\\)/src.*$" "\\1" buffer-file-name)))
 #+END_SRC
 
 ** Programming
@@ -492,6 +492,11 @@ comment box."
 (add-hook 'c++-mode-hook 'no-ns-indent)
 #+END_SRC
 
+***** Company
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c++-mode-hook (lambda () (add-to-list 'company-backends '(company-capf company-dabbrev))))
+#+END_SRC
+
 **** Diff
 #+BEGIN_SRC emacs-lisp
 (add-hook 'diff-mode-hook (lambda () (m-buffer-binds (current-local-map))))
@@ -551,6 +556,11 @@ comment box."
 ;; (setq projectile-completion-system 'helm)
 ;; (projectile-global-mode)
 ;; (helm-projectile-on)
+#+END_SRC
+
+*** hl-line-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
 *** which-function-mode
@@ -633,6 +643,11 @@ comment box."
      (define-key term-mode-map (kbd "C-x C-j") (lambda nil (interactive)))
      (m-buffer-binds term-raw-map)
      ))
+#+END_SRC
+
+*** subword-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook 'subword-mode)
 #+END_SRC
 
 ** Meta/misc
