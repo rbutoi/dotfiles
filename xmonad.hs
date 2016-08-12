@@ -2,9 +2,7 @@ import XMonad
 import XMonad.Config.Xfce
 import XMonad.Util.EZConfig
 
-myModMask = mod1Mask
-
-main = xmonad$ xfceConfig
+main = xmonad $ xfceConfig
     { modMask = mod1Mask
     , terminal    = "xfce4-terminal"
     , borderWidth = 2
