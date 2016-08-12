@@ -141,10 +141,14 @@ tree2() {
 }
 alias c="cat"
 alias dv="dirs -v"
+alias sudo='sudo '
 
 if [ "$TERM" != "dumb" ]; then
     if [ -z "$A4_CHROOT" ]; then
         [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+	[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+	[ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+
     else
         export FZF_TMUX=0
         [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
@@ -154,3 +158,6 @@ fi
 
 # Specifics
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
+
+true
+
