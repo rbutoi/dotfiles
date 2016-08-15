@@ -44,6 +44,7 @@
 (depends-on "swiper")
 (depends-on "term-run")
 (depends-on "undo-tree")
+(depends-on "visual-fill-column")
 (depends-on "which-key")
 (depends-on "xterm-frobs")
 (depends-on "xterm-title")
