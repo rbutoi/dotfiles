@@ -7,7 +7,8 @@
 
 (if (eq system-type 'darwin)
     (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
-  (require 'cask "~/.cask/cask.el"))
+  (if (locate-library "cask") (load-library "cask")
+    (require 'cask "~/.cask/cask.el")))
   
 (cask-initialize)
 (require 'pallet)
@@ -31,6 +32,10 @@
 (set-terminal-parameter nil 'background-mode 'dark)
 (enable-theme 'solarized)
 
+(let ((font "Ubuntu Mono-12"))
+  (set-face-attribute 'default nil :font font)
+  (set-frame-font font nil t))
+
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
@@ -44,10 +49,10 @@
                  nil 
                  :box nil
                  )
-(require 'hl-line)
-(require 'which-func)
-(set-face-attribute 'hl-line nil :underline t :inverse-video nil)
-(set-face-attribute 'which-func nil :foreground "dark cyan")
+(eval-after-load 'hl-line
+  (lambda () (set-face-attribute 'hl-line nil :underline t)))
+(eval-after-load 'which-func
+  (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 #+END_SRC
 
 *** Files
@@ -73,8 +78,8 @@
   (define-key map (kbd "M-o") 'other-window)
   (define-key map (kbd "M-i") (lambda() (interactive) (other-window -1)))
   (define-key map (kbd "M-l")
-                  (lambda() (interactive) (select-window (get-mru-window t t t))))
-  (define-key map (kbd "M-k") 'kill-this-buffer)
+    (lambda() (interactive) (select-window (get-mru-window t t t))))
+  (define-key map (kbd "C-k") 'kill-this-buffer) ; defies name but whatevs
 
   (define-key map (kbd "M-0") 'delete-window)
   (define-key map (kbd "M-1") 'delete-other-windows)
@@ -83,6 +88,8 @@
   (define-key map (kbd "M-=") 'balance-windows))
 (m-buffer-binds (current-global-map))
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
+(setq split-height-threshold nil
+      split-width-threshold nil) ; let me split
 #+END_SRC
 
 *** Helm
@@ -102,14 +109,9 @@
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
                 (lambda (&optional arg) (interactive "P")
-                  ;; (if (file-remote-p (buffer-file-name))
-                      ;; (if arg
-                          ;; (helm-ag)
-                        ;; (helm-ag default-directory))
                     (if arg
                         (helm-do-ag)
                       (helm-do-ag default-directory))
-                    ;; )
                     ))
 
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
@@ -121,7 +123,12 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-b") 'helm-mini)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key
+ (kbd "C-x C-f")
+ (lambda () (interactive)
+   (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+       (call-interactively 'find-file)
+     (call-interactively 'helm-find-files))))
 (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-M-o") 'helm-swoop)
@@ -497,10 +504,16 @@ comment box."
 (add-hook 'c++-mode-hook (lambda () (add-to-list 'company-backends '(company-capf company-dabbrev))))
 #+END_SRC
 
-**** Diff
+**** Diffing
 #+BEGIN_SRC emacs-lisp
 (add-hook 'diff-mode-hook (lambda () (m-buffer-binds (current-local-map))))
 (setq diff-switches "-u")
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(eval-after-load 'ediff
+  '(progn
+     (set-face-foreground 'ediff-fine-diff-A "white")
+     (set-face-foreground 'ediff-fine-diff-B "white")
+     ))
 #+END_SRC
 
 *** Flycheck
@@ -641,6 +654,8 @@ comment box."
      (define-key term-raw-map (kbd "<M-backspace>") 'term-send-backwards-delete-word)
      (define-key term-mode-map (kbd "TAB") (lambda () (interactive) (term-send-raw-string "\t")))
      (define-key term-mode-map (kbd "C-x C-j") (lambda nil (interactive)))
+     (setq comint-move-point-for-output nil)
+     (setq comint-scroll-show-maximum-output nil)
      (m-buffer-binds term-raw-map)
      ))
 #+END_SRC
@@ -648,6 +663,11 @@ comment box."
 *** subword-mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook 'subword-mode)
+#+END_SRC
+
+*** Springboard
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-=") 'springboard)
 #+END_SRC
 
 ** Meta/misc
@@ -678,9 +698,18 @@ comment box."
 (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 (setq tramp-default-method 'ssh)
 (setq tramp-use-ssh-controlmaster-options nil)
-(global-set-key (kbd "<f5>") 'tramp-cleanup-all-connections)
+(global-set-key (kbd "<f5>")
+                ;; (lambda () (interactive)
+                ;;   (tramp-cleanup-all-connections)
+                ;;   (let ((default-directory ""))
+                ;;     (shell-command "rm ~/.ssh/controlmasters/*")))
+                'tramp-cleanup-all-connections
+                )
 (setq auto-revert-remote-files t)
-(setq tramp-connection-timeout 3)
+(setq vc-ignore-dir-regexp
+      (format "\\(%s\\)\\|\\(%s\\)"
+              vc-ignore-dir-regexp
+              tramp-file-name-regexp))
 #+END_SRC
 
 ** Emacs server
