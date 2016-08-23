@@ -158,6 +158,7 @@ fi
 
 # Specifics
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
+[ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
 
 true
 
