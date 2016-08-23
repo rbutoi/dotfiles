@@ -90,6 +90,10 @@
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 (setq split-height-threshold nil
       split-width-threshold nil) ; let me split
+(global-set-key (kbd "<C-S-up>")     'buf-move-up)
+(global-set-key (kbd "<C-S-down>")   'buf-move-down)
+(global-set-key (kbd "<C-S-left>")   'buf-move-left)
+(global-set-key (kbd "<C-S-right>")  'buf-move-right)
 #+END_SRC
 
 *** Helm
@@ -412,19 +416,24 @@ comment box."
   (set-frame-width (selected-frame) arg))
 #+END_SRC
 
+*** Copy current workspace prefix
+#+BEGIN_SRC emacs-lisp
+(defun copy-current-workspace-prefix ()
+  (interactive)
+  (kill-new (replace-regexp-in-string "^\\(.+\\)/src.*$" "\\1" buffer-file-name)))
+#+END_SRC
+
+*** electric-pair-mode
+#+BEGIN_SRC emacs-lisp
+(electric-pair-mode)
+#+END_SRC
+
 *** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
 (setq-default fill-column 80)
 (delete-selection-mode 1)
 (put 'narrow-to-region 'disabled nil)
-#+END_SRC
-
-*** Copy current workspace prefix
-#+BEGIN_SRC emacs-lisp
-(defun copy-current-workspace-prefix ()
-  (interactive)
-  (kill-new (replace-regexp-in-string "^\\(.+\\)/src.*$" "\\1" buffer-file-name)))
 #+END_SRC
 
 ** Programming
