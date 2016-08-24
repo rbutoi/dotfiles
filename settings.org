@@ -17,6 +17,7 @@
 (require 'cl)
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/dev/arista-site-lisp/")
 (when (locate-library "arista") (load-library "arista"))
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -657,9 +658,9 @@ comment box."
     (if (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
-                ;; (user (tramp-file-name-user dissected))
+                (user (tramp-file-name-user dissected))
                 (dir  (tramp-file-name-localname dissected)))
-            (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'") arg2)
+            (term-run-shell-command (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'") arg2)
             ))
       (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
       )))

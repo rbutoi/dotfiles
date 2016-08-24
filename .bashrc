@@ -100,7 +100,7 @@ if [ "$TERM" != "dumb" ]; then
         UNDERLINE=
     fi
 
-    PS1="${UNDERLINE}${RED}${BOLD}\${?##0}${RESET}${UNDERLINE}${TEAL}\D{%H:%M} ${GREY}${BOLD}|${RESET}${UNDERLINE} ${GREEN}\w ${RESET}\n${GREEN}\$${RESET} "
+    PS1="${UNDERLINE}${RED}${BOLD}\${?##0}${RESET}${UNDERLINE}${TEAL}\D{%H:%M} ${GREY}${BOLD}|${RESET}${UNDERLINE} \H:${GREEN}\w ${RESET}\n${GREEN}\$${RESET} "
     export PS1
 fi
 
