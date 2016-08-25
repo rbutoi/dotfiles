@@ -15,8 +15,8 @@ main = xmonad $ xfceConfig
     [ ("M-`", spawn "xfce4-popup-whiskermenu")
     , ("M-j", windows W.focusUp)
     , ("M-k", windows W.focusDown)
-    , ("M-C-n", nextWS)
-    , ("M-C-p", prevWS)
+    , ("M-S-n", nextWS)
+    , ("M-S-p", prevWS)
     , ("M-S-b", sendMessage ToggleStruts)
     ] `removeKeysP`
     [ ("M-q")

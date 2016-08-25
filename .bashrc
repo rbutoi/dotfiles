@@ -160,5 +160,7 @@ fi
 [ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
 [ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
 
+keychain -V 2>/dev/null && eval $(keychain --quiet --eval id_rsa)
+
 true
 

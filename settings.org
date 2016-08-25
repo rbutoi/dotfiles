@@ -737,6 +737,7 @@ comment box."
       (format "\\(%s\\)\\|\\(%s\\)"
               vc-ignore-dir-regexp
               tramp-file-name-regexp))
+(keychain-refresh-environment)
 #+END_SRC
 
 ** Emacs server
