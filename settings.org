@@ -17,6 +17,7 @@
 (require 'cl)
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/dev/arista-site-lisp/")
 (when (locate-library "arista") (load-library "arista"))
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -512,7 +513,13 @@ comment box."
 
 ***** Company
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c++-mode-hook (lambda () (add-to-list 'company-backends '(company-capf company-dabbrev))))
+(add-hook
+ 'c++-mode-hook
+ (lambda ()
+   (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+       (add-to-list 'company-backends '(company-capf company-dabbrev))
+     (add-to-list 'company-backends '(company-clang company-dabbrev)))
+   ))
 #+END_SRC
 
 **** Diffing
@@ -525,6 +532,17 @@ comment box."
      (set-face-foreground 'ediff-fine-diff-A "white")
      (set-face-foreground 'ediff-fine-diff-B "white")
      ))
+#+END_SRC
+
+**** LaTeX
+#+BEGIN_SRC emacs-lisp
+(add-hook 'LaTeX-mode-hook
+          (lambda ()
+            (setq TeX-auto-untabify t     ;; remove all tabs before saving
+                  TeX-view-program-list '(("LLPP" "llpp %o"))
+                  TeX-view-program-selection '((output-pdf "LLPP")))
+            (auto-fill-mode)
+            ))
 #+END_SRC
 
 *** Flycheck
@@ -645,9 +663,9 @@ comment box."
     (if (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
-                ;; (user (tramp-file-name-user dissected))
+                (user (tramp-file-name-user dissected))
                 (dir  (tramp-file-name-localname dissected)))
-            (term-run-shell-command (concat "ssh -t " host " 'cd " dir " && exec bash -l'") arg2)
+            (term-run-shell-command (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'") arg2)
             ))
       (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
       )))
@@ -724,6 +742,7 @@ comment box."
       (format "\\(%s\\)\\|\\(%s\\)"
               vc-ignore-dir-regexp
               tramp-file-name-regexp))
+(keychain-refresh-environment)
 #+END_SRC
 
 ** Emacs server
