@@ -28,14 +28,16 @@
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
-(load-theme 'solarized t)
-(set-frame-parameter nil 'background-mode 'dark)
-(set-terminal-parameter nil 'background-mode 'dark)
-(enable-theme 'solarized)
-
-(let ((font "Ubuntu Mono-12"))
-  (set-face-attribute 'default nil :font font)
-  (set-frame-font font nil t))
+(if window-system
+    (progn
+      (load-theme 'solarized t)
+      (set-frame-parameter nil 'background-mode 'dark)
+      (set-terminal-parameter nil 'background-mode 'dark)
+      (enable-theme 'solarized)
+      (let ((font "Ubuntu Mono-12"))
+        (set-face-attribute 'default nil :font font)
+        (set-frame-font font nil t))
+      ))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -601,7 +603,10 @@ comment box."
 
 *** hl-line-mode
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook 'hl-line-mode)
+(if window-system
+    (progn
+      (add-hook 'prog-mode-hook 'hl-line-mode)
+  ))
 #+END_SRC
 
 *** which-function-mode
