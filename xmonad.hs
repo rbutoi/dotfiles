@@ -18,6 +18,8 @@ main = xmonad $ xfceConfig
     , ("M-S-n", nextWS)
     , ("M-S-p", prevWS)
     , ("M-S-b", sendMessage ToggleStruts)
+    , ("M-S-m", windows W.swapMaster)
+    , ("M-S-q", spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi") -- %! Restart xmonad)
     ] `removeKeysP`
     [ ("M-q")
     , ("M-w")
@@ -34,4 +36,5 @@ main = xmonad $ xfceConfig
     , ("M-7")
     , ("M-8")
     , ("M-9")
+    , ("M-<Return>")
     ]

@@ -16,8 +16,8 @@
 
 (require 'cl)
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
 (add-to-list 'load-path "~/dev/arista-site-lisp/")
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 (when (locate-library "arista") (load-library "arista"))
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -537,9 +537,10 @@ comment box."
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (setq TeX-auto-untabify t     ;; remove all tabs before saving
-                  TeX-view-program-list '(("LLPP" "llpp %o"))
+                  TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
                   TeX-view-program-selection '((output-pdf "LLPP")))
             (auto-fill-mode)
+            (setq TeX-command-force "LaTeX")
             ))
 #+END_SRC
 
