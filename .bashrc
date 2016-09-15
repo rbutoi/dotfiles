@@ -5,6 +5,8 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+[ -f ~/.bashrc_pi ] && source ~/.bashrc_pi
+
 # User specific aliases and functions
 mcd() {
     mkdir -p "$@"
@@ -142,6 +144,7 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 alias sudo='sudo '
+alias s='sudo '
 
 if [ "$TERM" != "dumb" ]; then
     if [ -z "$A4_CHROOT" ]; then
@@ -157,7 +160,6 @@ if [ "$TERM" != "dumb" ]; then
 fi
 
 # Specifics
-[ -f ~/.bashrc_arista ] && source ~/.bashrc_arista
 [ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
 
 keychain -V 2>/dev/null && eval $(keychain --quiet --eval id_rsa)
