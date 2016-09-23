@@ -5,20 +5,15 @@
 #+BEGIN_SRC emacs-lisp
 (package-initialize)
 
-(if (eq system-type 'darwin)
-    (require 'cask "/usr/local/Cellar/cask/0.7.4/cask.el")
-  (if (locate-library "cask") (load-library "cask")
-    (require 'cask "~/.cask/cask.el")))
-  
+(if (locate-library "cask") (load-library "cask")
+  (require 'cask "~/.cask/cask.el"))  
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
 
 (require 'cl)
 
-(add-to-list 'load-path "~/dev/arista-site-lisp/")
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-(when (locate-library "arista") (load-library "arista"))
 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-readable-p custom-file) (load custom-file))
@@ -53,7 +48,9 @@
                  :box nil
                  )
 (eval-after-load 'hl-line
-  (lambda () (set-face-attribute 'hl-line nil :underline t)))
+  (lambda () (set-face-attribute 'hl-line nil
+                                 ;; :underline t
+                                 )))
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 #+END_SRC
@@ -109,9 +106,9 @@
 (setq helm-split-window-default-side 'same)
 
 (setq helm-grep-default-command
-      "ack -Hn --color --smart-case --no-group %p %f"
+      "PATH=~/bin:$PATH ack -Hn --color --smart-case --no-group %p %f"
       helm-grep-default-recurse-command
-      "ack -H --color --smart-case --no-group %p %f")
+      "PATH=~/bin:$PATH ack -H --color --smart-case --no-group %p %f")
 (setq helm-ag-base-command "ack --nocolor --nogroup --smart-case")
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
@@ -515,11 +512,20 @@ comment box."
 ***** Company
 #+BEGIN_SRC emacs-lisp
 (add-hook
- 'c++-mode-hook
+ 'c-mode-common-hook
  (lambda ()
    (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
        (add-to-list 'company-backends '(company-capf company-dabbrev))
      (add-to-list 'company-backends '(company-clang company-dabbrev)))
+   ))
+#+END_SRC
+
+***** Other file
+#+BEGIN_SRC emacs-lisp
+(add-hook
+ 'c-mode-common-hook
+ (lambda ()
+   (local-set-key (kbd "C-c C-o") 'ff-find-other-file)
    ))
 #+END_SRC
 
@@ -639,6 +645,7 @@ comment box."
 ;; guess offset don't need the global modeline
 (dtrt-indent-mode 1)
 (add-hook 'prog-mode-hook (lambda() (delete 'dtrt-indent-mode-line-info global-mode-string)))
+(setq-default tab-width 4)
 
 (setq-default indent-tabs-mode nil)
 (setq c-default-style "linux")
