@@ -161,6 +161,7 @@ fi
 
 # Specifics
 [ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
+[ -f ~/.bashrc_eecg ] && source ~/.bashrc_eecg
 
 keychain -V 2>/dev/null && eval $(keychain --quiet --eval id_rsa)
 
