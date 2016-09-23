@@ -1,0 +1,15 @@
+escape ^Jj
+
+term screen-256color
+
+bind c screen 1
+bind ^c screen 1
+bind 0 select 10                                                
+screen 1
+
+hardstatus off
+hardstatus alwayslastline
+# hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W} %c %{g}]'
+hardstatus string '%{= kG}%{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}]'
+
+startup_message off
