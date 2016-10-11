@@ -34,6 +34,18 @@
         (set-frame-font font nil t))
       ))
 
+;; toggle dark/light
+(setq bg 'dark)
+(defun toggle-solarized-dark-light ()
+  (interactive)
+  (if (string= bg 'dark)
+      (setq bg 'light)
+    (setq bg 'dark))
+  (set-frame-parameter nil 'background-mode bg)
+  (set-terminal-parameter nil 'background-mode bg)
+  (enable-theme 'solarized))
+(global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light)
+
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))

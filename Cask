@@ -10,6 +10,7 @@
 (depends-on "async")
 (depends-on "auctex")
 (depends-on "avy")
+(depends-on "buffer-move")
 (depends-on "cask")
 (depends-on "clean-aindent-mode")
 (depends-on "color-theme-solarized")
