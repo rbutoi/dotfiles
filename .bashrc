@@ -60,7 +60,7 @@ export HISTFILE=~/.bash_eternal_history
 
 case "$TERM" in
 screen*)
-    PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}\007"; '
+    PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}@$HOSTNAME\007"; '
     export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
     ;;
 *)
