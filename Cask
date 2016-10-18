@@ -32,6 +32,7 @@
 (depends-on "helm-descbinds")
 (depends-on "helm-swoop")
 (depends-on "helm-unicode")
+(depends-on "itail")
 (depends-on "ivy")
 (depends-on "keychain-environment")
 (depends-on "let-alist")
