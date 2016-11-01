@@ -39,8 +39,12 @@
 (defun toggle-solarized-dark-light ()
   (interactive)
   (if (string= bg 'dark)
-      (setq bg 'light)
-    (setq bg 'dark))
+      (progn
+        (setq bg 'light)
+        (set-face-attribute 'diff-context nil :foreground "#586e75"))
+    (progn
+      (setq bg 'dark)
+      (set-face-attribute 'diff-context nil :foreground "#93a1a1")))
   (set-frame-parameter nil 'background-mode bg)
   (set-terminal-parameter nil 'background-mode bg)
   (enable-theme 'solarized))
@@ -649,6 +653,19 @@ comment box."
 
 *** compiling
 #+BEGIN_SRC emacs-lisp
+(defun kill-compile-buffer-if-successful (buffer string)
+  " kill a compilation buffer if succeeded without warnings "
+  (if (and
+       (string-match "compilation" (buffer-name buffer))
+       (string-match "finished" string)
+       (not
+        (with-current-buffer buffer
+          (search-forward "warning" nil t))))
+      (run-with-timer 0.5 nil
+                      'kill-buffer
+                      buffer)))
+(add-hook 'compilation-finish-functions 'kill-compile-buffer-if-successful)
+
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
 (setq compilation-message-face 'default)
@@ -693,17 +710,19 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (defun term-into-dir (arg)
   (interactive "P")
-  (let ((arg2 t))
-    (when (consp arg) (setq arg2 nil))
+  (let ((arg2 nil)
+        (cmd ""))
+    (when (consp arg) (setq arg2 'suh))
     (if (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
                 (user (tramp-file-name-user dissected))
                 (dir  (tramp-file-name-localname dissected)))
-            (term-run-shell-command (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'") arg2)
+            (setq cmd (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
             ))
-      (term-run-shell-command (concat "cd " default-directory " && exec bash -l") arg2)
-      )))
+      (setq cmd (concat "cd " default-directory " && exec bash -l")))
+      (term-run-shell-command cmd arg2)
+    ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
 (setq term-suppress-hard-newline t)
 (setq term-prompt-regexp "^.*[%$] ")
