@@ -1,4 +1,5 @@
 escape ^Jj
+meta ^Jj
 
 term screen-256color
 
