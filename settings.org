@@ -663,7 +663,7 @@ comment box."
        (not
         (with-current-buffer buffer
           (search-forward "warning" nil t))))
-      (run-with-timer 0.5 nil
+      (run-with-timer 1 nil
                       'kill-buffer
                       buffer)))
 (add-hook 'compilation-finish-functions 'kill-compile-buffer-if-successful)
@@ -712,9 +712,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (defun term-into-dir (arg)
   (interactive "P")
-  (let ((arg2 nil)
-        (cmd ""))
-    (when (consp arg) (setq arg2 'suh))
+  (let ((cmd ""))
     (if (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
@@ -723,7 +721,7 @@ comment box."
             (setq cmd (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
             ))
       (setq cmd (concat "cd " default-directory " && exec bash -l")))
-      (term-run-shell-command cmd arg2)
+      (term-run-shell-command cmd 'suh)
     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
 (setq term-suppress-hard-newline t)
