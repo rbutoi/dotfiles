@@ -29,9 +29,7 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      (let ((font "Ubuntu Mono-12"))
-        (set-face-attribute 'default nil :font font)
-        (set-frame-font font nil t))
+      (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-10"))
       ))
 
 ;; toggle dark/light
@@ -69,6 +67,8 @@
                                  )))
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
+
+(when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
 #+END_SRC
 
 *** Files
