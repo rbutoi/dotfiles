@@ -115,8 +115,8 @@
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
 (setq golden-ratio-adjust-factor 0.6)
-(global-set-key (kbd "C-x g")  'golden-ratio)
-(global-set-key (kbd "C-x G")  'golden-ratio-mode)
+(global-set-key (kbd "C-x g") 'golden-ratio)
+(global-set-key (kbd "C-x G") 'golden-ratio-mode)
 #+END_SRC
 
 *** Helm
@@ -132,7 +132,7 @@
       "PATH=~/bin:$PATH ack -Hn --color --smart-case --no-group %p %f"
       helm-grep-default-recurse-command
       "PATH=~/bin:$PATH ack -H --color --smart-case --no-group %p %f")
-(setq helm-ag-base-command "ack --nocolor --nogroup --smart-case")
+(setq helm-ag-base-command "PATH=~/bin:$PATH ack --nocolor --nogroup --smart-case")
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
                 (lambda (&optional arg) (interactive "P")
