@@ -29,12 +29,11 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
       (cond 
        ((find-font (font-spec :name "Ubuntu Mono"))
         (set-frame-font "Ubuntu Mono-12"))
        ((find-font (font-spec :name "DejaVu Sans Mono"))
-        (set-frame-font "DejaVu Sans Mono-12")))
+        (set-frame-font "DejaVu Sans Mono-10")))
       ))
 
 ;; toggle dark/light
