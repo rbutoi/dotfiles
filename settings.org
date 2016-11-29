@@ -29,7 +29,12 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
+      ;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
+      (cond 
+       ((find-font (font-spec :name "Ubuntu Mono"))
+        (set-frame-font "Ubuntu Mono-12"))
+       ((find-font (font-spec :name "DejaVu Sans Mono"))
+        (set-frame-font "DejaVu Sans Mono-12")))
       ))
 
 ;; toggle dark/light
@@ -121,7 +126,6 @@
 
 *** Helm
 #+BEGIN_SRC emacs-lisp
-; (require 'helm)
 (require 'helm-config)
 (helm-mode 1)
 (helm-descbinds-mode t)
@@ -474,29 +478,6 @@ comment box."
  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
 ;; (eval-after-load 'company
 ;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
-
-;; using flymake since it works with pylint < 1.0.0
-;; (require 'flymake)
-
-;; (defun flymake-pylint-init ()
-;;   (let* ((temp-file (flymake-init-create-temp-buffer-copy
-;;                      'flymake-create-temp-inplace))
-;;          (local-file (file-relative-name
-;;                       temp-file
-;;                       (file-name-directory buffer-file-name))))
-;;     (list "epylint" (list local-file))))
-;; (add-to-list 'flymake-allowed-file-name-masks
-;;              '("\\.py\\'" flymake-pylint-init))
-;; (add-hook 'python-mode-hook
-;;           (lambda()
-;;             (unless (file-remote-p (buffer-file-name))
-;;               (define-prefix-command 'fake-flycheck-map)
-;;               (local-set-key (kbd "C-c !") 'fake-flycheck-map)
-;;               (local-set-key (kbd "C-c ! h") 'flymake-popup-current-error-menu)
-;;               (local-set-key (kbd "C-c ! n") 'flymake-goto-next-error)
-;;               (local-set-key (kbd "C-c ! p") 'flymake-goto-prev-error)
-;;               (flymake-mode))
-;; ))
 #+END_SRC
 
 **** Perl
@@ -762,7 +743,6 @@ comment box."
 
 ** Emacs server
 #+BEGIN_SRC emacs-lisp
-;; (when (getenv "EMACS_SESSION_DIR") (setq server-socket-dir (getenv "EMACS_SESSION_DIR")))
 (server-start)
 #+END_SRC
 
