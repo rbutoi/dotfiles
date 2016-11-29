@@ -130,19 +130,20 @@
 (setq helm-buffer-skip-remote-checking t)
 (setq helm-split-window-default-side 'same)
 
-(setq helm-grep-default-command
-      "PATH=~/bin:$PATH ack -Hn --color --smart-case --no-group %p %f"
-      helm-grep-default-recurse-command
-      "PATH=~/bin:$PATH ack -H --color --smart-case --no-group %p %f")
-(setq helm-ag-base-command "PATH=~/bin:$PATH ack --nocolor --nogroup --smart-case")
+(let ((ack "ack"))
+  (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
+  (setq helm-grep-default-command
+        (concat ack " -Hn --color --smart-case --no-group %p %f")
+        helm-grep-default-recurse-command
+        (concat ack " -H  --color --smart-case --no-group %p %f"))
+  (setq helm-ag-base-command (concat ack " --nocolor --nogroup --smart-case")))
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
                 (lambda (&optional arg) (interactive "P")
-                    (if arg
-                        (helm-do-ag)
-                      (helm-do-ag default-directory))
-                    ))
-
+                  (if arg
+                      (helm-do-ag)
+                    (helm-do-ag default-directory))
+                  ))
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
 (global-unset-key (kbd "C-x c"))
@@ -613,25 +614,6 @@ comment box."
   'company-indent-for-tab-command)
 #+END_SRC
 
-*** Projectile RIP
-#+BEGIN_SRC emacs-lisp
-;; (add-hook 'projectile-mode-hook
-;;           (lambda ()
-;;             (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-;;             (define-key projectile-mode-map (kbd "C-x f") 'projectile-find-file)))
-;; (setq projectile-mode-line
-;;    (quote
-;;     (:eval
-;;      (if
-;;          (file-remote-p default-directory)
-;;          ""
-;;        (format " \@%s"
-;;                (projectile-project-name))))))
-;; (setq projectile-completion-system 'helm)
-;; (projectile-global-mode)
-;; (helm-projectile-on)
-#+END_SRC
-
 *** hl-line-mode
 #+BEGIN_SRC emacs-lisp
 (if window-system
@@ -686,8 +668,6 @@ comment box."
 
 (setq-default indent-tabs-mode nil)
 (setq c-default-style "linux")
-(if (locate-library "arista") (setq c-basic-offset 3) (setq c-basic-offset 4))
-;; (add-to-list 'c-offsets-alist '(arglist-close . c-linup-close-paren))
 #+END_SRC
 
 *** whitespace-mode
@@ -743,11 +723,6 @@ comment box."
 (add-hook 'prog-mode-hook 'subword-mode)
 #+END_SRC
 
-*** Springboard
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-=") 'springboard)
-#+END_SRC
-
 ** Meta/misc
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
@@ -776,13 +751,7 @@ comment box."
 (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 (add-to-list 'tramp-remote-path "~/bin")
 (setq tramp-use-ssh-controlmaster-options nil)
-(global-set-key (kbd "<f5>")
-                ;; (lambda () (interactive)
-                ;;   (tramp-cleanup-all-connections)
-                ;;   (let ((default-directory ""))
-                ;;     (shell-command "rm ~/.ssh/controlmasters/*")))
-                'tramp-cleanup-all-connections
-                )
+(global-set-key (kbd "<f5>") 'tramp-cleanup-all-connections)
 (setq auto-revert-remote-files t)
 (setq vc-ignore-dir-regexp
       (format "\\(%s\\)\\|\\(%s\\)"

@@ -1,5 +1,8 @@
 # .bashrc
 
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
@@ -161,7 +164,7 @@ fi
 
 # Specifics
 [ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
-[ -f ~/.bashrc_eecg ] && source ~/.bashrc_eecg
+# [ -f ~/.bashrc_eecg ] && source ~/.bashrc_eecg
 
 keychain -V 2>/dev/null && eval $(keychain --quiet --eval id_rsa)
 
