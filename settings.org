@@ -29,7 +29,7 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      (add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-10"))
+      (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-12"))
       ))
 
 ;; toggle dark/light
@@ -121,8 +121,10 @@
 
 *** Helm
 #+BEGIN_SRC emacs-lisp
-(require 'helm)
+; (require 'helm)
 (require 'helm-config)
+(helm-mode 1)
+(helm-descbinds-mode t)
 
 (setq helm-buffer-max-length 30)
 (setq helm-buffer-skip-remote-checking t)
@@ -145,25 +147,17 @@
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
 (global-unset-key (kbd "C-x c"))
 (global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-x C-m") 'helm-M-x)
 (global-set-key (kbd "C-x m") 'helm-M-x)
+(global-set-key (kbd "C-x C-m") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-b") 'mode-line-other-buffer)
-(global-set-key
- (kbd "C-x C-f")
- (lambda () (interactive)
-   (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
-       (call-interactively 'find-file)
-     (call-interactively 'helm-find-files))))
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x f") 'find-file)
 (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-M-o") 'helm-swoop)
 (global-set-key (kbd "C-c C-M-o") 'helm-multi-swoop)
-(helm-descbinds-mode t)
-
-(helm-mode 1)
 #+END_SRC
 
 *** Save window geometry
@@ -781,7 +775,6 @@ comment box."
 (require 'tramp)
 (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 (add-to-list 'tramp-remote-path "~/bin")
-(setq tramp-default-method 'ssh)
 (setq tramp-use-ssh-controlmaster-options nil)
 (global-set-key (kbd "<f5>")
                 ;; (lambda () (interactive)
