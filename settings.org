@@ -118,9 +118,9 @@
 (global-set-key (kbd "<C-S-left>")   'buf-move-left)
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
-(setq golden-ratio-adjust-factor 0.6)
-(global-set-key (kbd "C-x g") 'golden-ratio)
-(global-set-key (kbd "C-x G") 'golden-ratio-mode)
+;; (setq golden-ratio-adjust-factor 0.6)
+(global-set-key (kbd "C-x C-g") 'golden-ratio)
+(global-set-key (kbd "C-x C-G") 'golden-ratio-mode)
 #+END_SRC
 
 *** Helm
@@ -676,6 +676,7 @@ comment box."
       (term-run-shell-command cmd 'suh)
     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
+(global-set-key (kbd "C-!") 'shell-command)
 (setq term-suppress-hard-newline t)
 (setq term-prompt-regexp "^.*[%$] ")
 (add-hook 'term-mode-hook
@@ -701,6 +702,11 @@ comment box."
 *** subword-mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook 'subword-mode)
+#+END_SRC
+
+*** magit
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
 
 ** Meta/misc

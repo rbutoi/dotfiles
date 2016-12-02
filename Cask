@@ -34,6 +34,7 @@
 (depends-on "itail")
 (depends-on "keychain-environment")
 (depends-on "let-alist")
+(depends-on "magit")
 (depends-on "mwim")
 (depends-on "nlinum")
 (depends-on "org-journal")
