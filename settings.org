@@ -308,7 +308,6 @@ comment box."
 
 *** Newline indents
 #+BEGIN_SRC emacs-lisp
-(clean-aindent-mode t)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
