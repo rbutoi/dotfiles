@@ -38,6 +38,7 @@
 
 ;; toggle dark/light
 (setq bg 'dark)
+(require 'diff-mode)
 (defun toggle-solarized-dark-light ()
   (interactive)
   (if (string= bg 'dark)
@@ -119,8 +120,8 @@
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
 ;; (setq golden-ratio-adjust-factor 0.6)
-(global-set-key (kbd "C-x C-g") 'golden-ratio)
-(global-set-key (kbd "C-x C-G") 'golden-ratio-mode)
+;; (global-set-key (kbd "C-x C-g") 'golden-ratio)
+;; (global-set-key (kbd "C-x C-G") 'golden-ratio-mode)
 #+END_SRC
 
 *** Helm
@@ -438,7 +439,11 @@ comment box."
           (lambda ()
             (define-key org-journal-mode-map (kbd "C-c w")
               (lambda () (interactive)
-                (set-frame-width (selected-frame) (+ 1 fill-column))))))
+                (set-frame-width (selected-frame) (+ 1 fill-column))))
+            (define-key org-journal-mode-map (kbd "<f7>")
+              (lambda () (interactive)
+                (shell-command "yes Y | drive push")))
+            ))
 (defun set-frame-width-interactive (arg)
   (interactive "nFrame width: ")
   (set-frame-width (selected-frame) arg))
