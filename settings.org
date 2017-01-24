@@ -442,7 +442,7 @@ comment box."
                 (set-frame-width (selected-frame) (+ 1 fill-column))))
             (define-key org-journal-mode-map (kbd "<f7>")
               (lambda () (interactive)
-                (shell-command "yes Y | drive push")))
+                (async-shell-command "yes Y | drive push")))
             ))
 (defun set-frame-width-interactive (arg)
   (interactive "nFrame width: ")
