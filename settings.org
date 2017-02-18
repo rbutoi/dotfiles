@@ -130,7 +130,7 @@
 (helm-mode 1)
 (helm-descbinds-mode t)
 
-(setq helm-buffer-max-length 30)
+;; (setq helm-buffer-max-length 30)
 (setq helm-buffer-skip-remote-checking t)
 (setq helm-split-window-default-side 'same)
 
@@ -680,6 +680,7 @@ comment box."
       (term-run-shell-command cmd 'suh)
     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
+(global-unset-key (kbd "M-!"))
 (global-set-key (kbd "C-!") 'shell-command)
 (setq term-suppress-hard-newline t)
 (setq term-prompt-regexp "^.*[%$] ")
