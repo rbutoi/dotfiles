@@ -8,7 +8,8 @@ import qualified XMonad.StackSet as W
 main = xmonad $ xfceConfig
     { modMask = mod1Mask
     , terminal = "xfce4-terminal"
-    , borderWidth = 5
+    -- , borderWidth = 5
+    , borderWidth = 3
     , workspaces = map show [1..4]
     , focusedBorderColor = "#20B9A5"
     } `additionalKeysP`

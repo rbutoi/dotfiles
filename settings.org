@@ -461,6 +461,11 @@ comment box."
 (electric-pair-mode)
 #+END_SRC
 
+*** visual-line-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+#+END_SRC
+
 *** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
