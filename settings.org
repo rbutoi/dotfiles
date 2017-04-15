@@ -134,7 +134,7 @@
 (setq helm-buffer-skip-remote-checking t)
 (setq helm-split-window-default-side 'same)
 
-(let ((ack "ack"))
+(let ((ack "ag"))
   (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
   (setq helm-grep-default-command
         (concat ack " -Hn --color --smart-case --no-group %p %f")
@@ -560,7 +560,8 @@ comment box."
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (setq TeX-auto-untabify t     ;; remove all tabs before saving
-                  TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
+                  ;; TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
+                  TeX-view-program-list '(("LLPP" "llpp %o"))
                   TeX-view-program-selection '((output-pdf "LLPP")))
             (auto-fill-mode)
             (setq TeX-command-force "LaTeX")
@@ -681,7 +682,7 @@ comment box."
                 (dir  (tramp-file-name-localname dissected)))
             (setq cmd (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
             ))
-      (setq cmd (concat "cd " default-directory " && exec bash -l")))
+      (setq cmd (concat "cd '" default-directory "' && exec bash -l")))
       (term-run-shell-command cmd 'suh)
     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
