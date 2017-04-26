@@ -466,6 +466,11 @@ comment box."
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 #+END_SRC
 
+*** ztree
+#+BEGIN_SRC emacs-lisp
+(setq ztree-draw-unicode-lines t)
+#+END_SRC
+
 *** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
