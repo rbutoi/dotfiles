@@ -17,6 +17,8 @@
 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-readable-p custom-file) (load custom-file))
+(setq specific-file "~/.emacs.d/specific.el")
+(when (file-readable-p specific-file) (load specific-file))
 #+END_SRC
 
 ** UI
@@ -449,11 +451,17 @@ comment box."
   (set-frame-width (selected-frame) arg))
 #+END_SRC
 
-*** Copy current workspace prefix
+*** Copy current path name
 #+BEGIN_SRC emacs-lisp
-(defun copy-current-workspace-prefix ()
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
   (interactive)
-  (kill-new (replace-regexp-in-string "^\\(.+\\)/src.*$" "\\1" buffer-file-name)))
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC
 
 *** electric-pair-mode
@@ -668,6 +676,7 @@ comment box."
 *** whitespace-mode
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c w") 'whitespace-mode)
+(global-set-key (kbd "C-c C-w") 'whitespace-mode)
 #+END_SRC
 
 *** yafolding-mode
@@ -766,4 +775,3 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
-
