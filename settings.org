@@ -632,8 +632,8 @@ comment box."
 
 *** compiling
 #+BEGIN_SRC emacs-lisp
-(defun kill-compile-buffer-if-successful (buffer string)
-  " kill a compilation buffer if succeeded without warnings "
+(defun close-compile-window-if-successful (buffer string)
+  " close a compilation window if succeeded without warnings "
   (if (and
        (string-match "compilation" (buffer-name buffer))
        (string-match "finished" string)
@@ -641,9 +641,9 @@ comment box."
         (with-current-buffer buffer
           (search-forward "warning" nil t))))
       (run-with-timer 1 nil
-                      'kill-buffer
-                      buffer)))
-(add-hook 'compilation-finish-functions 'kill-compile-buffer-if-successful)
+                      'delete-window
+                      (get-buffer-window buffer))))
+(add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
