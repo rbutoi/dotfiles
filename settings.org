@@ -6,7 +6,7 @@
 (package-initialize)
 
 (if (locate-library "cask") (load-library "cask")
-  (require 'cask "~/.cask/cask.el"))  
+  (require 'cask "~/.cask/cask.el"))
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
@@ -31,7 +31,7 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      (cond 
+      (cond
        ((find-font (font-spec :name "Ubuntu Mono"))
         (set-frame-font "Ubuntu Mono-12"))
        ((find-font (font-spec :name "DejaVu Sans Mono"))
@@ -62,10 +62,10 @@
 
 ;; a bit more contrast to keep track of curent window
 (set-face-attribute  'mode-line
-                 nil 
+                 nil
                  :box '(:line-width 3 :style released-button))
 (set-face-attribute  'mode-line-inactive
-                 nil 
+                 nil
                  :box nil
                  )
 (eval-after-load 'hl-line
@@ -409,7 +409,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
-  
+
   \(fn arg char)"
   'interactive)
 (global-set-key (kbd "M-Z") 'zap-up-to-char)
@@ -418,7 +418,9 @@ comment box."
 *** ace-isearch-mode
 #+BEGIN_SRC emacs-lisp
 (setq ace-isearch-jump-delay 1)
-(global-ace-isearch-mode t)
+(add-hook 'find-file-hook (lambda ()
+                            (when (< (buffer-size) 40000)
+                              (ace-isearch-mode))))
 #+END_SRC
 
 *** org
@@ -466,7 +468,7 @@ comment box."
 
 *** electric-pair-mode
 #+BEGIN_SRC emacs-lisp
-(electric-pair-mode)
+;; (electric-pair-mode)
 #+END_SRC
 
 *** visual-line-mode
@@ -493,10 +495,10 @@ comment box."
 
 **** Python
 #+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook 'anaconda-mode)
+;; (add-hook 'python-mode-hook 'anaconda-mode)
 ; because python-mode overwrites it
-(add-hook 'python-mode-hook
- (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
+;; (add-hook 'python-mode-hook
+;;  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
 ;; (eval-after-load 'company
 ;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 #+END_SRC
@@ -538,13 +540,13 @@ comment box."
 
 ***** Company
 #+BEGIN_SRC emacs-lisp
-(add-hook
- 'c-mode-common-hook
- (lambda ()
-   (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
-       (add-to-list 'company-backends '(company-capf company-dabbrev))
-     (add-to-list 'company-backends '(company-clang company-dabbrev)))
-   ))
+;; (add-hook
+;;  'c-mode-common-hook
+;;  (lambda ()
+;;    (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+;;        (add-to-list 'company-backends '(company-capf company-dabbrev))
+;;      (add-to-list 'company-backends '(company-clang company-dabbrev)))
+;;    ))
 #+END_SRC
 
 ***** Other file
@@ -590,31 +592,34 @@ comment box."
 
 *** Company
 #+BEGIN_SRC emacs-lisp
-(global-company-mode 1)
-(setq company-require-match nil)
-(setq company-idle-delay nil)
-(setq company-dabbrev-downcase nil)
-
-(setq tab-always-indent 'complete)
+(add-hook 'after-init-hook
+          (lambda ()
+            (global-company-mode)
+            (add-to-list 'company-backends 'company-c-headers)
+            ;; (define-key company-mode-map [remap indent-for-tab-command]
+            ;;   'company-complete)
+            ;; (define-key company-mode-map [remap c-indent-line-or-region]
+            ;;   'company-complete)
+            (setq company-require-match nil
+                  company-idle-delay nil
+                  ;; company-dabbrev-downcase nil
+                  tab-always-indent 'complete)
+            ))
 ;; (add-to-list 'company-backends 'company-dabbrev)
-(setq company-dabbrev-code-other-buffers 'all)
+;; (setq company-dabbrev-code-other-buffers 'all)
 
-(defvar completion-at-point-functions-saved nil)
+;; (defvar completion-at-point-functions-saved nil)
 
-(defun company-indent-for-tab-command (&optional arg)
-  (interactive "P")
-  (let ((completion-at-point-functions-saved completion-at-point-functions)
-        (completion-at-point-functions '(company-complete-common-wrapper)))
-    (indent-for-tab-command arg)))
+;; (defun company-indent-for-tab-command (&optional arg)
+;;   (interactive "P")
+;;   (let ((completion-at-point-functions-saved completion-at-point-functions)
+;;         (completion-at-point-functions '(company-complete-common-wrapper)))
+;;     (indent-for-tab-command arg)))
 
-(defun company-complete-common-wrapper ()
-  (let ((completion-at-point-functions completion-at-point-functions-saved))
-    (company-complete-common)))
+;; (defun company-complete-common-wrapper ()
+;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
+;;     (company-complete-common)))
 
-(define-key company-mode-map [remap indent-for-tab-command]
-  'company-indent-for-tab-command)
-(define-key company-mode-map [remap c-indent-line-or-region]
-  'company-indent-for-tab-command)
 #+END_SRC
 
 *** hl-line-mode
@@ -641,7 +646,7 @@ comment box."
         (with-current-buffer buffer
           (search-forward "warning" nil t))))
       (run-with-timer 1 nil
-                      'delete-window
+                      (lambda (window) (quit-window nil window))
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
@@ -655,11 +660,56 @@ comment box."
 (global-set-key (kbd "C-c l") 'nlinum-mode)
 #+END_SRC
 
-*** Show parens 
+*** Parens
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook (lambda () (progn
-                                       (show-paren-mode 1)
-                                       (setq show-paren-delay 0))))
+(require 'smartparens-config)
+(smartparens-global-mode 1)
+(define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
+(define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
+(define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
+(define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
+(define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
+(define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
+(define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
+
+(define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
+(define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+(define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+(define-key smartparens-mode-map (kbd "M-D") 'sp-splice-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+(define-key smartparens-mode-map (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key smartparens-mode-map (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
+
+(define-key smartparens-mode-map (kbd "C-]") 'sp-select-next-thing-exchange)
+(define-key smartparens-mode-map (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+(define-key smartparens-mode-map (kbd "C-M-]") 'sp-select-next-thing)
+
+(define-key smartparens-mode-map (kbd "M-F") 'sp-forward-symbol)
+(define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
+
+(bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)) smartparens-mode-map)
+(bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)) smartparens-mode-map)
+
+(add-hook 'prog-mode-hook
+          (lambda () (progn
+                       (show-paren-mode 1)
+                       (setq show-paren-delay 0)
+                       )))
 #+END_SRC
 
 *** Indent
@@ -708,7 +758,7 @@ comment box."
           (lambda ()
             (term-set-escape-char ?\C-x)
             (setq term-buffer-maximum-size 20000)
-            (toggle-truncate-lines nil) 
+            (toggle-truncate-lines nil)
             ))
 (eval-after-load 'term
   '(progn

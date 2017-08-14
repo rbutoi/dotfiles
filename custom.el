@@ -13,7 +13,7 @@
  '(minimap-mode nil)
  '(package-selected-packages
    (quote
-    (ztree zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim magit keychain-environment itail helm-unicode helm-swoop helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-anaconda color-theme-solarized buffer-move ag ack ace-window ace-isearch)))
+    (smartparens company-c-headers ztree zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim magit keychain-environment itail helm-unicode helm-swoop helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-anaconda color-theme-solarized buffer-move ag ack ace-window ace-isearch)))
  '(safe-local-variable-values (quote ((eval switch-org-and-elisp-map 1)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
