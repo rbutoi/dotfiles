@@ -720,7 +720,8 @@ comment box."
 (setq-default tab-width 4)
 
 (setq-default indent-tabs-mode nil)
-(setq c-default-style "linux")
+(setq c-default-style "k&r"
+      c-basic-offset 4)
 #+END_SRC
 
 *** whitespace-mode
