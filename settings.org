@@ -353,7 +353,10 @@ comment box."
   (interactive)
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+    (progn
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+      (forward-line))
+    ))
 (global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
 ; (global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
 (global-set-key [remap comment-dwim] 'comment-or-uncomment-line-or-region)
