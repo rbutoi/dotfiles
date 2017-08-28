@@ -7,6 +7,7 @@
 (depends-on "ag")
 (depends-on "anaconda-mode")
 (depends-on "async")
+(depends-on "auctex")
 (depends-on "avy")
 (depends-on "buffer-move")
 (depends-on "cask")
