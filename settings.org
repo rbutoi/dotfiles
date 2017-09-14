@@ -31,6 +31,8 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
+
+      ;; (load-theme leuven)
       (cond
        ((find-font (font-spec :name "Ubuntu Mono"))
         (set-frame-font "Ubuntu Mono-12"))
@@ -158,6 +160,10 @@
 (setq helm-ag-insert-at-point 'word)
 (global-set-key (kbd "C-M-s")
                 (lambda (&optional arg) (interactive "P")
+                  (if (file-remote-p default-directory)
+                      (setq helm-ag-base-command (concat "~/bin/ack --nocolor --nogroup --smart-case"))
+                      (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case"))
+                      )
                   (if arg
                       (helm-do-ag)
                     (helm-do-ag default-directory))
@@ -717,8 +723,8 @@ comment box."
 (define-key smartparens-mode-map (kbd "M-F") 'sp-forward-symbol)
 (define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
 
-(bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)) smartparens-mode-map)
-(bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)) smartparens-mode-map)
+(define-key smartparens-mode-map (kbd "C-c f") (lambda () (interactive) (sp-beginning-of-sexp 2)))
+(define-key smartparens-mode-map (kbd "C-c b") (lambda () (interactive) (sp-beginning-of-sexp -2)))
 
 (add-hook 'prog-mode-hook
           (lambda () (progn
