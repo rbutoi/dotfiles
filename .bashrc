@@ -8,8 +8,6 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
-[ -f ~/.bashrc_pi ] && source ~/.bashrc_pi
-
 # User specific aliases and functions
 mcd() {
     mkdir -p "$@"
@@ -105,7 +103,7 @@ if [ "$TERM" != "dumb" ]; then
         UNDERLINE=
     fi
 
-    PS1="${UNDERLINE}${RED}${BOLD}\${?##0}${RESET}${UNDERLINE}${TEAL}\D{%H:%M} ${GREY}${BOLD}|${RESET}${UNDERLINE} \H:${GREEN}\w ${RESET}\n${GREEN}\$${RESET} "
+    PS1="${UNDERLINE}${RED}${BOLD}\${?##0}${RESET}${UNDERLINE}${TEAL}\D{%H:%M} ${RESET}|${UNDERLINE} \h:${GREEN}\w${RESET}\n${GREEN}\$${RESET} "
     export PS1
 fi
 
@@ -149,24 +147,19 @@ alias dv="dirs -v"
 alias sudo='sudo '
 alias s='sudo '
 
-if [ "$TERM" != "dumb" ]; then
-    if [ -z "$A4_CHROOT" ]; then
-        [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-	[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
-	[ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-    else
-        export FZF_TMUX=0
-        [ -f ~/.fzf.bash_chroot ] && source ~/.fzf.bash_chroot
-    fi
+if [ "$TERM" != "dumb" ]; then
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+    [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+    [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
     export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 fi
 
 # Specifics
 [ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
 [ -f ~/.bashrc_eecg ] && source ~/.bashrc_eecg
-
-keychain -V 2>/dev/null && eval $(keychain --quiet --eval id_rsa)
+[ -f ~/.bashrc_pi ] && source ~/.bashrc_pi
 
 true
 

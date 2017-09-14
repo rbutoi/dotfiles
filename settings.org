@@ -6,7 +6,7 @@
 (package-initialize)
 
 (if (locate-library "cask") (load-library "cask")
-  (require 'cask "~/.cask/cask.el"))  
+  (require 'cask "~/.cask/cask.el"))
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
@@ -17,6 +17,8 @@
 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-readable-p custom-file) (load custom-file))
+(setq specific-file "~/.emacs.d/specific.el")
+(when (file-readable-p specific-file) (load specific-file))
 #+END_SRC
 
 ** UI
@@ -29,7 +31,7 @@
       (set-frame-parameter nil 'background-mode 'dark)
       (set-terminal-parameter nil 'background-mode 'dark)
       (enable-theme 'solarized)
-      (cond 
+      (cond
        ((find-font (font-spec :name "Ubuntu Mono"))
         (set-frame-font "Ubuntu Mono-12"))
        ((find-font (font-spec :name "DejaVu Sans Mono"))
@@ -39,19 +41,31 @@
 ;; toggle dark/light
 (setq bg 'dark)
 (require 'diff-mode)
-(defun toggle-solarized-dark-light ()
+(defun toggle-solarized-dark-light-off ()
   (interactive)
-  (if (string= bg 'dark)
-      (progn
-        (setq bg 'light)
-        (set-face-attribute 'diff-context nil :foreground "#586e75"))
-    (progn
-      (setq bg 'dark)
-      (set-face-attribute 'diff-context nil :foreground "#93a1a1")))
-  (set-frame-parameter nil 'background-mode bg)
-  (set-terminal-parameter nil 'background-mode bg)
-  (enable-theme 'solarized))
-(global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light)
+  (cond ((string= bg 'dark)
+         (progn
+           (set-face-attribute 'diff-context nil :foreground "#586e75")
+           (set-frame-parameter nil 'background-mode bg)
+           (set-terminal-parameter nil 'background-mode bg)
+           (enable-theme 'solarized)
+           (setq bg 'light)
+         ))
+        ((string= bg 'light)
+         (progn
+           (set-face-attribute 'diff-context nil :foreground "#93a1a1")
+           (set-frame-parameter nil 'background-mode bg)
+           (set-terminal-parameter nil 'background-mode bg)
+           (enable-theme 'solarized)
+           (setq bg 'off)
+           ))
+        ((string= bg 'off)
+         (progn
+           (disable-theme 'solarized)
+           (setq bg 'dark)
+           ))))
+(global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light-off)
+(global-set-key (kbd "C-x C-7") 'toggle-solarized-dark-light-off)
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -60,10 +74,10 @@
 
 ;; a bit more contrast to keep track of curent window
 (set-face-attribute  'mode-line
-                 nil 
+                 nil
                  :box '(:line-width 3 :style released-button))
 (set-face-attribute  'mode-line-inactive
-                 nil 
+                 nil
                  :box nil
                  )
 (eval-after-load 'hl-line
@@ -130,11 +144,11 @@
 (helm-mode 1)
 (helm-descbinds-mode t)
 
-(setq helm-buffer-max-length 30)
+;; (setq helm-buffer-max-length 30)
 (setq helm-buffer-skip-remote-checking t)
 (setq helm-split-window-default-side 'same)
 
-(let ((ack "ack"))
+(let ((ack "ag"))
   (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
   (setq helm-grep-default-command
         (concat ack " -Hn --color --smart-case --no-group %p %f")
@@ -339,7 +353,10 @@ comment box."
   (interactive)
   (if (region-active-p)
       (comment-or-uncomment-region (region-beginning) (region-end))
-    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+    (progn
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+      (forward-line))
+    ))
 (global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
 ; (global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
 (global-set-key [remap comment-dwim] 'comment-or-uncomment-line-or-region)
@@ -407,7 +424,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (autoload 'zap-up-to-char "misc"
   "Kill up to, but not including ARGth occurrence of CHAR.
-  
+
   \(fn arg char)"
   'interactive)
 (global-set-key (kbd "M-Z") 'zap-up-to-char)
@@ -416,7 +433,9 @@ comment box."
 *** ace-isearch-mode
 #+BEGIN_SRC emacs-lisp
 (setq ace-isearch-jump-delay 1)
-(global-ace-isearch-mode t)
+(add-hook 'find-file-hook (lambda ()
+                            (when (< (buffer-size) 40000)
+                              (ace-isearch-mode))))
 #+END_SRC
 
 *** org
@@ -449,16 +468,32 @@ comment box."
   (set-frame-width (selected-frame) arg))
 #+END_SRC
 
-*** Copy current workspace prefix
+*** Copy current path name
 #+BEGIN_SRC emacs-lisp
-(defun copy-current-workspace-prefix ()
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
   (interactive)
-  (kill-new (replace-regexp-in-string "^\\(.+\\)/src.*$" "\\1" buffer-file-name)))
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC
 
 *** electric-pair-mode
 #+BEGIN_SRC emacs-lisp
-(electric-pair-mode)
+;; (electric-pair-mode)
+#+END_SRC
+
+*** visual-line-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+#+END_SRC
+
+*** ztree
+#+BEGIN_SRC emacs-lisp
+(setq ztree-draw-unicode-lines t)
 #+END_SRC
 
 *** Misc
@@ -475,10 +510,10 @@ comment box."
 
 **** Python
 #+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook 'anaconda-mode)
+;; (add-hook 'python-mode-hook 'anaconda-mode)
 ; because python-mode overwrites it
-(add-hook 'python-mode-hook
- (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
+;; (add-hook 'python-mode-hook
+;;  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
 ;; (eval-after-load 'company
 ;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
 #+END_SRC
@@ -520,13 +555,13 @@ comment box."
 
 ***** Company
 #+BEGIN_SRC emacs-lisp
-(add-hook
- 'c-mode-common-hook
- (lambda ()
-   (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
-       (add-to-list 'company-backends '(company-capf company-dabbrev))
-     (add-to-list 'company-backends '(company-clang company-dabbrev)))
-   ))
+;; (add-hook
+;;  'c-mode-common-hook
+;;  (lambda ()
+;;    (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
+;;        (add-to-list 'company-backends '(company-capf company-dabbrev))
+;;      (add-to-list 'company-backends '(company-clang company-dabbrev)))
+;;    ))
 #+END_SRC
 
 ***** Other file
@@ -555,7 +590,8 @@ comment box."
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (setq TeX-auto-untabify t     ;; remove all tabs before saving
-                  TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
+                  ;; TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
+                  TeX-view-program-list '(("LLPP" "llpp %o"))
                   TeX-view-program-selection '((output-pdf "LLPP")))
             (auto-fill-mode)
             (setq TeX-command-force "LaTeX")
@@ -571,31 +607,34 @@ comment box."
 
 *** Company
 #+BEGIN_SRC emacs-lisp
-(global-company-mode 1)
-(setq company-require-match nil)
-(setq company-idle-delay nil)
-(setq company-dabbrev-downcase nil)
-
-(setq tab-always-indent 'complete)
+(add-hook 'after-init-hook
+          (lambda ()
+            (global-company-mode)
+            (add-to-list 'company-backends 'company-c-headers)
+            ;; (define-key company-mode-map [remap indent-for-tab-command]
+            ;;   'company-complete)
+            ;; (define-key company-mode-map [remap c-indent-line-or-region]
+            ;;   'company-complete)
+            (setq company-require-match nil
+                  company-idle-delay nil
+                  ;; company-dabbrev-downcase nil
+                  tab-always-indent 'complete)
+            ))
 ;; (add-to-list 'company-backends 'company-dabbrev)
-(setq company-dabbrev-code-other-buffers 'all)
+;; (setq company-dabbrev-code-other-buffers 'all)
 
-(defvar completion-at-point-functions-saved nil)
+;; (defvar completion-at-point-functions-saved nil)
 
-(defun company-indent-for-tab-command (&optional arg)
-  (interactive "P")
-  (let ((completion-at-point-functions-saved completion-at-point-functions)
-        (completion-at-point-functions '(company-complete-common-wrapper)))
-    (indent-for-tab-command arg)))
+;; (defun company-indent-for-tab-command (&optional arg)
+;;   (interactive "P")
+;;   (let ((completion-at-point-functions-saved completion-at-point-functions)
+;;         (completion-at-point-functions '(company-complete-common-wrapper)))
+;;     (indent-for-tab-command arg)))
 
-(defun company-complete-common-wrapper ()
-  (let ((completion-at-point-functions completion-at-point-functions-saved))
-    (company-complete-common)))
+;; (defun company-complete-common-wrapper ()
+;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
+;;     (company-complete-common)))
 
-(define-key company-mode-map [remap indent-for-tab-command]
-  'company-indent-for-tab-command)
-(define-key company-mode-map [remap c-indent-line-or-region]
-  'company-indent-for-tab-command)
 #+END_SRC
 
 *** hl-line-mode
@@ -613,8 +652,8 @@ comment box."
 
 *** compiling
 #+BEGIN_SRC emacs-lisp
-(defun kill-compile-buffer-if-successful (buffer string)
-  " kill a compilation buffer if succeeded without warnings "
+(defun close-compile-window-if-successful (buffer string)
+  " close a compilation window if succeeded without warnings "
   (if (and
        (string-match "compilation" (buffer-name buffer))
        (string-match "finished" string)
@@ -622,9 +661,9 @@ comment box."
         (with-current-buffer buffer
           (search-forward "warning" nil t))))
       (run-with-timer 1 nil
-                      'kill-buffer
-                      buffer)))
-(add-hook 'compilation-finish-functions 'kill-compile-buffer-if-successful)
+                      (lambda (window) (quit-window nil window))
+                      (get-buffer-window buffer))))
+(add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
@@ -636,11 +675,56 @@ comment box."
 (global-set-key (kbd "C-c l") 'nlinum-mode)
 #+END_SRC
 
-*** Show parens 
+*** Parens
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook (lambda () (progn
-                                       (show-paren-mode 1)
-                                       (setq show-paren-delay 0))))
+(require 'smartparens-config)
+(smartparens-global-mode 1)
+(define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
+(define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-d") 'sp-down-sexp)
+(define-key smartparens-mode-map (kbd "C-M-a") 'sp-backward-down-sexp)
+(define-key smartparens-mode-map (kbd "C-S-d") 'sp-beginning-of-sexp)
+(define-key smartparens-mode-map (kbd "C-S-a") 'sp-end-of-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-e") 'sp-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-u") 'sp-backward-up-sexp)
+(define-key smartparens-mode-map (kbd "C-M-t") 'sp-transpose-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-n") 'sp-next-sexp)
+(define-key smartparens-mode-map (kbd "C-M-p") 'sp-previous-sexp)
+
+(define-key smartparens-mode-map (kbd "C-M-k") 'sp-kill-sexp)
+(define-key smartparens-mode-map (kbd "C-M-w") 'sp-copy-sexp)
+
+;; (define-key smartparens-mode-map (kbd "M-<delete>") 'sp-unwrap-sexp)
+;; (define-key smartparens-mode-map (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+(define-key smartparens-mode-map (kbd "C-<right>") 'sp-forward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-<left>") 'sp-forward-barf-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+(define-key smartparens-mode-map (kbd "M-D") 'sp-splice-sexp)
+(define-key smartparens-mode-map (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+(define-key smartparens-mode-map (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+(define-key smartparens-mode-map (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
+
+(define-key smartparens-mode-map (kbd "C-]") 'sp-select-next-thing-exchange)
+(define-key smartparens-mode-map (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+(define-key smartparens-mode-map (kbd "C-M-]") 'sp-select-next-thing)
+
+(define-key smartparens-mode-map (kbd "M-F") 'sp-forward-symbol)
+(define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
+
+(bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)) smartparens-mode-map)
+(bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)) smartparens-mode-map)
+
+(add-hook 'prog-mode-hook
+          (lambda () (progn
+                       (show-paren-mode 1)
+                       (setq show-paren-delay 0)
+                       )))
 #+END_SRC
 
 *** Indent
@@ -651,12 +735,14 @@ comment box."
 (setq-default tab-width 4)
 
 (setq-default indent-tabs-mode nil)
-(setq c-default-style "linux")
+(setq c-default-style "k&r"
+      c-basic-offset 4)
 #+END_SRC
 
 *** whitespace-mode
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c w") 'whitespace-mode)
+(global-set-key (kbd "C-c C-w") 'whitespace-mode)
 #+END_SRC
 
 *** yafolding-mode
@@ -676,10 +762,11 @@ comment box."
                 (dir  (tramp-file-name-localname dissected)))
             (setq cmd (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
             ))
-      (setq cmd (concat "cd " default-directory " && exec bash -l")))
+      (setq cmd (concat "cd '" default-directory "' && exec bash -l")))
       (term-run-shell-command cmd 'suh)
     ))
 (global-set-key (kbd "<f6>") 'term-into-dir)
+(global-unset-key (kbd "M-!"))
 (global-set-key (kbd "C-!") 'shell-command)
 (setq term-suppress-hard-newline t)
 (setq term-prompt-regexp "^.*[%$] ")
@@ -687,7 +774,7 @@ comment box."
           (lambda ()
             (term-set-escape-char ?\C-x)
             (setq term-buffer-maximum-size 20000)
-            (toggle-truncate-lines nil) 
+            (toggle-truncate-lines nil)
             ))
 (eval-after-load 'term
   '(progn
@@ -754,4 +841,3 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
-
