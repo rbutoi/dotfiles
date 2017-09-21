@@ -127,6 +127,7 @@ alias ll='l -lA -h'
 alias n="nano"
 alias g="grep --color=always -i"
 alias p="ps aux|grep `whoami`"
+alias chmox="chmod +x"
 m() {
     if [ -f /usr/bin/less ]; then
         less "$@"

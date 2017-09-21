@@ -22,6 +22,7 @@
 (depends-on "dtrt-indent")
 (depends-on "eink-theme")
 (depends-on "f")
+(depends-on "flatui-theme")
 (depends-on "flycheck")
 (depends-on "flycheck-rust")
 (depends-on "git-commit")
