@@ -597,8 +597,8 @@ comment box."
           (lambda ()
             (setq TeX-auto-untabify t     ;; remove all tabs before saving
                   ;; TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
-                  TeX-view-program-list '(("LLPP" "llpp %o"))
-                  TeX-view-program-selection '((output-pdf "LLPP")))
+                  TeX-view-program-list '(("Xreader" "xreader %o"))
+                  TeX-view-program-selection '((output-pdf "Xreader")))
             (auto-fill-mode)
             (setq TeX-command-force "LaTeX")
             ))
