@@ -1,24 +1,24 @@
 import XMonad
--- import XMonad.Config.Xfce
-import XMonad.Config.Kde
+import XMonad.Config.Xfce
+-- import XMonad.Config.Kde
 import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 
 import qualified XMonad.StackSet as W
 
--- main = xmonad $ xfceConfig
-main = xmonad $ kdeConfig
+main = xmonad $ xfceConfig
+-- main = xmonad $ kdeConfig
     { modMask = mod1Mask
-    -- , terminal = "xfce4-terminal"
-    , terminal = "konsole"
+    , terminal = "xfce4-terminal"
+    -- , terminal = "konsole"
     , borderWidth = 3
     , workspaces = map show [1..4]
     , focusedBorderColor = "#20B9A5"
     } `additionalKeysP`
     [
-      -- ("M-`", spawn "xfce4-popup-whiskermenu")
-      ("M-j", windows W.focusUp)
+      ("M-`", spawn "xfce4-popup-whiskermenu")
+    , ("M-j", windows W.focusUp)
     , ("M-k", windows W.focusDown)
     , ("M-S-j", windows W.swapUp)
     , ("M-S-k", windows W.swapDown)
