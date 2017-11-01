@@ -148,6 +148,10 @@ alias dv="dirs -v"
 alias sudo='sudo '
 alias s='sudo '
 
+find_pi() {
+    sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
+}
+
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 if [ "$TERM" != "dumb" ]; then
