@@ -36,7 +36,6 @@ v4l2ucp
 valgrind
 virtualbox-guest-utils
 wireshark-qt
-xdot
 xorg-xmessage
 xreader
 xsel
