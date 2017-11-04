@@ -8,3 +8,4 @@ ln -sf $PWD/.tmux.conf   ~
 ln -sf $PWD/Cask         ~/.emacs.d/
 ln -sf $PWD/settings.org ~/.emacs.d/
 ln -sf $PWD/custom.el    ~/.emacs.d/
+cp  -f $PWD/init.el      ~/.emacs.d/
