@@ -25,49 +25,50 @@
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
+;; toggle dark/light
 (if window-system
     (progn
-      (load-theme 'solarized t)
-      (set-frame-parameter nil 'background-mode 'dark)
-      (set-terminal-parameter nil 'background-mode 'dark)
-      (enable-theme 'solarized)
+      (require 'diff-mode)
+      (defun toggle-solarized-dark-light-off ()
+        (interactive)
+        (cond ((string= bg 'dark)
+               (progn
+                 (set-face-attribute 'diff-context nil :foreground "#586e75")
+                 (set-frame-parameter nil 'background-mode bg)
+                 (set-terminal-parameter nil 'background-mode bg)
+                 (enable-theme 'solarized-dark)
+                 (setq bg 'light)
+                 ))
+              ((string= bg 'light)
+               (progn
+                 (set-face-attribute 'diff-context nil :foreground "#93a1a1")
+                 (set-frame-parameter nil 'background-mode bg)
+                 (set-terminal-parameter nil 'background-mode bg)
+                 (enable-theme 'solarized-light)
+                 (setq bg 'off)
+                 ))
+              ((string= bg 'off)
+               (progn
+                 (disable-theme 'solarized-dark)
+                 (disable-theme 'solarized-light)
+                 (setq bg 'dark)
+                 ))))
+      
+      (progn
+        (load-theme 'solarized-dark t t)
+        (load-theme 'solarized-light t t)
+        (enable-theme 'solarized-dark)
+        (setq bg 'light)
+        
+        (cond
+         ((find-font (font-spec :name "Ubuntu Mono"))
+          (set-frame-font "Ubuntu Mono-12"))
+         ((find-font (font-spec :name "DejaVu Sans Mono"))
+          (set-frame-font "DejaVu Sans Mono-10")))
 
-      ;; (load-theme leuven)
-      (cond
-       ((find-font (font-spec :name "Ubuntu Mono"))
-        (set-frame-font "Ubuntu Mono-12"))
-       ((find-font (font-spec :name "DejaVu Sans Mono"))
-        (set-frame-font "DejaVu Sans Mono-10")))
-      ))
-
-;; toggle dark/light
-(setq bg 'dark)
-(require 'diff-mode)
-(defun toggle-solarized-dark-light-off ()
-  (interactive)
-  (cond ((string= bg 'dark)
-         (progn
-           (set-face-attribute 'diff-context nil :foreground "#586e75")
-           (set-frame-parameter nil 'background-mode bg)
-           (set-terminal-parameter nil 'background-mode bg)
-           (enable-theme 'solarized)
-           (setq bg 'light)
-         ))
-        ((string= bg 'light)
-         (progn
-           (set-face-attribute 'diff-context nil :foreground "#93a1a1")
-           (set-frame-parameter nil 'background-mode bg)
-           (set-terminal-parameter nil 'background-mode bg)
-           (enable-theme 'solarized)
-           (setq bg 'off)
-           ))
-        ((string= bg 'off)
-         (progn
-           (disable-theme 'solarized)
-           (setq bg 'dark)
-           ))))
-(global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light-off)
-(global-set-key (kbd "C-x C-7") 'toggle-solarized-dark-light-off)
+        (global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light-off)
+        (global-set-key (kbd "C-x C-7") 'toggle-solarized-dark-light-off)
+        )))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -99,7 +100,6 @@
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "C-c C-r") 'revert-buffer)
 (global-auto-revert-mode 1)
-(setq vc-follow-symlinks t)
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
 (setq recentf-max-saved-items 1000)
