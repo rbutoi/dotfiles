@@ -37,8 +37,10 @@
        ((find-font (font-spec :name "Ubuntu Mono"))
         (set-frame-font "Ubuntu Mono-12"))
        ((find-font (font-spec :name "DejaVu Sans Mono"))
-        (set-frame-font "DejaVu Sans Mono-10")))
-      ))
+        (set-frame-font "DejaVu Sans Mono-10"))
+       ((find-font (font-spec :name "Consolas"))
+        (set-frame-font "Consolas-11"))
+       )))
 
 ;; toggle dark/light
 (setq bg 'dark)
@@ -616,7 +618,7 @@ comment box."
 (add-hook 'after-init-hook
           (lambda ()
             (global-company-mode)
-            (add-to-list 'company-backends 'company-c-headers)
+            ;; (add-to-list 'company-backends 'company-c-headers)
             ;; (define-key company-mode-map [remap indent-for-tab-command]
             ;;   'company-complete)
             ;; (define-key company-mode-map [remap c-indent-line-or-region]
