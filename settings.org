@@ -26,52 +26,44 @@
 *** Theme
 #+BEGIN_SRC emacs-lisp
 ;; toggle dark/light
-(if window-system
-    (progn
-      (require 'diff-mode)
-      (defun toggle-solarized-dark-light-off ()
-        (interactive)
-        (cond ((string= bg 'dark)
-               (progn
-                 (set-face-attribute 'diff-context nil :foreground "#586e75")
-                 (set-frame-parameter nil 'background-mode bg)
-                 (set-terminal-parameter nil 'background-mode bg)
-                 (enable-theme 'solarized-dark)
-                 (setq bg 'light)
-                 ))
-              ((string= bg 'light)
-               (progn
-                 (set-face-attribute 'diff-context nil :foreground "#93a1a1")
-                 (set-frame-parameter nil 'background-mode bg)
-                 (set-terminal-parameter nil 'background-mode bg)
-                 (enable-theme 'solarized-light)
-                 (setq bg 'off)
-                 ))
-              ((string= bg 'off)
-               (progn
-                 (disable-theme 'solarized-dark)
-                 (disable-theme 'solarized-light)
-                 (setq bg 'dark)
-                 ))))
-      
-      (progn
-        (load-theme 'solarized-dark t t)
-        (load-theme 'solarized-light t t)
-        (enable-theme 'solarized-dark)
-        (setq bg 'light)
-        
-        (cond
-         ((find-font (font-spec :name "Ubuntu Mono"))
-          (set-frame-font "Ubuntu Mono-12"))
-         ((find-font (font-spec :name "DejaVu Sans Mono"))
-          (set-frame-font "DejaVu Sans Mono-10"))
-         ((find-font (font-spec :name "Consolas"))
-          (set-frame-font "Consolas-11"))
-         )
+(when window-system
+  (defun toggle-solarized-twilight-off ()
+    (interactive)
+    (cond ((string= next-bg 'dark)
+           (progn
+             (disable-theme 'twilight-bright)
+             (load-theme 'solarized-dark)
 
-        (global-set-key (kbd "C-x 7") 'toggle-solarized-dark-light-off)
-        (global-set-key (kbd "C-x C-7") 'toggle-solarized-dark-light-off)
-        )))
+             (setq next-bg 'light)
+             ))
+          ((string= next-bg 'light)
+           (progn
+             (disable-theme 'solarized-dark)
+             (load-theme 'twilight-bright)
+
+             (setq next-bg 'off)
+             ))
+          ((string= next-bg 'off)
+           (progn
+             (disable-theme 'twilight-bright)
+             (setq next-bg 'dark)
+             ))))
+
+  (load-theme 'solarized-dark)
+  (setq next-bg 'light)
+  
+  (cond
+   ((find-font (font-spec :name "Ubuntu Mono"))
+    (set-frame-font "Ubuntu Mono-12"))
+   ((find-font (font-spec :name "DejaVu Sans Mono"))
+    (set-frame-font "DejaVu Sans Mono-10"))
+   ((find-font (font-spec :name "Consolas"))
+    (set-frame-font "Consolas-11"))
+   )
+
+  (global-set-key (kbd "C-x 7") 'toggle-solarized-twilight-off)
+  (global-set-key (kbd "C-x C-7") 'toggle-solarized-twilight-off)
+  )
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -231,11 +223,9 @@
   )
 
 ;; Special work to do ONLY when there is a window system being used
-(if window-system
-    (progn
-      (add-hook 'after-init-hook 'load-framegeometry)
-      (add-hook 'kill-emacs-hook 'save-framegeometry))
-  )
+(when window-system
+  (add-hook 'after-init-hook 'load-framegeometry)
+  (add-hook 'kill-emacs-hook 'save-framegeometry))
 #+END_SRC
 
 *** rich-majority-mode
@@ -346,13 +336,9 @@ comment box."
 
 *** Flyspell
 #+BEGIN_SRC emacs-lisp
-;; flyspell needs location of aspell on Mac
-(setq ispell-list-command "--list")
-(when (eq system-type 'darwin)
-  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-  (setq exec-path (append exec-path '("/usr/local/bin"))))
+;; (setq ispell-list-command "--list")
 (add-hook 'org-journal-mode-hook 'flyspell-mode)
-; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
 *** comment-or-uncomment-line-or-region
@@ -367,7 +353,7 @@ comment box."
       (forward-line))
     ))
 (global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
-; (global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
+;; (global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
 (global-set-key [remap comment-dwim] 'comment-or-uncomment-line-or-region)
 #+END_SRC
 
@@ -411,15 +397,6 @@ comment box."
 *** can keep C-u C-SPC C-SPC C-SPC
 #+BEGIN_SRC emacs-lisp
 (setq set-mark-command-repeat-pop t)
-#+END_SRC
-
-*** highlight-symbol-mode
-#+BEGIN_SRC emacs-lisp
-;; I have a feeling this is laggy, and its more or less replaced by occur at point
-;; (define-globalized-minor-mode global-highlight-symbol-mode
-;;   highlight-symbol-mode (lambda () (progn (highlight-symbol-mode) (highlight-symbol-nav-mode))))
-;; (setq highlight-symbol-idle-delay 0.5)
-;; (global-highlight-symbol-mode)
 #+END_SRC
 
 *** Truncate lines
@@ -648,10 +625,8 @@ comment box."
 
 *** hl-line-mode
 #+BEGIN_SRC emacs-lisp
-(if window-system
-    (progn
-      (add-hook 'prog-mode-hook 'hl-line-mode)
-  ))
+(when window-system
+  (add-hook 'prog-mode-hook 'hl-line-mode))
 #+END_SRC
 
 *** which-function-mode
@@ -761,20 +736,40 @@ comment box."
 
 *** Term
 #+BEGIN_SRC emacs-lisp
-(defun term-into-dir (arg)
-  (interactive "P")
+
+(defun term-into-dir-internal (create)
   (let ((cmd ""))
-    (if (file-remote-p default-directory)
+    (when (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
                 (user (tramp-file-name-user dissected))
                 (dir  (tramp-file-name-localname dissected)))
-            (setq cmd (concat "ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
-            ))
-      (setq cmd (concat "cd '" default-directory "' ; exec bash -l")))
-    (term-run-shell-command cmd t)
-    ))
+            (setq ssh-cd-command (concat "exec ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
+            )))
+    (if create
+        (sane-term-create)
+      (sane-term))
+    (when (file-remote-p default-directory)
+      (run-with-timer 0.125 nil (lambda ()
+                              (term-line-mode)
+                              (goto-char (point-max))
+                              (insert ssh-cd-command)
+                              (term-send-input)
+                              (term-char-mode))))))
+(defun term-into-dir (arg)
+  (interactive "P")
+  (term-into-dir-internal nil))
+
+(defun term-into-dir-create (arg)
+  (interactive "P")
+  (term-into-dir-internal t))
+
 (global-set-key (kbd "<f6>") 'term-into-dir)
+(global-set-key (kbd "S-<f6>") 'term-into-dir-create)
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 (global-unset-key (kbd "M-!"))
 (global-set-key (kbd "C-!") 'shell-command)
 (setq term-suppress-hard-newline t)
