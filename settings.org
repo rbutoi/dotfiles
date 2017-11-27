@@ -419,6 +419,8 @@ comment box."
 *** org
 #+BEGIN_SRC emacs-lisp
 (define-key org-mode-map (kbd "C-M-u") 'org-up-element)
+(add-hook 'org-mode-hook (lambda () (m-buffer-binds (current-local-map))))
+
 (setq org-startup-folded nil)
 #+END_SRC
 
