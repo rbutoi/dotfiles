@@ -72,12 +72,12 @@
 
 ;; a bit more contrast to keep track of curent window
 (set-face-attribute  'mode-line
-                 nil
-                 :box '(:line-width 3 :style released-button))
+                     nil
+                     :box '(:line-width 3 :style released-button))
 (set-face-attribute  'mode-line-inactive
-                 nil
-                 :box nil
-                 )
+                     nil
+                     :box nil
+                     )
 (eval-after-load 'hl-line
   (lambda () (set-face-attribute 'hl-line nil
                                  ;; :underline t
@@ -130,7 +130,7 @@
 (global-set-key (kbd "<C-S-left>")   'buf-move-left)
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
-;; (setq golden-ratio-adjust-factor 0.6)
+(setq golden-ratio-adjust-factor 0.65)
 ;; (global-set-key (kbd "C-x C-g") 'golden-ratio)
 ;; (global-set-key (kbd "C-x C-G") 'golden-ratio-mode)
 #+END_SRC
@@ -157,8 +157,8 @@
                 (lambda (&optional arg) (interactive "P")
                   (if (file-remote-p default-directory)
                       (setq helm-ag-base-command (concat "~/bin/ack --nocolor --nogroup --smart-case"))
-                      (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case"))
-                      )
+                    (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case"))
+                    )
                   (if arg
                       (helm-do-ag)
                     (helm-do-ag default-directory))
@@ -247,7 +247,7 @@
       (set-fringe-style nil)
     (set-fringe-mode
      (/ (- (frame-pixel-width)
-           ; + 4 determined empirically
+                                        ; + 4 determined empirically
            (* (+ 4 fill-column) (frame-char-width)))
         2))))
 #+END_SRC
@@ -416,14 +416,6 @@ comment box."
 (global-set-key (kbd "M-Z") 'zap-up-to-char)
 #+END_SRC
 
-*** ace-isearch-mode
-#+BEGIN_SRC emacs-lisp
-;; (setq ace-isearch-jump-delay 1)
-;; (add-hook 'find-file-hook (lambda ()
-;;                             (when (< (buffer-size) 40000)
-;;                               (ace-isearch-mode))))
-#+END_SRC
-
 *** org
 #+BEGIN_SRC emacs-lisp
 (define-key org-mode-map (kbd "C-M-u") 'org-up-element)
@@ -438,8 +430,8 @@ comment box."
 (setq org-journal-hide-entries-p nil)
 (setq org-journal-find-file 'find-file)
 (add-hook 'org-journal-mode-hook 'auto-fill-mode)
-; whitespace-mode is fairly useless in org-journal. remap its key to set the
-; frame with to the fillcolumn + empirical value
+                                        ; whitespace-mode is fairly useless in org-journal. remap its key to set the
+                                        ; frame with to the fillcolumn + empirical value
 (add-hook 'org-journal-mode-hook
           (lambda ()
             (define-key org-journal-mode-map (kbd "C-c w")
@@ -494,16 +486,6 @@ comment box."
 
 *** Languages
 
-**** Python
-#+BEGIN_SRC emacs-lisp
-;; (add-hook 'python-mode-hook 'anaconda-mode)
-; because python-mode overwrites it
-;; (add-hook 'python-mode-hook
-;;  (lambda () (add-to-list 'completion-at-point-functions 'company-complete)))
-;; (eval-after-load 'company
-;;   '(add-to-list 'company-backends '(company-dabbrev-code company-anaconda)))
-#+END_SRC
-
 **** Perl
 #+BEGIN_SRC emacs-lisp
 (add-hook 'perl-mode-hook (lambda () (progn
@@ -526,10 +508,39 @@ comment box."
 #+END_SRC
 
 **** C-like
-***** Semantic
+***** Irony
 #+BEGIN_SRC emacs-lisp
-;; (semantic-mode)
-;; (global-semantic-stickyfunc-mode)
+(require 'rtags)
+(require 'company)
+(require 'irony)
+(require 'company-irony)
+
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(setq irony-cdb-search-directory-list '("." "build" "build-Debug" "build-Release"))
+#+END_SRC
+
+***** Company
+#+BEGIN_SRC emacs-lisp
+(defun setup-c/c++-company-backends ()
+  (setq-local company-backends '(company-irony-c-headers company-irony)))
+(add-hook 'c++-mode-hook 'setup-c/c++-company-backends)
+(add-hook 'c-mode-hook 'setup-c/c++-company-backends)
+(add-hook 'objc-mode-hook 'setup-c/c++-company-backends)
+
+#+END_SRC
+
+***** RTags
+#+BEGIN_SRC emacs-lisp
+(rtags-enable-standard-keybindings)
+(define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
+(define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
+(define-key c-mode-base-map (kbd "C-o") 'rtags-imenu)
+(define-key c-mode-base-map (kbd "C-c r f") 'rtags-next-match)
+(define-key c-mode-base-map (kbd "C-c r b") 'rtags-previous-match)
 #+END_SRC
 
 ***** No namespace intent
@@ -537,26 +548,6 @@ comment box."
 (defun no-ns-indent ()
    (c-set-offset 'innamespace [0]))
 (add-hook 'c++-mode-hook 'no-ns-indent)
-#+END_SRC
-
-***** Company
-#+BEGIN_SRC emacs-lisp
-;; (add-hook
-;;  'c-mode-common-hook
-;;  (lambda ()
-;;    (if (and (buffer-file-name) (file-remote-p (buffer-file-name)))
-;;        (add-to-list 'company-backends '(company-capf company-dabbrev))
-;;      (add-to-list 'company-backends '(company-clang company-dabbrev)))
-;;    ))
-#+END_SRC
-
-***** Other file
-#+BEGIN_SRC emacs-lisp
-(add-hook
- 'c-mode-common-hook
- (lambda ()
-   (local-set-key (kbd "C-c C-o") 'ff-find-other-file)
-   ))
 #+END_SRC
 
 **** Diffing
@@ -589,38 +580,46 @@ comment box."
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 (add-hook 'rust-mode-hook 'flycheck-mode)
 (add-hook 'perl-mode-hook 'flycheck-mode)
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+(add-hook 'c-mode-hook 'flycheck-mode)
+(add-hook 'c++-mode-hook 'flycheck-mode)
+
+(setq flycheck-display-errors-delay 0)
 #+END_SRC
 
 *** Company
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook
-          (lambda ()
-            (global-company-mode)
-            ;; (add-to-list 'company-backends 'company-c-headers)
-            ;; (define-key company-mode-map [remap indent-for-tab-command]
-            ;;   'company-complete)
-            ;; (define-key company-mode-map [remap c-indent-line-or-region]
-            ;;   'company-complete)
-            (setq company-require-match nil
-                  company-idle-delay nil
-                  ;; company-dabbrev-downcase nil
-                  tab-always-indent 'complete)
-            ))
-;; (add-to-list 'company-backends 'company-dabbrev)
-;; (setq company-dabbrev-code-other-buffers 'all)
+(global-company-mode)
+(define-key company-mode-map [remap indent-for-tab-command]
+  'company-indent-or-complete-common)
+(define-key company-mode-map [remap c-indent-line-or-region]
+  'company-indent-or-complete-common)
+(setq
+ company-idle-delay nil
+ tab-always-indent 'complete
+ company-dabbrev-downcase nil)
+;; Put -capf with dabbrev
+(setq company-backends (delete 'company-capf company-backends))
+(setq company-backends (delete 'company-dabbrev company-backends))
+(add-to-list 'company-backends '(company-capf :with company-dabbrev))
 
-;; (defvar completion-at-point-functions-saved nil)
+;; Messy, but it works
+(global-set-key (kbd "<C-tab>") 'hippie-expand)
+#+END_SRC
 
-;; (defun company-indent-for-tab-command (&optional arg)
-;;   (interactive "P")
-;;   (let ((completion-at-point-functions-saved completion-at-point-functions)
-;;         (completion-at-point-functions '(company-complete-common-wrapper)))
-;;     (indent-for-tab-command arg)))
+*** projectile
+#+BEGIN_SRC emacs-lisp
+(projectile-global-mode 1)
+(helm-projectile-on)
 
-;; (defun company-complete-common-wrapper ()
-;;   (let ((completion-at-point-functions completion-at-point-functions-saved))
-;;     (company-complete-common)))
-
+(add-hook
+ 'c-mode-common-hook
+ (lambda ()
+   (local-set-key (kbd "C-c C-o")
+                  (lambda () (interactive)
+                                    (if (projectile-project-p)
+                                        (projectile-find-other-file) (ff-find-other-file))))))
 #+END_SRC
 
 *** hl-line-mode
@@ -649,7 +648,11 @@ comment box."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
-(add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f7>")   'compile)))
+(add-hook 'prog-mode-hook
+          (lambda () (global-set-key (kbd "<f7>")
+                                     (lambda () (interactive)
+                                       (when (locate-dominating-file default-directory "Makefile")
+                                          (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile)))))))
 (add-hook 'prog-mode-hook (lambda () (global-set-key (kbd "<f8>") 'recompile)))
 (setq compilation-message-face 'default)
 #+END_SRC
@@ -705,10 +708,8 @@ comment box."
 (define-key smartparens-mode-map (kbd "C-c b") (lambda () (interactive) (sp-beginning-of-sexp -2)))
 
 (add-hook 'prog-mode-hook
-          (lambda () (progn
-                       (show-paren-mode 1)
-                       (setq show-paren-delay 0)
-                       )))
+          (lambda () (show-paren-mode 1)
+            (setq show-paren-delay 0)))
 #+END_SRC
 
 *** Indent
@@ -821,7 +822,6 @@ comment box."
         (progn (org-mode) (switch-org-and-elisp-mode t))
       (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t)))
     ))
-
 ;; Local Variables:
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:

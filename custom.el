@@ -3,11 +3,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
+ ;; '(ansi-color-names-vector
+   ;; ["#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"])
  ;; '(ansi-term-color-vector
    ;; [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"] t)
- '(compilation-message-face (quote default) t)
+ '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
  '(cua-overwrite-cursor-color "#b58900")
@@ -49,7 +49,7 @@
  '(org-agenda-files (quote ("~/Documents/google-drive/journal/20170308")))
  '(package-selected-packages
    (quote
-    (exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window ace-isearch)))
+    (twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
