@@ -93,7 +93,6 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/\\1" t)))
 (global-set-key (kbd "C-c r") 'revert-buffer)
-(global-set-key (kbd "C-c C-r") 'revert-buffer)
 (global-auto-revert-mode 1)
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
@@ -537,7 +536,7 @@ comment box."
 
 ***** RTags
 #+BEGIN_SRC emacs-lisp
-(rtags-enable-standard-keybindings)
+(rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
 (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
 (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
 (define-key c-mode-base-map (kbd "C-o") 'rtags-imenu)
