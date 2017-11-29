@@ -27,6 +27,7 @@ main = xmonad $ xfceConfig
     , ("M-S-b", sendMessage ToggleStruts)
     , ("M-S-m", windows W.swapMaster)
     , ("M-S-h", spawn "/home/radu/.local/bin/hidpi_mode.sh")
+    , ("M-C-<Return>", spawn "xfce4-terminal -e \"sh -c 'tmux a -d || tmux'\"")
     , ("M-S-q", spawn "xmonad --recompile && xmonad --restart")
     ] `removeKeysP`
     [ ("M-q"),("M-w"),("M-e"),("M-b"),("M-p"),("M-n")

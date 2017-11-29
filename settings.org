@@ -415,6 +415,13 @@ comment box."
 (global-set-key (kbd "M-Z") 'zap-up-to-char)
 #+END_SRC
 
+*** just-one-space
+#+BEGIN_SRC emacs-lisp
+
+;; to get around xmonad
+(global-set-key (kbd "C-M-SPC") 'just-one-space)
+#+END_SRC
+
 *** org
 #+BEGIN_SRC emacs-lisp
 (define-key org-mode-map (kbd "C-M-u") 'org-up-element)
@@ -462,7 +469,7 @@ comment box."
 
 *** electric-pair-mode
 #+BEGIN_SRC emacs-lisp
-;; (electric-pair-mode)
+(electric-pair-mode)
 #+END_SRC
 
 *** visual-line-mode
@@ -509,6 +516,10 @@ comment box."
 #+END_SRC
 
 **** C-like
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c-mode-common-hook 'electric-pair-local-mode)
+#+END_SRC
+
 ***** Irony
 #+BEGIN_SRC emacs-lisp
 (require 'rtags)
@@ -527,7 +538,7 @@ comment box."
 ***** Company
 #+BEGIN_SRC emacs-lisp
 (defun setup-c/c++-company-backends ()
-  (setq-local company-backends '(company-irony-c-headers company-irony)))
+  (setq-local company-backends '(company-irony company-irony-c-headers)))
 (add-hook 'c++-mode-hook 'setup-c/c++-company-backends)
 (add-hook 'c-mode-hook 'setup-c/c++-company-backends)
 (add-hook 'objc-mode-hook 'setup-c/c++-company-backends)
@@ -539,9 +550,9 @@ comment box."
 (rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
 (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
 (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
-(define-key c-mode-base-map (kbd "C-o") 'rtags-imenu)
-(define-key c-mode-base-map (kbd "C-c r f") 'rtags-next-match)
-(define-key c-mode-base-map (kbd "C-c r b") 'rtags-previous-match)
+(define-key c-mode-base-map (kbd "C-o") 'rtags-imenu) ; helm-sem
+(define-key c-mode-base-map (kbd "C-c C-r f") 'rtags-next-match)
+(define-key c-mode-base-map (kbd "C-c C-r b") 'rtags-previous-match)
 #+END_SRC
 
 ***** No namespace intent
@@ -611,7 +622,8 @@ comment box."
 
 *** projectile
 #+BEGIN_SRC emacs-lisp
-(projectile-global-mode 1)
+(projectile-mode 1)
+(add-to-list 'projectile-globally-ignored-modes 'term-mode)
 (helm-projectile-on)
 
 (add-hook
@@ -621,6 +633,11 @@ comment box."
                   (lambda () (interactive)
                                     (if (projectile-project-p)
                                         (projectile-find-other-file) (ff-find-other-file))))))
+#+END_SRC
+
+*** yasnippets
+#+BEGIN_SRC emacs-lisp
+(yas-global-mode 1)
 #+END_SRC
 
 *** hl-line-mode

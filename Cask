@@ -65,5 +65,7 @@
 (depends-on "which-key")
 (depends-on "with-editor")
 (depends-on "yafolding")
+(depends-on "yasnippet")
+(depends-on "yasnippet-snippets")
 (depends-on "zoom-window")
 (depends-on "ztree")

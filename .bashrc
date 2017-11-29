@@ -128,6 +128,12 @@ alias n="nano"
 alias g="grep --color=always -i"
 alias p="ps aux|grep `whoami`"
 alias chmox="chmod +x"
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias py="python"
 m() {
     if [ -f /usr/bin/less ]; then
         less "$@"
