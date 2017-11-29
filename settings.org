@@ -34,20 +34,17 @@
              (disable-theme 'twilight-bright)
              (load-theme 'solarized-dark)
 
-             (setq next-bg 'light)
-             ))
+             (setq next-bg 'light)))
           ((string= next-bg 'light)
            (progn
              (disable-theme 'solarized-dark)
              (load-theme 'twilight-bright)
 
-             (setq next-bg 'off)
-             ))
+             (setq next-bg 'off)))
           ((string= next-bg 'off)
            (progn
              (disable-theme 'twilight-bright)
-             (setq next-bg 'dark)
-             ))))
+             (setq next-bg 'dark)))))
 
   (load-theme 'solarized-dark)
   (setq next-bg 'light)
@@ -58,12 +55,10 @@
    ((find-font (font-spec :name "DejaVu Sans Mono"))
     (set-frame-font "DejaVu Sans Mono-10"))
    ((find-font (font-spec :name "Consolas"))
-    (set-frame-font "Consolas-11"))
-   )
+    (set-frame-font "Consolas-11")))
 
   (global-set-key (kbd "C-x 7") 'toggle-solarized-twilight-off)
-  (global-set-key (kbd "C-x C-7") 'toggle-solarized-twilight-off)
-  )
+  (global-set-key (kbd "C-x C-7") 'toggle-solarized-twilight-off))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -76,11 +71,9 @@
                      :box '(:line-width 3 :style released-button))
 (set-face-attribute  'mode-line-inactive
                      nil
-                     :box nil
-                     )
+                     :box nil)
 (eval-after-load 'hl-line
   (lambda () (set-face-attribute 'hl-line nil
-                                 ;; :underline t
                                  )))
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
@@ -130,8 +123,6 @@
 (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
 (setq golden-ratio-adjust-factor 0.65)
-;; (global-set-key (kbd "C-x C-g") 'golden-ratio)
-;; (global-set-key (kbd "C-x C-G") 'golden-ratio-mode)
 #+END_SRC
 
 *** Helm
@@ -156,12 +147,10 @@
                 (lambda (&optional arg) (interactive "P")
                   (if (file-remote-p default-directory)
                       (setq helm-ag-base-command (concat "~/bin/ack --nocolor --nogroup --smart-case"))
-                    (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case"))
-                    )
+                    (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case")))
                   (if arg
                       (helm-do-ag)
-                    (helm-do-ag default-directory))
-                  ))
+                    (helm-do-ag default-directory))))
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (define-key helm-map (kbd "C-k") 'helm-execute-persistent-action)
 (global-unset-key (kbd "C-x c"))
@@ -183,13 +172,11 @@
 #+BEGIN_SRC emacs-lisp
 (defun save-framegeometry ()
   "Gets the current frame's geometry and saves to ~/.emacs.d/framegeometry."
-  (let (
-        (framegeometry-left (frame-parameter (selected-frame) 'left))
+  (let ((framegeometry-left (frame-parameter (selected-frame) 'left))
         (framegeometry-top (frame-parameter (selected-frame) 'top))
         (framegeometry-width (frame-parameter (selected-frame) 'width))
         (framegeometry-height (frame-parameter (selected-frame) 'height))
-        (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry"))
-        )
+        (framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
 
     (when (not (number-or-marker-p framegeometry-left))
       (setq framegeometry-left 0))
@@ -211,15 +198,13 @@
        (format "        (width . %d)\n" (max framegeometry-width 0))
        (format "        (height . %d)))\n" (max framegeometry-height 0)))
       (when (file-writable-p framegeometry-file)
-        (write-file framegeometry-file))))
-  )
+        (write-file framegeometry-file)))))
 
 (defun load-framegeometry ()
   "Loads ~/.emacs.d/framegeometry which should load the previous frame's geometry."
   (let ((framegeometry-file (expand-file-name "~/.emacs.d/framegeometry")))
     (when (file-readable-p framegeometry-file)
-      (load-file framegeometry-file)))
-  )
+      (load-file framegeometry-file))))
 
 ;; Special work to do ONLY when there is a window system being used
 (when window-system
@@ -335,7 +320,6 @@ comment box."
 
 *** Flyspell
 #+BEGIN_SRC emacs-lisp
-;; (setq ispell-list-command "--list")
 (add-hook 'org-journal-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
@@ -349,10 +333,8 @@ comment box."
       (comment-or-uncomment-region (region-beginning) (region-end))
     (progn
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-      (forward-line))
-    ))
+      (forward-line))))
 (global-set-key (kbd "M-[ q") 'comment-or-uncomment-line-or-region)
-;; (global-set-key (kbd "C-;") 'comment-or-uncomment-line-or-region)
 (global-set-key [remap comment-dwim] 'comment-or-uncomment-line-or-region)
 #+END_SRC
 
@@ -447,8 +429,7 @@ comment box."
                 (set-frame-width (selected-frame) (+ 1 fill-column))))
             (define-key org-journal-mode-map (kbd "<f7>")
               (lambda () (interactive)
-                (async-shell-command "yes Y | drive push")))
-            ))
+                (async-shell-command "yes Y | drive push")))))
 (defun set-frame-width-interactive (arg)
   (interactive "nFrame width: ")
   (set-frame-width (selected-frame) arg))
@@ -497,8 +478,7 @@ comment box."
 **** Perl
 #+BEGIN_SRC emacs-lisp
 (add-hook 'perl-mode-hook (lambda () (progn
-                                       (define-key perl-mode-map (kbd "C-c C-d") 'cperl-perldoc)
-                                       )))
+                                       (define-key perl-mode-map (kbd "C-c C-d") 'cperl-perldoc))))
 #+END_SRC
 
 **** ASM mode
@@ -550,7 +530,8 @@ comment box."
 (rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
 (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
 (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
-(define-key c-mode-base-map (kbd "C-o") 'rtags-imenu) ; helm-sem
+(define-key c-mode-base-map (kbd "C-o")
+  (lambda () (interactive) (if (rtags-is-indexed) (rtags-imenu) (helm-semantic-or-imenu))))
 (define-key c-mode-base-map (kbd "C-c C-r f") 'rtags-next-match)
 (define-key c-mode-base-map (kbd "C-c C-r b") 'rtags-previous-match)
 #+END_SRC
@@ -570,8 +551,7 @@ comment box."
 (eval-after-load 'ediff
   '(progn
      (set-face-foreground 'ediff-fine-diff-A "white")
-     (set-face-foreground 'ediff-fine-diff-B "white")
-     ))
+     (set-face-foreground 'ediff-fine-diff-B "white")))
 #+END_SRC
 
 **** LaTeX
@@ -583,8 +563,7 @@ comment box."
                   TeX-view-program-list '(("Xreader" "xreader %o"))
                   TeX-view-program-selection '((output-pdf "Xreader")))
             (auto-fill-mode)
-            (setq TeX-command-force "LaTeX")
-            ))
+            (setq TeX-command-force "LaTeX")))
 #+END_SRC
 
 *** Flycheck
@@ -763,8 +742,7 @@ comment box."
           (let ((host (tramp-file-name-host dissected))
                 (user (tramp-file-name-user dissected))
                 (dir  (tramp-file-name-localname dissected)))
-            (setq ssh-cd-command (concat "exec ssh -t " user "@" host " 'cd " dir " && exec bash -l'"))
-            )))
+            (setq ssh-cd-command (concat "exec ssh -t " user "@" host " 'cd " dir " && exec bash -l'")))))
     (if create
         (sane-term-create)
       (sane-term))
@@ -797,8 +775,7 @@ comment box."
           (lambda ()
             (term-set-escape-char ?\C-x)
             (setq term-buffer-maximum-size 20000)
-            (toggle-truncate-lines nil)
-            ))
+            (toggle-truncate-lines nil)))
 (eval-after-load 'term
   '(progn
      (define-key term-mode-map (kbd "C-x C-k") 'term-char-mode)
@@ -809,8 +786,7 @@ comment box."
      (define-key term-mode-map (kbd "C-x C-j") (lambda nil (interactive)))
      (setq comint-move-point-for-output nil)
      (setq comint-scroll-show-maximum-output nil)
-     (m-buffer-binds term-raw-map)
-     ))
+     (m-buffer-binds term-raw-map)))
 #+END_SRC
 
 *** subword-mode
@@ -838,8 +814,7 @@ comment box."
   (lambda () (interactive)
     (if (string= 'emacs-lisp-mode major-mode)
         (progn (org-mode) (switch-org-and-elisp-mode t))
-      (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t)))
-    ))
+      (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t)))))
 ;; Local Variables:
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
