@@ -1,9 +1,9 @@
 import XMonad
-import XMonad.Config.Xfce
-import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
-import XMonad.Hooks.ManageDocks
+import XMonad.Config.Xfce
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.EZConfig
 
 import qualified XMonad.StackSet as W
 
@@ -11,7 +11,7 @@ main = xmonad $ xfceConfig
     { modMask = mod1Mask
     , handleEventHook = fullscreenEventHook
     , terminal = "xfce4-terminal"
-    , borderWidth = 3
+    , borderWidth = 6
     , workspaces = map show [1..4]
     , focusedBorderColor = "#20B9A5"
     } `additionalKeysP`
