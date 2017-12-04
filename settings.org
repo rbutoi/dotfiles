@@ -73,8 +73,7 @@
                      nil
                      :box nil)
 (eval-after-load 'hl-line
-  (lambda () (set-face-attribute 'hl-line nil
-                                 )))
+  (lambda () (set-face-attribute 'hl-line nil)))
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
@@ -115,7 +114,7 @@
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 
 (setq split-height-threshold nil
-      split-width-threshold nil) ; let me split
+      split-width-threshold 100)
 
 (global-set-key (kbd "<C-S-up>")     'buf-move-up)
 (global-set-key (kbd "<C-S-down>")   'buf-move-down)
