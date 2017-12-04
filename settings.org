@@ -114,7 +114,7 @@
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 
 (setq split-height-threshold nil
-      split-width-threshold 100)
+      split-width-threshold 120)
 
 (global-set-key (kbd "<C-S-up>")     'buf-move-up)
 (global-set-key (kbd "<C-S-down>")   'buf-move-down)
