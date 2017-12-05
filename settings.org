@@ -164,7 +164,6 @@
 (global-set-key (kbd "C-o") 'helm-semantic-or-imenu)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-M-o") 'helm-swoop)
-(global-set-key (kbd "C-c C-M-o") 'helm-multi-swoop)
 #+END_SRC
 
 *** Save window geometry
@@ -600,8 +599,9 @@ comment box."
 
 *** projectile
 #+BEGIN_SRC emacs-lisp
+(require 'projectile)
+(add-to-list 'projectile-globally-ignored-modes "term-mode")
 (projectile-mode 1)
-(add-to-list 'projectile-globally-ignored-modes 'term-mode)
 (helm-projectile-on)
 
 (add-hook
@@ -774,7 +774,9 @@ comment box."
           (lambda ()
             (term-set-escape-char ?\C-x)
             (setq term-buffer-maximum-size 20000)
-            (toggle-truncate-lines nil)))
+            (toggle-truncate-lines nil)
+            (yas-minor-mode -1) ; give me my ^C
+            (projectile-mode -1)))
 (eval-after-load 'term
   '(progn
      (define-key term-mode-map (kbd "C-x C-k") 'term-char-mode)
