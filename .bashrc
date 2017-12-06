@@ -167,10 +167,8 @@ if [ "$TERM" != "dumb" ]; then
     export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 fi
 
-# Specifics
-[ -f ~/.bashrc_arch ] && source ~/.bashrc_arch
-[ -f ~/.bashrc_eecg ] && source ~/.bashrc_eecg
-[ -f ~/.bashrc_pi ] && source ~/.bashrc_pi
+# Specific
+[ -f ~/.bashrc_pi ] && source ~/.bashrc_specific
 
+# to not be annoying if previous fails
 true
-
