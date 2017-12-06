@@ -168,7 +168,7 @@ if [ "$TERM" != "dumb" ]; then
 fi
 
 # Specific
-[ -f ~/.bashrc_pi ] && source ~/.bashrc_specific
+[ -f ~/.bashrc_specific ] && source ~/.bashrc_specific
 
 # to not be annoying if previous fails
 true
