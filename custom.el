@@ -49,7 +49,7 @@
  '(org-agenda-files (quote ("~/Documents/google-drive/journal/20170308")))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets yasnippet twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
+    (protobuf-mode esup yasnippet-snippets yasnippet twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
