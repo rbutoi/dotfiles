@@ -61,7 +61,7 @@ export HISTFILE=~/.bash_eternal_history
 
 case "$TERM" in
 screen*)
-    PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}@$HOSTNAME\007"; '
+    PROMPT_COMMAND='echo -ne "\033]0;${PWD##*/}@$HOSTNAME\007"'
     export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
     ;;
 *)
@@ -165,6 +165,12 @@ if [ "$TERM" != "dumb" ]; then
     [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
     [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
     export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+fi
+
+# https://github.com/jml/undistract-me
+if [ -f /usr/share/undistract-me/long-running.bash ]; then
+    source /usr/share/undistract-me/long-running.bash
+    notify_when_long_running_commands_finish_install
 fi
 
 # Specific
