@@ -159,6 +159,7 @@
   ;; get dependencies
   (use-package helm-swoop)
   (use-package helm-descbinds :config (helm-descbinds-mode t))
+  (use-package helm-ag)
 
   (setq helm-buffer-skip-remote-checking t)
   (setq helm-split-window-default-side 'same)
