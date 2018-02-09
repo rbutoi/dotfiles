@@ -837,6 +837,15 @@ comment box."
   :bind (("C-x g" . magit-status)))
 #+END_SRC
 
+** clang-format
+#+BEGIN_SRC emacs-lisp
+(use-package clang-format
+  :bind (("C-c i" . clang-format-region)
+         ("C-c u" . clang-format-buffer))
+  :config
+  (setq clang-format-style-option "file"))
+#+END_SRC
+
 ** Meta/misc
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
