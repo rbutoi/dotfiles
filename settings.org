@@ -30,23 +30,29 @@
     (interactive)
     (cond ((string= next-bg 'dark)
            (progn
-             (disable-theme 'twilight-bright)
+             ;; (disable-theme 'twilight-bright)
              (load-theme 'solarized-dark)
 
-             (setq next-bg 'light)))
-          ((string= next-bg 'light)
-           (progn
-             (disable-theme 'solarized-dark)
-             (load-theme 'solarized-light)
-
+             ;; (setq next-bg 'light)))
              (setq next-bg 'off)))
+
+          ;; ((string= next-bg 'light)
+          ;;  (progn
+          ;;    (disable-theme 'solarized-dark)
+          ;;    (load-theme 'solarized-light)
+
+          ;;    (setq next-bg 'off)))
           ((string= next-bg 'off)
            (progn
-             (disable-theme 'solarized-light)
+             ;; (disable-theme 'solarized-light)
+             (disable-theme 'solarized-dark)
              (setq next-bg 'dark)))))
 
-  (load-theme 'solarized-dark)
-  (setq next-bg 'light)
+  (when (string= (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")
+                 "gtk2-theme-solarizeddark\n")
+    (load-theme 'solarized-dark))
+  ;; (setq next-bg 'light)
+  (setq next-bg 'off)
   
   (cond
    ((find-font (font-spec :name "Ubuntu Mono"))
@@ -634,19 +640,20 @@ comment box."
 
 ** projectile
 #+BEGIN_SRC emacs-lisp
+(defun bind-other-file (map)
+  (bind-key "C-c C-o"
+            (lambda () (interactive)
+              (if (projectile-project-p)
+                  (projectile-find-other-file) (ff-find-other-file)))
+            map))
 (use-package projectile
   :init (projectile-mode 1)
   :config
   (add-to-list 'projectile-globally-ignored-modes "term-mode")
-  (use-package helm-projectile :init (helm-projectile-on))
-
-  (add-hook
-   'c-mode-common-hook
-   (lambda ()
-     (bind-key "C-c C-o"
-               (lambda () (interactive)
-                 (if (projectile-project-p)
-                     (projectile-find-other-file) (ff-find-other-file)))))))
+  (add-hook 'c-mode-hook (lambda () (bind-other-file c-mode-map)))
+  (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map))))
+(use-package helm-projectile
+  :init (helm-projectile-on))
 #+END_SRC
 
 ** hl-line-mode
