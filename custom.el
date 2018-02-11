@@ -14,7 +14,7 @@
  '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
-    ("c1390663960169cd92f58aad44ba3253227d8f715c026438303c09b9fb66cdfb" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "c72a772c104710300103307264c00a04210c00f6cc419a79b8af7890478f380e" "43c1a8090ed19ab3c0b1490ce412f78f157d69a29828aa977dae941b994b4147" "31992d4488dba5b28ddb0c16914bf5726dc41588c2b1c1a2fd16516ea92c1d8e" "44c566df0e1dfddc60621711155b1be4665dd3520b290cb354f8270ca57f8788" "67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" default)))
+    ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "c1390663960169cd92f58aad44ba3253227d8f715c026438303c09b9fb66cdfb" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "c72a772c104710300103307264c00a04210c00f6cc419a79b8af7890478f380e" "43c1a8090ed19ab3c0b1490ce412f78f157d69a29828aa977dae941b994b4147" "31992d4488dba5b28ddb0c16914bf5726dc41588c2b1c1a2fd16516ea92c1d8e" "44c566df0e1dfddc60621711155b1be4665dd3520b290cb354f8270ca57f8788" "67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" default)))
  '(doc-view-continuous t)
  '(doc-view-resolution 300)
  '(fci-rule-character-color "#d9d9d9")
@@ -49,12 +49,33 @@
  '(org-agenda-files (quote ("~/Documents/google-drive/journal/20170308")))
  '(package-selected-packages
    (quote
-    (protobuf-mode esup yasnippet-snippets yasnippet twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
+    (clang-format protobuf-mode esup yasnippet-snippets yasnippet twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+           (setq switch-org-and-elisp-map
+                 (make-sparse-keymap))
+           (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
+           (bind-key "C-c m"
+                     (lambda nil
+                       (interactive)
+                       (if
+                           (string=
+                            (quote emacs-lisp-mode)
+                            major-mode)
+                           (progn
+                             (org-mode)
+                             (switch-org-and-elisp-mode t))
+                         (progn
+                           (emacs-lisp-mode)
+                           (switch-org-and-elisp-mode t))))
+                     switch-org-and-elisp-map)
+           (switch-org-and-elisp-mode 1)))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
- '(term-default-bg-color "#002b36")
- '(term-default-fg-color "#839496")
+ ;; '(term-default-bg-color "#002b36")
+ ;; '(term-default-fg-color "#839496")
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map

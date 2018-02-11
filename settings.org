@@ -11,11 +11,8 @@
 (require 'use-package)
 (setq use-package-verbose t
       use-package-always-ensure t)
-(use-package diminish)
 (require 'bind-key)
 
-(load "~/.emacs.d/custom.el")
-      ;; 'no-error 'no-message
 #+END_SRC
 
 * UI
@@ -46,7 +43,8 @@
            (progn
              ;; (disable-theme 'solarized-light)
              (disable-theme 'solarized-dark)
-             (setq next-bg 'dark)))))
+             (setq next-bg 'dark))))
+    (sml/setup))
 
   (when (string= (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")
                  "gtk2-theme-solarizeddark\n")
@@ -84,6 +82,55 @@
 
 ;; fix for school computers
 (when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
+#+END_SRC
+
+** smart-mode-line
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+  :config
+  (setq rm-whitelist
+        (format "^ \\(%s\\)$"
+                (mapconcat #'identity
+                           '("Fly.*" "Ace*")
+                           "\\|")))
+  (sml/setup))
+#+END_SRC
+
+*** Buffers and windows
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+  :bind (("C-x o" . ace-window)
+         ("C-x C-o" . ace-window))
+  :config
+  (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
+
+(defun m-buffer-binds (m)
+  (bind-keys :map m
+             ("M-o" . other-window)
+             ("M-i" . (lambda() (interactive) (other-window -1)))
+             ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
+             ("C-k" . kill-this-buffer) ; defies name but whatevs
+             ("M-0" . delete-window)
+             ("M-1" . delete-other-windows)
+             ("M-2" . split-window-below)
+             ("M-3" . split-window-right)
+             ("M-=" . balance-windows)))
+(m-buffer-binds (current-global-map))
+
+(use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
+
+(setq split-height-threshold nil
+      split-width-threshold 120)
+
+(use-package buffer-move
+  :bind (("<C-S-up>" . buf-move-up)
+         ("<C-S-down>" . buf-move-down)
+         ("<C-S-left>" . buf-move-left)
+         ("<C-S-right>" . buf-move-right)))
+
+(use-package golden-ratio
+  :config
+  (setq golden-ratio-adjust-factor 0.65))
 #+END_SRC
 
 ** Files
@@ -235,12 +282,6 @@
   (add-hook 'kill-emacs-hook 'save-framegeometry))
 #+END_SRC
 
-** rich-majority-mode
-#+BEGIN_SRC emacs-lisp
-;; (rich-minority-mode 1)
-;; (setq rm-blacklist ".*")
-#+END_SRC
-
 ** big-fringe-mode
 #+BEGIN_SRC emacs-lisp
 (defvar big-fringe-mode nil)
@@ -330,12 +371,13 @@ comment box."
 ** Undoing, undo tree
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
-  :config
-  (setq undo-tree-visualizer-timestamps t)
-  (setq undo-tree-visualizer-diff t)
-  (global-undo-tree-mode 1)
   :bind (("C-z" . undo)
-         ("C-x C-u" . undo-tree-visualize)))
+         ("C-x C-u" . undo-tree-visualize)
+         ("C-x u" . undo-tree-visualize))
+  :config
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t)
+  (global-undo-tree-mode 1))
 #+END_SRC
 
 ** Flyspell
@@ -543,7 +585,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :init (global-company-mode)
-  :bind (([tab] . company-indent-or-complete-common))
+  :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
   :config
   (defun setup-company-c/c++ ()
     (setq-local company-backends '(company-irony
@@ -569,7 +611,6 @@ comment box."
   (setq company-backends (delete 'company-dabbrev-code company-backends))
   (setq company-backends (delete 'company-capf company-backends))
   (add-to-list 'company-backends '(company-capf :with company-dabbrev-code))
-
 
   ;; Messy, but it works
   (bind-key "<C-tab>" 'hippie-expand))
@@ -747,7 +788,7 @@ comment box."
   :config
   ;; guess offset don't need the global modeline
   (dtrt-indent-mode 1)
-  (add-hook 'prog-mode-hook (lambda() (delete 'dtrt-indent-mode-line-info global-mode-string))))
+  (add-hook 'prog-mode-hook (lambda () (delete 'dtrt-indent-mode-line-info global-mode-string))))
 
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
@@ -769,6 +810,8 @@ comment box."
 ** Term
 #+BEGIN_SRC emacs-lisp
 (use-package sane-term
+  :bind (("<f6>" . term-into-dir)
+         ("S-<f6>" . term-into-dir-create))
   :config
   (defun term-into-dir-internal (create)
     (let ((cmd ""))
@@ -794,10 +837,7 @@ comment box."
 
   (defun term-into-dir-create (arg)
     (interactive "P")
-    (term-into-dir-internal t))
-
-  :bind (("<f6>" . term-into-dir)
-         ("S-<f6>" . term-into-dir-create)))
+    (term-into-dir-internal t)))
 
 (unbind-key "M-!")
 (bind-key "C-!" 'shell-command)
@@ -815,8 +855,9 @@ comment box."
      (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
      (bind-keys :map term-raw-map
                 ("<C-backspace>" . term-send-backwards-delete-word)
-                ("<M-backspace>" . term-send-backwards-delete-word))
-     (bind-keys :map term-mode-map
+                ("<M-backspace>" . term-send-backwards-delete-word)
+                ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
+                :map term-mode-map
                 ("C-x C-k" . term-char-mode)
                 ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
                 ("C-x C-j" . (lambda nil (interactive))))
