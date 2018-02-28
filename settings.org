@@ -585,7 +585,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :init (global-company-mode)
-  :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
+  ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
   :config
   (defun setup-company-c/c++ ()
     (setq-local company-backends '(company-irony
@@ -613,7 +613,7 @@ comment box."
   (add-to-list 'company-backends '(company-capf :with company-dabbrev-code))
 
   ;; Messy, but it works
-  (bind-key "<C-tab>" 'hippie-expand))
+  (bind-key "<C-tab>" 'dabbrev-expand))
 #+END_SRC
 
 ** Irony & RTags
@@ -635,7 +635,8 @@ comment box."
                ("M-," . rtags-find-references-at-point)
                ("C-o" . (lambda () (interactive) (if (rtags-is-indexed) (rtags-imenu) (helm-semantic-or-imenu))))
                ("C-c C-r f" . rtags-next-match)
-               ("C-c C-r b" . rtags-previous-match)))
+               ("C-c C-r b" . rtags-previous-match)
+               ("C-S-t" . rtags-find-symbol)))
   (add-hook 'c++-mode-hook 'setup-rtags-c/c++)
   (add-hook 'c-mode-hook 'setup-rtags-c/c++)
   )
@@ -810,8 +811,8 @@ comment box."
 ** Term
 #+BEGIN_SRC emacs-lisp
 (use-package sane-term
-  :bind (("<f6>" . term-into-dir)
-         ("S-<f6>" . term-into-dir-create))
+  :bind (("C-x C-t" . term-into-dir)
+         ("C-x t" . term-into-dir-create))
   :config
   (defun term-into-dir-internal (create)
     (let ((cmd ""))
