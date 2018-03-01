@@ -47,6 +47,9 @@ shopt -s extglob
 
 shopt -s checkwinsize
 
+# https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
+stty -ixon
+
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend
 
