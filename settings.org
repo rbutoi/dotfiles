@@ -46,9 +46,10 @@
              (setq next-bg 'dark))))
     (sml/setup))
 
-  (when (string= (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")
-                 "gtk2-theme-solarizeddark\n")
-    (load-theme 'solarized-dark))
+  (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
+    (when (or (string= cmd-out "gtk2-theme-solarizeddark\n")
+              (string= cmd-out "xfconf-query: Command not found.\n"))
+      (load-theme 'solarized-dark)))
   ;; (setq next-bg 'light)
   (setq next-bg 'off)
   
