@@ -5,11 +5,23 @@ import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
 
+import qualified DBus as D
+import qualified DBus.Client as D
 import qualified XMonad.StackSet as W
 
-main = xmonad $ xfceConfig
+main :: IO ()
+main = do
+  dbus <- D.connectSession
+  -- Request access to the DBus name
+  D.requestName dbus (D.busName_ "org.xmonad.Log")
+    [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+
+  xmonad $ xfceConfig
     { modMask = mod1Mask
-    , handleEventHook = fullscreenEventHook
+    , manageHook = manageDocks <+> manageHook xfceConfig
+    , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
+    , handleEventHook = fullscreenEventHook <+> ewmhDesktopsEventHook
+    , startupHook = ewmhDesktopsStartup <+> startupHook xfceConfig
     , terminal = "xfce4-terminal"
     , borderWidth = 3
     , workspaces = map show [1..4]
