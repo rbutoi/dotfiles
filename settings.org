@@ -550,6 +550,11 @@ comment box."
           (lambda () (progn (bind-key "C-c C-d" 'cperl-perldoc perl-mode-map))))
 #+END_SRC
 
+*** Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode)
+#+END_SRC
+
 *** ASM mode
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'asm-mode
@@ -876,7 +881,8 @@ comment box."
 ** magit
 #+BEGIN_SRC emacs-lisp
 (use-package magit
-  :bind (("C-x g" . magit-status)))
+  :bind (("C-x g" . magit-status)
+         ("C-x C-g" . magit-status)))
 #+END_SRC
 
 ** clang-format
