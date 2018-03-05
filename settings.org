@@ -856,7 +856,7 @@ comment box."
             (setq term-buffer-maximum-size 20000)
             (toggle-truncate-lines nil)
             ;; (yas-minor-mode -1) ; give me my ^C
-            (projectile-mode -1)))
+            ))
 (eval-after-load 'term
   '(progn
      (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
