@@ -19,39 +19,46 @@
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
+;; toggle dark/light
+(defun toggle-theme ()
+  (interactive)
+  (cond ((string= next-bg 'dark)
+         (progn
+           ;; (disable-theme 'twilight-bright)
+           (load-theme 'solarized-dark)
+
+           ;; (setq next-bg 'light)))
+           (setq next-bg 'off)))
+
+        ;; ((string= next-bg 'light)
+        ;;  (progn
+        ;;    (disable-theme 'solarized-dark)
+        ;;    (load-theme 'solarized-light)
+
+        ;;    (setq next-bg 'off)))
+        ((string= next-bg 'off)
+         (progn
+           ;; (disable-theme 'solarized-light)
+           (disable-theme 'solarized-dark)
+           (setq next-bg 'dark))))
+  (sml/setup)
+
+  ;; a bit more contrast to keep track of curent window
+  (set-face-attribute  'mode-line
+                       nil
+                       :box '(:line-width 3 :style released-button))
+  (set-face-attribute  'mode-line-inactive
+                       nil
+                       :box nil))
 (use-package solarized-theme
   :if (window-system)
   :config
-  ;; toggle dark/light
-  (defun toggle-theme ()
-    (interactive)
-    (cond ((string= next-bg 'dark)
-           (progn
-             ;; (disable-theme 'twilight-bright)
-             (load-theme 'solarized-dark)
-
-             ;; (setq next-bg 'light)))
-             (setq next-bg 'off)))
-
-          ;; ((string= next-bg 'light)
-          ;;  (progn
-          ;;    (disable-theme 'solarized-dark)
-          ;;    (load-theme 'solarized-light)
-
-          ;;    (setq next-bg 'off)))
-          ((string= next-bg 'off)
-           (progn
-             ;; (disable-theme 'solarized-light)
-             (disable-theme 'solarized-dark)
-             (setq next-bg 'dark))))
-    (sml/setup))
+  (setq next-bg 'dark)
 
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
     (when (or (string= cmd-out "gtk2-theme-solarizeddark\n")
               (string= cmd-out "xfconf-query: Command not found.\n"))
-      (load-theme 'solarized-dark)))
-  ;; (setq next-bg 'light)
-  (setq next-bg 'off)
+      (toggle-theme)))
   
   (cond
    ((find-font (font-spec :name "Ubuntu Mono"))
@@ -69,13 +76,6 @@
   (set-display-table-slot display-table 'vertical-border (make-glyph-code ?│))
   (setq standard-display-table display-table))
 
-;; a bit more contrast to keep track of curent window
-(set-face-attribute  'mode-line
-                     nil
-                     :box '(:line-width 3 :style released-button))
-(set-face-attribute  'mode-line-inactive
-                     nil
-                     :box nil)
 (eval-after-load 'hl-line
   (lambda () (set-face-attribute 'hl-line nil)))
 (eval-after-load 'which-func
@@ -695,11 +695,11 @@ comment box."
                   (projectile-find-other-file) (ff-find-other-file)))
             map))
 (use-package projectile
-  :init (projectile-mode 1)
   :config
   (add-to-list 'projectile-globally-ignored-modes "term-mode")
   (add-hook 'c-mode-hook (lambda () (bind-other-file c-mode-map)))
-  (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map))))
+  (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map)))
+  )
 (use-package helm-projectile
   :init (helm-projectile-on))
 #+END_SRC
@@ -838,40 +838,41 @@ comment box."
                                     (insert ssh-cd-command)
                                     (term-send-input)
                                     (term-char-mode))))))
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (term-set-escape-char ?\C-x)
+              (setq term-buffer-maximum-size 20000)
+              (toggle-truncate-lines nil)
+              ))
+  (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
+
+  (eval-after-load 'term
+    '(progn
+       (bind-keys :map term-raw-map
+                  ("<C-backspace>" . term-send-backwards-delete-word)
+                  ("<M-backspace>" . term-send-backwards-delete-word)
+                  ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
+                  :map term-mode-map
+                  ("C-x C-k" . term-char-mode)
+                  ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
+                  ("C-x C-j" . (lambda nil (interactive))))
+       (setq comint-move-point-for-output nil
+             comint-scroll-show-maximum-output nil
+             term-suppress-hard-newline t
+             term-prompt-regexp "^.*[%$] ")
+       (m-buffer-binds term-raw-map)
+       ))
+
   (defun term-into-dir (arg)
     (interactive "P")
     (term-into-dir-internal nil))
-
   (defun term-into-dir-create (arg)
     (interactive "P")
-    (term-into-dir-internal t)))
+    (term-into-dir-internal t))
+  )
 
 (unbind-key "M-!")
 (bind-key "C-!" 'shell-command)
-(setq term-suppress-hard-newline t
-      term-prompt-regexp "^.*[%$] ")
-(add-hook 'term-mode-hook
-          (lambda ()
-            (term-set-escape-char ?\C-x)
-            (setq term-buffer-maximum-size 20000)
-            (toggle-truncate-lines nil)
-            ;; (yas-minor-mode -1) ; give me my ^C
-            ))
-(eval-after-load 'term
-  '(progn
-     (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
-     (bind-keys :map term-raw-map
-                ("<C-backspace>" . term-send-backwards-delete-word)
-                ("<M-backspace>" . term-send-backwards-delete-word)
-                ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
-                :map term-mode-map
-                ("C-x C-k" . term-char-mode)
-                ([tab] . (lambda () (interactive) (term-send-raw-string "\t")))
-                ("C-x C-j" . (lambda nil (interactive))))
-     (setq comint-move-point-for-output nil
-           comint-scroll-show-maximum-output nil)
-     
-     (m-buffer-binds term-raw-map)))
 #+END_SRC
 
 ** subword-mode
