@@ -18,11 +18,9 @@ gdb
 ghostscript
 gimp
 git
-glsof
 grub
 gtk-engine-murrine
 haskell-dbus
-hdf5
 htop
 hunspell-en
 hunspell-en_CA
@@ -37,7 +35,6 @@ mlocate
 moreutils
 mosh
 mpv
-net-tools
 nmap
 opencv
 openssh
@@ -58,6 +55,7 @@ texlive-ieeetran
 texlive-local-algorithm2e
 texlive-localmanager-git
 the_silver_searcher
+thunderbird
 tmux
 ttf-hack
 ttf-ubuntu-font-family
