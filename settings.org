@@ -41,7 +41,6 @@
            ;; (disable-theme 'solarized-light)
            (disable-theme 'solarized-dark)
            (setq next-bg 'dark))))
-  (sml/setup)
 
   ;; a bit more contrast to keep track of curent window
   (set-face-attribute  'mode-line
@@ -85,16 +84,17 @@
 (when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
 #+END_SRC
 
-** smart-mode-line
+** rich-minority-mode
 #+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
+(use-package rich-minority-mode
   :config
   (setq rm-whitelist
         (format "^ \\(%s\\)$"
                 (mapconcat #'identity
                            '("Fly.*" "Ace*")
                            "\\|")))
-  (sml/setup))
+  (rich-minority-mode t)
+  )
 #+END_SRC
 
 *** Buffers and windows
