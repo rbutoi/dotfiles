@@ -364,11 +364,6 @@ comment box."
     (goto-char (point-max))))
 #+END_SRC
 
-** Newline indents
-#+BEGIN_SRC emacs-lisp
-(bind-key "RET" 'newline-and-indent)
-#+END_SRC
-
 ** Undoing, undo tree
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
