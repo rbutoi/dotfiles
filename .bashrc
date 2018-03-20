@@ -129,7 +129,7 @@ alias l='ls -F'
 alias ll='l -lA -h'
 alias n="nano"
 alias g="grep --color=always -i"
-alias p="ps aux|grep `whoami`"
+alias pg="ps aux | grep -v grep | grep"
 alias chmox="chmod +x"
 alias ..="cd .."
 alias ...="cd ../.."
