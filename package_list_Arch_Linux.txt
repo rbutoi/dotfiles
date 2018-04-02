@@ -21,6 +21,7 @@ git
 grub
 gtk-engine-murrine
 haskell-dbus
+hdf5
 htop
 hunspell-en
 hunspell-en_CA
@@ -29,6 +30,7 @@ jre7-openjdk
 keychain
 lastpass-cli
 libreoffice-fresh
+lsb-release
 lsof
 meld
 mlocate
