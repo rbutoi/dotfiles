@@ -30,9 +30,12 @@ debconf-i18n
 debconf-utils
 debianutils
 dhcpcd5
+dialog
 diffutils
 dmidecode
 dmsetup
+dnsmasq
+dnsutils
 dosfstools
 dphys-swapfile
 dpkg
@@ -64,6 +67,7 @@ gzip
 hardlink
 hostname
 htop
+idn2
 ifupdown
 info
 init
@@ -200,12 +204,14 @@ libustr-1.0-1
 libuuid1
 libxapian30
 libxtables12
+lighttpd
 linux-base
 locales
 locate
 login
 logrotate
 lsb-base
+lsof
 lua5.1
 luajit
 makedev
@@ -223,6 +229,7 @@ ncurses-base
 ncurses-bin
 net-tools
 netbase
+netcat
 netcat-openbsd
 netcat-traditional
 nfs-common
@@ -230,6 +237,9 @@ parted
 passwd
 paxctld
 perl-base
+php-cgi
+php-common
+php-sqlite3
 pi-bluetooth
 pinentry-curses
 pkg-config
