@@ -86,7 +86,7 @@
 
 ** rich-minority-mode
 #+BEGIN_SRC emacs-lisp
-(use-package rich-minority-mode
+(use-package rich-minority
   :config
   (setq rm-whitelist
         (format "^ \\(%s\\)$"
@@ -140,6 +140,7 @@
       auto-save-file-name-transforms '((".*" "~/.emacs.d/backups/\\1" t)))
 
 (bind-key "C-c r" 'revert-buffer)
+(bind-key "C-c C-r" 'revert-buffer)
 (global-auto-revert-mode 1)
 
 (setq-default save-place t)
@@ -580,6 +581,16 @@ comment box."
                   TeX-view-program-selection '((output-pdf "Xreader")))
             (auto-fill-mode)
             (setq TeX-command-force "LaTeX")))
+#+END_SRC
+
+*** rust
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode)
+#+END_SRC
+
+*** pkgbuild
+#+BEGIN_SRC emacs-lisp
+(use-package pkgbuild-mode)
 #+END_SRC
 
 ** Company
