@@ -849,6 +849,7 @@ comment box."
               (term-set-escape-char ?\C-x)
               (setq term-buffer-maximum-size 20000)
               (toggle-truncate-lines nil)
+              (setq bidi-paragraph-direction 'left-to-right)
               ))
   (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
 
