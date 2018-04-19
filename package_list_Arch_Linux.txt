@@ -6,12 +6,13 @@ aspell-en
 bash-completion
 bear
 boost
+caprine
 clang
 cmake
 cower
 drive
-eclipse-java
 emacs
+exa
 firefox
 fzf
 gdb
@@ -75,4 +76,3 @@ xsel
 youtube-dl
 zile
 zip
-zookeeper

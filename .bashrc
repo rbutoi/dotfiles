@@ -128,6 +128,8 @@ alias l='ls -F'
 [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
 alias ll='l -lA -h'
 alias n="nano"
+alias z="zile"
+alias sz="sudo zile"
 alias g="grep --color=always -i"
 alias pg="ps aux | grep -v grep | grep"
 alias chmox="chmod +x"

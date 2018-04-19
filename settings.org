@@ -105,12 +105,18 @@
   :config
   (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
 
+(defun kill-all-buffers ()
+  (interactive)
+  (mapc 'kill-buffer (buffer-list))
+  (delete-other-windows))
+
 (defun m-buffer-binds (m)
   (bind-keys :map m
              ("M-o" . other-window)
              ("M-i" . (lambda() (interactive) (other-window -1)))
              ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
+             ("C-S-k" . kill-all-buffers)
              ("M-0" . delete-window)
              ("M-1" . delete-other-windows)
              ("M-2" . split-window-below)
