@@ -740,8 +740,9 @@ comment box."
 (add-hook 'prog-mode-hook
           (lambda () (bind-key "<f7>"
                                (lambda () (interactive)
-                                 (when (locate-dominating-file default-directory "Makefile")
-                                   (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile)))))))
+                                 (if (locate-dominating-file default-directory "Makefile")
+                                     (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile))
+                                   (call-interactively 'compile))))))
 (add-hook 'prog-mode-hook (lambda ()) (bind-key "<f8>" 'recompile))
 (setq compilation-message-face 'default)
 #+END_SRC

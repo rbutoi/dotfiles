@@ -13,6 +13,7 @@ cower
 drive
 emacs
 exa
+fd
 firefox
 fzf
 gdb
