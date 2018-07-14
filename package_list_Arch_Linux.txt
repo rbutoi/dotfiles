@@ -20,6 +20,7 @@ gdb
 ghostscript
 gimp
 git
+gitg
 grub
 gtk-engine-murrine
 haskell-dbus
@@ -40,7 +41,6 @@ moreutils
 mosh
 mpv
 nmap
-opencv
 openssh
 pacaur
 pamac-aur
@@ -50,7 +50,6 @@ pygtk
 python2
 python-numpy
 rtags
-rust
 sox
 speedtest-cli
 strace
@@ -60,6 +59,7 @@ texlive-local-algorithm2e
 texlive-localmanager-git
 the_silver_searcher
 thunderbird
+tk
 tmux
 ttf-hack
 ttf-ubuntu-font-family
