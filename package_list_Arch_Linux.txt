@@ -36,6 +36,7 @@ libreoffice-fresh
 lsb-release
 lsof
 meld
+mesa-demos
 mlocate
 moreutils
 mosh
@@ -66,7 +67,7 @@ ttf-ubuntu-font-family
 undistract-me-git
 unzip
 valgrind
-virtualbox-guest-utils
+vmware-tools
 xarchiver
 xclip
 xmonad
