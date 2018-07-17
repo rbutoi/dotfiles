@@ -9,6 +9,7 @@ boost
 caprine
 clang
 cmake
+compton
 cower
 drive
 emacs
@@ -62,6 +63,7 @@ the_silver_searcher
 thunderbird
 tk
 tmux
+transset-df
 ttf-hack
 ttf-ubuntu-font-family
 undistract-me-git

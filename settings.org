@@ -80,8 +80,9 @@
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
-;; fix for school computers
-(when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
+;; transparency if supported
+(set-frame-parameter (selected-frame) 'alpha 85)
+
 #+END_SRC
 
 ** rich-minority-mode
@@ -541,6 +542,9 @@ comment box."
 (setq-default fill-column 80)
 (delete-selection-mode 1)
 (put 'narrow-to-region 'disabled nil)
+
+;; fix for school computers
+(when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
 #+END_SRC
 
 * Programming

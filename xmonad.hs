@@ -9,6 +9,10 @@ import qualified DBus as D
 import qualified DBus.Client as D
 import qualified XMonad.StackSet as W
 
+myStartupHook = do
+  startupHook xfceConfig
+  spawn "compton -b"
+
 main :: IO ()
 main = do
   dbus <- D.connectSession
@@ -21,7 +25,7 @@ main = do
     , manageHook = manageDocks <+> manageHook xfceConfig
     , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
     , handleEventHook = fullscreenEventHook <+> ewmhDesktopsEventHook
-    , startupHook = ewmhDesktopsStartup <+> startupHook xfceConfig
+    , startupHook = ewmhDesktopsStartup <+> myStartupHook
     , terminal = "xfce4-terminal"
     , borderWidth = 3
     , workspaces = map show [1..4]
