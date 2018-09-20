@@ -56,7 +56,8 @@
 
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
     (when (or (string= cmd-out "gtk2-theme-solarizeddark\n")
-              (string= cmd-out "xfconf-query: Command not found.\n"))
+              (string= cmd-out "xfconf-query: Command not found.\n")
+              (eq system-type 'darwin))
       (toggle-theme)))
   
   (cond
@@ -363,6 +364,8 @@
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
+
+(setq ns-command-modifier 'control)
 
 #+END_SRC
 * Editing
@@ -859,9 +862,10 @@ comment box."
       (when (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
-                (user (tramp-file-name-user dissected))
+                (user (concat (tramp-file-name-user dissected)))
                 (dir  (tramp-file-name-localname dissected)))
-            (setq ssh-cd-command (concat "exec ssh -t " user "@" host " 'cd " dir " && exec bash -l'")))))
+                (when (string= user "@") (setq user ""))
+                (setq ssh-cd-command (concat "exec ssh -t " user host " 'cd " dir " && exec bash -l'")))))
       (if create
           (sane-term-create)
         (sane-term))
