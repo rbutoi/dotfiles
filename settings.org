@@ -55,9 +55,7 @@
   (setq next-bg 'dark)
 
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
-    (when (or (string= cmd-out "gtk2-theme-solarizeddark\n")
-              (string= cmd-out "xfconf-query: Command not found.\n")
-              (eq system-type 'darwin))
+    (unless (string= cmd-out "gtk2-theme-solarizedlight\n")
       (toggle-theme)))
   
   (cond
