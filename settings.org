@@ -82,8 +82,7 @@
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
 ;; transparency if supported
-(when (eq system-type 'gnu/linux)
-  (set-frame-parameter (selected-frame) 'alpha 85))
+(set-frame-parameter (selected-frame) 'alpha 95)
 
 #+END_SRC
 
