@@ -625,63 +625,66 @@ comment box."
 
 ** Company
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :init (global-company-mode)
-  ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
-  :config
-  (defun setup-company-c/c++ ()
-    (setq-local company-backends '(company-irony
-                                   company-irony-c-headers))
-    (bind-keys :map c-mode-base-map
-               ([tab] . company-indent-or-complete-common)
-               :map c++-mode-map
-               ([tab] . company-indent-or-complete-common))
-    )
-  (add-hook 'c++-mode-hook 'setup-company-c/c++)
-  (add-hook 'c-mode-hook 'setup-company-c/c++)
+  (use-package company
+    :init (global-company-mode)
+    ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
+    :config
+    (defun setup-company-c/c++ ()
+      (setq-local company-backends '(company-irony
+                                     company-irony-c-headers))
+      (bind-keys :map c-mode-base-map
+                 ([tab] . company-indent-or-complete-common)
+                 :map c++-mode-map
+                 ([tab] . company-indent-or-complete-common))
+      )
+    (add-hook 'c++-mode-hook 'setup-company-c/c++)
+    (add-hook 'c-mode-hook 'setup-company-c/c++)
 
-  (setq
-   company-idle-delay nil
-   tab-always-indent 'complete
-   company-dabbrev-downcase nil)
+    (setq
+     company-idle-delay nil
+     tab-always-indent 'complete
+     company-dabbrev-downcase nil)
 
-  ;; Add to front
-  (setq company-backends (delete 'company-dabbrev company-backends))
-  (add-to-list 'company-backends 'company-dabbrev)
+    ;; ;; Add to front
+    ;; (setq company-backends (delete 'company-dabbrev company-backends))
+    ;; (add-to-list 'company-backends 'company-dabbrev)
 
-  ;; Use -capf :with -code
-  (setq company-backends (delete 'company-dabbrev-code company-backends))
-  (setq company-backends (delete 'company-capf company-backends))
-  (add-to-list 'company-backends '(company-capf :with company-dabbrev-code))
+    ;; ;; Use -capf :with -code
+    ;; (setq company-backends (delete 'company-dabbrev-code company-backends))
+    ;; (setq company-backends (delete 'company-capf company-backends))
+    ;; (add-to-list 'company-backends '(company-capf :with company-dabbrev-code))
 
-  ;; Messy, but it works
-  (bind-key "<C-tab>" 'dabbrev-expand))
+    ;; ;; Messy, but it works
+    ;; (bind-key "<C-tab>" 'dabbrev-expand)
+  )
 #+END_SRC
 
 ** Irony & RTags
 #+BEGIN_SRC emacs-lisp
-(use-package irony
-  :hook ((irony-mode . irony-cdb-autosetup-compile-options)
-         (c++-mode . irony-mode)
-         (c-mode . irony-mode))
-  :config
-  (use-package company-irony)
+;; Take out in favour of Google stuff, for now
 
-  (setq irony-cdb-search-directory-list '("." "build" "build-Debug" "build-Release"))
+;; (use-package irony
+;;   :hook ((irony-mode . irony-cdb-autosetup-compile-options)
+;;          (c++-mode . irony-mode)
+;;          (c-mode . irony-mode))
+;;   :config
+;;   (use-package company-irony)
 
-  (require 'rtags)
-  (defun setup-rtags-c/c++ ()
-    (rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
-    (bind-keys :map c-mode-base-map
-               ("M-." . rtags-find-symbol-at-point)
-               ("M-," . rtags-find-references-at-point)
-               ("C-o" . (lambda () (interactive) (if (rtags-is-indexed) (rtags-imenu) (helm-semantic-or-imenu))))
-               ("C-c C-r f" . rtags-next-match)
-               ("C-c C-r b" . rtags-previous-match)
-               ("C-S-t" . rtags-find-symbol)))
-  (add-hook 'c++-mode-hook 'setup-rtags-c/c++)
-  (add-hook 'c-mode-hook 'setup-rtags-c/c++)
-  )
+;;   (setq irony-cdb-search-directory-list '("." "build" "build-Debug" "build-Release"))
+
+;;   (require 'rtags)
+;;   (defun setup-rtags-c/c++ ()
+;;     (rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
+;;     (bind-keys :map c-mode-base-map
+;;                ("M-." . rtags-find-symbol-at-point)
+;;                ("M-," . rtags-find-references-at-point)
+;;                ("C-o" . (lambda () (interactive) (if (rtags-is-indexed) (rtags-imenu) (helm-semantic-or-imenu))))
+;;                ("C-c C-r f" . rtags-next-match)
+;;                ("C-c C-r b" . rtags-previous-match)
+;;                ("C-S-t" . rtags-find-symbol)))
+;;   (add-hook 'c++-mode-hook 'setup-rtags-c/c++)
+;;   (add-hook 'c-mode-hook 'setup-rtags-c/c++)
+;;   )
 #+END_SRC
 
 ** No namespace intent
@@ -704,22 +707,24 @@ comment box."
 
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck
-  :demand
-  :hook (;; (flycheck-mode . flycheck-rust-setup)
-         ;; (rust-mode     . flycheck-mode)
-         (perl-mode     . flycheck-mode)
-         (c-mode        . flycheck-mode)
-         (c++-mode      . flycheck-mode))
-  :config
-  (setq flycheck-display-errors-delay 0))
-(defun setup-flycheck-irony-c/c++ ()
-  (add-to-list 'flycheck-disabled-checkers 'c/c++-clang)
-  (add-to-list 'flycheck-disabled-checkers 'c/c++-gcc))
-(use-package flycheck-irony
-  :hook ((flycheck-mode . flycheck-irony-setup)
-         (c++-mode . setup-flycheck-irony-c/c++)
-         (c-mode . setup-flycheck-irony-c/c++)))
+;; GOOG
+
+;; (use-package flycheck
+;;   :demand
+;;   :hook (;; (flycheck-mode . flycheck-rust-setup)
+;;          ;; (rust-mode     . flycheck-mode)
+;;          (perl-mode     . flycheck-mode)
+;;          (c-mode        . flycheck-mode)
+;;          (c++-mode      . flycheck-mode))
+;;   :config
+;;   (setq flycheck-display-errors-delay 0))
+;; (defun setup-flycheck-irony-c/c++ ()
+;;   (add-to-list 'flycheck-disabled-checkers 'c/c++-clang)
+;;   (add-to-list 'flycheck-disabled-checkers 'c/c++-gcc))
+;; (use-package flycheck-irony
+;;   :hook ((flycheck-mode . flycheck-irony-setup)
+;;          (c++-mode . setup-flycheck-irony-c/c++)
+;;          (c-mode . setup-flycheck-irony-c/c++)))
 #+END_SRC
 
 ** projectile
