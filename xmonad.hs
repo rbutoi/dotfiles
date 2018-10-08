@@ -4,6 +4,7 @@ import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Layout.NoBorders
 
 import qualified DBus as D
 import qualified DBus.Client as D
@@ -23,6 +24,7 @@ main = do
   xmonad $ xfceConfig
     { modMask = mod1Mask
     , manageHook = manageDocks <+> manageHook xfceConfig
+    , layoutHook = smartBorders $ layoutHook xfceConfig
     , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
     , handleEventHook = fullscreenEventHook <+> ewmhDesktopsEventHook
     , startupHook = ewmhDesktopsStartup <+> myStartupHook
