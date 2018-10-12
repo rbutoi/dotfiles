@@ -59,6 +59,8 @@
       (toggle-theme)))
   
   (cond
+   ((find-font (font-spec :name "Monaco"))
+    (set-frame-font "Monaco-10"))
    ((find-font (font-spec :name "Ubuntu Mono"))
     (set-frame-font "Ubuntu Mono-11"))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
@@ -67,7 +69,8 @@
     (set-frame-font "Consolas-11")))
 
   (bind-key "C-x 7" 'toggle-theme)
-  (bind-key "C-x C-7" 'toggle-theme))
+  (bind-key "C-x C-7" 'toggle-theme)
+  (bind-key "C-x C-_" 'toggle-theme))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -80,7 +83,7 @@
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
 ;; transparency if supported
-(set-frame-parameter (selected-frame) 'alpha 95)
+(set-frame-parameter (selected-frame) 'alpha 92)
 
 #+END_SRC
 
@@ -315,6 +318,11 @@
   (define-globalized-minor-mode global-which-key-mode
     which-key-mode (lambda () (which-key-mode)))
   (global-which-key-mode))
+#+END_SRC
+
+** which-key-mode
+#+BEGIN_SRC emacs-lisp
+(use-package pos-tip)
 #+END_SRC
 
 ** Hide UI elements
@@ -553,6 +561,12 @@ comment box."
   (setq ztree-draw-unicode-lines t))
 #+END_SRC
 
+** ztree
+#+BEGIN_SRC emacs-lisp
+(use-package string-inflection
+  )
+#+END_SRC
+
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
@@ -595,7 +609,11 @@ comment box."
 
 *** C-like
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-common-hook 'electric-pair-local-mode)
+(add-hook 'c-mode-common-hook
+	  (lambda ()
+	    (electric-pair-local-mode)
+	    (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t)) c-mode-base-map)))
+
 #+END_SRC
 
 *** LaTeX
@@ -626,16 +644,16 @@ comment box."
     :init (global-company-mode)
     ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
     :config
-    (defun setup-company-c/c++ ()
-      (setq-local company-backends '(company-irony
-                                     company-irony-c-headers))
-      (bind-keys :map c-mode-base-map
-                 ([tab] . company-indent-or-complete-common)
-                 :map c++-mode-map
-                 ([tab] . company-indent-or-complete-common))
-      )
-    (add-hook 'c++-mode-hook 'setup-company-c/c++)
-    (add-hook 'c-mode-hook 'setup-company-c/c++)
+    ;; (defun setup-company-c/c++ ()
+    ;;   ;; (setq-local company-backends '(company-irony
+    ;;                                  ;; company-irony-c-headers))
+    ;;   (bind-keys :map c-mode-base-map
+    ;;              ([tab] . company-indent-or-complete-common)
+    ;;              :map c++-mode-map
+    ;;              ([tab] . company-indent-or-complete-common))
+    ;;   )
+    ;; (add-hook 'c++-mode-hook 'setup-company-c/c++)
+    ;; (add-hook 'c-mode-hook 'setup-company-c/c++)
 
     (setq
      company-idle-delay nil
@@ -726,20 +744,20 @@ comment box."
 
 ** projectile
 #+BEGIN_SRC emacs-lisp
-(defun bind-other-file (map)
-  (bind-key "C-c C-o"
-            (lambda () (interactive)
-              (if (projectile-project-p)
-                  (projectile-find-other-file) (ff-find-other-file)))
-            map))
-(use-package projectile
-  :config
-  (add-to-list 'projectile-globally-ignored-modes "term-mode")
-  (add-hook 'c-mode-hook (lambda () (bind-other-file c-mode-map)))
-  (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map)))
-  )
-(use-package helm-projectile
-  :init (helm-projectile-on))
+;; (defun bind-other-file (map)
+;;   (bind-key "C-c C-o"
+;;             (lambda () (interactive)
+;;               (if (projectile-project-p)
+;;                   (projectile-find-other-file) (ff-find-other-file)))
+;;             map))
+;; (use-package projectile
+;;   :config
+;;   (add-to-list 'projectile-globally-ignored-modes "term-mode")
+;;   (add-hook 'c-mode-hook (lambda () (bind-other-file c-mode-map)))
+;;   (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map)))
+;;   )
+;; (use-package helm-projectile
+;;   :init (helm-projectile-on))
 #+END_SRC
 
 ** hl-line-mode
@@ -763,12 +781,12 @@ comment box."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
-(add-hook 'prog-mode-hook
-          (lambda () (bind-key "<f7>"
-                               (lambda () (interactive)
-                                 (if (locate-dominating-file default-directory "Makefile")
-                                     (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile))
-                                   (call-interactively 'compile))))))
+;; (add-hook 'prog-mode-hook
+;;           (lambda () (bind-key "<f7>"
+;;                                (lambda () (interactive)
+;;                                  (if (locate-dominating-file default-directory "Makefile")
+;;                                      (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile))
+;;                                    (call-interactively 'compile))))))
 (add-hook 'prog-mode-hook (lambda ()) (bind-key "<f8>" 'recompile))
 (setq compilation-message-face 'default)
 #+END_SRC
@@ -961,7 +979,14 @@ comment box."
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
-* Emacs server
+*** Specific
+#+BEGIN_SRC emacs-lisp
+(let ((specific (concat user-emacs-directory "specific.el")))
+  (when (file-exists-p specific)
+    (load specific)))
+#+END_SRC
+
+*** Emacs server
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
