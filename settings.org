@@ -225,8 +225,9 @@
   (use-package helm-descbinds :config (helm-descbinds-mode t))
   (use-package helm-ag)
 
-  (setq helm-buffer-skip-remote-checking t)
-  (setq helm-split-window-default-side 'same)
+  (setq helm-buffer-skip-remote-checking t
+        helm-split-window-default-side 'same
+        helm-buffer-max-length 30)
 
   (let ((ack "ag"))
     (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
@@ -642,21 +643,15 @@ comment box."
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :init (global-company-mode)
-    ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
+    :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
     :config
-    ;; (defun setup-company-c/c++ ()
-    ;;   ;; (setq-local company-backends '(company-irony
-    ;;                                  ;; company-irony-c-headers))
-    ;;   (bind-keys :map c-mode-base-map
-    ;;              ([tab] . company-indent-or-complete-common)
-    ;;              :map c++-mode-map
-    ;;              ([tab] . company-indent-or-complete-common))
-    ;;   )
-    ;; (add-hook 'c++-mode-hook 'setup-company-c/c++)
-    ;; (add-hook 'c-mode-hook 'setup-company-c/c++)
+    (defun setup-company-c/c++ ()
+      ;; (setq-local company-backends '(company-irony
+                                     ;; company-irony-c-headers))
+      (bind-keys :map c-mode-base-map ([tab] . company-indent-or-complete-common)))
+    (add-hook 'c-mode-common-hook 'setup-company-c/c++)
 
     (setq
-     company-idle-delay nil
      tab-always-indent 'complete
      company-dabbrev-downcase nil)
 
@@ -762,8 +757,7 @@ comment box."
 
 ** hl-line-mode
 #+BEGIN_SRC emacs-lisp
-(when window-system
-  (add-hook 'prog-mode-hook 'hl-line-mode))
+(add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
 ** compiling
