@@ -60,7 +60,7 @@
   
   (cond
    ((find-font (font-spec :name "Monaco"))
-    (set-frame-font "Monaco-10"))
+    (set-frame-font "Monaco-11"))
    ((find-font (font-spec :name "Ubuntu Mono"))
     (set-frame-font "Ubuntu Mono-11"))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
