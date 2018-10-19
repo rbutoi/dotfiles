@@ -215,7 +215,8 @@
 
   (setq helm-buffer-skip-remote-checking t
         helm-split-window-default-side 'same
-        helm-buffer-max-length 30)
+        helm-buffer-max-length 30
+        helm-follow-mode-persistent t)
 
   (let ((ack "ag"))
     (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
@@ -309,7 +310,7 @@
   (global-which-key-mode))
 #+END_SRC
 
-** which-key-mode
+** pos-tip
 #+BEGIN_SRC emacs-lisp
 (use-package pos-tip)
 #+END_SRC
@@ -464,7 +465,7 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (bind-key "C-c s" 'toggle-truncate-lines)
 (bind-key "C-c C-s" 'toggle-truncate-lines)
-(set-default 'truncate-lines t)
+;; (set-default 'truncate-lines t)
 #+END_SRC
 
 ** zap-to-char
@@ -548,7 +549,8 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (use-package string-inflection
   :config
-  (add-hook 'c-mode-common-hook (lambda () (local-set-key (kbd "C-c C-u") 'string-inflection-cycle))))
+  (add-hook 'c-mode-common-hook
+            (lambda () (bind-key "C-c C-u" 'string-inflection-cycle c-mode-base-map))))
 #+END_SRC
 
 ** Misc
@@ -628,7 +630,7 @@ comment box."
     :init (global-company-mode)
     :config
     (defun setup-company-c/c++ ()
-      (local-set-key (kbd "TAB") 'company-indent-or-complete-common))
+      (bind-key "TAB" 'company-indent-or-complete-common c-mode-base-map))
     (add-hook 'c-mode-common-hook 'setup-company-c/c++)
     (bind-key "TAB" 'company-indent-or-complete-common)
 
