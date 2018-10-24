@@ -72,7 +72,8 @@
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
 ;; transparency
-(set-frame-parameter (selected-frame) 'alpha 92)
+(set-frame-parameter (selected-frame) 'alpha '(92 92))
+(add-to-list 'default-frame-alist '(alpha 92 92))
 #+END_SRC
 
 ** rich-minority-mode
@@ -466,6 +467,10 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (bind-key "C-c s" 'toggle-truncate-lines)
 (bind-key "C-c C-s" 'toggle-truncate-lines)
+(add-hook 'c-mode-common-hook
+	      (lambda ()
+	        (bind-key "C-c C-s" 'toggle-truncate-lines c-mode-base-map)))
+
 ;; (set-default 'truncate-lines t)
 #+END_SRC
 
