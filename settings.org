@@ -492,10 +492,10 @@ comment box."
   :hook (org-mode . (lambda () (m-buffer-binds (current-local-map))))
   :config
   (setq org-startup-folded nil)
-#+END_SRC
+  #+END_SRC
 
-** org-journal
-#+BEGIN_SRC emacs-lisp
+  ** org-journal
+  #+BEGIN_SRC emacs-lisp
   (use-package org-journal
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
@@ -602,9 +602,9 @@ comment box."
 *** C-like
 #+BEGIN_SRC emacs-lisp
 (add-hook 'c-mode-common-hook
-	  (lambda ()
-	    (electric-pair-local-mode)
-	    (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t)) c-mode-base-map)))
+	      (lambda ()
+	        (electric-pair-local-mode)
+	        (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t)) c-mode-base-map)))
 
 #+END_SRC
 
@@ -632,17 +632,17 @@ comment box."
 
 ** Company
 #+BEGIN_SRC emacs-lisp
-  (use-package company
-    :init (global-company-mode)
-    :config
-    (defun setup-company-c/c++ ()
-      (bind-key "TAB" 'company-indent-or-complete-common c-mode-base-map))
-    (add-hook 'c-mode-common-hook 'setup-company-c/c++)
-    (bind-key "TAB" 'company-indent-or-complete-common)
+(use-package company
+  :init (global-company-mode)
+  :config
+  (defun setup-company-c/c++ ()
+    (bind-key "TAB" 'company-indent-or-complete-common c-mode-base-map))
+  (add-hook 'c-mode-common-hook 'setup-company-c/c++)
+  (bind-key "TAB" 'company-indent-or-complete-common)
 
-    (setq
-     tab-always-indent 'complete
-     company-dabbrev-downcase nil))
+  (setq
+   tab-always-indent 'complete
+   company-dabbrev-downcase nil))
 #+END_SRC
 
 ** Irony & RTags
@@ -790,8 +790,8 @@ comment box."
           (let ((host (tramp-file-name-host dissected))
                 (user (concat (tramp-file-name-user dissected)))
                 (dir  (tramp-file-name-localname dissected)))
-                (when (string= user "@") (setq user ""))
-                (setq ssh-cd-command (concat "exec ssh -t " user host " 'cd " dir " && exec bash -l'")))))
+            (when (string= user "@") (setq user ""))
+            (setq ssh-cd-command (concat "exec ssh -t " user host " 'cd " dir " && exec bash -l'")))))
       (if create
           (sane-term-create)
         (sane-term))
