@@ -49,7 +49,7 @@
   
   (cond
    ((find-font (font-spec :name "Monaco"))
-    (set-frame-font "Monaco-11"))
+    (set-frame-font "Monaco-12"))
    ((find-font (font-spec :name "Ubuntu Mono"))
     (set-frame-font "Ubuntu Mono-11"))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
@@ -399,9 +399,8 @@ comment box."
 
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
-(use-package flyspell
-  :hook ((org-journal-mode . flyspell-mode)
-         ))
+(unless (eq system-type 'darwin)
+  (use-package flyspell :hook ((org-journal-mode . flyspell-mode))))
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
@@ -500,7 +499,7 @@ comment box."
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
     (setq sorg-journal-file-format "%Y%m%d.txt")
-    (setq org-journal-dir "~/Documents/google-drive/journal/")
+    (setq org-journal-dir "~/Google Drive/journal/")
     (setq org-journal-hide-entries-p nil)
     (setq org-journal-find-file 'find-file)
     (add-hook 'org-journal-mode-hook 'auto-fill-mode)
