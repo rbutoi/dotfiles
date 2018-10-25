@@ -1,4 +1,5 @@
 import XMonad
+import XMonad.Actions.UpdatePointer
 import XMonad.Config.Xfce
 import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
@@ -24,8 +25,11 @@ main = do
   xmonad $ xfceConfig
     { modMask = mod1Mask
     , manageHook = manageDocks <+> manageHook xfceConfig
-    , layoutHook = smartBorders $ layoutHook xfceConfig
+      -- no borders needed, just updatePointer
+    , layoutHook = noBorders $ layoutHook xfceConfig
     , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
+      -- haskell syntax is so wat:
+                   >> updatePointer (0.5, 0.5) (0, 0)
     , handleEventHook = fullscreenEventHook <+> ewmhDesktopsEventHook
     , startupHook = ewmhDesktopsStartup <+> myStartupHook
     , terminal = "xfce4-terminal"
@@ -50,6 +54,7 @@ main = do
     -- , ("M-C-<Return>", spawn "xfce4-terminal -e \"sh -c 'tmux a -d || tmux'\"")
     , ("M-S-q", spawn "xmonad --recompile && xmonad --restart")
     , ("C-M-S-q", spawn "killall xmonad-x86_64-linux && xfwm4 --daemon --replace")
+    , ("M-m", nextScreen)
     ] `removeKeysP`
     [ ("M-q"),("M-w"),("M-e"),("M-b"),("M-p"),("M-n")
     ,("M-1"),("M-2"),("M-3"),("M-4"),("M-5"),("M-6"),("M-7"),("M-8"),("M-9")
