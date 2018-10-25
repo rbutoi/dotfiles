@@ -862,7 +862,7 @@ comment box."
   (setq clang-format-style-option "file"))
 #+END_SRC
 
-** Meta/misc
+* Meta/misc
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
