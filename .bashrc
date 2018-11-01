@@ -135,6 +135,9 @@ en() {
 export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
+# https://github.com/cykerway/complete-alias
+. ~/complete-alias/completions/bash_completion.sh
+
 export CLICOLOR=1
 alias l='ls -F'
 [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
@@ -168,8 +171,8 @@ tree2() {
 }
 alias c="cat"
 alias dv="dirs -v"
-alias sudo='sudo '
-alias s='sudo '
+alias s='sudo'
+complete -F _complete_alias s
 
 find_pi() {
     sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
