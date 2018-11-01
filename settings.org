@@ -311,6 +311,11 @@
   (global-which-key-mode))
 #+END_SRC
 
+** fill-column-indicator
+#+BEGIN_SRC emacs-lisp
+(use-package fill-column-indicator)
+#+END_SRC
+
 ** pos-tip
 #+BEGIN_SRC emacs-lisp
 (use-package pos-tip)
@@ -561,7 +566,10 @@ comment box."
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
+
 (setq-default fill-column 80)
+(setq sentence-end-double-space nil)
+
 (delete-selection-mode 1)
 (put 'narrow-to-region 'disabled nil)
 
