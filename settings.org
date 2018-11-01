@@ -24,7 +24,7 @@
   (interactive)
   (cond ((string= next-bg 'dark)
          (progn
-           (load-theme 'solarized-dark)
+           (load-theme 'solarized-dark t)
            (setq next-bg 'off)))
         ((string= next-bg 'off)
          (progn
