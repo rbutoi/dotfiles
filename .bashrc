@@ -136,7 +136,7 @@ export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
 # https://github.com/cykerway/complete-alias
-. ~/complete-alias/completions/bash_completion.sh
+. ~/bin/complete-alias/completions/bash_completion.sh
 
 export CLICOLOR=1
 alias l='ls -F'
@@ -148,12 +148,12 @@ alias sz="sudo zile"
 alias g="grep --color=always -i"
 alias pg="ps aux | grep -v grep | g"
 alias chmox="chmod +x"
+alias -- -="cd -"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-alias py="python"
 m() {
     if [ -f /usr/bin/less ]; then
         less "$@"
