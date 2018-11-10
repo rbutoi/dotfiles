@@ -89,7 +89,7 @@
   )
 #+END_SRC
 
-*** Buffers and windows
+** Buffers and windows
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :bind (("C-x o" . ace-window)
@@ -105,14 +105,14 @@
 (defun m-buffer-binds (m)
   (bind-keys :map m
              ("M-o" . other-window)
-             ("M-i" . (lambda() (interactive) (other-window -1)))
-             ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
+             ("M-i" . (lambda () (interactive) (other-window -1)))
+             ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
              ("C-S-k" . kill-all-buffers)
-             ("M-0" . delete-window)
-             ("M-1" . delete-other-windows)
-             ("M-2" . split-window-below)
-             ("M-3" . split-window-right)
+             ("M-0" . (lambda () (interactive) (delete-window) (balance-windows)))
+             ("M-1" . (lambda () (interactive) (delete-other-windows) (balance-windows)))
+             ("M-2" . (lambda () (interactive) (split-window-below) (balance-windows)))
+             ("M-3" . (lambda () (interactive) (split-window-right) (balance-windows)))
              ("M-=" . balance-windows)))
 (m-buffer-binds (current-global-map))
 
@@ -162,14 +162,16 @@
 (defun m-buffer-binds (m)
   (bind-keys :map m
              ("M-o" . other-window)
-             ("M-i" . (lambda() (interactive) (other-window -1)))
-             ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
+             ("M-i" . (lambda () (interactive) (other-window -1)))
+             ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("M-0" . delete-window)
-             ("M-1" . delete-other-windows)
-             ("M-2" . split-window-below)
-             ("M-3" . split-window-right)
+             ("C-S-k" . kill-all-buffers)
+             ("M-0" . (lambda () (interactive) (delete-window) (balance-windows)))
+             ("M-1" . (lambda () (interactive) (delete-other-windows) (balance-windows)))
+             ("M-2" . (lambda () (interactive) (split-window-below) (balance-windows)))
+             ("M-3" . (lambda () (interactive) (split-window-right) (balance-windows)))
              ("M-=" . balance-windows)))
+
 (m-buffer-binds (current-global-map))
 
 (use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
