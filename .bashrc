@@ -136,7 +136,7 @@ export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
 # https://github.com/cykerway/complete-alias
-. ~/bin/complete-alias/completions/bash_completion.sh
+[ -f /etc/bash_completion ] && . ~/bin/complete-alias/completions/bash_completion.sh
 
 export CLICOLOR=1
 alias l='ls -F'
