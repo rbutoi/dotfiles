@@ -44,8 +44,9 @@ main = do
     , ("M-<F4>", kill)
     , ("M-S-n", nextWS)
     , ("M-S-p", prevWS)
-    , ("M-C-,", sendMessage (IncMasterN 1)) -- for the almighty emacs
-    , ("M-C-.", sendMessage (IncMasterN (-1)))
+      -- for the almighty emacs
+    , ("M-C-,", sendMessage (IncMasterN (-1)))
+    , ("M-C-.", sendMessage (IncMasterN   1))
     -- xfce
     -- , ("M-S-e", spawn "emacsclient -c -a emacs")
     , ("M-S-b", sendMessage ToggleStruts)
