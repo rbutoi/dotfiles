@@ -108,7 +108,7 @@
              ("M-i" . (lambda () (interactive) (other-window -1)))
              ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("C-S-k" . kill-all-buffers)
+             ("C-M-k" . kill-all-buffers)
              ("M-0" . (lambda () (interactive) (delete-window) (balance-windows)))
              ("M-1" . (lambda () (interactive) (delete-other-windows) (balance-windows)))
              ("M-2" . (lambda () (interactive) (split-window-below) (balance-windows)))
