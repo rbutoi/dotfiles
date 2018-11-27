@@ -633,7 +633,9 @@ comment box."
 
 ** Diffing
 #+BEGIN_SRC emacs-lisp
-(add-hook 'diff-mode-hook (lambda () (m-buffer-binds (current-local-map))))
+(add-hook 'diff-mode-hook (lambda ()
+            (m-buffer-binds (current-local-map))
+            (read-only-mode t)))
 (setq diff-switches "-u")
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load 'ediff
