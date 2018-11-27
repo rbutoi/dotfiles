@@ -468,10 +468,10 @@ comment box."
   ** org-journal
   #+BEGIN_SRC emacs-lisp
   (use-package org-journal
+    :custom (org-journal-dir "~/Google Drive/journal/")
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
     (setq sorg-journal-file-format "%Y%m%d.txt")
-    (setq org-journal-dir "~/Google Drive/journal/")
     (setq org-journal-hide-entries-p nil)
     (setq org-journal-find-file 'find-file)
     (add-hook 'org-journal-mode-hook 'auto-fill-mode)
