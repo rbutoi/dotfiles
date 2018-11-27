@@ -110,12 +110,19 @@
              ("C-k" . kill-this-buffer) ; defies name but whatevs
              ("C-M-k" . kill-all-buffers)
              ("C-M-C" . save-buffers-kill-emacs)
-             ("M-0" . (lambda () (interactive) (delete-window) (balance-windows)))
-             ("M-1" . (lambda () (interactive) (delete-other-windows) (balance-windows)))
-             ("M-2" . (lambda () (interactive) (split-window-below) (balance-windows)))
-             ("M-3" . (lambda () (interactive) (split-window-right) (balance-windows)))
+             ("M-0" . (lambda () (interactive) (delete-window)))
+             ("M-1" . (lambda () (interactive) (delete-other-windows)))
+             ("M-2" . (lambda () (interactive) (split-window-below)))
+             ("M-3" . (lambda () (interactive) (split-window-right)))
              ("M-=" . balance-windows)))
 (m-buffer-binds (current-global-map))
+;; instead of the hacky putting (balance-windows) after all those commands:
+(defadvice split-window-below (after restore-balanace-below activate)
+  (balance-windows))
+(defadvice split-window-right (after restore-balance-right activate)
+  (balance-windows))
+(defadvice delete-window (after restore-balance activate)
+  (balance-windows))
 
 (use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
 
@@ -127,10 +134,6 @@
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
-
-(use-package golden-ratio
-  :config
-  (setq golden-ratio-adjust-factor 0.65))
 #+END_SRC
 
 ** Files
@@ -289,7 +292,6 @@
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 (blink-cursor-mode 0)
 #+END_SRC
@@ -369,7 +371,8 @@ comment box."
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
 (unless (eq system-type 'darwin)
-  (use-package flyspell :hook ((org-journal-mode . flyspell-mode))))
+  (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
+                               (prog-mode . flyspell-prog-mode))))
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
