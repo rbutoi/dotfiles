@@ -152,45 +152,6 @@
 (run-at-time (current-time) 300 'recentf-save-list)
 #+END_SRC
 
-*** Buffers and windows
-#+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :bind (("C-x o" . ace-window)
-         ("C-x C-o" . ace-window))
-  :config
-  (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
-
-(defun m-buffer-binds (m)
-  (bind-keys :map m
-             ("M-o" . other-window)
-             ("M-i" . (lambda () (interactive) (other-window -1)))
-             ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
-             ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("C-S-k" . kill-all-buffers)
-             ("M-0" . (lambda () (interactive) (delete-window) (balance-windows)))
-             ("M-1" . (lambda () (interactive) (delete-other-windows) (balance-windows)))
-             ("M-2" . (lambda () (interactive) (split-window-below) (balance-windows)))
-             ("M-3" . (lambda () (interactive) (split-window-right) (balance-windows)))
-             ("M-=" . balance-windows)))
-
-(m-buffer-binds (current-global-map))
-
-(use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
-
-(setq split-height-threshold nil
-      split-width-threshold 120)
-
-(use-package buffer-move
-  :bind (("<C-S-up>" . buf-move-up)
-         ("<C-S-down>" . buf-move-down)
-         ("<C-S-left>" . buf-move-left)
-         ("<C-S-right>" . buf-move-right)))
-
-(use-package golden-ratio
-  :config
-  (setq golden-ratio-adjust-factor 0.65))
-#+END_SRC
-
 ** Helm
 #+BEGIN_SRC emacs-lisp
 (use-package helm
