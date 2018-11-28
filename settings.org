@@ -24,21 +24,10 @@
   (interactive)
   (cond ((string= next-bg 'dark)
          (progn
-           ;; (disable-theme 'twilight-bright)
-           (load-theme 'solarized-dark)
-
-           ;; (setq next-bg 'light)))
+           (load-theme 'solarized-dark t)
            (setq next-bg 'off)))
-
-        ;; ((string= next-bg 'light)
-        ;;  (progn
-        ;;    (disable-theme 'solarized-dark)
-        ;;    (load-theme 'solarized-light)
-
-        ;;    (setq next-bg 'off)))
         ((string= next-bg 'off)
          (progn
-           ;; (disable-theme 'solarized-light)
            (disable-theme 'solarized-dark)
            (setq next-bg 'dark))))
 
@@ -55,11 +44,12 @@
   (setq next-bg 'dark)
 
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
-    (when (or (string= cmd-out "gtk2-theme-solarizeddark\n")
-              (string= cmd-out "xfconf-query: Command not found.\n"))
+    (unless (string= cmd-out "gtk2-theme-solarizedlight\n")
       (toggle-theme)))
   
   (cond
+   ((find-font (font-spec :name "Monaco"))
+    (set-frame-font "Monaco-12"))
    ((find-font (font-spec :name "Ubuntu Mono"))
     (set-frame-font "Ubuntu Mono-11"))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
@@ -68,7 +58,8 @@
     (set-frame-font "Consolas-11")))
 
   (bind-key "C-x 7" 'toggle-theme)
-  (bind-key "C-x C-7" 'toggle-theme))
+  (bind-key "C-x C-7" 'toggle-theme)
+  (bind-key "C-x C-_" 'toggle-theme))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -80,9 +71,9 @@
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
-;; transparency if supported
-(set-frame-parameter (selected-frame) 'alpha 85)
-
+;; transparency
+(set-frame-parameter (selected-frame) 'alpha '(92 92))
+(add-to-list 'default-frame-alist '(alpha 92 92))
 #+END_SRC
 
 ** rich-minority-mode
@@ -98,7 +89,7 @@
   )
 #+END_SRC
 
-*** Buffers and windows
+** Buffers and windows
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :bind (("C-x o" . ace-window)
@@ -114,16 +105,24 @@
 (defun m-buffer-binds (m)
   (bind-keys :map m
              ("M-o" . other-window)
-             ("M-i" . (lambda() (interactive) (other-window -1)))
-             ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
+             ("M-i" . (lambda () (interactive) (other-window -1)))
+             ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("C-S-k" . kill-all-buffers)
-             ("M-0" . delete-window)
-             ("M-1" . delete-other-windows)
-             ("M-2" . split-window-below)
-             ("M-3" . split-window-right)
+             ("C-M-k" . kill-all-buffers)
+             ("C-M-C" . save-buffers-kill-emacs)
+             ("M-0" . (lambda () (interactive) (delete-window)))
+             ("M-1" . (lambda () (interactive) (delete-other-windows)))
+             ("M-2" . (lambda () (interactive) (split-window-below)))
+             ("M-3" . (lambda () (interactive) (split-window-right)))
              ("M-=" . balance-windows)))
 (m-buffer-binds (current-global-map))
+;; instead of the hacky putting (balance-windows) after all those commands:
+(defadvice split-window-below (after restore-balanace-below activate)
+  (balance-windows))
+(defadvice split-window-right (after restore-balance-right activate)
+  (balance-windows))
+(defadvice delete-window (after restore-balance activate)
+  (balance-windows))
 
 (use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
 
@@ -135,10 +134,6 @@
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
-
-(use-package golden-ratio
-  :config
-  (setq golden-ratio-adjust-factor 0.65))
 #+END_SRC
 
 ** Files
@@ -158,43 +153,6 @@
       recentf-save-file "~/.emacs.d/recentf")
 (recentf-mode t)
 (run-at-time (current-time) 300 'recentf-save-list)
-#+END_SRC
-
-*** Buffers and windows
-#+BEGIN_SRC emacs-lisp
-(use-package ace-window
-  :bind (("C-x o" . ace-window)
-         ("C-x C-o" . ace-window))
-  :config
-  (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
-
-(defun m-buffer-binds (m)
-  (bind-keys :map m
-             ("M-o" . other-window)
-             ("M-i" . (lambda() (interactive) (other-window -1)))
-             ("M-l" . (lambda() (interactive) (select-window (get-mru-window t t t))))
-             ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("M-0" . delete-window)
-             ("M-1" . delete-other-windows)
-             ("M-2" . split-window-below)
-             ("M-3" . split-window-right)
-             ("M-=" . balance-windows)))
-(m-buffer-binds (current-global-map))
-
-(use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
-
-(setq split-height-threshold nil
-      split-width-threshold 120)
-
-(use-package buffer-move
-  :bind (("<C-S-up>" . buf-move-up)
-         ("<C-S-down>" . buf-move-down)
-         ("<C-S-left>" . buf-move-left)
-         ("<C-S-right>" . buf-move-right)))
-
-(use-package golden-ratio
-  :config
-  (setq golden-ratio-adjust-factor 0.65))
 #+END_SRC
 
 ** Helm
@@ -223,8 +181,10 @@
   (use-package helm-descbinds :config (helm-descbinds-mode t))
   (use-package helm-ag)
 
-  (setq helm-buffer-skip-remote-checking t)
-  (setq helm-split-window-default-side 'same)
+  (setq helm-buffer-skip-remote-checking t
+        helm-split-window-default-side 'same
+        helm-buffer-max-length 30
+        helm-follow-mode-persistent t)
 
   (let ((ack "ag"))
     (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
@@ -318,11 +278,20 @@
   (global-which-key-mode))
 #+END_SRC
 
+** fill-column-indicator
+#+BEGIN_SRC emacs-lisp
+(use-package fill-column-indicator)
+#+END_SRC
+
+** pos-tip
+#+BEGIN_SRC emacs-lisp
+(use-package pos-tip)
+#+END_SRC
+
 ** Hide UI elements
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 (blink-cursor-mode 0)
 #+END_SRC
@@ -363,6 +332,8 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
+(setq ns-command-modifier 'control)
+
 #+END_SRC
 * Editing
 
@@ -402,11 +373,9 @@ comment box."
 
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
-(use-package flyspell
-  :hook ((org-journal-mode . flyspell-mode)
-         ;; kind of annoying inside #includes
-         ;; (prog-mode . flyspell-prog-mode)
-         ))
+(unless (eq system-type 'darwin)
+  (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
+                               (prog-mode . flyspell-prog-mode))))
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
@@ -472,7 +441,11 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (bind-key "C-c s" 'toggle-truncate-lines)
 (bind-key "C-c C-s" 'toggle-truncate-lines)
-(set-default 'truncate-lines t)
+(add-hook 'c-mode-common-hook
+	      (lambda ()
+	        (bind-key "C-c C-s" 'toggle-truncate-lines c-mode-base-map)))
+
+;; (set-default 'truncate-lines t)
 #+END_SRC
 
 ** zap-to-char
@@ -493,15 +466,15 @@ comment box."
   :hook (org-mode . (lambda () (m-buffer-binds (current-local-map))))
   :config
   (setq org-startup-folded nil)
-#+END_SRC
+  #+END_SRC
 
-** org-journal
-#+BEGIN_SRC emacs-lisp
+  ** org-journal
+  #+BEGIN_SRC emacs-lisp
   (use-package org-journal
+    :custom (org-journal-dir "~/Google Drive/journal/")
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
     (setq sorg-journal-file-format "%Y%m%d.txt")
-    (setq org-journal-dir "~/Documents/google-drive/journal/")
     (setq org-journal-hide-entries-p nil)
     (setq org-journal-find-file 'find-file)
     (add-hook 'org-journal-mode-hook 'auto-fill-mode)
@@ -552,10 +525,21 @@ comment box."
   (setq ztree-draw-unicode-lines t))
 #+END_SRC
 
+** string-inflection
+#+BEGIN_SRC emacs-lisp
+(use-package string-inflection
+  :config
+  (add-hook 'c-mode-common-hook
+            (lambda () (bind-key "C-c C-u" 'string-inflection-cycle c-mode-base-map))))
+#+END_SRC
+
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
+
 (setq-default fill-column 80)
+(setq sentence-end-double-space nil)
+
 (delete-selection-mode 1)
 (put 'narrow-to-region 'disabled nil)
 
@@ -599,7 +583,11 @@ comment box."
 
 *** C-like
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-common-hook 'electric-pair-local-mode)
+(add-hook 'c-mode-common-hook
+	      (lambda ()
+	        (electric-pair-local-mode)
+	        (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t)) c-mode-base-map)))
+
 #+END_SRC
 
 *** LaTeX
@@ -628,61 +616,20 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :init (global-company-mode)
-  ;; :hook ((prog-mode . (lambda () (bind-keys ([tab] . company-indent-or-complete-common)))))
   :config
   (defun setup-company-c/c++ ()
-    (setq-local company-backends '(company-irony
-                                   company-irony-c-headers))
-    (bind-keys :map c-mode-base-map
-               ([tab] . company-indent-or-complete-common)
-               :map c++-mode-map
-               ([tab] . company-indent-or-complete-common))
-    )
-  (add-hook 'c++-mode-hook 'setup-company-c/c++)
-  (add-hook 'c-mode-hook 'setup-company-c/c++)
+    (bind-key "TAB" 'company-indent-or-complete-common c-mode-base-map))
+  (add-hook 'c-mode-common-hook 'setup-company-c/c++)
+  (bind-key "TAB" 'company-indent-or-complete-common)
 
   (setq
-   company-idle-delay nil
    tab-always-indent 'complete
-   company-dabbrev-downcase nil)
-
-  ;; Add to front
-  (setq company-backends (delete 'company-dabbrev company-backends))
-  (add-to-list 'company-backends 'company-dabbrev)
-
-  ;; Use -capf :with -code
-  (setq company-backends (delete 'company-dabbrev-code company-backends))
-  (setq company-backends (delete 'company-capf company-backends))
-  (add-to-list 'company-backends '(company-capf :with company-dabbrev-code))
-
-  ;; Messy, but it works
-  (bind-key "<C-tab>" 'dabbrev-expand))
+   company-dabbrev-downcase nil))
 #+END_SRC
 
 ** Irony & RTags
 #+BEGIN_SRC emacs-lisp
-(use-package irony
-  :hook ((irony-mode . irony-cdb-autosetup-compile-options)
-         (c++-mode . irony-mode)
-         (c-mode . irony-mode))
-  :config
-  (use-package company-irony)
-
-  (setq irony-cdb-search-directory-list '("." "build" "build-Debug" "build-Release"))
-
-  (require 'rtags)
-  (defun setup-rtags-c/c++ ()
-    (rtags-enable-standard-keybindings c-mode-base-map "C-c C-r ")
-    (bind-keys :map c-mode-base-map
-               ("M-." . rtags-find-symbol-at-point)
-               ("M-," . rtags-find-references-at-point)
-               ("C-o" . (lambda () (interactive) (if (rtags-is-indexed) (rtags-imenu) (helm-semantic-or-imenu))))
-               ("C-c C-r f" . rtags-next-match)
-               ("C-c C-r b" . rtags-previous-match)
-               ("C-S-t" . rtags-find-symbol)))
-  (add-hook 'c++-mode-hook 'setup-rtags-c/c++)
-  (add-hook 'c-mode-hook 'setup-rtags-c/c++)
-  )
+;; Take out in favour of Google stuff, for now
 #+END_SRC
 
 ** No namespace intent
@@ -694,7 +641,9 @@ comment box."
 
 ** Diffing
 #+BEGIN_SRC emacs-lisp
-(add-hook 'diff-mode-hook (lambda () (m-buffer-binds (current-local-map))))
+(add-hook 'diff-mode-hook (lambda ()
+            (m-buffer-binds (current-local-map))
+            (read-only-mode t)))
 (setq diff-switches "-u")
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load 'ediff
@@ -705,46 +654,12 @@ comment box."
 
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck
-  :demand
-  :hook (;; (flycheck-mode . flycheck-rust-setup)
-         ;; (rust-mode     . flycheck-mode)
-         (perl-mode     . flycheck-mode)
-         (c-mode        . flycheck-mode)
-         (c++-mode      . flycheck-mode))
-  :config
-  (setq flycheck-display-errors-delay 0))
-(defun setup-flycheck-irony-c/c++ ()
-  (add-to-list 'flycheck-disabled-checkers 'c/c++-clang)
-  (add-to-list 'flycheck-disabled-checkers 'c/c++-gcc))
-(use-package flycheck-irony
-  :hook ((flycheck-mode . flycheck-irony-setup)
-         (c++-mode . setup-flycheck-irony-c/c++)
-         (c-mode . setup-flycheck-irony-c/c++)))
-#+END_SRC
-
-** projectile
-#+BEGIN_SRC emacs-lisp
-(defun bind-other-file (map)
-  (bind-key "C-c C-o"
-            (lambda () (interactive)
-              (if (projectile-project-p)
-                  (projectile-find-other-file) (ff-find-other-file)))
-            map))
-(use-package projectile
-  :config
-  (add-to-list 'projectile-globally-ignored-modes "term-mode")
-  (add-hook 'c-mode-hook (lambda () (bind-other-file c-mode-map)))
-  (add-hook 'c++-mode-hook (lambda () (bind-other-file c++-mode-map)))
-  )
-(use-package helm-projectile
-  :init (helm-projectile-on))
+;; GOOG
 #+END_SRC
 
 ** hl-line-mode
 #+BEGIN_SRC emacs-lisp
-(when window-system
-  (add-hook 'prog-mode-hook 'hl-line-mode))
+(add-hook 'prog-mode-hook 'hl-line-mode)
 #+END_SRC
 
 ** compiling
@@ -762,12 +677,6 @@ comment box."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
-(add-hook 'prog-mode-hook
-          (lambda () (bind-key "<f7>"
-                               (lambda () (interactive)
-                                 (if (locate-dominating-file default-directory "Makefile")
-                                     (with-temp-buffer (cd (locate-dominating-file default-directory "Makefile")) (call-interactively 'compile))
-                                   (call-interactively 'compile))))))
 (add-hook 'prog-mode-hook (lambda ()) (bind-key "<f8>" 'recompile))
 (setq compilation-message-face 'default)
 #+END_SRC
@@ -786,11 +695,6 @@ comment box."
              ("C-M-f" . sp-forward-sexp)
              ("C-M-b" . sp-backward-sexp)
 
-             ("C-M-d" . sp-down-sexp)
-             ("C-M-a" . sp-backward-down-sexp)
-             ("C-S-d" . sp-beginning-of-sexp)
-             ("C-S-a" . sp-end-of-sexp)
-
              ("C-M-e" . sp-up-sexp)
              ("C-M-u" . sp-backward-up-sexp)
              ("C-M-t" . sp-transpose-sexp)
@@ -798,31 +702,11 @@ comment box."
              ("C-M-n" . sp-next-sexp)
              ("C-M-p" . sp-previous-sexp)
 
-             ("C-M-k" . sp-kill-sexp)
-             ("C-M-w" . sp-copy-sexp)
-
-             ;; ("M-<delete>" . sp-unwrap-sexp)
-             ;; ("M-<backspace>" . sp-backward-unwrap-sexp)
-
-             ("C-<right>" . sp-forward-slurp-sexp)
-             ("C-<left>" . sp-forward-barf-sexp)
-             ("C-M-<left>" . sp-backward-slurp-sexp)
-             ("C-M-<right>" . sp-backward-barf-sexp)
-
              ("M-D" . sp-splice-sexp)
-             ("C-M-<delete>" . sp-splice-sexp-killing-forward)
-             ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
-             ("C-S-<backspace>" . sp-splice-sexp-killing-around)
-
-             ("C-]" . sp-select-next-thing-exchange)
-             ("C-<left_bracket>" . sp-select-previous-thing)
-             ("C-M-]" . sp-select-next-thing)
 
              ("M-F" . sp-forward-symbol)
              ("M-B" . sp-backward-symbol)
-
-             ("C-c f" . (lambda () (interactive) (sp-beginning-of-sexp 2)))
-             ("C-c b" . (lambda () (interactive) (sp-beginning-of-sexp -2))))
+             )
 
   (add-hook 'prog-mode-hook (lambda () (show-paren-mode 1) (setq show-paren-delay 0))))
 #+END_SRC
@@ -863,9 +747,10 @@ comment box."
       (when (file-remote-p default-directory)
         (let ((dissected (tramp-dissect-file-name default-directory)))
           (let ((host (tramp-file-name-host dissected))
-                (user (tramp-file-name-user dissected))
+                (user (concat (tramp-file-name-user dissected)))
                 (dir  (tramp-file-name-localname dissected)))
-            (setq ssh-cd-command (concat "exec ssh -t " user "@" host " 'cd " dir " && exec bash -l'")))))
+            (when (string= user "@") (setq user ""))
+            (setq ssh-cd-command (concat "exec ssh -t " user host " 'cd " dir " && exec bash -l'")))))
       (if create
           (sane-term-create)
         (sane-term))
@@ -936,7 +821,7 @@ comment box."
   (setq clang-format-style-option "file"))
 #+END_SRC
 
-** Meta/misc
+* Meta/misc
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
@@ -953,13 +838,19 @@ comment box."
   (setq tramp-use-ssh-controlmaster-options nil)
   (setq auto-revert-remote-files t)
   (setq vc-ignore-dir-regexp
-        (format "\\(%s\\)\\|\\(%s\\)" vc-ignore-dir-regexp tramp-file-name-regexp))
-  :bind ("<f5>" . tramp-cleanup-all-connections))
+        (format "\\(%s\\)\\|\\(%s\\)" vc-ignore-dir-regexp tramp-file-name-regexp)))
 
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
-* Emacs server
+*** Specific
+#+BEGIN_SRC emacs-lisp
+(let ((specific (concat user-emacs-directory "specific.el")))
+  (when (file-exists-p specific)
+    (load specific)))
+#+END_SRC
+
+*** Emacs server
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC

@@ -1,9 +1,11 @@
 import XMonad
+import XMonad.Actions.UpdatePointer
 import XMonad.Config.Xfce
 import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Layout.NoBorders
 
 import qualified DBus as D
 import qualified DBus.Client as D
@@ -23,7 +25,11 @@ main = do
   xmonad $ xfceConfig
     { modMask = mod1Mask
     , manageHook = manageDocks <+> manageHook xfceConfig
+      -- no borders needed, just updatePointer
+    , layoutHook = noBorders $ layoutHook xfceConfig
     , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
+      -- haskell syntax is so wat:
+                   >> updatePointer (0.5, 0.5) (0, 0)
     , handleEventHook = fullscreenEventHook <+> ewmhDesktopsEventHook
     , startupHook = ewmhDesktopsStartup <+> myStartupHook
     , terminal = "xfce4-terminal"
@@ -38,8 +44,9 @@ main = do
     , ("M-<F4>", kill)
     , ("M-S-n", nextWS)
     , ("M-S-p", prevWS)
-    , ("M-C-,", sendMessage (IncMasterN 1)) -- for the almighty emacs
-    , ("M-C-.", sendMessage (IncMasterN (-1)))
+      -- for the almighty emacs
+    , ("M-C-,", sendMessage (IncMasterN (-1)))
+    , ("M-C-.", sendMessage (IncMasterN   1))
     -- xfce
     -- , ("M-S-e", spawn "emacsclient -c -a emacs")
     , ("M-S-b", sendMessage ToggleStruts)
@@ -48,8 +55,9 @@ main = do
     -- , ("M-C-<Return>", spawn "xfce4-terminal -e \"sh -c 'tmux a -d || tmux'\"")
     , ("M-S-q", spawn "xmonad --recompile && xmonad --restart")
     , ("C-M-S-q", spawn "killall xmonad-x86_64-linux && xfwm4 --daemon --replace")
+    , ("M-m", nextScreen)
     ] `removeKeysP`
     [ ("M-q"),("M-w"),("M-e"),("M-b"),("M-p"),("M-n")
     ,("M-1"),("M-2"),("M-3"),("M-4"),("M-5"),("M-6"),("M-7"),("M-8"),("M-9")
-    ,("M-<Return>"),("M-,"),("M-.")
+    ,("M-<Return>"),("M-,"),("M-."),("M-S-/"),("M-S-e"),("M-S-r")
     ]
