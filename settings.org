@@ -339,13 +339,13 @@
 #+BEGIN_SRC emacs-lisp
 (setq garbage-collection-messages t)
 
-(setq gc-cons-threshold 100000000)
+(defconst GC-MEGS 500)
+(setq gc-cons-threshold (* 1024 1024 GC-MEGS))
 (defun my-minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my-minibuffer-exit-hook ()
-  ;; (setq gc-cons-threshold 800000))
-  (setq gc-cons-threshold 100000000))
+  (setq gc-cons-threshold (* 1024 1024 GC-MEGS)))
 
 (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
@@ -561,6 +561,11 @@ comment box."
 
 ;; fix for school computers
 (when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
+
+;; use keyboard volume up/down to scroll quickly
+(bind-key "<XF86AudioRaiseVolume>" 'scroll-down-command)
+(bind-key "<XF86AudioLowerVolume>" 'scroll-up-command)
+
 #+END_SRC
 
 * Programming

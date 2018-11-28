@@ -22,7 +22,6 @@ ghostscript
 gimp
 git
 gitg
-gopreload-git
 grub
 gtk-engine-murrine
 haskell-dbus
