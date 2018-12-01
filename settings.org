@@ -308,7 +308,7 @@
 #+BEGIN_SRC emacs-lisp
 (setq garbage-collection-messages t)
 
-(defconst GC-MEGS 500)
+(defconst GC-MEGS 100)
 (setq gc-cons-threshold (* 1024 1024 GC-MEGS))
 (defun my-minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
@@ -439,8 +439,8 @@ comment box."
 
 ** Truncate lines
 #+BEGIN_SRC emacs-lisp
-(bind-key "C-c s" 'toggle-truncate-lines)
-(bind-key "C-c C-s" 'toggle-truncate-lines)
+(bind-keys ("C-c s" . toggle-truncate-lines)
+           ("C-c C-s" . toggle-truncate-lines))
 (add-hook 'c-mode-common-hook
 	      (lambda ()
 	        (bind-key "C-c C-s" 'toggle-truncate-lines c-mode-base-map)))
@@ -450,7 +450,8 @@ comment box."
 
 ** zap-to-char
 #+BEGIN_SRC emacs-lisp
-(bind-key "M-z" 'zap-to-char)
+(bind-keys ("M-z" . zap-to-char)
+           ("C-M-z" . zap-up-to-char))
 #+END_SRC
 
 ** just-one-space
@@ -683,7 +684,13 @@ comment box."
 
 ** Line numbers
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum :bind ("C-c l" . nlinum-mode))
+(use-package nlinum :bind
+  ("C-c l" . nlinum-mode)
+  ("C-c C-l" . nlinum-mode))
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (bind-keys :map c++-mode-map
+                       ("C-c C-l" . nlinum-mode))))
 #+END_SRC
 
 ** Parens
