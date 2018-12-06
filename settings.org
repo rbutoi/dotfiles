@@ -20,6 +20,7 @@
 ** Theme
 #+BEGIN_SRC emacs-lisp
 ;; toggle dark/light
+(setq next-bg 'dark)
 (defun toggle-theme ()
   (interactive)
   (cond ((string= next-bg 'dark)
@@ -38,13 +39,16 @@
   (set-face-attribute  'mode-line-inactive
                        nil
                        :box nil))
+(bind-keys ("C-x 7" . toggle-theme)
+           ("C-x C-7" . toggle-theme)
+           ("C-x C-_" . toggle-theme))
+
 (use-package solarized-theme
-  :if (window-system)
   :config
-  (setq next-bg 'dark)
 
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
-    (unless (string= cmd-out "gtk2-theme-solarizedlight\n")
+    (when (and (window-system)
+               (not (string= cmd-out "gtk2-theme-solarizedlight\n")))
       (toggle-theme)))
   
   (cond
@@ -57,9 +61,7 @@
    ((find-font (font-spec :name "Consolas"))
     (set-frame-font "Consolas-11")))
 
-  (bind-key "C-x 7" 'toggle-theme)
-  (bind-key "C-x C-7" 'toggle-theme)
-  (bind-key "C-x C-_" 'toggle-theme))
+  )
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
