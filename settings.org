@@ -447,7 +447,9 @@ comment box."
 	      (lambda ()
 	        (bind-key "C-c C-s" 'toggle-truncate-lines c-mode-base-map)))
 
-(set-default 'truncate-lines t)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (setq truncate-lines t)))
 #+END_SRC
 
 ** zap-to-char

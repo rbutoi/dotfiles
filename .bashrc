@@ -1,4 +1,5 @@
 # .bashrc
+# -*- sh-basic-offset:4 -*-
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -121,12 +122,15 @@ complete -F _upto upto
 fork() { (setsid "$@" &); }
 
 e() {
+    [ ! -e "$@" ] && return 1
     emacsclient "$@"
 }
 ew() {
+    [ ! -e "$@" ] && return 1
     emacsclient -nw "$@"
 }
 en() {
+    [ ! -e "$@" ] && return 1
     emacsclient -n "$@"
 }
 # export EDITOR='emacsclient -nw'
@@ -187,7 +191,7 @@ fi
 
 # enable programmable completion features
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-      . /etc/bash_completion
+    . /etc/bash_completion
 fi
 
 # https://github.com/jml/undistract-me
