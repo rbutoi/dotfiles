@@ -3,22 +3,20 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(ansi-color-names-vector
-   ;; ["#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"])
- ;; '(ansi-term-color-vector
-   ;; [unspecified "#FFFFFF" "#d15120" "#5f9411" "#d2ad00" "#6b82a7" "#a66bab" "#6b82a7" "#505050"] t)
+ '(ansi-color-names-vector
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
+ '(compilation-error-regexp-alist
+   (quote
+    (google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google-blaze-error google-log-error google-log-warning google-log-info google-log-fatal-message google-forge-python gunit-stack-trace cargo rustc-colon rustc absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma cucumber msft edg-1 edg-2 epc ftnchek iar ibm irix java jikes-file maven jikes-line clang-include clang-include gcc-include ruby-Test::Unit gnu lcc makepp mips-1 mips-2 msft omake oracle perl php rxp sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line)))
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
  '(cua-overwrite-cursor-color "#b58900")
  '(cua-read-only-cursor-color "#859900")
- '(custom-safe-themes
-   (quote
-    ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "c1390663960169cd92f58aad44ba3253227d8f715c026438303c09b9fb66cdfb" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "15348febfa2266c4def59a08ef2846f6032c0797f001d7b9148f30ace0d08bcf" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "c72a772c104710300103307264c00a04210c00f6cc419a79b8af7890478f380e" "43c1a8090ed19ab3c0b1490ce412f78f157d69a29828aa977dae941b994b4147" "31992d4488dba5b28ddb0c16914bf5726dc41588c2b1c1a2fd16516ea92c1d8e" "44c566df0e1dfddc60621711155b1be4665dd3520b290cb354f8270ca57f8788" "67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" default)))
- '(doc-view-continuous t)
- '(doc-view-resolution 300)
- '(fci-rule-character-color "#d9d9d9")
  '(fci-rule-color "#073642")
+ '(helm-source-names-using-follow
+   (quote
+    ("Search at /google/src/cloud/butoi/centigrade/google3/security/binauthz/testing/centigrate/tests/" "Search at /google/src/cloud/butoi/centigrade/google3/cloud/testing/centigrate/testutils/cc/" "Search at /google/src/cloud/butoi/simplify_join/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/e2e/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/join/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/absl_time/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/handle-error/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/uppf_bine/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/rename/google3/security/binauthz/post_auditing/")))
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
  '(highlight-symbol-colors
    (--map
@@ -42,14 +40,15 @@
  '(hl-fg-colors
    (quote
     ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
+ '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
    (quote
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
- '(org-agenda-files (quote ("~/Documents/google-drive/journal/20170308")))
+ '(org-journal-dir "~/Google Drive/journal/")
  '(package-selected-packages
    (quote
-    (clang-format protobuf-mode esup yasnippet-snippets yasnippet twilight-bright-theme helm-projectile projectile helm-rtags rtags company-irony-c-headers sane-term cmake-mode flycheck-irony company-irony irony exec-path-from-shell solarized-theme helm-swoop smartparens flatui-theme leuven-theme eink-theme github-modern-theme zenburn-theme markdown-preview-mode markdown-mode auctex ztree pdf-tools itail magit buffer-move zoom-window yafolding which-key visual-fill-column undo-tree term-run rust-mode rich-minority pkgbuild-mode pallet org-journal nlinum mwim keychain-environment helm-unicode helm-descbinds helm-ag haskell-mode golden-ratio flycheck-rust dtrt-indent dired+ diffview company-auctex company-anaconda clean-aindent-mode ag ack ace-window)))
+    (ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds helm-ag haskell-mode golden-ratio flycheck-irony fill-column-indicator elisp-format dtrt-indent company-irony clang-format buffer-move ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(safe-local-variable-values
@@ -74,39 +73,38 @@
                      switch-org-and-elisp-map)
            (switch-org-and-elisp-mode 1)))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
- ;; '(term-default-bg-color "#002b36")
- ;; '(term-default-fg-color "#839496")
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
    (quote
     ((20 . "#dc322f")
-     (40 . "#c85d17")
-     (60 . "#be730b")
+     (40 . "#c8805d801780")
+     (60 . "#bec073400bc0")
      (80 . "#b58900")
-     (100 . "#a58e00")
-     (120 . "#9d9100")
-     (140 . "#959300")
-     (160 . "#8d9600")
+     (100 . "#a5008e550000")
+     (120 . "#9d0091000000")
+     (140 . "#950093aa0000")
+     (160 . "#8d0096550000")
      (180 . "#859900")
-     (200 . "#669b32")
-     (220 . "#579d4c")
-     (240 . "#489e65")
-     (260 . "#399f7e")
+     (200 . "#66aa9baa32aa")
+     (220 . "#57809d004c00")
+     (240 . "#48559e556555")
+     (260 . "#392a9faa7eaa")
      (280 . "#2aa198")
-     (300 . "#2898af")
-     (320 . "#2793ba")
-     (340 . "#268fc6")
+     (300 . "#28669833af33")
+     (320 . "#279993ccbacc")
+     (340 . "#26cc8f66c666")
      (360 . "#268bd2"))))
  '(vc-annotate-very-old-color nil)
- ;; '(weechat-color-list
-   ;; (quote
-    ;; (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
-;;  '(xterm-color-names
-;;    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
-;; '(xterm-color-names-bright
-;;   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"])
- )
+ '(weechat-color-list
+   (quote
+    (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
+ '(xterm-color-names
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
+ '(xterm-color-names-bright
+   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

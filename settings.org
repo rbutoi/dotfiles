@@ -12,7 +12,6 @@
 (setq use-package-verbose t
       use-package-always-ensure t)
 (require 'bind-key)
-
 #+END_SRC
 
 * UI
@@ -449,7 +448,7 @@ comment box."
 
 (add-hook 'prog-mode-hook
           (lambda ()
-            (setq truncate-lines t)))
+            (toggle-truncate-lines t)))
 #+END_SRC
 
 ** zap-to-char
