@@ -51,42 +51,10 @@ precmd_functions+=(append_history)
 # esac
 
 if [ "$TERM" != "dumb" ]; then
-    # magic to check if we have colour
-    colour=0
-    if tput Co > /dev/null 2>&1
-    then
-        test "`tput Co`" -gt 2 && colour=1
-    elif tput colors > /dev/null 2>&1
-    then
-        test "`tput colors`" -gt 2 && colour=1
-    fi
-
-    if [ $colour -eq 1  ]; then
-        RED="\[$(tput setaf 1)\]"
-        GREEN="\[$(tput setaf 2)\]"
-        ORANGE="\[$(tput setaf 3)\]"
-        BLUE="\[$(tput setaf 4)\]"
-        PINK="\[$(tput setaf 5)\]"
-        TEAL="\[$(tput setaf 6)\]"
-        GREY="\[$(tput setaf 7)\]"
-        RESET="\[$(tput sgr0)\]"
-        BOLD="\[$(tput bold)\]"
-        UNDERLINE="\[$(tput sgr 0 1)\]"
-    else
-        RED=
-        GREEN=
-        ORANGE=
-        BLUE=
-        PINK=
-        TEAL=
-        GREY=
-        RESET=
-        BOLD=
-        UNDERLINE=
-    fi
-
-    PS1="${UNDERLINE}${RED}${BOLD}\${?##0}${RESET}${UNDERLINE}${TEAL}\D{%H:%M} ${RESET}|${UNDERLINE} \h:${GREEN}\w${RESET}\n${GREEN}\$${RESET} "
-    export PS1
+    RED='\e[0;31m'
+    GREEN='\e[0;32m'
+    RESET='\e[0m'
+    export PS1="${RED}${BOLD}\${?##0}${RESET}${GREEN}\w${RESET} "
 fi
 
 #######################################
@@ -174,6 +142,7 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 alias s='sudo'
+alias .~='. ~/.bashrc'
 complete -F _complete_alias s
 
 find_pi() {
