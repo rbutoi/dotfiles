@@ -51,9 +51,9 @@ precmd_functions+=(append_history)
 # esac
 
 if [ "$TERM" != "dumb" ]; then
-    RED='\e[0;31m'
-    GREEN='\e[0;32m'
-    RESET='\e[0m'
+    RED='\[\e[0;31m\]'
+    GREEN='\[\e[0;32m\]'
+    RESET='\[\e[0m\]'
     export PS1="${RED}${BOLD}\${?##0}${RESET}${GREEN}\w${RESET} "
 fi
 
