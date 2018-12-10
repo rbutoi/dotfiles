@@ -124,13 +124,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-m() {
-    if [ -f /usr/bin/less ]; then
-        less "$@"
-    else
-        more "$@"
-    fi
-}
+alias m="less"
 export LESS=-RMiS
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
