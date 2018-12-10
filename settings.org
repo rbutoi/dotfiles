@@ -585,6 +585,12 @@ comment box."
 (add-to-list 'auto-mode-alist '("\\.vt\\'" . verilog-mode))
 #+END_SRC
 
+*** Conf-mode
+#+BEGIN_SRC emacs-lisp
+(dolist (hook '(conf-unix-mode-hook conf-space-mode-hook))
+  (add-hook hook (lambda () (run-mode-hooks 'prog-mode-hook))))
+#+END_SRC
+
 *** C-like
 #+BEGIN_SRC emacs-lisp
 (add-hook 'c-mode-common-hook
