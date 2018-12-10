@@ -125,6 +125,7 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias m="less"
+alias M='$(history -p \!\!) | less'
 export LESS=-RMiS
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
