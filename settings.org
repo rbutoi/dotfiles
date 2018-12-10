@@ -59,8 +59,12 @@
     (set-frame-font "DejaVu Sans Mono-10"))
    ((find-font (font-spec :name "Consolas"))
     (set-frame-font "Consolas-11")))
-
   )
+
+;; set tmux title
+(run-with-idle-timer 1 t
+                     (lambda () (send-string-to-terminal
+                                 (concat "\ekemacs/" (buffer-name) "\e\\"))))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))

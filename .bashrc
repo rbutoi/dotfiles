@@ -40,16 +40,6 @@ export HISTFILE=~/.bash_eternal_history
 append_history() { history -a; }
 precmd_functions+=(append_history)
 
-# Tell window name information. It's pretty useless though
-# case "$TERM" in
-# screen*)
-#     tell_screen_info() { echo -ne "\033]0;${PWD##*/}@$HOSTNAME\007"; }
-#     precmd_functions+=(tell_screen_info)
-#     ;;
-# *)
-#     ;;
-# esac
-
 if [ "$TERM" != "dumb" ]; then
     RED='\[\e[0;31m\]'
     GREEN='\[\e[0;32m\]'
