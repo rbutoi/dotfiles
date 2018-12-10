@@ -73,8 +73,8 @@
                      switch-org-and-elisp-map)
            (switch-org-and-elisp-mode 1)))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
- '(term-default-bg-color "#002b36")
- '(term-default-fg-color "#839496")
+ ;; '(term-default-bg-color "#002b36")
+ ;; '(term-default-fg-color "#839496")
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
