@@ -63,8 +63,9 @@
 
 ;; set tmux title
 (run-with-idle-timer 1 t
-                     (lambda () (send-string-to-terminal
-                                 (concat "\ekemacs/" (buffer-name) "\e\\"))))
+                     (lambda () (unless (display-graphic-p)
+                                  (send-string-to-terminal
+                                   (concat "\ekemacs/" (buffer-name) "\e\\")))))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -188,9 +189,11 @@
 
   (setq helm-buffer-skip-remote-checking t
         helm-split-window-default-side 'same
-        helm-buffer-max-length 30
-        helm-follow-mode-persistent t)
+        helm-buffer-max-length nil)
 
+  (helm-attrset 'follow 1 helm-source-do-ag)
+
+  (setq helm-ag-insert-at-point 'word)
   (let ((ack "ag"))
     (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
     (setq helm-grep-default-command
@@ -198,16 +201,12 @@
           helm-grep-default-recurse-command
           (concat ack " -H  --color --smart-case --no-group %p %f"))
     (setq helm-ag-base-command (concat ack " --nocolor --nogroup --smart-case")))
-  (setq helm-ag-insert-at-point 'word)
-
   (bind-key "C-M-s"
             (lambda (&optional arg) (interactive "P")
               (if (file-remote-p default-directory)
                   (setq helm-ag-base-command (concat "~/bin/ack --nocolor --nogroup --smart-case"))
                 (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case")))
-              (if arg
-                  (helm-do-ag)
-                (helm-do-ag default-directory))))
+              (if arg (helm-do-ag) (helm-do-ag default-directory))))
 
   (unbind-key "C-x c"))
 #+END_SRC

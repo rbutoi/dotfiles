@@ -7,16 +7,13 @@
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
  '(compilation-error-regexp-alist
    (quote
-    (google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google-blaze-error google-log-error google-log-warning google-log-info google-log-fatal-message google-forge-python gunit-stack-trace cargo rustc-colon rustc absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma cucumber msft edg-1 edg-2 epc ftnchek iar ibm irix java jikes-file maven jikes-line clang-include clang-include gcc-include ruby-Test::Unit gnu lcc makepp mips-1 mips-2 msft omake oracle perl php rxp sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line)))
+    (google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google-blaze-error google-log-error google-log-warning google-log-info google-log-fatal-message google-forge-python gunit-stack-trace cargo rustc-colon rustc absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma cucumber msft edg-1 edg-2 epc ftnchek iar ibm irix java jikes-file maven jikes-line clang-include clang-include gcc-include ruby-Test::Unit gnu lcc makepp mips-1 mips-2 msft omake oracle perl php rxp sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line)))
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
  '(cua-overwrite-cursor-color "#b58900")
  '(cua-read-only-cursor-color "#859900")
  '(fci-rule-color "#073642")
- '(helm-source-names-using-follow
-   (quote
-    ("Search at /google/src/cloud/butoi/centigrade/google3/security/binauthz/testing/centigrate/tests/" "Search at /google/src/cloud/butoi/centigrade/google3/cloud/testing/centigrate/testutils/cc/" "Search at /google/src/cloud/butoi/simplify_join/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/e2e/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/join/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/absl_time/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/handle-error/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/uppf_bine/google3/security/binauthz/post_auditing/" "Search at /google/src/cloud/butoi/rename/google3/security/binauthz/post_auditing/")))
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
  '(highlight-symbol-colors
    (--map
