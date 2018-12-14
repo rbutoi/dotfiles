@@ -64,8 +64,12 @@
 ;; set tmux title
 (run-with-idle-timer 1 t
                      (lambda () (unless (display-graphic-p)
-                                  (send-string-to-terminal
-                                   (concat "\ekemacs/" (buffer-name) "\e\\")))))
+                                  (let ((title (buffer-name)))
+                                    (setq title (if (> (frame-width) 100)
+                                                    (concat "emacs/" title)
+                                                  (s-left 20 title)))
+                                    (send-string-to-terminal
+                                     (concat "\ek" title "\e\\"))))))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
