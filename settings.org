@@ -161,6 +161,7 @@
 ;; Recentf
 (setq recentf-max-saved-items 1000
       recentf-save-file "~/.emacs.d/recentf")
+(customize-set-variable 'recentf-auto-cleanup "never")
 (recentf-mode t)
 (run-at-time (current-time) 300 'recentf-save-list)
 #+END_SRC

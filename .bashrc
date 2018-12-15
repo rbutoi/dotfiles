@@ -79,10 +79,6 @@ complete -F _upto upto
 
 fork() { (setsid "$@" &); }
 
-e() {
-    [ ! -e "$@" ] && return 1
-    emacsclient "$@"
-}
 ew() {
     [ ! -e "$@" ] && return 1
     emacsclient -nw "$@"
@@ -91,7 +87,7 @@ en() {
     [ ! -e "$@" ] && return 1
     emacsclient -n "$@"
 }
-# export EDITOR='emacsclient -nw'
+e() { ew "$@"; }
 export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
