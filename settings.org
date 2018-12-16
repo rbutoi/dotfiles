@@ -849,8 +849,15 @@ comment box."
 
 *** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
+(setq switch-org-and-elisp-map (make-sparse-keymap))
+(define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
+(defun switch-org-and-elisp () (interactive)
+       (if (string= 'emacs-lisp-mode major-mode)
+           (progn (org-mode) (switch-org-and-elisp-mode t))
+         (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t))))
+(bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
 ;; Local Variables:
-;; eval: (progn (setq switch-org-and-elisp-map (make-sparse-keymap)) (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map) (bind-key "C-c m" (lambda () (interactive) (if (string= 'emacs-lisp-mode major-mode) (progn (org-mode) (switch-org-and-elisp-mode t)) (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t)))) switch-org-and-elisp-map) (switch-org-and-elisp-mode 1))
+;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
 #+END_SRC
 *** TRAMP

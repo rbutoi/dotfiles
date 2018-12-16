@@ -50,7 +50,28 @@
  '(pos-tip-foreground-color "#93a1a1")
  '(safe-local-variable-values
    (quote
-    ((eval progn
+    ((eval switch-org-and-elisp)
+     (eval progn
+           (setq switch-org-and-elisp-map
+                 (make-sparse-keymap))
+           (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
+           (bind-key "C-c m"
+                     (lambda nil
+                       (interactive)
+                       (if
+                           (string=
+                            (quote emacs-lisp-mode)
+                            major-mode)
+                           (progn
+                             (org-mode)
+                             (switch-org-and-elisp-mode t))
+                         (progn
+                           (emacs-lisp-mode)
+                           (switch-org-and-elisp-mode t))))
+                     switch-org-and-elisp-map)
+           (emacs-lisp-mode)
+           (switch-org-and-elisp-mode 1))
+     (eval progn
            (setq switch-org-and-elisp-map
                  (make-sparse-keymap))
            (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
