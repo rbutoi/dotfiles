@@ -45,9 +45,10 @@
  '(org-journal-dir "~/Google Drive/journal/")
  '(package-selected-packages
    (quote
-    (ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds helm-ag haskell-mode golden-ratio flycheck-irony fill-column-indicator elisp-format dtrt-indent company-irony clang-format buffer-move ace-window)))
+    (s ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds helm-ag haskell-mode golden-ratio flycheck-irony fill-column-indicator elisp-format dtrt-indent company-irony clang-format buffer-move ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
+ '(recentf-auto-cleanup (quote never))
  '(safe-local-variable-values
    (quote
     ((eval switch-org-and-elisp)
