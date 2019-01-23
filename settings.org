@@ -52,13 +52,13 @@
   
   (cond
    ((find-font (font-spec :name "Monaco"))
-    (set-frame-font "Monaco-12"))
+    (set-frame-font "Monaco-12" t t))
    ((find-font (font-spec :name "Ubuntu Mono"))
-    (set-frame-font "Ubuntu Mono-11"))
+    (set-frame-font "Ubuntu Mono-11" t t))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
-    (set-frame-font "DejaVu Sans Mono-10"))
+    (set-frame-font "DejaVu Sans Mono-10" t t))
    ((find-font (font-spec :name "Consolas"))
-    (set-frame-font "Consolas-11")))
+    (set-frame-font "Consolas-11" t t)))
   )
 
 ;; set tmux title
@@ -254,10 +254,8 @@
     (when (file-readable-p framegeometry-file)
       (load-file framegeometry-file))))
 
-;; Special work to do ONLY when there is a window system being used
-(when window-system
-  (add-hook 'after-init-hook 'load-framegeometry)
-  (add-hook 'kill-emacs-hook 'save-framegeometry))
+(add-hook 'after-init-hook 'load-framegeometry)
+(add-hook 'kill-emacs-hook 'save-framegeometry)
 #+END_SRC
 
 ** big-fringe-mode
@@ -574,11 +572,6 @@ comment box."
           (lambda () (progn (bind-key "C-c C-d" 'cperl-perldoc perl-mode-map))))
 #+END_SRC
 
-*** Haskell
-#+BEGIN_SRC emacs-lisp
-(use-package haskell-mode)
-#+END_SRC
-
 *** ASM mode
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'asm-mode
@@ -616,7 +609,6 @@ comment box."
                   ;; TeX-view-program-list '(("LLPP" "killall -SIGHUP llpp || llpp %o"))
                   TeX-view-program-list '(("Xreader" "xreader %o"))
                   TeX-view-program-selection '((output-pdf "Xreader")))
-            (auto-fill-mode)
             (setq TeX-command-force "LaTeX")))
 #+END_SRC
 
@@ -731,7 +723,8 @@ comment box."
              ("M-F" . sp-forward-symbol)
              ("M-B" . sp-backward-symbol)
              )
-
+  (sp-with-modes '(c-mode c++-mode)
+    (sp-local-pair "<" ">"))
   (add-hook 'prog-mode-hook (lambda () (show-paren-mode 1) (setq show-paren-delay 0))))
 #+END_SRC
 
@@ -753,11 +746,6 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (bind-keys ("C-c w" . whitespace-mode)
            ("C-c C-w" . whitespace-mode))
-#+END_SRC
-
-** yafolding-mode
-#+BEGIN_SRC emacs-lisp
-(use-package yafolding :hook (prog-mode . yafolding-mode))
 #+END_SRC
 
 ** Term
@@ -829,6 +817,14 @@ comment box."
 (add-hook 'prog-mode-hook 'subword-mode)
 #+END_SRC
 
+** auto-fill-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook (lambda ()
+                            (setq-local comment-auto-fill-only-comments t)
+                            (auto-fill-mode 1)))
+(add-hook 'text-mode-hook 'auto-fill-mode)
+#+END_SRC
+
 ** magit
 #+BEGIN_SRC emacs-lisp
 (use-package magit
@@ -839,10 +835,11 @@ comment box."
 ** clang-format
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
-  :bind (("C-c i" . clang-format-region)
-         ("C-c u" . clang-format-buffer))
   :config
-  (setq clang-format-style-option "file"))
+  (add-hook 'c-mode-common-hook (lambda () (fset 'c-indent-region 'clang-format-region)))
+  (add-hook 'before-save-hook
+            (lambda () (when (or (eq major-mode 'c++-mode) (eq major-mode 'c-mode))
+                         (clang-format-buffer)))))
 #+END_SRC
 
 * Meta/misc

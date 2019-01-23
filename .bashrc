@@ -88,6 +88,7 @@ en() {
     emacsclient -n "$@"
 }
 e() { ew "$@"; }
+alias emd="emacs --daemon >/dev/null 2>&1 ; emacsclient -nw"
 export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
@@ -112,7 +113,7 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias m="less"
 alias M='$(history -p \!\!) | less'
-export LESS=-RMiS
+export LESS=-RMiSe
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
 alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
