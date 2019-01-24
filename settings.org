@@ -44,7 +44,6 @@
 
 (use-package solarized-theme
   :config
-
   (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
     (when (and (window-system)
                (not (string= cmd-out "gtk2-theme-solarizedlight\n")))
@@ -206,12 +205,8 @@
           helm-grep-default-recurse-command
           (concat ack " -H  --color --smart-case --no-group %p %f"))
     (setq helm-ag-base-command (concat ack " --nocolor --nogroup --smart-case")))
-  (bind-key "C-M-s"
-            (lambda (&optional arg) (interactive "P")
-              (if (file-remote-p default-directory)
-                  (setq helm-ag-base-command (concat "~/bin/ack --nocolor --nogroup --smart-case"))
-                (setq helm-ag-base-command (concat "ag --nocolor --nogroup --smart-case")))
-              (if arg (helm-do-ag) (helm-do-ag default-directory))))
+  (bind-key "C-M-s" (lambda (&optional arg) (interactive "P")
+                      (if arg (helm-do-ag) (helm-do-ag default-directory))))
 
   (unbind-key "C-x c"))
 #+END_SRC
@@ -597,7 +592,8 @@ comment box."
 (add-hook 'c-mode-common-hook
 	      (lambda ()
 	        (electric-pair-local-mode)
-	        (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t)) c-mode-base-map)))
+	        (bind-key "C-c C-o" (lambda () (interactive) (ff-find-other-file nil t))
+                      c-mode-base-map)))
 
 #+END_SRC
 
@@ -635,11 +631,6 @@ comment box."
   (setq
    tab-always-indent 'complete
    company-dabbrev-downcase nil))
-#+END_SRC
-
-** Irony & RTags
-#+BEGIN_SRC emacs-lisp
-;; Take out in favour of Google stuff, for now
 #+END_SRC
 
 ** No namespace intent
@@ -734,7 +725,8 @@ comment box."
   :config
   ;; guess offset don't need the global modeline
   (dtrt-indent-mode 1)
-  (add-hook 'prog-mode-hook (lambda () (delete 'dtrt-indent-mode-line-info global-mode-string))))
+  (add-hook 'prog-mode-hook
+            (lambda () (delete 'dtrt-indent-mode-line-info global-mode-string))))
 
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
@@ -762,7 +754,9 @@ comment box."
                 (user (concat (tramp-file-name-user dissected)))
                 (dir  (tramp-file-name-localname dissected)))
             (when (string= user "@") (setq user ""))
-            (setq ssh-cd-command (concat "exec ssh -t " user host " 'cd " dir " && exec bash -l'")))))
+            (setq ssh-cd-command
+                  (concat "exec ssh -t " user host " 'cd " dir
+                          " && exec bash -l'")))))
       (if create
           (sane-term-create)
         (sane-term))
@@ -780,8 +774,9 @@ comment box."
               (toggle-truncate-lines nil)
               (setq bidi-paragraph-direction 'left-to-right)
               ))
-  ;; (defun term-send-backwards-delete-word () (interactive) (term-send-raw-string "\C-w"))
-  (defun term-send-Mbackspace () (interactive)(term-send-raw-string "\e\d"))
+  ;; (defun term-send-backwards-delete-word () (interactive)
+  ;;        (term-send-raw-string "\C-w"))
+  (defun term-send-Mbackspace () (interactive) (term-send-raw-string "\e\d"))
 
   (eval-after-load 'term
     '(progn
@@ -836,7 +831,8 @@ comment box."
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
   :config
-  (add-hook 'c-mode-common-hook (lambda () (fset 'c-indent-region 'clang-format-region)))
+  (add-hook 'c-mode-common-hook
+            (lambda () (fset 'c-indent-region 'clang-format-region)))
   (add-hook 'before-save-hook
             (lambda () (when (or (eq major-mode 'c++-mode) (eq major-mode 'c-mode))
                          (clang-format-buffer)))))
