@@ -532,10 +532,7 @@ comment box."
 
 ** string-inflection
 #+BEGIN_SRC emacs-lisp
-(use-package string-inflection
-  :config
-  (add-hook 'c-mode-common-hook
-            (lambda () (bind-key "C-c C-u" 'string-inflection-cycle c-mode-base-map))))
+(use-package string-inflection :config (bind-key* "C-c C-u" 'string-inflection-cycle))
 #+END_SRC
 
 ** Misc
@@ -630,7 +627,11 @@ comment box."
 
   (setq
    tab-always-indent 'complete
-   company-dabbrev-downcase nil))
+   company-dabbrev-downcase nil)
+
+  ;; low-tech alternative
+  (bind-keys ("C-<tab>" . hippie-expand)
+             ("M-/" . hippie-expand)))
 #+END_SRC
 
 ** No namespace intent
