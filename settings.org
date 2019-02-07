@@ -302,6 +302,7 @@
 #+BEGIN_SRC emacs-lisp
 (setq x-select-enable-clipboard t
       x-select-enable-primary t
+      x-select-enable-clipboard-manager nil
       save-interprogram-paste-before-kill t
       mouse-yank-at-point t)
 #+END_SRC
@@ -533,6 +534,13 @@ comment box."
 ** string-inflection
 #+BEGIN_SRC emacs-lisp
 (use-package string-inflection :config (bind-key* "C-c C-u" 'string-inflection-cycle))
+#+END_SRC
+
+** goto-address-mode
+#+BEGIN_SRC emacs-lisp
+(define-globalized-minor-mode global-goto-address-mode
+  goto-address-mode (lambda () (goto-address-mode)))
+(global-goto-address-mode t)
 #+END_SRC
 
 ** Misc
