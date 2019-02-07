@@ -376,9 +376,9 @@ comment box."
 
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
-(unless (eq system-type 'darwin)
-  (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
-                               (prog-mode . flyspell-prog-mode))))
+;; (unless (eq system-type 'darwin)
+  ;; (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
+                               ;; (prog-mode . flyspell-prog-mode))))
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
