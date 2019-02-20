@@ -124,8 +124,8 @@ tree2() {
 alias c="cat"
 alias dv="dirs -v"
 alias s='sudo'
-alias .~='. ~/.bashrc'
 complete -F _complete_alias s
+alias .~='. ~/.bashrc'
 
 find_pi() {
     sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'

@@ -637,11 +637,6 @@ comment box."
    company-dabbrev-downcase nil))
 #+END_SRC
 
-** Irony & RTags
-#+BEGIN_SRC emacs-lisp
-;; Take out in favour of Google stuff, for now
-#+END_SRC
-
 ** No namespace intent
 #+BEGIN_SRC emacs-lisp
 (defun no-ns-indent ()
