@@ -15,6 +15,8 @@ myStartupHook = do
   startupHook xfceConfig
   spawn "compton -b"
 
+modMask' = mod1Mask
+
 main :: IO ()
 main = do
   dbus <- D.connectSession
@@ -23,10 +25,10 @@ main = do
     [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
   xmonad $ xfceConfig
-    { modMask = mod1Mask
+    { modMask = modMask'
     , manageHook = manageDocks <+> manageHook xfceConfig
       -- no borders needed, just updatePointer
-    , layoutHook = noBorders $ layoutHook xfceConfig
+    , layoutHook = noBorders $ desktopLayoutModifiers $ Tall 1 (3/100) (1/2) ||| Full
     , logHook    = ewmhDesktopsLogHook <+> logHook xfceConfig
       -- haskell syntax is so wat:
                    >> updatePointer (0.5, 0.5) (0, 0)
@@ -60,4 +62,9 @@ main = do
     [ ("M-q"),("M-w"),("M-e"),("M-b"),("M-p"),("M-n")
     ,("M-1"),("M-2"),("M-3"),("M-4"),("M-5"),("M-6"),("M-7"),("M-8"),("M-9")
     ,("M-<Return>"),("M-,"),("M-."),("M-S-/"),("M-S-e"),("M-S-r")
+    ] `additionalMouseBindings`
+    [ ((modMask', 9), (\_ -> prevWS))
+    , ((modMask', 8), (\_ -> nextWS))
+    , ((modMask', button4), (\_ -> prevWS))
+    , ((modMask', button5), (\_ -> nextWS))
     ]
