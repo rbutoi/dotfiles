@@ -18,17 +18,21 @@
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
-;; toggle dark/light
+;; toggle dark/light for when switching graphical to terminal
+(require 'diff-hl)
+(require 'diff-hl-amend)
 (setq next-bg 'dark)
 (defun toggle-theme ()
   (interactive)
   (cond ((string= next-bg 'dark)
          (progn
            (load-theme 'solarized-dark t)
+           (diff-hl-margin-mode -1)
            (setq next-bg 'off)))
         ((string= next-bg 'off)
          (progn
            (disable-theme 'solarized-dark)
+           (diff-hl-margin-mode 1)
            (setq next-bg 'dark))))
 
   ;; a bit more contrast to keep track of curent window
@@ -48,17 +52,13 @@
     (when (and (window-system)
                (not (string= cmd-out "gtk2-theme-solarizedlight\n")))
       (toggle-theme)))
-  
+
   (cond
    ((find-font (font-spec :name "Monaco"))
     (set-frame-font "Monaco-11" t t))
-   ((find-font (font-spec :name "Ubuntu Mono"))
-    (set-frame-font "Ubuntu Mono-11" t t))
    ((find-font (font-spec :name "DejaVu Sans Mono"))
-    (set-frame-font "DejaVu Sans Mono-10" t t))
-   ((find-font (font-spec :name "Consolas"))
-    (set-frame-font "Consolas-11" t t)))
-  )
+    (set-frame-font "DejaVu Sans Mono-11" t t))
+   ))
 
 ;; set tmux title
 (run-with-idle-timer 1 t
@@ -153,6 +153,29 @@
 (bind-key "C-c r" 'revert-buffer)
 (bind-key "C-c C-r" 'revert-buffer)
 (global-auto-revert-mode 1)
+(defun modi/revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be
+reverted. They will be reverted though if they were modified
+outside emacs. Buffers visiting files which do not exist any more
+or are no longer readable will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
+(bind-key "C-c R" 'modi/revert-all-file-buffers)
 
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
@@ -556,10 +579,9 @@ comment box."
 ;; fix for school computers
 (when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
 
-;; use keyboard volume up/down to scroll quickly
-(bind-key "<XF86AudioRaiseVolume>" 'scroll-down-command)
-(bind-key "<XF86AudioLowerVolume>" 'scroll-up-command)
-
+;; swap query replace keys so regexp is available in terminal
+(bind-keys ("C-M-%" . query-replace)
+           ("M-%" . query-replace-regexp))
 #+END_SRC
 
 * Programming
@@ -638,8 +660,8 @@ comment box."
    company-dabbrev-downcase nil)
 
   ;; low-tech alternative
-  (bind-keys ("C-<tab>" . hippie-expand)
-             ("M-/" . hippie-expand)))
+  (bind-keys ("C-<tab>" . dabbrev-expand)
+             ("M-/" . dabbrev-expand)))
 #+END_SRC
 
 ** No namespace intent
@@ -660,11 +682,25 @@ comment box."
   '(progn
      (set-face-foreground 'ediff-fine-diff-A "white")
      (set-face-foreground 'ediff-fine-diff-B "white")))
+
+(bind-key "C-x C-v" 'vc-prefix-map)
 #+END_SRC
 
-** Flycheck
+** diff-hl-mode
 #+BEGIN_SRC emacs-lisp
-;; GOOG
+(use-package diff-hl
+  :bind (("C-x C-v ]" . diff-hl-next-hunk)
+         ("C-x C-v [" . diff-hl-previous-hunk)
+         ("C-x C-v n" . diff-hl-revert-hunk)
+         ("C-x C-v a" . global-diff-hl-amend-mode)
+         ("C-x C-v C-a" . global-diff-hl-amend-mode)
+         )
+  :config
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (global-diff-hl-mode)
+  (bind-keys
+   ("C-x C-v =" . vc-diff)
+   ("C-x v   =" . vc-diff)))
 #+END_SRC
 
 ** hl-line-mode
