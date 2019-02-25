@@ -1,0 +1,4 @@
+# http://psung.blogspot.com/2010/12/inline-expansion-in-bash.html
+$if Bash
+  Space: magic-space
+$endif
