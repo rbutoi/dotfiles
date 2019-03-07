@@ -107,9 +107,16 @@
   (setq aw-keys '(?q ?w ?e ?r ?t ?y ?u ?i ?o)))
 
 (defun kill-all-buffers ()
+  "Kill all buffers."
   (interactive)
   (mapc 'kill-buffer (buffer-list))
   (delete-other-windows))
+(defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list)))))
 
 (defun m-buffer-binds (m)
   (bind-keys :map m
@@ -117,7 +124,7 @@
              ("M-i" . (lambda () (interactive) (other-window -1)))
              ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
              ("C-k" . kill-this-buffer) ; defies name but whatevs
-             ("C-M-k" . kill-all-buffers)
+             ("C-M-k" . kill-other-buffers)
              ("C-M-C" . save-buffers-kill-emacs)
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
