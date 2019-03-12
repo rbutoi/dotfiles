@@ -81,8 +81,26 @@
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
 
 ;; transparency
-(set-frame-parameter (selected-frame) 'alpha '(92 92))
-(add-to-list 'default-frame-alist '(alpha 92 92))
+(setq next-opacity 'translucent)
+(defun toggle-opacity ()
+  (interactive)
+  (cond ((string= next-opacity 'opaque)
+         (progn
+           (set-frame-parameter (selected-frame) 'alpha '(100 100))
+           (add-to-list 'default-frame-alist '(alpha 100 100))
+           (setq next-opacity 'translucent)))
+        ((string= next-opacity 'translucent)
+         (progn
+           (set-frame-parameter (selected-frame) 'alpha '(92 92))
+           (add-to-list 'default-frame-alist '(alpha 92 92))
+           (setq next-opacity 'opaque)))))
+
+(bind-keys ("C-x   8" . toggle-opacity)
+           ("C-x C-8" . toggle-opacity)
+           ("C-x C-*" . toggle-opacity))
+(toggle-opacity)
+(setq 'default-frame-alist '(alpha next-opacity next-opacity))
+
 #+END_SRC
 
 ** rich-minority-mode
@@ -123,8 +141,9 @@
              ("M-o" . other-window)
              ("M-i" . (lambda () (interactive) (other-window -1)))
              ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
-             ("C-k" . kill-this-buffer) ; defies name but whatevs
+             ("C-k" . kill-this-buffer)
              ("C-M-k" . kill-other-buffers)
+             ("C-S-M-k" . kill-all-buffers)
              ("C-M-C" . save-buffers-kill-emacs)
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
