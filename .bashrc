@@ -92,6 +92,8 @@ alias emd="emacs --daemon >/dev/null 2>&1 ; emacsclient -nw"
 export EDITOR=~/bin/my_editor.sh
 export ALTERNATE_EDITOR=zile
 
+export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
+
 # https://github.com/cykerway/complete-alias
 [ -f /etc/bash_completion ] && . ~/bin/complete-alias/bash_completion.sh
 
