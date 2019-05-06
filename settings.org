@@ -45,7 +45,7 @@
     (set-face-attribute  'mode-line-inactive
                          nil
                          :box nil))
-  
+
   ;; needed to prevent errors
   (toggle-theme)
   (add-hook 'window-setup-hook
@@ -65,7 +65,6 @@
       (set-frame-font "Monaco-13"))
   (progn
     (add-to-list 'default-frame-alist '(font . "Monaco-11"))
-    (set-frame-font "Monaco-11")
     ))
 
 ;; make window divider prettier
