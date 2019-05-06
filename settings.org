@@ -58,6 +58,9 @@
   (add-hook 'after-make-frame-functions
             (lambda (frame)
               (if (window-system frame) (themed-mode) (unthemed-mode))))
+  (add-hook 'focus-in-hook
+            (lambda ()
+              (if (window-system) (themed-mode) (unthemed-mode))))
   )
 
 ;; transparency
@@ -203,6 +206,7 @@ or are no longer readable will be killed."
 ** Helm
 #+BEGIN_SRC emacs-lisp
 (use-package helm
+  :defer 1
   :bind (("C-c h" . helm-command-prefix)
          ("M-x" . helm-M-x)
          ("C-x m" . helm-M-x)
