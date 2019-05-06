@@ -135,6 +135,11 @@
     (mapc 'kill-buffer
           (delq (current-buffer)
                 (remove-if-not 'buffer-file-name (buffer-list)))))
+(defun kill-matching-buffers-just-do-it ()
+  "Kill buffers whose names match REGEXP, without asking."
+  (interactive)
+  (cl-letf (((symbol-function 'kill-buffer-ask) #'kill-buffer))
+    (call-interactively #'kill-matching-buffers)))
 
 (defun m-buffer-binds (m)
   (bind-keys :map m
@@ -235,27 +240,14 @@ or are no longer readable will be killed."
   (require 'helm-config)
   (helm-mode t)
 
-  ;; get dependencies
+  ;; get dependencies. idk if this nested thing is good but whatever
   (use-package helm-swoop)
   (use-package helm-descbinds :config (helm-descbinds-mode t))
-  (use-package helm-ag)
+  (use-package helm-rg :bind (("C-M-s" . helm-rg)))
 
   (setq helm-buffer-skip-remote-checking t
         helm-split-window-default-side 'same
         helm-buffer-max-length nil)
-
-  (helm-attrset 'follow 1 helm-source-do-ag)
-
-  (setq helm-ag-insert-at-point 'word)
-  (let ((ack "ag"))
-    (when (file-exists-p "~/bin/ack") (setq ack "~/bin/ack"))
-    (setq helm-grep-default-command
-          (concat ack " -Hn --color --smart-case --no-group %p %f")
-          helm-grep-default-recurse-command
-          (concat ack " -H  --color --smart-case --no-group %p %f"))
-    (setq helm-ag-base-command (concat ack " --nocolor --nogroup --smart-case")))
-  (bind-key "C-M-s" (lambda (&optional arg) (interactive "P")
-                      (if arg (helm-do-ag) (helm-do-ag default-directory))))
 
   (unbind-key "C-x c"))
 #+END_SRC
@@ -920,6 +912,7 @@ comment box."
            (progn (org-mode) (switch-org-and-elisp-mode t))
          (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t))))
 (bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
+(bind-key "C-c C-m" 'switch-org-and-elisp switch-org-and-elisp-map)
 ;; Local Variables:
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
