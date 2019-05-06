@@ -18,7 +18,6 @@
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
-;; toggle dark/light for when switching graphical to terminal
 (use-package solarized-theme
   :bind (("C-x 7" . toggle-theme)
          ("C-x C-7" . toggle-theme)
@@ -28,15 +27,16 @@
 
   (defun themed-mode ()
     (interactive)
-    (load-theme 'solarized-dark t)
-    (diff-hl-margin-mode -1)
-    (setq next-bg 'off))
+    (when (eq next-bg 'dark)
+      (load-theme 'solarized-dark t)
+      (setq next-bg 'off)))
   (defun unthemed-mode ()
     (interactive)
-    (disable-theme 'solarized-dark)
-    (diff-hl-margin-mode 1)
-    (setq next-bg 'dark))
+    (when (eq next-bg 'off)
+      (disable-theme 'solarized-dark)
+      (setq next-bg 'dark)))
 
+  ;; toggle dark/light for when switching graphical to terminal
   (defun toggle-theme ()
     (interactive)
     (cond ((eq next-bg 'dark)
@@ -57,6 +57,7 @@
   (defun themed-if-window-system (frame)
     (if (window-system frame) (themed-mode) (unthemed-mode)))
   (add-hook 'after-make-frame-functions 'themed-if-window-system)
+  (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
   (themed-if-window-system (selected-frame))
   )
 
@@ -703,6 +704,9 @@ comment box."
          )
   :config
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  ;; TODO figure out margin mode toggling with toggle-theme that doesn't cause
+  ;; void-variable errors and such
+  ;; (diff-hl-margin-mode t)
   (global-diff-hl-mode)
   (bind-keys
    ("C-x C-v =" . vc-diff)
