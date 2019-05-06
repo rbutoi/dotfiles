@@ -19,56 +19,42 @@
 ** Theme
 #+BEGIN_SRC emacs-lisp
 ;; toggle dark/light for when switching graphical to terminal
-(require 'diff-hl)
-(require 'diff-hl-amend)
-(setq next-bg 'dark)
-(defun toggle-theme ()
-  (interactive)
-  (cond ((string= next-bg 'dark)
-         (progn
-           (load-theme 'solarized-dark t)
-           (diff-hl-margin-mode -1)
-           (setq next-bg 'off)))
-        ((string= next-bg 'off)
-         (progn
-           (disable-theme 'solarized-dark)
-           (diff-hl-margin-mode 1)
-           (setq next-bg 'dark))))
-
-  ;; a bit more contrast to keep track of curent window
-  (set-face-attribute  'mode-line
-                       nil
-                       :box '(:line-width 3 :style released-button))
-  (set-face-attribute  'mode-line-inactive
-                       nil
-                       :box nil))
-(bind-keys ("C-x 7" . toggle-theme)
-           ("C-x C-7" . toggle-theme)
-           ("C-x C-_" . toggle-theme))
-
 (use-package solarized-theme
-  :config
-  (let ((cmd-out (shell-command-to-string "xfconf-query --channel xsettings --property /Net/ThemeName --type string")))
-    (when (and (window-system)
-               (not (string= cmd-out "gtk2-theme-solarizedlight\n")))
-      (toggle-theme)))
+  :bind (("C-x 7" . toggle-theme)
+         ("C-x C-7" . toggle-theme)
+         ("C-x C-_" . toggle-theme))
+  :init
+  (setq next-bg 'dark)
+  (defun toggle-theme ()
+    (interactive)
+    (cond ((string= next-bg 'dark)
+           (progn
+             (load-theme 'solarized-dark t)
+             (diff-hl-margin-mode -1)
+             (setq next-bg 'off)))
+          ((string= next-bg 'off)
+           (progn
+             (disable-theme 'solarized-dark)
+             (diff-hl-margin-mode 1)
+             (setq next-bg 'dark))))
 
-  (cond
-   ((find-font (font-spec :name "Monaco"))
-    (set-frame-font "Monaco-11" t t))
-   ((find-font (font-spec :name "DejaVu Sans Mono"))
-    (set-frame-font "DejaVu Sans Mono-11" t t))
-   ))
+    ;; a bit more contrast to keep track of curent window
+    (set-face-attribute  'mode-line
+                         nil
+                         :box '(:line-width 3 :style released-button))
+    (set-face-attribute  'mode-line-inactive
+                         nil
+                         :box nil))
+  (when window-system (toggle-theme))
+  )
 
-;; set tmux title
-(run-with-idle-timer 1 t
-                     (lambda () (unless (display-graphic-p)
-                                  (let ((title (buffer-name)))
-                                    (setq title (if (> (frame-width) 100)
-                                                    (concat "emacs/" title)
-                                                  (s-left 20 title)))
-                                    (send-string-to-terminal
-                                     (concat "\ek" title "\e\\"))))))
+;; transparency
+(add-to-list 'default-frame-alist '(alpha 92 92))
+
+;; Font
+(if (string= (system-name) "Radu-Arch")
+    (add-to-list 'default-frame-alist '(font . "Monaco-12"))
+  (add-to-list 'default-frame-alist '(font . "Monaco-11")))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -79,27 +65,6 @@
   (lambda () (set-face-attribute 'hl-line nil)))
 (eval-after-load 'which-func
   (lambda () (set-face-attribute 'which-func nil :foreground "dark cyan")))
-
-;; transparency
-(setq next-opacity 'translucent)
-(defun toggle-opacity ()
-  (interactive)
-  (cond ((string= next-opacity 'opaque)
-         (progn
-           (set-frame-parameter (selected-frame) 'alpha '(100 100))
-           (add-to-list 'default-frame-alist '(alpha 100 100))
-           (setq next-opacity 'translucent)))
-        ((string= next-opacity 'translucent)
-         (progn
-           (set-frame-parameter (selected-frame) 'alpha '(92 92))
-           (add-to-list 'default-frame-alist '(alpha 92 92))
-           (setq next-opacity 'opaque)))))
-
-(bind-keys ("C-x   8" . toggle-opacity)
-           ("C-x C-8" . toggle-opacity)
-           ("C-x C-*" . toggle-opacity))
-(toggle-opacity)
-(setq 'default-frame-alist '(alpha next-opacity next-opacity))
 
 #+END_SRC
 
@@ -584,6 +549,13 @@ comment box."
 (global-goto-address-mode t)
 #+END_SRC
 
+** open file in sudo
+#+BEGIN_SRC emacs-lisp
+(defun open-file-with-sudo ()
+  (interactive)
+  (find-file (concat "/sudo::" (buffer-file-name))))
+#+END_SRC
+
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
@@ -865,6 +837,13 @@ comment box."
     (interactive "P")
     (term-into-dir-internal t))
   )
+
+(add-to-list 'load-path (locate-user-emacs-file "lisp/emacs-libvterm"))
+(let (vterm-install)
+  (require 'vterm))
+;; (bind-keys :map vterm-mode-map
+           ;; )
+(m-buffer-binds vterm-mode-map)
 
 (unbind-key "M-!")
 (bind-key "C-!" 'shell-command)

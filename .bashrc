@@ -88,8 +88,7 @@ en() {
     emacsclient -n "$@"
 }
 e() { ew "$@"; }
-alias emd="emacs --daemon >/dev/null 2>&1 ; emacsclient -nw"
-export EDITOR=~/bin/my_editor.sh
+export EDITOR="emacsclient -nw"
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
