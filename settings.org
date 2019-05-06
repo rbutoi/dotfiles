@@ -25,18 +25,24 @@
          ("C-x C-_" . toggle-theme))
   :init
   (setq next-bg 'dark)
+
+  (defun themed-mode ()
+    (interactive)
+    (load-theme 'solarized-dark t)
+    (diff-hl-margin-mode -1)
+    (setq next-bg 'off))
+  (defun unthemed-mode ()
+    (interactive)
+    (disable-theme 'solarized-dark)
+    (diff-hl-margin-mode 1)
+    (setq next-bg 'dark))
+
   (defun toggle-theme ()
     (interactive)
     (cond ((eq next-bg 'dark)
-           (progn
-             (load-theme 'solarized-dark t)
-             (diff-hl-margin-mode -1)
-             (setq next-bg 'off)))
+           (themed-mode))
           ((eq next-bg 'off)
-           (progn
-             (disable-theme 'solarized-dark)
-             (diff-hl-margin-mode 1)
-             (setq next-bg 'dark))))
+           (unthemed-mode)))
 
     ;; a bit more contrast to keep track of curent window
     (set-face-attribute  'mode-line
@@ -46,13 +52,12 @@
                          nil
                          :box nil))
 
-  ;; needed to prevent errors
-  (toggle-theme)
-  (add-hook 'window-setup-hook
-            (lambda ()
-              (when (or (and (window-system) (eq next-bg 'dark))
-                        (and (not (window-system)) (eq next-bg 'off)))
-                (toggle-theme))))
+  ;; needed to prevent errors, even if staying unthemed
+  (themed-mode)
+
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (if (window-system frame) (themed-mode) (unthemed-mode))))
   )
 
 ;; transparency
