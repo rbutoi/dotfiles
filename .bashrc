@@ -147,10 +147,10 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 # https://github.com/jml/undistract-me
-# if [ -f /usr/share/undistract-me/long-running.bash ]; then
-#     source /usr/share/undistract-me/long-running.bash
-#     notify_when_long_running_commands_finish_install
-# fi
+if [ -f /usr/share/undistract-me/long-running.bash ]; then
+    source /usr/share/undistract-me/long-running.bash
+    notify_when_long_running_commands_finish_install
+fi
 
 # Specific
 [ -f ~/.bashrc_specific ] && source ~/.bashrc_specific
