@@ -500,7 +500,7 @@ comment box."
   ** org-journal
   #+BEGIN_SRC emacs-lisp
   (use-package org-journal
-    :custom (org-journal-dir "~/Google Drive/journal/")
+    :custom (org-journal-dir "~/google-drive/journal/")
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
     (setq sorg-journal-file-format "%Y%m%d.txt")

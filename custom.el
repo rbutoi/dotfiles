@@ -42,7 +42,7 @@
  '(nrepl-message-colors
    (quote
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
- '(org-journal-dir "~/Google Drive/journal/")
+ '(org-journal-dir "~/google-drive/journal/")
  '(package-selected-packages
    (quote
     (vc-hgcmd helm-rg diff-hl company s ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
