@@ -16,7 +16,7 @@ modMask' = mod1Mask
 
 myStartupHook = do
   startupHook xfceConfig
-  spawn "compton -CGb"
+  spawn "compton -CGb --no-fading-openclose -I 1 -O 1 --backend glx --vsync"
 
 myManageHook = composeAll
    [ title =? "Whisker Menu"  --> doFloat
