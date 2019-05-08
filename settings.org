@@ -133,8 +133,7 @@
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
              ("M-2" . (lambda () (interactive) (split-window-below)))
-             ("M-3" . (lambda () (interactive) (split-window-right)))
-             ("M-=" . balance-windows)))
+             ("M-3" . (lambda () (interactive) (split-window-right)))))
 (m-buffer-binds (current-global-map))
 ;; instead of the hacky putting (balance-windows) after all those commands:
 (defadvice split-window-below (after restore-balanace-below activate)
@@ -564,11 +563,10 @@ comment box."
 (global-goto-address-mode t)
 #+END_SRC
 
-** open file in sudo
+** expand-region
 #+BEGIN_SRC emacs-lisp
-(defun open-file-with-sudo ()
-  (interactive)
-  (find-file (concat "/sudo::" (buffer-file-name))))
+(use-package expand-region
+  :bind (("M-=" . 'er/expand-region)))
 #+END_SRC
 
 ** Misc
@@ -902,7 +900,7 @@ comment box."
 
 * Meta/misc
 
-*** When editing this file, C-c m to switch between org-mode and elisp. Yup...
+** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
 (setq switch-org-and-elisp-map (make-sparse-keymap))
 (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
@@ -913,11 +911,19 @@ comment box."
 (bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
 (bind-key "C-c C-m" 'switch-org-and-elisp switch-org-and-elisp-map)
 ;; Local Variables:
+;; mode: emacs-lisp
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
 #+END_SRC
 
-*** TRAMP
+** open file in sudo
+#+BEGIN_SRC emacs-lisp
+(defun open-file-with-sudo ()
+  (interactive)
+  (find-file (concat "/sudo::" (buffer-file-name))))
+#+END_SRC
+
+** TRAMP
 #+BEGIN_SRC emacs-lisp
 (use-package tramp
   :config
@@ -931,14 +937,14 @@ comment box."
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
-*** Specific
+** Specific
 #+BEGIN_SRC emacs-lisp
 (let ((specific (locate-user-emacs-file "specific.el")))
   (when (file-exists-p specific)
     (load specific)))
 #+END_SRC
 
-*** Emacs server
+** Emacs server
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
