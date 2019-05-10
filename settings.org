@@ -896,7 +896,6 @@ or are no longer readable will be killed."
 (bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
 (bind-key "C-c C-m" 'switch-org-and-elisp switch-org-and-elisp-map)
 ;; Local Variables:
-;; mode: emacs-lisp
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
 #+END_SRC
