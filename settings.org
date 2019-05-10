@@ -548,13 +548,6 @@ or are no longer readable will be killed."
 (global-goto-address-mode t)
 #+END_SRC
 
-** open file in sudo
-#+BEGIN_SRC emacs-lisp
-(defun open-file-with-sudo ()
-  (interactive)
-  (find-file (concat "/sudo::" (buffer-file-name))))
-#+END_SRC
-
 ** expand-region
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
@@ -892,7 +885,7 @@ or are no longer readable will be killed."
 
 * Meta/misc
 
-*** When editing this file, C-c m to switch between org-mode and elisp. Yup...
+** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
 (setq switch-org-and-elisp-map (make-sparse-keymap))
 (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
@@ -903,11 +896,19 @@ or are no longer readable will be killed."
 (bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
 (bind-key "C-c C-m" 'switch-org-and-elisp switch-org-and-elisp-map)
 ;; Local Variables:
+;; mode: emacs-lisp
 ;; eval: (switch-org-and-elisp-mode 1)
 ;; End:
 #+END_SRC
 
-*** TRAMP
+** open file in sudo
+#+BEGIN_SRC emacs-lisp
+(defun open-file-with-sudo ()
+  (interactive)
+  (find-file (concat "/sudo::" (buffer-file-name))))
+#+END_SRC
+
+** TRAMP
 #+BEGIN_SRC emacs-lisp
 (use-package tramp
   :config
@@ -921,14 +922,14 @@ or are no longer readable will be killed."
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
-*** Specific
+** Specific
 #+BEGIN_SRC emacs-lisp
 (let ((specific (locate-user-emacs-file "specific.el")))
   (when (file-exists-p specific)
     (load specific)))
 #+END_SRC
 
-*** Emacs server
+** Emacs server
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
