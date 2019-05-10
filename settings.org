@@ -133,8 +133,7 @@
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
              ("M-2" . (lambda () (interactive) (split-window-below)))
-             ("M-3" . (lambda () (interactive) (split-window-right)))
-             ("M-=" . balance-windows)))
+             ("M-3" . (lambda () (interactive) (split-window-right)))))
 (m-buffer-binds (current-global-map))
 ;; instead of the hacky putting (balance-windows) after all those commands:
 (defadvice split-window-below (after restore-balanace-below activate)
@@ -315,6 +314,7 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 (blink-cursor-mode 0)
 #+END_SRC
@@ -365,22 +365,6 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (bind-keys ("M-p" . backward-paragraph)
            ("M-n" . forward-paragraph))
-#+END_SRC
-
-** jcs-comment-box
-#+BEGIN_SRC emacs-lisp
-(defun jcs-comment-box (b e)
-  "Draw a box comment around the region but arrange for the region
-to extend to at least the fill column. Place the point after the
-comment box."
-  (interactive "r")
-  (save-restriction
-    (narrow-to-region b e)
-    (goto-char b)
-    (end-of-line)
-    (insert-char ?  (- fill-column (current-column)))
-    (comment-box b (point-max) 1)
-    (goto-char (point-max))))
 #+END_SRC
 
 ** Undoing, undo tree
@@ -569,6 +553,12 @@ comment box."
 (defun open-file-with-sudo ()
   (interactive)
   (find-file (concat "/sudo::" (buffer-file-name))))
+#+END_SRC
+
+** expand-region
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :bind ("M-=" . er/expand-region))
 #+END_SRC
 
 ** Misc
