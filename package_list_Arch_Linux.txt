@@ -1,6 +1,7 @@
+alacritty
+alacritty-terminfo
 alsa-utils
 amd-ucode
-archlinux-artwork
 aspell-en
 bash-completion
 caprine
@@ -18,11 +19,12 @@ gdb
 gimp
 git
 gitg
+gparted
 grive
-haskell-dbus
 htop
 hunspell
 hunspell-en_US
+i3ipc-python
 icdiff
 inotify-tools
 inxi
@@ -30,8 +32,6 @@ keychain
 lastpass-cli
 libva-mesa-driver
 libva-utils
-lightdm
-lightdm-gtk-greeter
 lostfiles
 lsb-release
 mesa-demos
@@ -52,10 +52,13 @@ pulseaudio
 pulseaudio-alsa
 reflector
 ripgrep
+rmlint
+rofi
 rsync
 speedtest-cli
 spotify
 strace
+sway
 systemd-swap
 tmux
 ttf-monaco
@@ -65,8 +68,9 @@ undistract-me-git
 unzip
 valgrind
 vdpauinfo
+waybar
 wmctrl
+xarchiver
 xclip
-xmonad
-xmonad-contrib
+xreader
 zile
