@@ -25,6 +25,9 @@ shopt -s checkwinsize
 # https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
 stty -ixon
 
+
+# Avoid duplicates
+export HISTCONTROL=ignoredups:erasedups
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend
 
@@ -38,6 +41,7 @@ export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
 append_history() { history -a; }
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 precmd_functions+=(append_history)
 
 if [ "$TERM" != "dumb" ]; then
@@ -152,10 +156,10 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 # https://github.com/jml/undistract-me
-# if [ -f /usr/share/undistract-me/long-running.bash ]; then
-#     source /usr/share/undistract-me/long-running.bash
-#     notify_when_long_running_commands_finish_install
-# fi
+if [ -f /usr/share/undistract-me/long-running.bash ]; then
+    source /usr/share/undistract-me/long-running.bash
+    notify_when_long_running_commands_finish_install
+fi
 
 # Specific
 [ -f ~/.bashrc_specific ] && source ~/.bashrc_specific

@@ -18,7 +18,6 @@
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
-;; toggle dark/light for when switching graphical to terminal
 (use-package solarized-theme
   :bind (("C-x 7" . toggle-theme)
          ("C-x C-7" . toggle-theme)
@@ -28,15 +27,16 @@
 
   (defun themed-mode ()
     (interactive)
-    (load-theme 'solarized-dark t)
-    (diff-hl-margin-mode -1)
-    (setq next-bg 'off))
+    (when (eq next-bg 'dark)
+      (load-theme 'solarized-dark t)
+      (setq next-bg 'off)))
   (defun unthemed-mode ()
     (interactive)
-    (disable-theme 'solarized-dark)
-    (diff-hl-margin-mode 1)
-    (setq next-bg 'dark))
+    (when (eq next-bg 'off)
+      (disable-theme 'solarized-dark)
+      (setq next-bg 'dark)))
 
+  ;; toggle dark/light for when switching graphical to terminal
   (defun toggle-theme ()
     (interactive)
     (cond ((eq next-bg 'dark)
@@ -51,29 +51,27 @@
     (set-face-attribute  'mode-line-inactive
                          nil
                          :box nil))
-
   ;; needed to prevent errors, even if staying unthemed
   (themed-mode)
 
-  (add-hook 'after-make-frame-functions
-            (lambda (frame)
-              (if (window-system frame) (themed-mode) (unthemed-mode))))
-  (add-hook 'focus-in-hook
-            (lambda ()
-              (if (window-system) (themed-mode) (unthemed-mode))))
+  (defun themed-if-window-system (frame)
+    (if (window-system frame) (themed-mode) (unthemed-mode)))
+  (add-hook 'after-make-frame-functions 'themed-if-window-system)
+  (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
+  (themed-if-window-system (selected-frame))
   )
 
 ;; transparency
 (add-to-list 'default-frame-alist '(alpha 92 92))
 
-;; Font. idk why mac os is annoying and different
+;; font
+;; why does mac need this?
 (if (eq system-type 'darwin)
     (progn
-      (add-to-list 'default-frame-alist '(font . "Monaco-13"))
-      (set-frame-font "Monaco-13"))
-  (progn
-    (add-to-list 'default-frame-alist '(font . "Monaco-11"))
-    ))
+      (add-to-list 'default-frame-alist '(font . "Monaco-10"))
+      (set-frame-font "Monaco-10"))
+  (add-to-list 'default-frame-alist '(font . "Monaco-11")))
+
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -114,11 +112,11 @@
   (mapc 'kill-buffer (buffer-list))
   (delete-other-windows))
 (defun kill-other-buffers ()
-    "Kill all other buffers."
-    (interactive)
-    (mapc 'kill-buffer
-          (delq (current-buffer)
-                (remove-if-not 'buffer-file-name (buffer-list)))))
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer
+        (delq (current-buffer)
+              (remove-if-not 'buffer-file-name (buffer-list)))))
 (defun kill-matching-buffers-just-do-it ()
   "Kill buffers whose names match REGEXP, without asking."
   (interactive)
@@ -137,8 +135,7 @@
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
              ("M-2" . (lambda () (interactive) (split-window-below)))
-             ("M-3" . (lambda () (interactive) (split-window-right)))
-             ("M-=" . balance-windows)))
+             ("M-3" . (lambda () (interactive) (split-window-right)))))
 (m-buffer-binds (current-global-map))
 ;; instead of the hacky putting (balance-windows) after all those commands:
 (defadvice split-window-below (after restore-balanace-below activate)
@@ -320,6 +317,7 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
 (unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 (blink-cursor-mode 0)
 #+END_SRC
@@ -372,22 +370,6 @@ or are no longer readable will be killed."
            ("M-n" . forward-paragraph))
 #+END_SRC
 
-** jcs-comment-box
-#+BEGIN_SRC emacs-lisp
-(defun jcs-comment-box (b e)
-  "Draw a box comment around the region but arrange for the region
-to extend to at least the fill column. Place the point after the
-comment box."
-  (interactive "r")
-  (save-restriction
-    (narrow-to-region b e)
-    (goto-char b)
-    (end-of-line)
-    (insert-char ?  (- fill-column (current-column)))
-    (comment-box b (point-max) 1)
-    (goto-char (point-max))))
-#+END_SRC
-
 ** Undoing, undo tree
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
@@ -403,8 +385,8 @@ comment box."
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
 ;; (unless (eq system-type 'darwin)
-  ;; (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
-                               ;; (prog-mode . flyspell-prog-mode))))
+;; (use-package flyspell :hook ((org-journal-mode . flyspell-mode)
+;; (prog-mode . flyspell-prog-mode))))
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
@@ -503,7 +485,7 @@ comment box."
   ** org-journal
   #+BEGIN_SRC emacs-lisp
   (use-package org-journal
-    :custom (org-journal-dir "~/Google Drive/journal/")
+    :custom (org-journal-dir "~/google-drive/journal/")
     :config
     (setq org-journal-date-format "%A, %d/%m/%Y")
     (setq sorg-journal-file-format "%Y%m%d.txt")
@@ -569,11 +551,10 @@ comment box."
 (global-goto-address-mode t)
 #+END_SRC
 
-** open file in sudo
+** expand-region
 #+BEGIN_SRC emacs-lisp
-(defun open-file-with-sudo ()
-  (interactive)
-  (find-file (concat "/sudo::" (buffer-file-name))))
+(use-package expand-region
+  :bind ("M-=" . er/expand-region))
 #+END_SRC
 
 ** Misc
@@ -648,11 +629,23 @@ comment box."
 *** rust
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode)
+(use-package racer
+  :config
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode)
+  (setq racer-rust-src-path "/home/radu/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"))
 #+END_SRC
 
 *** pkgbuild
 #+BEGIN_SRC emacs-lisp
 (use-package pkgbuild-mode)
+#+END_SRC
+
+*** yaml
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :config
+  (add-hook 'yaml-mode-hook (lambda () (run-mode-hooks 'prog-mode-hook))))
 #+END_SRC
 
 ** Company
@@ -684,8 +677,8 @@ comment box."
 ** Diffing
 #+BEGIN_SRC emacs-lisp
 (add-hook 'diff-mode-hook (lambda ()
-            (m-buffer-binds (current-local-map))
-            (read-only-mode t)))
+                            (m-buffer-binds (current-local-map))
+                            (read-only-mode t)))
 (setq diff-switches "-u")
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load 'ediff
@@ -699,6 +692,7 @@ comment box."
 ** diff-hl-mode
 #+BEGIN_SRC emacs-lisp
 (use-package diff-hl
+  :defer 1
   :bind (("C-x C-v ]" . diff-hl-next-hunk)
          ("C-x C-v [" . diff-hl-previous-hunk)
          ("C-x C-v n" . diff-hl-revert-hunk)
@@ -707,6 +701,9 @@ comment box."
          )
   :config
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  ;; TODO figure out margin mode toggling with toggle-theme that doesn't cause
+  ;; void-variable errors and such
+  ;; (diff-hl-margin-mode t)
   (global-diff-hl-mode)
   (bind-keys
    ("C-x C-v =" . vc-diff)
@@ -904,7 +901,7 @@ comment box."
 
 * Meta/misc
 
-*** When editing this file, C-c m to switch between org-mode and elisp. Yup...
+** When editing this file, C-c m to switch between org-mode and elisp. Yup...
 #+BEGIN_SRC emacs-lisp
 (setq switch-org-and-elisp-map (make-sparse-keymap))
 (define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
@@ -919,7 +916,14 @@ comment box."
 ;; End:
 #+END_SRC
 
-*** TRAMP
+** open file in sudo
+#+BEGIN_SRC emacs-lisp
+(defun open-file-with-sudo ()
+  (interactive)
+  (find-file (concat "/sudo::" (buffer-file-name))))
+#+END_SRC
+
+** TRAMP
 #+BEGIN_SRC emacs-lisp
 (use-package tramp
   :config
@@ -933,14 +937,14 @@ comment box."
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
-*** Specific
+** Specific
 #+BEGIN_SRC emacs-lisp
 (let ((specific (locate-user-emacs-file "specific.el")))
   (when (file-exists-p specific)
     (load specific)))
 #+END_SRC
 
-*** Emacs server
+** Emacs server
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC

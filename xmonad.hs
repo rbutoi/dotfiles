@@ -16,10 +16,14 @@ modMask' = mod1Mask
 
 myStartupHook = do
   startupHook xfceConfig
-  spawn "compton -CGb"
+  spawn "compton -CGb --no-fading-openclose -I 1 -O 1 --backend glx --vsync"
 
 myManageHook = composeAll
-   [ title =? "Whisker Menu"  --> doFloat
+   [ title     =? "Whisker Menu"    --> doFloat
+   , className =? "Xfce4-appfinder" --> doFloat
+   , title     =? "Weather Report"  --> doFloat
+   , title     =? "Panel"           --> doFloat
+   , title     =? "Add New Items"   --> doFloat
    , manageDocks
    ]
 
@@ -68,6 +72,7 @@ main = do
     , ("M-S-e", spawn "emacsclient -c -a emacs")
     , ("M-`", spawn "xfce4-popup-whiskermenu")
     , ("M-S-f", spawn "firefox")
+    , ("M-S-s", spawn "spotify")
     ] `removeKeysP`
     [ ("M-q"),("M-w"),("M-e"),("M-b"),("M-p"),("M-n")
     ,("M-1"),("M-2"),("M-3"),("M-4"),("M-5"),("M-6"),("M-7"),("M-8"),("M-9")
