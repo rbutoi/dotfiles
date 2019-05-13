@@ -677,6 +677,7 @@ or are no longer readable will be killed."
 ** diff-hl-mode
 #+BEGIN_SRC emacs-lisp
 (use-package diff-hl
+  :defer 1
   :bind (("C-x C-v ]" . diff-hl-next-hunk)
          ("C-x C-v [" . diff-hl-previous-hunk)
          ("C-x C-v n" . diff-hl-revert-hunk)
