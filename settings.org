@@ -65,11 +65,13 @@
 (add-to-list 'default-frame-alist '(alpha 92 92))
 
 ;; font
-(if (string-match-p "\\.com" (system-name))
-    (add-to-list 'default-frame-alist '(font . "Monaco-11"))
-    (add-to-list 'default-frame-alist '(font . "Monaco-10")))
 ;; why does mac need this?
-(when (eq system-type 'darwin) (set-frame-font "Monaco-10"))
+(if (eq system-type 'darwin)
+    (progn
+      (add-to-list 'default-frame-alist '(font . "Monaco-10"))
+      (set-frame-font "Monaco-10"))
+  (add-to-list 'default-frame-alist '(font . "Monaco-11")))
+
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -626,11 +628,23 @@ or are no longer readable will be killed."
 *** rust
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode)
+(use-package racer
+  :config
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'eldoc-mode)
+  (setq racer-rust-src-path "/home/radu/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"))
 #+END_SRC
 
 *** pkgbuild
 #+BEGIN_SRC emacs-lisp
 (use-package pkgbuild-mode)
+#+END_SRC
+
+*** yaml
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :config
+  (add-hook 'yaml-mode-hook (lambda () (run-mode-hooks 'prog-mode-hook))))
 #+END_SRC
 
 ** Company
