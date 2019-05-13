@@ -1,0 +1,123 @@
+set $mod Mod1
+
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $term alacritty
+set $menu rofi -modi combi -combi-modi 'drun#run' -show 
+
+output * bg "~/Pictures/macosx-desert/Mojave Night.jpg" fill
+
+input * {
+    xkb_options ctrl:nocaps
+    repeat_delay 250
+    repeat_rate 20
+}
+
+### Key bindings
+#
+# Basics:
+#
+    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+c kill
+    bindsym $mod+space exec $menu
+    floating_modifier $mod normal
+    bindsym $mod+Shift+q reload
+    bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+#
+# Moving around:
+#
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # _move_ the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+    # switch to workspace (ctrl for emacs)
+    bindsym $mod+Ctrl+1 workspace 1
+    bindsym $mod+Ctrl+2 workspace 2
+    bindsym $mod+Ctrl+3 workspace 3
+    bindsym $mod+Ctrl+4 workspace 4
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    # next and previous workspace
+    bindsym $mod+Shift+n exec ~/autoi3/next_ws.py
+    bindsym $mod+Shift+p exec ~/autoi3/prev_ws.py
+#
+# Layout stuff:
+#
+    bindsym $mod+Shift+b splith
+    bindsym $mod+Shift+v splitv
+    bindsym $mod+s layout stacking 
+    bindsym $mod+Shift+w layout tabbed
+    bindsym $mod+e layout toggle split
+    bindsym $mod+Shift+f fullscreen
+    bindsym $mod+Shift+t floating toggle
+    bindsym $mod+t focus mode_toggle
+    bindsym $mod+a focus parent
+    bindsym $mod+Shift+a focus child
+#
+# Scratchpad:
+#
+    bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+minus scratchpad show
+#
+# Resizing containers:
+#
+bindsym $mod+Ctrl+$left resize shrink width 40px
+bindsym $mod+Ctrl+$down resize grow height 40px
+bindsym $mod+Ctrl+$up resize shrink height 40px
+bindsym $mod+Ctrl+$right resize grow width 40px
+
+# ditto, with arrow keys
+bindsym $mod+Ctrl+Left resize shrink width 40px
+bindsym $mod+Ctrl+Down resize grow height 40px
+bindsym $mod+Ctrl+Up resize shrink height 40px
+bindsym $mod+Ctrl+Right resize grow width 40px
+
+# bar {
+#     position bottom
+#     colors {
+#         statusline #ffffff
+#         background #323232
+#         inactive_workspace #32323200 #32323200 #5c5c5c
+#     }
+# }
+
+include /etc/sway/config.d/*
+
+mouse_warping container
+
+font "Sans 11"
+
+default_border pixel 5
+smart_borders on
+hide_edge_borders both
+
+workspace_auto_back_and_forth yes
+
+bindsym $mod+Shift+e exec emacsclient -c -a emacs
+
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
