@@ -66,11 +66,8 @@
 
 ;; font
 ;; why does mac need this?
-(if (eq system-type 'darwin)
-    (progn
-      (add-to-list 'default-frame-alist '(font . "Monaco-10"))
-      (set-frame-font "Monaco-10"))
-  (add-to-list 'default-frame-alist '(font . "Monaco-11")))
+(add-to-list 'default-frame-alist '(font . "Monaco-10"))
+(when (eq system-type 'darwin) (set-frame-font "Monaco-10"))
 
 
 ;; make window divider prettier
@@ -702,7 +699,7 @@ or are no longer readable will be killed."
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   ;; TODO figure out margin mode toggling with toggle-theme that doesn't cause
   ;; void-variable errors and such
-  ;; (diff-hl-margin-mode t)
+  (diff-hl-margin-mode t)
   (global-diff-hl-mode)
   (bind-keys
    ("C-x C-v =" . vc-diff)
