@@ -6,14 +6,17 @@ set $up k
 set $right l
 
 set $term alacritty
-set $menu rofi -modi combi -combi-modi 'drun#run' -show 
+set $menu "rofi -modi combi,calc -combi-modi drun#run -show combi"
 
-output * bg "~/Pictures/macosx-desert/Mojave Night.jpg" fill
+output * bg "~/Pictures/macosx-desert/Desert 5.jpg" fill
 
 input * {
+# keyboard
     xkb_options ctrl:nocaps
     repeat_delay 250
-    repeat_rate 20
+    repeat_rate 30
+# mouse
+    pointer_accel -1
 }
 
 ### Key bindings
@@ -25,9 +28,10 @@ input * {
     bindsym $mod+space exec $menu
     floating_modifier $mod normal
     bindsym $mod+Shift+q reload
+    # exit command is i3/sway-specific
     bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #
-# Moving around:
+# Moving around (default):
 #
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
@@ -64,7 +68,9 @@ input * {
     bindsym $mod+Shift+4 move container to workspace 4
     # next and previous workspace
     bindsym $mod+Shift+n exec ~/autoi3/next_ws.py
+    bindsym --whole-window $mod+button5 exec ~/autoi3/next_ws.py
     bindsym $mod+Shift+p exec ~/autoi3/prev_ws.py
+    bindsym --whole-window $mod+button4 exec ~/autoi3/prev_ws.py
 #
 # Layout stuff:
 #
@@ -97,27 +103,45 @@ bindsym $mod+Ctrl+Down resize grow height 40px
 bindsym $mod+Ctrl+Up resize shrink height 40px
 bindsym $mod+Ctrl+Right resize grow width 40px
 
-# bar {
-#     position bottom
-#     colors {
-#         statusline #ffffff
-#         background #323232
-#         inactive_workspace #32323200 #32323200 #5c5c5c
-#     }
-# }
+#
+# Radu-Arch system:
+#
+bindsym $mod+Shift+e exec emacsclient -c -a emacs
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioStop exec playerctl stop
+bindsym XF86Calculator exec "rofi -show calc" 
 
-include /etc/sway/config.d/*
+# notification daemon
+exec mako
+
+bar {
+    position bottom
+
+    status_command i3blocks
+    colors {
+        statusline #ffffff
+        background #323232
+        inactive_workspace #32323200 #32323200 #5c5c5c
+    }
+}
 
 mouse_warping container
 
-font "Sans 11"
-
-default_border pixel 5
+default_border pixel 3
 smart_borders on
 hide_edge_borders both
 
 workspace_auto_back_and_forth yes
 
-bindsym $mod+Shift+e exec emacsclient -c -a emacs
+# my colours:
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
+#            only non-default, bright to indicate active -^ 
 
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+# system configs
+include /etc/sway/config.d/*

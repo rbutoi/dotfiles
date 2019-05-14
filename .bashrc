@@ -92,13 +92,10 @@ en() {
     emacsclient -n "$@"
 }
 e() { ew "$@"; }
-export EDITOR="emacsclient -nw"
+export EDITOR=ew
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
-
-# https://github.com/cykerway/complete-alias
-[ -f /etc/bash_completion ] && . ~/bin/complete-alias/bash_completion.sh
 
 export CLICOLOR=1
 alias l='ls -F'
@@ -131,6 +128,7 @@ alias dv="dirs -v"
 alias s='sudo'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
+alias tm='tmx2 a -d || tmx2'
 
 find_pi() {
     sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
@@ -145,7 +143,14 @@ if [ "$TERM" != "dumb" ]; then
     export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 fi
 
+# https://the.exa.website
+if command -v exa >/dev/null 2>&1; then
+    alias l='exa'
+    alias ll='l -la'
+fi
+
 # enable programmable completion features
+# worth mentioning: https://github.com/cykerway/complete-alias
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
