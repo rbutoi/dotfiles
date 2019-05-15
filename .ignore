@@ -1,0 +1,4 @@
+.config/google-chrome/**
+.config/chrome-remote-desktop/**
+.rustup/**
+.cargo/**
