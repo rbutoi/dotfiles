@@ -66,6 +66,8 @@ input * {
     bindsym $mod+Shift+2 move container to workspace 2
     bindsym $mod+Shift+3 move container to workspace 3
     bindsym $mod+Shift+4 move container to workspace 4
+    # other monitor
+    bindsym $mod+m focus output right
     # next and previous workspace
     bindsym $mod+Shift+n exec ~/autoi3/next_ws.py
     bindsym --whole-window $mod+button5 exec ~/autoi3/next_ws.py
