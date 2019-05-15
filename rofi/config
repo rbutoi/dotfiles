@@ -1,4 +1,4 @@
 rofi.modi:  combi
 rofi.combi-modi: window,drun,run
 rofi.theme: glue_pro_blue
-rofi.font:  sans 12
+rofi.font:  sans 13

@@ -92,7 +92,7 @@ en() {
     emacsclient -n "$@"
 }
 e() { ew "$@"; }
-export EDITOR=ew
+export EDITOR="emacsclient -c -a="
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc

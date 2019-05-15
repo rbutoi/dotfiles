@@ -645,6 +645,11 @@ or are no longer readable will be killed."
   (add-hook 'yaml-mode-hook (lambda () (run-mode-hooks 'prog-mode-hook))))
 #+END_SRC
 
+*** json
+#+BEGIN_SRC emacs-lisp
+(use-package json-mode)
+#+END_SRC
+
 ** Company
 #+BEGIN_SRC emacs-lisp
 (use-package company

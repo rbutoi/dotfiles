@@ -1,0 +1,47 @@
+// -*- mode: json; -*-
+{
+    "layer": "bottom",
+    "position": "bottom",
+    "height": 24,
+    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-center": ["sway/window"],
+    "modules-right": ["custom/load", "custom/music", "pulseaudio", "tray", "clock"],
+    "sway/workspaces": {
+        "format": "{name}",
+        "disable-scroll": false
+    },
+    "sway/window": {
+        "max-length": 200,
+        "tooltip": false
+    },
+    "custom/load": {
+        "exec": "cut -f1 -d' ' /proc/loadavg",
+        "format": "load {}",
+        "interval": 60
+    },
+    "custom/music": {
+        // emoji(status) doesn't work great with Dina
+        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}} ({{status}})' -F",
+        "escape": true,
+        "tooltip": false
+    },
+    "clock": {
+        "format": "{:%a %d %b %H:%M}",
+        "on-click": "gsimplecal",
+        "tooltip": false
+    },
+    "pulseaudio": {
+        "format": "vol {volume}",
+        "format-muted": "muted",
+        "format-icons": {
+            "phone": [" ", " ", " ", " "],
+            "default": ["", "", "", ""]
+        },
+        "scroll-step": 10,
+        "on-click": "pavucontrol",
+        "tooltip": false
+    },
+    "tray": {
+        "icon-size": 18
+    }
+}

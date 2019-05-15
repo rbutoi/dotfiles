@@ -78,8 +78,8 @@ input * {
 #
     bindsym $mod+Shift+b splith
     bindsym $mod+Shift+v splitv
-    bindsym $mod+s layout stacking 
-    bindsym $mod+Shift+w layout tabbed
+    bindsym $mod+Shift+s layout stacking
+    bindsym $mod+s layout tabbed
     bindsym $mod+e layout toggle split
     bindsym $mod+Shift+f fullscreen
     bindsym $mod+Shift+t floating toggle
@@ -116,20 +116,23 @@ bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioStop exec playerctl stop
-bindsym XF86Calculator exec "rofi -show calc" 
+bindsym XF86Calculator exec "rofi -show calc"
+
+font Dina 10
 
 # notification daemon
 exec mako
 
 bar {
-    position bottom
+    swaybar_command waybar
+    # position bottom
 
-    status_command i3blocks
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
+    # status_command i3blocks
+    # colors {
+        # statusline #ffffff
+        # background #323232
+        # inactive_workspace #32323200 #32323200 #5c5c5c
+    # }
 }
 
 mouse_warping container
@@ -147,3 +150,9 @@ client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 
 # system configs
 include /etc/sway/config.d/*
+
+exec spotify
+for_window [class="Spotify"] move to scratchpad
+
+for_window [class="(?i)gsimplecal"] move position mouse, move down 100 px
+
