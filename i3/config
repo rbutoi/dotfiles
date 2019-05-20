@@ -1,0 +1,130 @@
+set $mod Mod1
+
+set $left h
+set $down j
+set $up k
+set $right l
+
+set $term kitty
+set $menu "rofi -show"
+
+exec feh --bg-fill "~/Desktop/Pictures/El\ Capitan\ 2.jpg"  --bg-fill "Desktop/Pictures/Sierra.jpg"
+exec xset r rate 250 25
+
+### Key bindings
+#
+# Basics:
+#
+    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+c kill
+    bindsym $mod+space exec $menu
+    # floating_modifier $mod normal
+    floating_modifier $mod
+    bindsym $mod+Shift+q reload
+    bindsym $mod+Shift+Ctrl+q exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+#
+# Moving around:
+#
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # _move_ the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+    # switch to workspace (ctrl for emacs)
+    bindsym $mod+Ctrl+1 workspace 1
+    bindsym $mod+Ctrl+2 workspace 2
+    bindsym $mod+Ctrl+3 workspace 3
+    bindsym $mod+Ctrl+4 workspace 4
+    # move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace 1
+    bindsym $mod+Shift+2 move container to workspace 2
+    bindsym $mod+Shift+3 move container to workspace 3
+    bindsym $mod+Shift+4 move container to workspace 4
+    # other monitor
+    bindsym $mod+m focus output right
+    # next and previous workspace
+    bindsym $mod+Shift+n exec ~/autoi3/next_ws.py
+    bindsym --whole-window $mod+button5 exec ~/autoi3/next_ws.py
+    bindsym $mod+Shift+p exec ~/autoi3/prev_ws.py
+    bindsym --whole-window $mod+button4 exec ~/autoi3/prev_ws.py
+#
+# Layout stuff:
+#
+    bindsym $mod+Shift+b splith
+    bindsym $mod+Shift+v splitv
+    bindsym $mod+s layout stacking
+    bindsym $mod+Shift+s layout tabbed
+    bindsym $mod+e layout toggle split
+    bindsym $mod+Shift+f fullscreen
+    bindsym $mod+Shift+t floating toggle
+    bindsym $mod+t focus mode_toggle
+    bindsym $mod+a focus parent
+    bindsym $mod+Shift+a focus child
+#
+# Scratchpad:
+#
+    bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+minus scratchpad show
+#
+# Resizing containers:
+#
+bindsym $mod+Ctrl+$left resize shrink width 40px
+bindsym $mod+Ctrl+$down resize grow height 40px
+bindsym $mod+Ctrl+$up resize shrink height 40px
+bindsym $mod+Ctrl+$right resize grow width 40px
+
+# ditto, with arrow keys
+bindsym $mod+Ctrl+Left resize shrink width 40px
+bindsym $mod+Ctrl+Down resize grow height 40px
+bindsym $mod+Ctrl+Up resize shrink height 40px
+bindsym $mod+Ctrl+Right resize grow width 40px
+
+bar {
+    status_command i3blocks
+
+    position bottom
+    colors {
+        statusline #d9d8d8
+        background #231f20
+        inactive_workspace #32323200 #32323200 #5c5c5c
+    }
+}
+
+mouse_warping output
+
+font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+
+default_border pixel 3
+hide_edge_borders both
+
+workspace_auto_back_and_forth yes
+
+bindsym $mod+Shift+e exec emacsclient -c -a emacs
+
+bindsym $mod+Shift+Ctrl+l exec i3lock
+
+# my colours:
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
+#            only non-default, bright to indicate active -^
+
+for_window [class="Blueman-manager"] floating enable
+for_window [class="Pavucontrol"] floating enable

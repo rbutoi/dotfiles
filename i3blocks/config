@@ -1,21 +1,15 @@
-command=/usr/lib/i3blocks/$BLOCK_NAME
+command=/usr/share/i3blocks/$BLOCK_NAME
 separator_block_width=15
 markup=none
 
 [load_average]
-interval=10
+interval=60
 
 [volume]
-label=♪
 instance=Master
 interval=1
 signal=10
 
-[mediaplayer]
-instance=spotify
-interval=5
-signal=10
-
 [time]
-command=date +'%b %d %H:%M'
+command=date +'%a %b %d %H:%M'
 interval=5
