@@ -92,7 +92,7 @@ en() {
     emacsclient -n "$@"
 }
 e() { ew "$@"; }
-export EDITOR="emacsclient -c -a="
+export EDITOR="emacsclient -nw -a="
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
@@ -129,6 +129,7 @@ alias s='sudo'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmx2 a -d || tmx2'
+alias xa='xargs'
 
 find_pi() {
     sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'

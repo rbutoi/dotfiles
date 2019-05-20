@@ -125,9 +125,9 @@
              ("M-o" . other-window)
              ("M-i" . (lambda () (interactive) (other-window -1)))
              ("M-l" . (lambda () (interactive) (select-window (get-mru-window t t t))))
-             ("C-k" . kill-this-buffer)
-             ("C-M-k" . kill-other-buffers)
-             ("C-S-M-k" . kill-all-buffers)
+             ("C-k" . kill-current-buffer)
+             ("C-S-k" . kill-other-buffers)
+             ("C-M-k" . kill-other-buffers) ;; for when in terminal
              ("C-M-C" . save-buffers-kill-emacs)
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
