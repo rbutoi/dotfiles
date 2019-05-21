@@ -107,13 +107,15 @@
   "Kill all buffers."
   (interactive)
   (mapc 'kill-buffer (buffer-list))
-  (delete-other-windows))
+  (delete-other-windows)
+  (message "Killed all buffers"))
 (defun kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
   (mapc 'kill-buffer
         (delq (current-buffer)
-              (remove-if-not 'buffer-file-name (buffer-list)))))
+              (remove-if-not 'buffer-file-name (buffer-list))))
+  (message "Killed other buffers"))
 (defun kill-matching-buffers-just-do-it ()
   "Kill buffers whose names match REGEXP, without asking."
   (interactive)

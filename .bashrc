@@ -83,6 +83,11 @@ complete -F _upto upto
 
 fork() { (setsid "$@" &); }
 
+all_atq () {
+  atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'
+}
+
+# editor
 ew() {
     [ ! -e "$@" ] && return 1
     emacsclient -nw "$@"
@@ -95,15 +100,13 @@ e() { ew "$@"; }
 export EDITOR="emacsclient -nw -a="
 export ALTERNATE_EDITOR=zile
 
-export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
 
+export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
 export CLICOLOR=1
+
 alias l='ls -F'
 [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
 alias ll='l -lA -h'
-alias n="nano"
-alias z="zile"
-alias sz="sudo zile"
 alias g="grep --color=always -i"
 alias pg="ps aux | grep -v grep | g"
 alias chmox="chmod +x"

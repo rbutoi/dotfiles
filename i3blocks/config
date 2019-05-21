@@ -2,8 +2,11 @@ command=/usr/share/i3blocks/$BLOCK_NAME
 separator_block_width=15
 markup=none
 
+[cpu_usage]
+interval=5
+
 [load_average]
-interval=60
+interval=30
 
 [volume]
 instance=Master
