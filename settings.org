@@ -65,8 +65,9 @@
 (add-to-list 'default-frame-alist '(alpha 92 92))
 
 ;; font
-;; why does mac need this?
-(add-to-list 'default-frame-alist '(font . "Monaco-10"))
+(if (string-match-p "Arch" (system-name))
+    (add-to-list 'default-frame-alist '(font . "Monaco-11"))
+  (add-to-list 'default-frame-alist '(font . "Monaco-10")))
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(font . "Monaco-13"))
   (set-frame-font "Monaco-13"))
@@ -224,7 +225,8 @@ or are no longer readable will be killed."
   ;; get dependencies. idk if this nested thing is good but whatever
   (use-package helm-swoop)
   (use-package helm-descbinds :config (helm-descbinds-mode t))
-  (use-package helm-rg :bind (("C-M-s" . helm-rg)))
+  (use-package helm-rg :bind (("C-M-s" . helm-rg))
+    :config (setq helm-rg-default-extra-args "--hidden"))
 
   (setq helm-buffer-skip-remote-checking t
         helm-split-window-default-side 'same

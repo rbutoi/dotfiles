@@ -20,9 +20,11 @@
         "interval": 60
     },
     "custom/music": {
-        // emoji(status) doesn't work great with Dina
+        // emoji(status) doesn't work great with Dina font
         "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}} ({{status}})' -F",
         "escape": true,
+        "on-click": "swaymsg scratchpad show",
+        "on-click-right": "playerctl play-pause",
         "tooltip": false
     },
     "clock": {
