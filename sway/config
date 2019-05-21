@@ -119,6 +119,7 @@ bindsym $mod+Ctrl+Right resize grow width 40px
 #
 # Radu-Arch system:
 #
+bindsym $mod+Shift+Ctrl+l exec swaylock
 bindsym $mod+Shift+e exec emacsclient -c -a emacs
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
