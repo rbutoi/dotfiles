@@ -67,7 +67,9 @@
 ;; font
 ;; why does mac need this?
 (add-to-list 'default-frame-alist '(font . "Monaco-10"))
-(when (eq system-type 'darwin) (set-frame-font "Monaco-10"))
+(when (eq system-type 'darwin)
+  (add-to-list 'default-frame-alist '(font . "Monaco-13"))
+  (set-frame-font "Monaco-13"))
 
 
 ;; make window divider prettier
