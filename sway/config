@@ -1,12 +1,5 @@
-set $mod Mod1
-
-set $left h
-set $down j
-set $up k
-set $right l
-
 set $term alacritty
-set $menu "rofi -modi combi,calc -combi-modi drun#run -show combi"
+set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 
 output HDMI-A-1 {
     background "~/Pictures/macosx-desert/Mojave_Day.jpg" fill
@@ -30,78 +23,95 @@ exec swayidle -w \
               resume 'swaymsg "output * dpms on"' \
          before-sleep 'swaylock -f -c 000000'
 
-### Key bindings
+# startup
+exec mako
+exec spotify
+
+workspace_auto_back_and_forth yes
+mouse_warping container
+
+# display
+font Dina 10
+default_border pixel 3
+smart_borders on
+hide_edge_borders both
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
+#            only non-default, bright to indicate active -^
+
+bar swaybar_command waybar
+
+# per window config
+for_window [class="Spotify"] move to scratchpad, resize set width 2000 px height 1000 px
+for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
+for_window [title="Pavucontrol"] floating enable
+     
 #
-# Basics:
+# Keybindings - basics:
 #
-    bindsym $mod+Return exec $term
-    bindsym $mod+Shift+c kill
-    bindsym $mod+space exec $menu
-    floating_modifier $mod normal
-    bindsym $mod+Shift+q reload
-    # exit command is i3/sway-specific
-    bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+set $mod Mod1
+
+set $left h
+set $down j
+set $up k
+set $right l
+
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+c kill
+bindsym $mod+space exec $menu
+floating_modifier $mod normal
+bindsym $mod+Shift+q reload
+bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #
 # Moving around:
 #
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
-    # or use $mod+[up|down|left|right]
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
-    bindsym $mod+Right focus right
-
-    # _move_ the focused window with the same, but add Shift
-    bindsym $mod+Shift+$left move left
-    bindsym $mod+Shift+$down move down
-    bindsym $mod+Shift+$up move up
-    bindsym $mod+Shift+$right move right
-    # ditto, with arrow keys
-    bindsym $mod+Shift+Left move left
-    bindsym $mod+Shift+Down move down
-    bindsym $mod+Shift+Up move up
-    bindsym $mod+Shift+Right move right
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+# _move_ the focused window with the same, but add Shift
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
 #
 # Workspaces:
 #
-    # switch to workspace (ctrl for emacs)
-    bindsym $mod+Ctrl+1 workspace 1
-    bindsym $mod+Ctrl+2 workspace 2
-    bindsym $mod+Ctrl+3 workspace 3
-    bindsym $mod+Ctrl+4 workspace 4
-    # move focused container to workspace
-    bindsym $mod+Shift+1 move container to workspace 1
-    bindsym $mod+Shift+2 move container to workspace 2
-    bindsym $mod+Shift+3 move container to workspace 3
-    bindsym $mod+Shift+4 move container to workspace 4
-    # other monitor
-    bindsym $mod+m focus output right
-    # next and previous workspace
-    bindsym $mod+Shift+n workspace next_on_output
-    bindsym --whole-window $mod+button5 workspace next_on_output
-    bindsym $mod+Shift+p workspace prev_on_output
-    bindsym --whole-window $mod+button4 workspace prev_on_output
+# switch to workspace (ctrl for emacs)
+bindsym $mod+Ctrl+1 workspace 1
+bindsym $mod+Ctrl+2 workspace 2
+bindsym $mod+Ctrl+3 workspace 3
+bindsym $mod+Ctrl+4 workspace 4
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+# other monitor
+bindsym $mod+m focus output right
+# next and previous workspace
+bindsym $mod+Shift+n workspace next_on_output
+bindsym --whole-window $mod+button5 workspace next_on_output
+bindsym $mod+Shift+p workspace prev_on_output
+bindsym --whole-window $mod+button4 workspace prev_on_output
 #
 # Layout stuff:
 #
-    bindsym $mod+Shift+b splith
-    bindsym $mod+Shift+v splitv
-    bindsym $mod+s layout stacking
-    bindsym $mod+Shift+s layout tabbed
-    bindsym $mod+e layout toggle split
-    bindsym $mod+Shift+f fullscreen
-    bindsym $mod+Shift+t floating toggle
-    bindsym $mod+t focus mode_toggle
-    bindsym $mod+a focus parent
-    bindsym $mod+Shift+a focus child
+bindsym $mod+Shift+b splith
+bindsym $mod+Shift+v splitv
+bindsym $mod+s layout stacking
+bindsym $mod+Shift+s layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+f fullscreen
+bindsym $mod+Shift+t floating toggle
+bindsym $mod+t focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
 #
 # Scratchpad:
 #
-    bindsym $mod+Shift+minus move scratchpad
-    bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
 #
 # Resizing containers:
 #
@@ -110,14 +120,8 @@ bindsym $mod+Ctrl+$down resize grow height 40px
 bindsym $mod+Ctrl+$up resize shrink height 40px
 bindsym $mod+Ctrl+$right resize grow width 40px
 
-# ditto, with arrow keys
-bindsym $mod+Ctrl+Left resize shrink width 40px
-bindsym $mod+Ctrl+Down resize grow height 40px
-bindsym $mod+Ctrl+Up resize shrink height 40px
-bindsym $mod+Ctrl+Right resize grow width 40px
-
 #
-# Radu-Arch system:
+# Radu-Arch keys:
 #
 bindsym $mod+Shift+Ctrl+l exec swaylock
 bindsym $mod+Shift+e exec emacsclient -c -a emacs
@@ -130,34 +134,5 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioStop exec playerctl stop
 bindsym XF86Calculator exec "rofi -show calc"
 
-font Dina 10
-
-# notification daemon
-exec mako
-
-bar {
-    swaybar_command waybar
-}
-
-mouse_warping container
-
-default_border pixel 3
-smart_borders on
-hide_edge_borders both
-
-workspace_auto_back_and_forth yes
-
-# my colours:
-# class                 border  backgr. text    indicator child_border
-client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
-#            only non-default, bright to indicate active -^ 
-
-exec spotify
-for_window [class="Spotify"] move to scratchpad, resize set width 2000 px height 1000 px
-
-for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
-for_window [title="Pavucontrol"] floating enable
-
 # system configs
 include /etc/sway/config.d/*
-
