@@ -2,11 +2,12 @@ command=/usr/share/i3blocks/$BLOCK_NAME
 separator_block_width=15
 markup=none
 
-[cpu_usage]
-interval=5
+[window_title]
+command=xprop -id $(xdotool getactivewindow) | grep _NET_WM_NAME | cut -d'"' -f2
+interval=1
 
 [load_average]
-interval=30
+interval=5
 
 [volume]
 instance=Master
