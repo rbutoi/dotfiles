@@ -8,7 +8,13 @@ set $right l
 set $term alacritty
 set $menu "rofi -modi combi,calc -combi-modi drun#run -show combi"
 
-output * bg "~/Pictures/macosx-desert/Desert 5.jpg" fill
+output HDMI-A-1 {
+    background "~/Pictures/macosx-desert/Mojave_Day.jpg" fill
+    position 0 0
+}
+output DVI-D-1 {
+    background "~/Pictures/macosx-desert/Mojave_Night.jpg" fill
+}
 
 input * {
 # keyboard
@@ -18,6 +24,11 @@ input * {
 # mouse
     pointer_accel -1
 }
+
+exec swayidle -w \
+         timeout 900 'swaymsg "output * dpms off"' \
+              resume 'swaymsg "output * dpms on"' \
+         before-sleep 'swaylock -f -c 000000'
 
 ### Key bindings
 #
@@ -31,7 +42,7 @@ input * {
     # exit command is i3/sway-specific
     bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 #
-# Moving around (default):
+# Moving around:
 #
     bindsym $mod+$left focus left
     bindsym $mod+$down focus down
@@ -69,17 +80,17 @@ input * {
     # other monitor
     bindsym $mod+m focus output right
     # next and previous workspace
-    bindsym $mod+Shift+n exec ~/autoi3/next_ws.py
-    bindsym --whole-window $mod+button5 exec ~/autoi3/next_ws.py
-    bindsym $mod+Shift+p exec ~/autoi3/prev_ws.py
-    bindsym --whole-window $mod+button4 exec ~/autoi3/prev_ws.py
+    bindsym $mod+Shift+n workspace next_on_output
+    bindsym --whole-window $mod+button5 workspace next_on_output
+    bindsym $mod+Shift+p workspace prev_on_output
+    bindsym --whole-window $mod+button4 workspace prev_on_output
 #
 # Layout stuff:
 #
     bindsym $mod+Shift+b splith
     bindsym $mod+Shift+v splitv
-    bindsym $mod+Shift+s layout stacking
-    bindsym $mod+s layout tabbed
+    bindsym $mod+s layout stacking
+    bindsym $mod+Shift+s layout tabbed
     bindsym $mod+e layout toggle split
     bindsym $mod+Shift+f fullscreen
     bindsym $mod+Shift+t floating toggle
@@ -108,6 +119,7 @@ bindsym $mod+Ctrl+Right resize grow width 40px
 #
 # Radu-Arch system:
 #
+bindsym $mod+Shift+Ctrl+l exec swaylock
 bindsym $mod+Shift+e exec emacsclient -c -a emacs
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
@@ -125,14 +137,6 @@ exec mako
 
 bar {
     swaybar_command waybar
-    # position bottom
-
-    # status_command i3blocks
-    # colors {
-        # statusline #ffffff
-        # background #323232
-        # inactive_workspace #32323200 #32323200 #5c5c5c
-    # }
 }
 
 mouse_warping container
@@ -148,11 +152,12 @@ workspace_auto_back_and_forth yes
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 #            only non-default, bright to indicate active -^ 
 
+exec spotify
+for_window [class="Spotify"] move to scratchpad, resize set width 2000 px height 1000 px
+
+for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
+for_window [title="Pavucontrol"] floating enable
+
 # system configs
 include /etc/sway/config.d/*
-
-exec spotify
-for_window [class="Spotify"] move to scratchpad
-
-for_window [class="(?i)gsimplecal"] move position mouse, move down 100 px
 
