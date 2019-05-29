@@ -1,6 +1,6 @@
 set $term kitty
 set $menu "rofi -show"
-set $editor emacsclient -c -a emacs
+set $editor emacsclient -c -a=
 
 # output
 exec --no-startup-id feh --bg-fill "~/Desktop/Pictures/El\ Capitan\ 2.jpg"  --bg-fill "Desktop/Pictures/Sierra.jpg"

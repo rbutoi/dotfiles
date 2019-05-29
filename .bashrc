@@ -131,7 +131,7 @@ alias dv="dirs -v"
 alias s='sudo'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
-alias tm='tmx2 a -d || tmx2'
+alias tm='tmux a -d || tmux'
 alias xa='xargs'
 
 find_pi() {

@@ -1,5 +1,6 @@
 set $term alacritty
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
+set $editor emacsclient -c -a=
 
 output HDMI-A-1 {
     background "~/Pictures/macosx-desert/Mojave_Day.jpg" fill
@@ -21,11 +22,19 @@ input * {
 exec swayidle -w \
          timeout 900 'swaymsg "output * dpms off"' \
               resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+# no security
+#         before-sleep 'swaylock -f -c 000000'
 
 # startup
 exec mako
 exec spotify
+exec $term -e tmux a -d
+exec firefox
+
+workspace 1 output HDMI-A-1
+workspace 3 output HDMI-A-1
+workspace 2 output DVI-D-1
+workspace 4 output DVI-D-1
 
 workspace_auto_back_and_forth yes
 mouse_warping container
@@ -123,8 +132,27 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 #
 # Radu-Arch keys:
 #
+
 bindsym $mod+Shift+Ctrl+l exec swaylock
-bindsym $mod+Shift+e exec emacsclient -c -a emacs
+bindsym $mod+Shift+Ctrl+s exec systemctl suspend
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec swaylock, mode "default"
+    bindsym e exec swaymsg exit, mode "default"
+    bindsym s exec systemctl suspend, mode "default"
+    bindsym r exec systemctl reboot, mode "default"
+    bindsym Shift+s exec systemctl poweroff , mode "default"  
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+Pause mode "$mode_system"
+
+
+bindsym $mod+Shift+e exec $editor
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
