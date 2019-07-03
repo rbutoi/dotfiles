@@ -1,17 +1,23 @@
 set $term kitty
 set $menu "rofi -show"
 set $editor emacsclient -c -a emacs
+set $locker i3lock -c 000000
 
 # output
 exec --no-startup-id feh --bg-fill "~/Desktop/Pictures/El\ Capitan\ 2.jpg"  --bg-fill "Desktop/Pictures/Sierra.jpg"
-exec --no-startup-id xrandr --output DP-0 --primary --mode 2560x1440 --pos 0x0 --output DP-2 --mode 2560x1440 --pos 2560x0
+exec --no-startup-id xrandr --output DP-2 --mode 2560x1440 --pos 0x0 --output DP-0 --mode 2560x1440 --pos 2560x0
 exec --no-startup-id compton -CGb --no-fading-openclose -I 1 -O 1
+
+workspace 1 output DP-2
+workspace 2 output DP-0
+workspace 3 output DP-2
+workspace 4 output DP-0
 
 # input
 exec --no-startup-id setxkbmap -option ctrl:nocaps
 exec --no-startup-id xset r rate 250 25
 
-exec --no-startup-id xautolock -locker i3lock
+exec --no-startup-id xautolock -locker $locker
 
 # startup
 exec --no-startup-id dex -ae i3
@@ -44,6 +50,7 @@ bar {
 
 # per window config
 for_window [class="Blueman-manager"] floating enable
+for_window [class="gsimplecal"] move position mouse, move up 100 px, move left 120 px
 for_window [class="Pavucontrol"] floating enable
 
 #
@@ -57,6 +64,7 @@ set $up k
 set $right l
 
 bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term ~/bin/my_tmux.sh
 bindsym $mod+Shift+c kill
 bindsym $mod+space exec $menu
 floating_modifier $mod
@@ -90,10 +98,10 @@ bindsym $mod+Shift+4 move container to workspace 4
 # other monitor
 bindsym $mod+m focus output right
 # next and previous workspace
-bindsym                $mod+Shift+n exec --no-startup-id ~/autoi3/next_ws.py
-bindsym --whole-window $mod+button5 exec --no-startup-id ~/autoi3/next_ws.py
-bindsym                $mod+Shift+p exec --no-startup-id ~/autoi3/prev_ws.py
-bindsym --whole-window $mod+button4 exec --no-startup-id ~/autoi3/prev_ws.py
+bindsym                $mod+Shift+n workspace next_on_output
+bindsym --whole-window $mod+button5 workspace next_on_output
+bindsym                $mod+Shift+p workspace prev_on_output
+bindsym --whole-window $mod+button4 workspace prev_on_output
 #
 # Layout stuff:
 #
@@ -123,5 +131,5 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 #
 # i3 keys:
 #
-bindsym $mod+Shift+Ctrl+l exec i3lock
+bindsym $mod+Shift+Ctrl+l exec $locker
 bindsym $mod+Shift+e exec $editor

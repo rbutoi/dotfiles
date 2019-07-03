@@ -1,2 +1,2 @@
---max-columns=150
 --smart-case
+--type-add=desktop:*.desktop

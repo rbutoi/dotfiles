@@ -62,7 +62,24 @@
   )
 
 ;; transparency
-(add-to-list 'default-frame-alist '(alpha 92 92))
+(setq next-opacity 'translucent)
+(defun toggle-opacity ()
+  (interactive)
+  (cond ((string= next-opacity 'opaque)
+         (progn
+           (when (window-system)
+             (set-frame-parameter (selected-frame) 'alpha '(100 100)))
+           (add-to-list 'default-frame-alist '(alpha 100 100))
+           (setq next-opacity 'translucent)))
+        ((string= next-opacity 'translucent)
+         (progn
+           (when (window-system)
+             (set-frame-parameter (selected-frame) 'alpha '(92 92)))
+           (add-to-list 'default-frame-alist '(alpha 92 92))
+           (setq next-opacity 'opaque)))))
+(bind-keys ("C-x   8" . toggle-opacity)
+           ("C-x C-8" . toggle-opacity)
+           ("C-x C-*" . toggle-opacity))
 
 ;; font
 (if (string-match-p "Arch" (system-name))
