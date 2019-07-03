@@ -15,8 +15,7 @@
         "tooltip": false
     },
     "custom/load": {
-        "exec": "cut -f1 -d' ' /proc/loadavg",
-        "format": "load {}",
+        "exec": "cut -f1-3 -d' ' /proc/loadavg",
         "interval": 60
     },
     "custom/music": {
@@ -33,13 +32,9 @@
         "tooltip": false
     },
     "pulseaudio": {
-        "format": "vol {volume}",
+        "format": "{volume}%",
         "format-muted": "muted",
-        "format-icons": {
-            "phone": [" ", " ", " ", " "],
-            "default": ["", "", "", ""]
-        },
-        "scroll-step": 10,
+        "scroll-step": 5,
         "on-click": "pavucontrol",
         "tooltip": false
     },

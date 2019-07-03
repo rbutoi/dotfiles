@@ -1,6 +1,6 @@
 set $term kitty
 set $menu "rofi -show"
-set $editor emacsclient -c -a emacs
+set $editor emacsclient -c -a=
 set $locker i3lock -c 000000
 
 # output
