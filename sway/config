@@ -1,6 +1,7 @@
 set $term alacritty
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
+set $locker swaylock -c 000000
 
 output HDMI-A-1 {
     background "~/Pictures/macosx-desert/Mojave_Day.jpg" fill
@@ -22,12 +23,11 @@ input * {
 exec swayidle -w \
          timeout 900 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
               resume '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms on"' \
-# no security
-#         before-sleep 'swaylock -f -c 000000'
+        before-sleep 'swaylock -c 000000'
 
 # startup
 exec mako
-exec spotify
+exec spotify >/dev/null 2>&1
 exec $term -e tmux a -d
 exec firefox
 
@@ -99,10 +99,10 @@ bindsym $mod+Shift+4 move container to workspace 4
 # other monitor
 bindsym $mod+m focus output right
 # next and previous workspace
-bindsym $mod+Shift+n workspace next_on_output
-bindsym --whole-window $mod+button5 workspace next_on_output
-bindsym $mod+Shift+p workspace prev_on_output
-bindsym --whole-window $mod+button4 workspace prev_on_output
+bindsym $mod+Shift+n workspace next_on_output --create
+bindsym --whole-window $mod+button5 workspace next_on_output --create
+bindsym $mod+Shift+p workspace prev_on_output --create
+bindsym --whole-window $mod+button4 workspace prev_on_output --create
 #
 # Layout stuff:
 #
@@ -133,7 +133,7 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 # Radu-Arch keys:
 #
 
-bindsym $mod+Shift+Ctrl+l exec swaylock
+bindsym $mod+Shift+Ctrl+l exec $locker
 bindsym $mod+Shift+Ctrl+s exec systemctl suspend
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
