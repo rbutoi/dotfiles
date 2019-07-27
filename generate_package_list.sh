@@ -1,7 +1,12 @@
 #!/bin/bash
 
-os=$(lsb_release -si)
-outname=package_list_$(lsb_release -sd | sed 's/"//g' | sed 's/[ /]/_/g')
+os=$(uname)
+if [ $os == Darwin ]; then
+    outname=package_list_$os
+else
+    outname=package_list_$(lsb_release -sd | sed 's/"//g' | sed 's/[ /]/_/g')
+    os=$(lsb_release -si)
+fi
 
 case $os in
 Arch)
@@ -11,5 +16,8 @@ Arch)
     ;;
 Raspbian)
     apt-mark showmanual > $outname.txt
+    ;;
+Darwin)
+    port installed requested | tail -n +2 | cut -d' ' -f3 > $outname.txt
     ;;
 esac
