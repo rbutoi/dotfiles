@@ -144,7 +144,8 @@ if [ "$TERM" != "dumb" ]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
     [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
     [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
-    export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+    export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
+    export FZF_CTRL_T_COMMAND="fd --hidden"
 fi
 
 # https://the.exa.website
