@@ -150,6 +150,7 @@
              ("C-k" . kill-current-buffer)
              ("C-S-k" . kill-other-buffers)
              ("C-M-k" . kill-other-buffers) ;; for when in terminal
+             ("C-S-M-k" . kill-all-buffers)
              ("C-M-C" . save-buffers-kill-emacs)
              ("M-0" . (lambda () (interactive) (delete-window)))
              ("M-1" . (lambda () (interactive) (delete-other-windows)))
@@ -489,7 +490,7 @@ or are no longer readable will be killed."
 ** just-one-space
 #+BEGIN_SRC emacs-lisp
 ;; to get around xmonad
-(bind-key "C-M-SPC" 'just-one-space)
+(bind-key "S-M-SPC" 'just-one-space)
 #+END_SRC
 
 ** org
@@ -722,13 +723,15 @@ or are no longer readable will be killed."
          ("C-x C-v n" . diff-hl-revert-hunk)
          ("C-x C-v a" . global-diff-hl-amend-mode)
          ("C-x C-v C-a" . global-diff-hl-amend-mode)
+         ("C-x C-v C-m" . diff-hl-margin-mode)
+         ("C-x C-v m" . diff-hl-margin-mode)
          )
   :config
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   ;; TODO figure out margin mode toggling with toggle-theme that doesn't cause
   ;; void-variable errors and such
-  (diff-hl-margin-mode t)
   (global-diff-hl-mode)
+  (global-diff-hl-amend-mode)
   (bind-keys
    ("C-x C-v =" . vc-diff)
    ("C-x v   =" . vc-diff)))
