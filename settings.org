@@ -36,21 +36,20 @@
       (disable-theme 'solarized-dark)
       (setq next-bg 'dark)))
 
-  ;; toggle dark/light for when switching graphical to terminal
   (defun toggle-theme ()
     (interactive)
     (cond ((eq next-bg 'dark)
            (themed-mode))
           ((eq next-bg 'off)
-           (unthemed-mode)))
+           (unthemed-mode))))
 
-    ;; a bit more contrast to keep track of curent window
-    (set-face-attribute  'mode-line
-                         nil
-                         :box '(:line-width 3 :style released-button))
-    (set-face-attribute  'mode-line-inactive
-                         nil
-                         :box nil))
+  ;; a bit more contrast to keep track of curent window
+  (set-face-attribute  'mode-line
+                       nil
+                       :box '(:line-width 3 :style released-button))
+  (set-face-attribute  'mode-line-inactive
+                       nil
+                       :box nil)
   ;; needed to prevent errors, even if staying unthemed
   (themed-mode)
 
