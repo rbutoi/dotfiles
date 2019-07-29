@@ -2,7 +2,6 @@
 {
     "layer": "bottom",
     "position": "bottom",
-    "height": 24,
     "modules-left": ["sway/workspaces", "sway/mode"],
     "modules-center": ["sway/window"],
     "modules-right": ["custom/load", "custom/music", "pulseaudio", "tray", "clock"],
