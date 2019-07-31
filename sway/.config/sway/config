@@ -43,7 +43,7 @@ mouse_warping container
 font Dina 10
 default_border pixel 3
 smart_borders on
-hide_edge_borders both
+hide_edge_borders --i3 both
 # class                 border  backgr. text    indicator child_border
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 #            only non-default, bright to indicate active -^
@@ -51,7 +51,7 @@ client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 bar swaybar_command waybar
 
 # per window config
-for_window [class="Spotify"] move to scratchpad, resize set width 2000 px height 1000 px # for some reason enabling fullscreen here crashes sway on startup (!)
+for_window [class="Spotify"] move to scratchpad # for some reason enabling fullscreen here crashes sway on startup (!)
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
 for_window [title="Pavucontrol"] floating enable
      
@@ -96,6 +96,7 @@ bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
 bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+m move container to output right
 # other monitor
 bindsym $mod+m focus output right
 # next and previous workspace

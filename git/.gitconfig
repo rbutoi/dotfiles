@@ -1,5 +1,8 @@
-[user]
-	email = rbutoi@gmail.com
-	name = Radu Butoi
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+[icdiff]
+	options = --line-numbers
+
+# personal config
+[include]
+	path = ~/.gitconfig.local
