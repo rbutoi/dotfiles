@@ -87,6 +87,14 @@ all_atq () {
   atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'
 }
 
+escape() {
+  python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'
+}
+
+unescape() {
+  python3 -c "import sys; print(sys.stdin.read().decode('unicode_escape'))"
+}
+
 # editor
 ew() {
     [ ! -e "$@" ] && return 1
