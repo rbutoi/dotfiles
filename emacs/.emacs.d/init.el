@@ -4,7 +4,7 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(setq custom-file "~/dotfiles/custom.el")
+(setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
 ; Here in init.el so changes to settings.org don't always ask this question

@@ -152,13 +152,15 @@ if [ "$TERM" != "dumb" ]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
     [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
     [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
-    export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+    export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
+    export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 
 # https://the.exa.website
 if command -v exa >/dev/null 2>&1; then
-    alias l='exa'
-    alias ll='l -la'
+    alias l='exa --group-directories-first'
+    alias ll='l -la --group-directories-first'
 fi
 
 # enable programmable completion features
