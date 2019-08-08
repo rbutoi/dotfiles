@@ -51,7 +51,6 @@ client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 bar swaybar_command waybar
 
 # per window config
-for_window [class="Spotify"] move to scratchpad # for some reason enabling fullscreen here crashes sway on startup (!)
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
 for_window [title="Pavucontrol"] floating enable
      
@@ -66,6 +65,7 @@ set $up k
 set $right l
 
 bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term -e ~/bin/make_or_attach_tmux.sh
 bindsym $mod+Shift+c kill
 bindsym $mod+Ctrl+space exec $menu
 floating_modifier $mod normal
