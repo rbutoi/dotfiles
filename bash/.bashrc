@@ -109,12 +109,9 @@ export EDITOR="emacsclient -nw -a="
 export ALTERNATE_EDITOR=zile
 
 
-export RIPGREP_CONFIG_PATH=~/dotfiles/ripgreprc
+export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
 export CLICOLOR=1
 
-alias l='ls -F'
-[ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first' 
-alias ll='l -lA -h'
 alias g="grep --color=always -i"
 alias pg="ps aux | grep -v grep | g"
 alias chmox="chmod +x"
@@ -152,15 +149,17 @@ if [ "$TERM" != "dumb" ]; then
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
     [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
     [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
-    export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
-    export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 fi
 
 # https://the.exa.website
 if command -v exa >/dev/null 2>&1; then
-    alias l='exa --group-directories-first'
-    alias ll='l -la --group-directories-first'
+    alias l='exa'
+    alias ll='l -la'
+else
+  alias l='ls -F'
+  [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first'
+  alias ll='l -lA -h'
 fi
 
 # enable programmable completion features

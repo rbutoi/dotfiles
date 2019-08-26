@@ -55,8 +55,8 @@
 
   (defun themed-if-window-system (frame)
     (if (window-system frame) (themed-mode) (unthemed-mode)))
-  (add-hook 'after-make-frame-functions 'themed-if-window-system)
-  (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
+  ;; (add-hook 'after-make-frame-functions 'themed-if-window-system)
+  ;; (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
   (themed-if-window-system (selected-frame))
   )
 
