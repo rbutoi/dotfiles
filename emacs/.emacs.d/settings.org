@@ -920,9 +920,15 @@ or are no longer readable will be killed."
   :config
   (add-hook 'c-mode-common-hook
             (lambda () (fset 'c-indent-region 'clang-format-region)))
+
+  (setq clang-format-before-save t)
+  (defun enable-clang-format-before-save () (interactive) (setq clang-format-before-save t) (message "enable-clang-format-before-save"))
+  (defun disable-clang-format-before-save () (interactive) (setq clang-format-before-save nil) (message "disable-clang-format-before-save"))
   (add-hook 'before-save-hook
-            (lambda () (when (or (eq major-mode 'c++-mode) (eq major-mode 'c-mode))
-                         (clang-format-buffer)))))
+            (lambda ()
+              (when (and clang-format-before-save
+                         (or (eq major-mode 'c++-mode) (eq major-mode 'c-mode)))
+                (clang-format-buffer)))))
 #+END_SRC
 
 * Meta/misc
