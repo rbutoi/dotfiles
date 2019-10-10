@@ -143,23 +143,13 @@ find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
 }
 
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias alert='notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 if [ "$TERM" != "dumb" ]; then
   [ -f ~/.fzf.bash ] && source ~/.fzf.bash
   [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
   [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
   export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
-fi
-
-# https://the.exa.website
-if command -v exa >/dev/null 2>&1; then
-  alias l='exa'
-  alias ll='l -la'
-else
-  alias l='ls -F'
-  [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first'
-  alias ll='l -lA -h'
 fi
 
 # enable programmable completion features
@@ -176,6 +166,17 @@ fi
 
 # Specific
 [ -f ~/.bashrc_specific ] && source ~/.bashrc_specific
+
+# https://the.exa.website
+# needs to be after PATH setting
+if command -v exa >/dev/null 2>&1; then
+  alias l='exa'
+  alias ll='l -la'
+else
+  alias l='ls -F'
+  [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first'
+  alias ll='l -lA -h'
+fi
 
 # to not be annoying if previous fails
 true
