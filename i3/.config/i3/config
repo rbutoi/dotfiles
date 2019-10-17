@@ -14,7 +14,7 @@ workspace 3 output DP-2
 workspace 4 output DP-0
 
 # input
-exec --no-startup-id setxkbmap -option ctrl:nocaps
+exec --no-startup-id setxkbmap -option ctrl:nocaps,altwin:ctrl_win
 exec --no-startup-id xset r rate 250 25
 
 exec --no-startup-id xautolock -locker $locker
