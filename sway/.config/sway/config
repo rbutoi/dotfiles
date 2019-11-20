@@ -1,4 +1,5 @@
 set $term alacritty
+set $web firefox
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
 set $locker swaylock -c 000000
@@ -13,11 +14,12 @@ output DVI-D-1 {
 
 input * {
 # keyboard
-    xkb_options ctrl:nocaps
+    xkb_options ctrl:nocaps,altwin:ctrl_win
     repeat_delay 250
     repeat_rate 30
 # mouse
-    pointer_accel -1
+    accel_profile flat
+    pointer_accel 0.1
 }
 
 exec swayidle -w \
@@ -26,10 +28,12 @@ exec swayidle -w \
         before-sleep 'swaylock -c 000000'
 
 # startup
+exec dex -a
+
 exec mako
 exec spotify >/dev/null 2>&1
 exec $term -e tmux a -d
-exec firefox
+exec $web
 
 workspace 1 output HDMI-A-1
 workspace 3 output HDMI-A-1
@@ -37,10 +41,10 @@ workspace 2 output DVI-D-1
 workspace 4 output DVI-D-1
 
 workspace_auto_back_and_forth yes
-mouse_warping container
+mouse_warping output
 
 # display
-font Dina 10
+font Ubuntu 12
 default_border pixel 3
 smart_borders on
 hide_edge_borders --i3 both
@@ -52,8 +56,10 @@ bar swaybar_command waybar
 
 # per window config
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
-for_window [title="Pavucontrol"] floating enable
-     
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="xfce4-appfinder"] floating enable
+for_window [app_id="exo-desktop-item-edit"] floating enable
+
 #
 # Keybindings - basics:
 #
@@ -66,6 +72,7 @@ set $right l
 
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $term -e ~/bin/make_or_attach_tmux.sh
+bindsym $mod+Shift+f exec $web
 bindsym $mod+Shift+c kill
 bindsym $mod+Ctrl+space exec $menu
 floating_modifier $mod normal
@@ -151,7 +158,6 @@ mode "$mode_system" {
 }
 
 bindsym $mod+Pause mode "$mode_system"
-
 
 bindsym $mod+Shift+e exec $editor
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle

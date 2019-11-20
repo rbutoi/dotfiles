@@ -2,9 +2,10 @@
 {
     "layer": "bottom",
     "position": "bottom",
-    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-left": ["custom/apps", "sway/workspaces", "sway/mode", "custom/spotify"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/load", "custom/music", "pulseaudio", "tray", "clock"],
+    "modules-right": ["custom/load", "pulseaudio", "tray",
+                      "clock", "custom/power"],
     "sway/workspaces": {
         "format": "{name}",
         "disable-scroll": false
@@ -15,13 +16,13 @@
     },
     "custom/load": {
         "exec": "cut -f1-3 -d' ' /proc/loadavg",
+        "on-click": "(tmux new-window glances && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e glances",
         "interval": 60
     },
-    "custom/music": {
-        // emoji(status) doesn't work great with Dina font
+    "custom/spotify": {
         "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}} ({{status}})' -F",
         "escape": true,
-        "on-click": "swaymsg scratchpad show",
+        "on-click": "swaymsg '[title=\"Spotify Premium\"] focus'",
         "on-click-right": "playerctl play-pause",
         "tooltip": false
     },
@@ -31,13 +32,24 @@
         "tooltip": false
     },
     "pulseaudio": {
-        "format": "{volume}%",
-        "format-muted": "muted",
+        "format": "🔉 {volume}%",
+        "format-muted": "🔇 0%",
         "scroll-step": 5,
         "on-click": "pavucontrol",
+        "on-click-right": "pamixer -t",
         "tooltip": false
     },
     "tray": {
-        "icon-size": 18
+        "icon-size": 24
+    },
+    "custom/power": {
+        "format": "⏻",
+        "on-click": "swaymsg 'mode $mode_system'",
+        "tooltip": false
+    },
+    "custom/apps": {
+        "format": "Applications",
+        "on-click": "xfce4-appfinder",
+        "tooltip": false
     }
 }

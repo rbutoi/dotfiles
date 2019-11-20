@@ -1,41 +1,79 @@
+/* { */
+/*     --base03:    #002b36; */
+/*     --base02:    #073642; */
+/*     --base01:    #586e75; */
+/*     --base00:    #657b83; */
+/*     --base0:     #839496; */
+/*     --base1:     #93a1a1; */
+/*     --base2:     #eee8d5; */
+/*     --base3:     #fdf6e3; */
+/*     --yellow:    #b58900; */
+/*     --orange:    #cb4b16; */
+/*     --red:       #dc322f; */
+/*     --magenta:   #d33682; */
+/*     --violet:    #6c71c4; */
+/*     --blue:      #268bd2; */
+/*     --cyan:      #2aa198; */
+/*     --green:     #859900; */
+/* } */
+
 * {
-    border:        none;
+    border: none;
     border-radius: 0;
-    font-family:   Dina;
-    font-size:     14px;
-    box-shadow:    none;
-    text-shadow:   none;
-    transition-duration: 0s;
+    font-family: Ubuntu, sans-serif;
+    font-size: 13pt;
+    min-height: 24px;
 }
 
-window {
-    color:      rgba(217, 216, 216, 1);
-    background: rgba(35, 31, 32, 1);
+window#waybar {
+    background-color: #002b36;
+    color: #859900;
 }
 
 #workspaces {
-    margin: 0 5px;
+    border-bottom: 1px solid #586e75;
 }
 
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 #workspaces button {
-    padding:    0 5px;
-    color:      rgba(217, 216, 216, 0.4);
-}
-
-#workspaces button.visible {
-    color:      rgba(217, 216, 216, 1);
+    padding: 0 5px;
+    background-color: transparent;
+    color: #657b83;
+    border-bottom: 3px solid transparent;
 }
 
 #workspaces button.focused {
-    border-top: 3px solid rgba(217, 216, 216, 1);
-    border-bottom: 3px solid rgba(217, 216, 216, 0);
+    background-color: #073642;
+    border-bottom: 1px solid #ff0;
 }
 
 #workspaces button.urgent {
-    color:      rgba(238, 46, 36, 1);
+    background-color: #d33682;
 }
 
-#pulseaudio, #clock, #custom-load, #custom-music {
-    margin:     0px 10px 0px 10px;
-    min-width:  1px;
+#mode {
+    background-color: #002b36;
+    border-bottom: 1px solid #dc322f;
+}
+
+#clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio,
+#custom-load, #custom-spotify, #tray, #mode, #custom-power, #custom-apps,
+#idle_inhibitor {
+    padding: 0 6px;
+    margin: 0 2px;
+    color: #657b83;
+}
+
+#custom-load, #custom-apps, #clock {
+    background-color: #073642;
+}
+
+#pulseaudio.muted {
+    color: #dc322f;
+}
+
+#custom-spotify {
+    /* https://usbrandcolors.com/spotify-colors/ */
+    color: #1db954;
+    background-color: #191414
 }
