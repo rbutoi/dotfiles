@@ -212,7 +212,7 @@ or are no longer readable will be killed."
 (setq save-place-file "~/.emacs.d/saved-places")
 
 ;; Recentf
-(setq recentf-max-saved-items 1000
+(setq recentf-max-saved-items 100
       recentf-save-file "~/.emacs.d/recentf")
 (customize-set-variable 'recentf-auto-cleanup 'never)
 (recentf-mode t)
@@ -227,8 +227,8 @@ or are no longer readable will be killed."
          ("C-x m" . helm-M-x)
          ("C-x C-m" . helm-M-x)
          ("M-y" . helm-show-kill-ring)
+         ("C-x C-b" . helm-buffers-list)
          ("C-x b" . helm-mini)
-         ("C-x C-b" . mode-line-other-buffer)
          ("C-x C-f" . helm-find-files)
          ("C-x f" . find-file)
          ("C-o" . helm-semantic-or-imenu)
@@ -757,19 +757,20 @@ or are no longer readable will be killed."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
-(add-hook 'prog-mode-hook (lambda ()) (bind-key "<f8>" 'recompile))
+(add-hook 'prog-mode-hook (lambda ()) (bind-keys ("<f7>" . compile)
+                                                 ("<f8>" . recompile)))
+(bind-key "S-<f7>" (lambda () (interactive) (switch-to-buffer "*compilation*")))
 (setq compilation-message-face 'default)
 #+END_SRC
 
 ** Line numbers
 #+BEGIN_SRC emacs-lisp
-(use-package nlinum :bind
-  ("C-c l" . nlinum-mode)
-  ("C-c C-l" . nlinum-mode))
-(add-hook 'c++-mode-hook
-          (lambda ()
-            (bind-keys :map c++-mode-map
-                       ("C-c C-l" . nlinum-mode))))
+(defun line-number-binds (m)
+  (bind-keys :map m
+             ("C-c l" . global-display-line-numbers-mode)
+             ("C-c C-l" . global-display-line-numbers-mode)))
+(line-number-binds (current-global-map))
+(add-hook 'find-file-hook (lambda () (line-number-binds (current-local-map))))
 #+END_SRC
 
 ** Parens
