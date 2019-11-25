@@ -59,6 +59,7 @@ for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 1
 for_window [app_id="pavucontrol"] floating enable
 for_window [app_id="xfce4-appfinder"] floating enable
 for_window [app_id="exo-desktop-item-edit"] floating enable
+for_window [app_id="zenity"] floating enable
 
 #
 # Keybindings - basics:

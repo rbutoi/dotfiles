@@ -2,7 +2,8 @@
 {
     "layer": "bottom",
     "position": "bottom",
-    "modules-left": ["custom/apps", "sway/workspaces", "sway/mode", "custom/spotify"],
+    "modules-left": [ "custom/apps", "sway/workspaces", "sway/mode",
+                      "custom/spotify"],
     "modules-center": ["sway/window"],
     "modules-right": ["custom/load", "pulseaudio", "tray",
                       "clock", "custom/power"],
@@ -20,9 +21,9 @@
         "interval": 60
     },
     "custom/spotify": {
-        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}} ({{status}})' -F",
+        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
         "escape": true,
-        "on-click": "swaymsg '[title=\"Spotify Premium\"] focus'",
+        "on-click": "swaymsg '[class=\"Spotify\"] focus'",
         "on-click-right": "playerctl play-pause",
         "tooltip": false
     },
@@ -48,8 +49,9 @@
         "tooltip": false
     },
     "custom/apps": {
-        "format": "Applications",
-        "on-click": "xfce4-appfinder",
+        "format": "App list",
+        "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
+        "on-click-right": "rofi -modi combi,calc -combi-modi window#drun#run -show combi",
         "tooltip": false
     }
 }
