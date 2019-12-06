@@ -57,8 +57,8 @@ window#waybar {
 }
 
 #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio,
-#custom-load, #custom-spotify, #tray, #mode, #custom-power, #custom-apps,
-#idle_inhibitor {
+#custom-updates, #custom-load, #custom-spotify, #tray, #mode, #custom-power,
+#custom-apps, #idle_inhibitor {
     padding: 0 6px;
     margin: 0 2px;
     color: #657b83;

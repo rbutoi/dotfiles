@@ -5,7 +5,7 @@
     "modules-left": [ "custom/apps", "sway/workspaces", "sway/mode",
                       "custom/spotify"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/load", "pulseaudio", "tray",
+    "modules-right": ["custom/updates", "custom/load", "pulseaudio", "tray",
                       "clock", "custom/power"],
     "sway/workspaces": {
         "format": "{name}",
@@ -14,6 +14,14 @@
     "sway/window": {
         "max-length": 200,
         "tooltip": false
+    },
+    "custom/updates": {
+        "exec": "checkupdates | wc -l",
+        "format": "🎁 {}",
+        "interval": 3600,
+        "on-click": "(tmux neww pacaur -Syu && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e pacaur -e -Syu; pkill -RTMIN+8 waybar",
+        "tooltip": false,
+        "signal": 8
     },
     "custom/load": {
         "exec": "cut -f1-3 -d' ' /proc/loadavg",
