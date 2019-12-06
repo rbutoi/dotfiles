@@ -931,6 +931,13 @@ or are no longer readable will be killed."
                 (clang-format-buffer)))))
 #+END_SRC
 
+** idle-highlight-mode
+#+BEGIN_SRC emacs-lisp
+(use-package idle-highlight-mode
+  :config
+  (add-hook 'prog-mode-hook 'idle-highlight-mode))
+#+END_SRC
+
 * Meta/misc
 
 ** When editing this file, C-c m to switch between org-mode and elisp. Yup...
