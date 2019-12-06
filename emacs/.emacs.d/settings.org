@@ -401,6 +401,13 @@ or are no longer readable will be killed."
   (global-undo-tree-mode 1))
 #+END_SRC
 
+** goto-chg
+#+BEGIN_SRC emacs-lisp
+(use-package goto-chg
+  :bind (("C-." . goto-last-change)
+         ("C-," . goto-last-change-reverse)))
+#+END_SRC
+
 ** Flyspell
 #+BEGIN_SRC emacs-lisp
 ;; (unless (eq system-type 'darwin)
