@@ -113,7 +113,7 @@ export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
 export CLICOLOR=1
 
 alias g="grep --color=always -i"
-alias pg="ps aux | grep -v grep | g"
+alias pg="pgrep"
 alias chmox="chmod +x"
 alias -- -="cd -"
 alias ..="cd .."

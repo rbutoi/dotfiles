@@ -2,9 +2,11 @@
 {
     "layer": "bottom",
     "position": "bottom",
-    "modules-left": ["sway/workspaces", "sway/mode"],
+    "modules-left": [ "custom/apps", "sway/workspaces", "sway/mode",
+                      "custom/spotify"],
     "modules-center": ["sway/window"],
-    "modules-right": ["custom/load", "custom/music", "pulseaudio", "tray", "clock"],
+    "modules-right": ["custom/updates", "custom/load", "pulseaudio", "tray",
+                      "clock", "custom/power"],
     "sway/workspaces": {
         "format": "{name}",
         "disable-scroll": false
@@ -13,15 +15,23 @@
         "max-length": 200,
         "tooltip": false
     },
+    "custom/updates": {
+        "exec": "checkupdates | wc -l",
+        "format": "🎁 {}",
+        "interval": 3600,
+        "on-click": "(tmux neww pacaur -Syu && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e pacaur -e -Syu; pkill -RTMIN+8 waybar",
+        "tooltip": false,
+        "signal": 8
+    },
     "custom/load": {
         "exec": "cut -f1-3 -d' ' /proc/loadavg",
+        "on-click": "(tmux new-window glances && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e glances",
         "interval": 60
     },
-    "custom/music": {
-        // emoji(status) doesn't work great with Dina font
-        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}} ({{status}})' -F",
+    "custom/spotify": {
+        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
         "escape": true,
-        "on-click": "swaymsg scratchpad show",
+        "on-click": "swaymsg '[class=\"Spotify\"] focus'",
         "on-click-right": "playerctl play-pause",
         "tooltip": false
     },
@@ -31,13 +41,25 @@
         "tooltip": false
     },
     "pulseaudio": {
-        "format": "{volume}%",
-        "format-muted": "muted",
+        "format": "🔉 {volume}%",
+        "format-muted": "🔇 0%",
         "scroll-step": 5,
         "on-click": "pavucontrol",
+        "on-click-right": "pamixer -t",
         "tooltip": false
     },
     "tray": {
-        "icon-size": 18
+        "icon-size": 24
+    },
+    "custom/power": {
+        "format": "⏻",
+        "on-click": "swaymsg 'mode $mode_system'",
+        "tooltip": false
+    },
+    "custom/apps": {
+        "format": "App list",
+        "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
+        "on-click-right": "rofi -modi combi,calc -combi-modi window#drun#run -show combi",
+        "tooltip": false
     }
 }

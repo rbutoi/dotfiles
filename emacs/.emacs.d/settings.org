@@ -585,6 +585,7 @@ or are no longer readable will be killed."
 
 (delete-selection-mode 1)
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
 
 ;; fix for school computers
 (when (string-match-p "eecg" system-name) (normal-erase-is-backspace-mode 0))
