@@ -793,8 +793,7 @@ or are no longer readable will be killed."
              ("M-F" . sp-forward-symbol)
              ("M-B" . sp-backward-symbol)
              )
-  (sp-with-modes '(c-mode c++-mode)
-    (sp-local-pair "<" ">"))
+  (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
   (add-hook 'prog-mode-hook (lambda () (show-paren-mode 1) (setq show-paren-delay 0))))
 #+END_SRC
 
