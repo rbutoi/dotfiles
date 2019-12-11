@@ -248,7 +248,12 @@ or are no longer readable will be killed."
 
   (setq helm-buffer-skip-remote-checking t
         helm-split-window-default-side 'same
-        helm-buffer-max-length nil)
+        helm-buffer-max-length nil
+
+        ;; doesn't work because:
+        ;; https://github.com/emacsorphanage/helm-swoop/issues/144
+        ;; helm-swoop-pre-input-function (lambda () (format "\\b%s\\b" (thing-at-point 'symbol)))
+        )
 
   (unbind-key "C-x c"))
 #+END_SRC
@@ -941,9 +946,9 @@ or are no longer readable will be killed."
 
 ** idle-highlight-mode
 #+BEGIN_SRC emacs-lisp
-(use-package idle-highlight-mode
-  :config
-  (add-hook 'prog-mode-hook 'idle-highlight-mode))
+(let ((file (locate-user-emacs-file "lisp/my-idle-highlight-mode.el")))
+  (when (file-exists-p file) (load file) (add-hook 'prog-mode-hook 'idle-highlight-mode)))
+
 #+END_SRC
 
 * Meta/misc

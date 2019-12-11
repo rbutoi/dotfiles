@@ -5,9 +5,6 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
- '(compilation-error-regexp-alist
-   (quote
-    (google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google3-build-log-parser-info google3-build-log-parser-warning google3-build-log-parser-error google3-build-log-parser-python-traceback google-blaze-error google-log-error google-log-warning google-log-info google-log-fatal-message google-forge-python gunit-stack-trace cargo rustc-colon rustc absoft ada aix ant bash borland python-tracebacks-and-caml cmake cmake-info comma cucumber msft edg-1 edg-2 epc ftnchek iar ibm irix java jikes-file maven jikes-line clang-include clang-include gcc-include ruby-Test::Unit gnu lcc makepp mips-1 mips-2 msft omake oracle perl php rxp sparc-pascal-file sparc-pascal-line sparc-pascal-example sun sun-ada watcom 4bsd gcov-file gcov-header gcov-nomark gcov-called-line gcov-never-called perl--Pod::Checker perl--Test perl--Test2 perl--Test::Harness weblint guile-file guile-line)))
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
@@ -42,7 +39,7 @@
  '(org-journal-dir "~/google-drive/journal/")
  '(package-selected-packages
    (quote
-    (goto-chg helm-find idle-highlight-mode ivy json-mode yaml-mode racer expand-region vc-hgcmd helm-rg company s zoutline zoom-window yafolding which-key use-package undo-tree string-inflection solarized-theme smartparens sane-term rust-mode rich-minority pos-tip pkgbuild-mode org-journal mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
+    (goto-chg helm-find ivy json-mode yaml-mode racer expand-region vc-hgcmd helm-rg company s zoutline zoom-window yafolding which-key use-package undo-tree string-inflection solarized-theme smartparens sane-term rust-mode rich-minority pos-tip pkgbuild-mode org-journal mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(recentf-auto-cleanup (quote never))
