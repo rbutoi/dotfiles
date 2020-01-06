@@ -1,5 +1,5 @@
 set $term alacritty
-set $web firefox
+set $web firefox-nightly
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
 set $locker swaylock -c 000000
@@ -31,6 +31,7 @@ exec swayidle -w \
 exec dex -a
 
 exec mako
+exec udiskie --tray --appindicator
 exec spotify >/dev/null 2>&1
 exec $term -e tmux a -d
 exec $web
@@ -72,7 +73,7 @@ set $up k
 set $right l
 
 bindsym $mod+Return exec $term
-bindsym $mod+Shift+Return exec $term -e ~/bin/make_or_attach_tmux.sh
+bindsym $mod+Shift+Return exec $term -e ~/bin/continuetmux
 bindsym $mod+Shift+f exec $web
 bindsym $mod+Shift+c kill
 bindsym $mod+Ctrl+space exec $menu

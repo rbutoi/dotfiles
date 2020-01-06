@@ -2,7 +2,7 @@
 {
     "layer": "bottom",
     "position": "bottom",
-    "modules-left": [ "custom/apps", "sway/workspaces", "sway/mode",
+    "modules-left": [ "custom/apps", "custom/home", "sway/workspaces", "sway/mode",
                       "custom/spotify"],
     "modules-center": ["sway/window"],
     "modules-right": ["custom/updates", "custom/load", "pulseaudio", "tray",
@@ -57,9 +57,14 @@
         "tooltip": false
     },
     "custom/apps": {
-        "format": "App list",
+        "format": "Applications",
         "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
-        "on-click-right": "rofi -modi combi,calc -combi-modi window#drun#run -show combi",
+        "on-click-right": "j4-dmenu-desktop --dmenu='/usr/bin/rofi -dmenu -p launch -show run -i'",
+        "tooltip": false
+    },
+    "custom/home": {
+        "format": "🏠 ",
+        "on-click": "xdg-open ~",
         "tooltip": false
     }
 }
