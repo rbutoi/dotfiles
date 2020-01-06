@@ -996,6 +996,15 @@ or are no longer readable will be killed."
 (use-package keychain-environment :init (keychain-refresh-environment))
 #+END_SRC
 
+** Auto update
+#+BEGIN_SRC emacs-lisp
+(use-package auto-package-update
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "06:00")
+  )
+#+END_SRC
+
 ** Specific
 #+BEGIN_SRC emacs-lisp
 (let ((specific (locate-user-emacs-file "specific.el")))
