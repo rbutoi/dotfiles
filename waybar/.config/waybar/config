@@ -59,7 +59,7 @@
     "custom/apps": {
         "format": "Applications",
         "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
-        "on-click-right": "j4-dmenu-desktop --dmenu='/usr/bin/rofi -dmenu -p launch -show run -i'",
+        "on-click-right": "j4-dmenu-desktop --dmenu='/usr/bin/rofi -dmenu -p launch -show run -i -lines 40'",
         "tooltip": false
     },
     "custom/home": {
