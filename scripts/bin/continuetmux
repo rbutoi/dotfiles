@@ -1,11 +1,7 @@
 #!/bin/bash
-if [[ "$TMUX" == "" ]] &&
-     [[ "$SSH_CONNECTION" != "" ]]; then
-  WHOAMI=$(whoami)
-  if tmx2 has-session 2>/dev/null; then
+if tmx2 has-session 2>/dev/null; then
     tmx2 attach -d # workaround for window size issues with different monitors
     tmx2 attach-session
-  else
-    tmx2 new-session
-  fi
+else
+  tmx2 new-session
 fi
