@@ -1,5 +1,5 @@
 # .bashrc
-# -*- sh-basic-offset:4 -*-
+# -*- sh-basic-offset:2 -*-
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return

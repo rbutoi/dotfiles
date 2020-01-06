@@ -819,10 +819,11 @@ or are no longer readable will be killed."
   (add-hook 'prog-mode-hook
             (lambda () (delete 'dtrt-indent-mode-line-info global-mode-string))))
 
-(setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2
+              indent-tabs-mode nil
+              sh-basic-offset 2)
 (setq c-default-style "k&r"
-      c-basic-offset 4)
+      c-basic-offset 2)
 #+END_SRC
 
 ** whitespace-mode
