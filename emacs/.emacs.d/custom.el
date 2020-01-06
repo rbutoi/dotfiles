@@ -39,7 +39,7 @@
  '(org-journal-dir "~/google-drive/journal/")
  '(package-selected-packages
    (quote
-    (goto-chg helm-find ivy json-mode yaml-mode racer expand-region vc-hgcmd helm-rg company s zoutline zoom-window yafolding which-key use-package undo-tree string-inflection solarized-theme smartparens sane-term rust-mode rich-minority pos-tip pkgbuild-mode org-journal mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
+    (goto-chg helm-find ivy markdown-mode json-mode yaml-mode racer expand-region vc-hgcmd helm-rg diff-hl company s ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(recentf-auto-cleanup (quote never))
