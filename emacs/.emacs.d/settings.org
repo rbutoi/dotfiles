@@ -685,6 +685,12 @@ or are no longer readable will be killed."
 (use-package json-mode)
 #+END_SRC
 
+*** markdown
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :mode (("\\.md\\'" . gfm-mode)))
+#+END_SRC
+
 ** Company
 #+BEGIN_SRC emacs-lisp
 (use-package company
@@ -988,6 +994,15 @@ or are no longer readable will be killed."
         (format "\\(%s\\)\\|\\(%s\\)" vc-ignore-dir-regexp tramp-file-name-regexp)))
 
 (use-package keychain-environment :init (keychain-refresh-environment))
+#+END_SRC
+
+** Auto update
+#+BEGIN_SRC emacs-lisp
+(use-package auto-package-update
+  :config
+  (auto-package-update-maybe)
+  (auto-package-update-at-time "06:00")
+  )
 #+END_SRC
 
 ** Specific
