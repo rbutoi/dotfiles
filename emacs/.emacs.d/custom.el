@@ -32,6 +32,7 @@
    (quote
     ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
  '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
+ '(lsp-ui-doc-border "#93a1a1")
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
    (quote
@@ -39,7 +40,7 @@
  '(org-journal-dir "~/google-drive/journal/")
  '(package-selected-packages
    (quote
-    (auto-package-update markdown-mode json-mode yaml-mode racer expand-region vc-hgcmd helm-rg diff-hl company s ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
+    (goto-chg helm auto-package-update markdown-mode json-mode yaml-mode racer expand-region vc-hgcmd helm-rg diff-hl company s ztree zoutline zoom-window yafolding which-key use-package undo-tree swiper string-inflection solarized-theme smartparens sane-term rust-mode rich-minority posframe pos-tip pkgbuild-mode org-journal nlinum mwim magit keychain-environment iedit hydra helm-swoop helm-projectile helm-descbinds golden-ratio fill-column-indicator elisp-format dtrt-indent clang-format buffer-move ace-window)))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(recentf-auto-cleanup (quote never))
@@ -86,6 +87,8 @@
                      switch-org-and-elisp-map)
            (switch-org-and-elisp-mode 1)))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map

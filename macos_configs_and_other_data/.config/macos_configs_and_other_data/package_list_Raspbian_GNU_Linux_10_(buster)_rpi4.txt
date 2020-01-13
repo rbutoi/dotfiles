@@ -33,7 +33,9 @@ dphys-swapfile
 dpkg
 e2fsprogs
 ed
+emacs-nox
 ethtool
+exa
 fake-hwclock
 fbset
 fdisk
@@ -43,6 +45,7 @@ firmware-brcm80211
 firmware-libertas
 firmware-misc-nonfree
 firmware-realtek
+fzf
 gcc-4.9-base
 gcc-5-base
 gcc-6-base
@@ -50,6 +53,7 @@ gcc-7-base
 gcc-8-base
 gdb
 gdbm-l10n
+git
 gnupg
 gnupg-l10n
 gnupg-utils
@@ -71,6 +75,7 @@ info
 init
 init-system-helpers
 install-info
+iperf
 iproute2
 iptables
 iputils-ping
@@ -192,6 +197,7 @@ locales
 login
 logrotate
 lsb-base
+lsof
 lua5.1
 luajit
 man-db
@@ -235,10 +241,14 @@ rpi-eeprom
 rpi-update
 rsync
 rsyslog
+samba
 sed
 sensible-utils
+smbclient
+speedtest-cli
 ssh
 ssh-import-id
+stow
 strace
 sudo
 systemd
@@ -247,7 +257,9 @@ sysvinit-utils
 tar
 tasksel
 tasksel-data
+tmux
 traceroute
+transmission-daemon
 tzdata
 udev
 unzip
@@ -261,4 +273,5 @@ vl805fw
 wireless-tools
 wpasupplicant
 xxd
+zile
 zlib1g

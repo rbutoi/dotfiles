@@ -341,9 +341,10 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (column-number-mode 1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
-(unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
+(when (fboundp 'scroll-bar-mode) ;; emacs-nox has this undefined
+  (scroll-bar-mode -1))
 (blink-cursor-mode 0)
+(unless (and (eq system-type 'darwin) (display-graphic-p)) (menu-bar-mode -1))
 #+END_SRC
 
 ** Copy paste

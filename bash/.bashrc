@@ -149,6 +149,8 @@ if [ "$TERM" != "dumb" ]; then
   [ -f ~/.fzf.bash ] && source ~/.fzf.bash
   [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
   [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+  # for raspbian
+  [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && . /usr/share/doc/fzf/examples/key-bindings.bash
   export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
 fi
 
