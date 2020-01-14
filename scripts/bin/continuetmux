@@ -1,7 +1,6 @@
 #!/bin/bash
 if tmx2 has-session 2>/dev/null; then
-    tmx2 attach -d # workaround for window size issues with different monitors
-    tmx2 attach-session
+  tmx2 attach -d
 else
   tmx2 new-session
 fi
