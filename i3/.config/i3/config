@@ -1,7 +1,7 @@
 set $term kitty
 set $menu "rofi -show"
 set $editor emacsclient -c -a=
-set $locker i3lock -c 000000
+set $locker xsecurelock
 
 # output
 exec --no-startup-id feh --bg-fill "~/Desktop/Pictures/El\ Capitan\ 2.jpg"  --bg-fill "Desktop/Pictures/Sierra.jpg"
@@ -17,12 +17,12 @@ workspace 4 output DP-0
 exec --no-startup-id setxkbmap -option ctrl:nocaps,altwin:ctrl_win
 exec --no-startup-id xset r rate 250 25
 
-exec --no-startup-id xautolock -locker $locker
+exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
 
 # startup
 exec --no-startup-id dex -ae i3
 exec --no-startup-id $editor
-exec --no-startup-id $term
+exec --no-startup-id $term ~/bin/my_tmux.sh
 exec --no-startup-id google-chrome
 exec --no-startup-id ~/bin/firefox
 
@@ -124,13 +124,14 @@ bindsym $mod+minus scratchpad show
 #
 # Resizing containers:
 #
-bindsym $mod+Ctrl+$left resize shrink width 40px
-bindsym $mod+Ctrl+$down resize grow height 40px
-bindsym $mod+Ctrl+$up resize shrink height 40px
-bindsym $mod+Ctrl+$right resize grow width 40px
+bindsym $mod+Ctrl+$left  resize shrink width  100px
+bindsym $mod+Ctrl+$down  resize grow   height 100px
+bindsym $mod+Ctrl+$up    resize shrink height 100px
+bindsym $mod+Ctrl+$right resize grow   width  100px
 
 #
 # i3 keys:
 #
+bindsym $mod+Shift+Ctrl+s exec $locker
 bindsym $mod+Shift+Ctrl+l exec $locker
 bindsym $mod+Shift+e exec $editor
