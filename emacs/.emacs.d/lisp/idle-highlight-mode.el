@@ -60,6 +60,7 @@
  "Highlight other occurrences of the word at point."
  :group 'faces)
 
+;;;; disable face
 ;; (defface idle-highlight
 ;;  '((t (:inherit region)))
 ;;  "Face used to highlight other occurrences of the word at point."
@@ -92,6 +93,7 @@
                    (looking-at-p "\\s_\\|\\sw") ;; Symbol characters
                    (not (member target idle-highlight-exceptions)))
           (setq idle-highlight-regexp (concat "\\<" (regexp-quote target) "\\>"))
+                                                  ;; disable face
           (highlight-regexp idle-highlight-regexp ;; 'idle-highlight
                             )))))
 
