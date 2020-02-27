@@ -82,11 +82,11 @@
 
 ;; font
 (if (string-match-p "Arch" (system-name))
-    (add-to-list 'default-frame-alist '(font . "FiraCode-11"))
-  (add-to-list 'default-frame-alist '(font . "FiraCode-10")))
+    (add-to-list 'default-frame-alist '(font . "FiraEmacs-11"))
+  (add-to-list 'default-frame-alist '(font . "FiraEmacs-10")))
 (when (eq system-type 'darwin)
-  (add-to-list 'default-frame-alist '(font . "FiraCode-13"))
-  (set-frame-font "FiraCode-13"))
+  (add-to-list 'default-frame-alist '(font . "FiraEmacs-13"))
+  (set-frame-font "FiraEmacs-13"))
 (let ((path (locate-user-emacs-file "lisp/fira-code-emacs")))
   (when (file-exists-p path)
     (add-to-list 'load-path path)
@@ -505,7 +505,7 @@ or are no longer readable will be killed."
 
 ** just-one-space
 #+BEGIN_SRC emacs-lisp
-;; to get around xmonad
+;; M-SPC is used by WM
 (bind-key "S-M-SPC" 'just-one-space)
 #+END_SRC
 
@@ -946,6 +946,8 @@ or are no longer readable will be killed."
 (use-package magit
   :bind (("C-x g" . magit-status)
          ("C-x C-g" . magit-status))
+  :custom ((magit-log-auto-more t)
+           (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
   :config
   (setenv "EDITOR" "emacsclient"))
 #+END_SRC
