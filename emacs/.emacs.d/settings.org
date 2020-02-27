@@ -589,6 +589,15 @@ or are no longer readable will be killed."
   :bind ("M-=" . er/expand-region))
 #+END_SRC
 
+** dired
+#+BEGIN_SRC emacs-lisp
+(use-package dired-hide-dotfiles
+  :config
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (bind-key "." 'dired-hide-dotfiles-mode dired-mode-map))))
+#+END_SRC
+
 ** Misc
 #+BEGIN_SRC emacs-lisp
 (setq require-final-newline t)
@@ -787,7 +796,7 @@ or are no longer readable will be killed."
 (defun line-number-binds (m)
   (bind-keys :map m
              ("C-c l" . global-display-line-numbers-mode)
-             ("C-c C-l" . global-display-line-numbers-mode)))
+             ("C-c C-l" . display-line-numbers-mode)))
 (line-number-binds (current-global-map))
 (add-hook 'find-file-hook (lambda () (line-number-binds (current-local-map))))
 #+END_SRC
@@ -932,7 +941,9 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :bind (("C-x g" . magit-status)
-         ("C-x C-g" . magit-status)))
+         ("C-x C-g" . magit-status))
+  :config
+  (setenv "EDITOR" "emacsclient"))
 #+END_SRC
 
 ** clang-format
@@ -956,6 +967,12 @@ or are no longer readable will be killed."
 #+BEGIN_SRC emacs-lisp
 (let ((file (locate-user-emacs-file "lisp/my-idle-highlight-mode.el")))
   (when (file-exists-p file) (load file) (add-hook 'prog-mode-hook 'idle-highlight-mode)))
+
+#+END_SRC
+
+** which-function-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook 'which-function-mode)
 
 #+END_SRC
 
