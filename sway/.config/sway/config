@@ -1,4 +1,4 @@
-set $term alacritty
+set $term kitty
 set $web firefox-nightly
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
@@ -104,7 +104,7 @@ bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
 bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+m move container to output right
+bindsym $mod+Shift+m move container to output right; focus output right
 # other monitor
 bindsym $mod+m focus output right
 # next and previous workspace

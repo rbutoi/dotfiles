@@ -1,8 +1,8 @@
 alacritty
-alacritty-terminfo
 alsa-utils
 amd-ucode
 android-file-transfer
+android-udev
 arch-audit
 archlinux-xdg-menu
 aspell-en
@@ -17,8 +17,8 @@ bemenu-git
 blueman
 bluez
 bluez-utils
+breezy
 bzip2
-bzr
 celluloid
 chromium
 chromium-widevine
@@ -27,7 +27,7 @@ cmake
 coreutils
 cryptsetup
 darksky-git
-deluge
+deluge-gtk
 device-mapper
 devtools
 dex
@@ -47,6 +47,7 @@ fish
 font-manager
 fwupd
 fzf
+gcc-libs
 gdb
 gimp
 git
@@ -69,6 +70,7 @@ hunspell
 hunspell-en_US
 i3blocks
 icdiff
+inetutils
 informant
 inotify-tools
 inxi
@@ -78,6 +80,7 @@ iputils
 j4-dmenu-desktop
 jfsutils
 keychain
+kitty
 lastpass-cli
 less
 libappindicator-gtk3
@@ -136,9 +139,10 @@ powder-player-bin
 procps-ng
 protobuf
 psmisc
-pulseaudio
 pulseaudio-alsa
+pulseaudio-git
 pv
+python-pip
 qalculate-gtk
 reflector
 reiserfsprogs
@@ -170,6 +174,7 @@ tmux
 transmission-gtk
 ttf-bitstream-vera
 ttf-droid
+ttf-fira-code
 ttf-liberation
 ttf-monaco
 ttf-roboto

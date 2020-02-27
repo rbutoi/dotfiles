@@ -6,3 +6,5 @@
 # personal config
 [include]
 	path = ~/.gitconfig.local
+[cola]
+	spellcheck = false
