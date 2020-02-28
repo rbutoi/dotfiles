@@ -18,6 +18,26 @@
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
+;; font
+(if (string-match-p "Arch" (system-name))
+    (add-to-list 'default-frame-alist '(font . "FiraEmacs-11"))
+  (add-to-list 'default-frame-alist '(font . "FiraEmacs-10")))
+(when (eq system-type 'darwin)
+  (add-to-list 'default-frame-alist '(font . "FiraEmacs-13"))
+  (set-frame-font "FiraEmacs-13"))
+(add-to-list 'load-path (locate-user-emacs-file "lisp/fira-code-emacs"))
+(load "fira-code.el")
+(defun fira-code-mode-all-prog-buffers (arg)
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (when (derived-mode-p 'prog-mode) (fira-code-mode arg)))))
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (if (window-system (selected-frame))
+                (fira-code-mode +1)
+              (fira-code-mode -1))))
+
+;; colour theme
 (use-package solarized-theme
   :bind (("C-x 7" . toggle-theme)
          ("C-x C-7" . toggle-theme)
@@ -54,11 +74,12 @@
   (themed-mode)
 
   (defun themed-if-window-system (frame)
-    (if (window-system frame) (themed-mode) (unthemed-mode)))
-  ;; (add-hook 'after-make-frame-functions 'themed-if-window-system)
-  ;; (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
-  (themed-if-window-system (selected-frame))
-  )
+    (if (window-system frame)
+        (progn (themed-mode) (fira-code-mode-all-prog-buffers +1))
+      (progn (unthemed-mode) (fira-code-mode-all-prog-buffers -1))))
+  (add-hook 'after-make-frame-functions 'themed-if-window-system)
+  (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
+  (themed-if-window-system (selected-frame)))
 
 ;; transparency
 (setq next-opacity 'translucent)
@@ -79,19 +100,6 @@
 (bind-keys ("C-x   8" . toggle-opacity)
            ("C-x C-8" . toggle-opacity)
            ("C-x C-*" . toggle-opacity))
-
-;; font
-(if (string-match-p "Arch" (system-name))
-    (add-to-list 'default-frame-alist '(font . "FiraEmacs-11"))
-  (add-to-list 'default-frame-alist '(font . "FiraEmacs-10")))
-(when (eq system-type 'darwin)
-  (add-to-list 'default-frame-alist '(font . "FiraEmacs-13"))
-  (set-frame-font "FiraEmacs-13"))
-(let ((path (locate-user-emacs-file "lisp/fira-code-emacs")))
-  (when (file-exists-p path)
-    (add-to-list 'load-path path)
-    (load "fira-code.el")
-    (add-hook 'prog-mode-hook 'fira-code-mode)))
 
 ;; make window divider prettier
 (let ((display-table (or standard-display-table (make-display-table))))
@@ -327,7 +335,7 @@ or are no longer readable will be killed."
 (use-package which-key
   :config
   (define-globalized-minor-mode global-which-key-mode
-    which-key-mode (lambda () (which-key-mode)))
+    which-key-mode which-key-mode)
   (global-which-key-mode))
 #+END_SRC
 
@@ -789,8 +797,8 @@ or are no longer readable will be killed."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 
-(add-hook 'prog-mode-hook (lambda ()) (bind-keys ("<f7>" . compile)
-                                                 ("<f8>" . recompile)))
+(add-hook 'prog-mode-hook (lambda () (bind-keys ("<f7>" . compile)
+                                                ("<f8>" . recompile))))
 (bind-key "S-<f7>" (lambda () (interactive) (switch-to-buffer "*compilation*")))
 (setq compilation-message-face 'default)
 #+END_SRC
