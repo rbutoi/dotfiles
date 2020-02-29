@@ -1,4 +1,3 @@
-alacritty
 alsa-utils
 amd-ucode
 android-file-transfer
@@ -25,6 +24,7 @@ chromium-widevine
 clang
 cmake
 coreutils
+cronie
 cryptsetup
 darksky-git
 deluge-gtk
@@ -121,7 +121,6 @@ ntfs-3g
 ntp
 numix-gtk-theme
 openssh
-pacaur
 pacman-cleanup-hook
 pacman-contrib
 pamixer
@@ -133,6 +132,7 @@ peco
 perl
 perl-file-mimeinfo
 pigz
+pikaur
 playerctl
 polkit-gnome
 powder-player-bin
