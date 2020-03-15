@@ -25,7 +25,6 @@ shopt -s checkwinsize
 # https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
 stty -ixon
 
-
 # Avoid duplicates
 export HISTCONTROL=ignoredups:erasedups
 # Append to the Bash history file, rather than overwriting it
@@ -50,6 +49,9 @@ if [ "$TERM" != "dumb" ]; then
   RESET='\[\e[0m\]'
   export PS1="${RED}${BOLD}\${?##0}${RESET}${GREEN}\w${RESET} "
 fi
+
+# disable history expansion
+set +H
 
 #######################################
 # User specific aliases and functions #
