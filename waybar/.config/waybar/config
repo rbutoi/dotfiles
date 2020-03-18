@@ -19,13 +19,13 @@
         "exec": "checkupdates | wc -l",
         "format": "🎁 {}",
         "interval": 3600,
-        "on-click": "(tmux neww pacaur -Syu && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e pacaur -e -Syu; pkill -RTMIN+8 waybar",
+        "on-click": "(tmux neww pikaur -Syu && swaymsg '[app_id=\"kitty\"] focus') || kitty pikaur -Syu; pkill -RTMIN+8 waybar",
         "tooltip": false,
         "signal": 8
     },
     "custom/load": {
         "exec": "cut -f1-3 -d' ' /proc/loadavg",
-        "on-click": "(tmux new-window glances && swaymsg '[title=\"Alacritty.*\"] focus') || alacritty -e glances",
+        "on-click": "(tmux neww glances && swaymsg '[app_id=\"kitty\"] focus') || kitty glances",
         "interval": 60
     },
     "custom/spotify": {
