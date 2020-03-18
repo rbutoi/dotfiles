@@ -25,17 +25,21 @@
 (when (eq system-type 'darwin)
   (add-to-list 'default-frame-alist '(font . "FiraEmacs-13"))
   (set-frame-font "FiraEmacs-13"))
-(add-to-list 'load-path (locate-user-emacs-file "lisp/fira-code-emacs"))
-(load "fira-code.el")
-(defun fira-code-mode-all-prog-buffers (arg)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      (when (derived-mode-p 'prog-mode) (fira-code-mode arg)))))
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (if (window-system (selected-frame))
-                (fira-code-mode +1)
-              (fira-code-mode -1))))
+;; (add-to-list 'load-path (locate-user-emacs-file "lisp/fira-code-emacs"))
+;; (load "fira-code.el")
+;; (defun fira-code-mode-all-prog-buffers-if-needed (arg)
+;;   (dolist (buffer (buffer-list))
+;;     (with-current-buffer buffer
+;;       (when (derived-mode-p 'prog-mode)
+;;         (if arg
+;;             (unless fira-code-mode (fira-code-mode))
+;;           (when fira-code-mode (fira-code-mode)))
+;;         ))))
+;; (add-hook 'prog-mode-hook
+;;           (lambda ()
+;;             (if (window-system (selected-frame))
+;;                 (fira-code-mode +1)
+;;               (fira-code-mode -1))))
 
 ;; colour theme
 (use-package solarized-theme
@@ -75,8 +79,13 @@
 
   (defun themed-if-window-system (frame)
     (if (window-system frame)
-        (progn (themed-mode) (fira-code-mode-all-prog-buffers +1))
-      (progn (unthemed-mode) (fira-code-mode-all-prog-buffers -1))))
+        (progn (themed-mode)
+               ;; (fira-code-mode-all-prog-buffers-if-needed +1)
+               )
+      (progn (unthemed-mode)
+             ;; (fira-code-mode-all-prog-buffers-if-needed -1)
+             )
+      ))
   (add-hook 'after-make-frame-functions 'themed-if-window-system)
   (add-hook 'focus-in-hook (lambda () (themed-if-window-system (selected-frame))))
   (themed-if-window-system (selected-frame)))
