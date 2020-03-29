@@ -1,0 +1,20 @@
+This file contains my [[github:hlissner/doom-emacs][Doom Emacs]] configuration.
+
+* Preamble
+
+Enable lexical binding [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#use-lexical-binding-everywhere][by default]].
+
+#+BEGIN_SRC emacs-lisp
+;;; -*- lexical-binding: t; -*-
+#+END_SRC
+
+Start benchmark for user config load time.
+
+#+BEGIN_SRC emacs-lisp
+(setq user-config-start-time (current-time))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(map! "C-x C-b" 'counsel-switch-buffer)
+(map! "C-x b" 'counsel-buffer-or-recentf)
+#+END_SRC
