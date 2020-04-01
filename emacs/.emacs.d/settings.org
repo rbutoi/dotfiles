@@ -1002,21 +1002,6 @@ or are no longer readable will be killed."
 
 * Meta/misc
 
-** When editing this file, C-c m to switch between org-mode and elisp. Yup...
-#+BEGIN_SRC emacs-lisp
-(setq switch-org-and-elisp-map (make-sparse-keymap))
-(define-minor-mode switch-org-and-elisp-mode "" nil nil switch-org-and-elisp-map)
-(defun switch-org-and-elisp () (interactive)
-       (if (string= 'emacs-lisp-mode major-mode)
-           (progn (org-mode) (switch-org-and-elisp-mode t))
-         (progn (emacs-lisp-mode) (switch-org-and-elisp-mode t))))
-(bind-key "C-c m" 'switch-org-and-elisp switch-org-and-elisp-map)
-(bind-key "C-c C-m" 'switch-org-and-elisp switch-org-and-elisp-map)
-;; Local Variables:
-;; eval: (switch-org-and-elisp-mode 1)
-;; End:
-#+END_SRC
-
 ** open file in sudo
 #+BEGIN_SRC emacs-lisp
 (defun open-file-with-sudo ()
