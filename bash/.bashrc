@@ -43,12 +43,8 @@ append_history() { history -a; }
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 precmd_functions+=(append_history)
 
-if [ "$TERM" != "dumb" ]; then
-  RED='\[\e[0;31m\]'
-  GREEN='\[\e[0;32m\]'
-  RESET='\[\e[0m\]'
-  export PS1="${RED}${BOLD}\${?##0}${RESET}${GREEN}\w${RESET} "
-fi
+[ -f ~/bin/starship ] && eval "$(~/bin/starship init bash)" \
+  || eval "$(starship init bash)"
 
 # disable history expansion
 set +H
