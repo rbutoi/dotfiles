@@ -147,13 +147,16 @@ find_pi() {
 
 alias alert='notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+source-if-e () {
+  [ -f "$@" ] && . "$@"
+}
 if [ "$TERM" != "dumb" ]; then
-  [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-  [ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
-  [ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
-  # for raspbian
-  [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && . /usr/share/doc/fzf/examples/key-bindings.bash
-  export FZF_DEFAULT_OPTS="-e --bind=ctrl-v:page-down,alt-v:page-up"
+  source-if-e /usr/share/fzf/key-bindings.bash # Arch
+  source-if-e /usr/share/fzf/completion.bash
+  source-if-e /usr/share/doc/fzf/examples/key-bindings.bash # Debian
+  source-if-e /usr/share/doc/fzf/examples/completion.bash
+  export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
+  export FZF_DEFAULT_COMMAND='fd --hidden'
 fi
 
 # enable programmable completion features
