@@ -26,6 +26,7 @@ Start benchmark for user config load time.
 (package! highlight-thing)
 (package! goto-chg)
 (package! defrepeater)
+(package! keychain-environment)
 #+END_SRC
 
 * UI
@@ -311,6 +312,7 @@ generally want to comment out the line.
       "C-x C-g" 'magit-status)
 (setq magit-log-auto-more t
       magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
+(use-package keychain-environment :config (keychain-refresh-environment))
 #+END_SRC
 
 ** Misc / one-offs

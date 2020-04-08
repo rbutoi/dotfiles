@@ -11,6 +11,7 @@ baobab
 base
 bash
 bash-completion
+bat
 bdf-unifont
 bemenu-git
 blueman
@@ -19,6 +20,7 @@ bluez-utils
 breezy
 bzip2
 celluloid
+cheese
 chromium
 chromium-widevine
 clang
@@ -33,6 +35,7 @@ devtools
 dex
 dhcpcd
 diffutils
+dust
 e2fsprogs
 efibootmgr
 emacs
@@ -56,7 +59,6 @@ glances
 glibc
 gnome-disk-utility
 gnome-logs
-gnome-multi-writer
 gnome-themes-extra
 gnu-free-fonts
 gotop-bin
@@ -88,6 +90,7 @@ libmicrodns
 libreoffice-fresh
 libva-mesa-driver
 libva-utils
+libvterm
 licenses
 linux
 linux-firmware
@@ -139,8 +142,8 @@ powder-player-bin
 procps-ng
 protobuf
 psmisc
+pulseaudio
 pulseaudio-alsa
-pulseaudio-git
 pv
 python-pip
 qalculate-gtk
@@ -155,11 +158,13 @@ ruby
 rustup
 sd
 shadow
+shellcheck
 slurp
 s-nail
 solaar
 speedtest-cli
 spotify
+starship
 stow
 strace
 sway
@@ -184,10 +189,10 @@ unzip
 usbutils
 util-linux
 valgrind
+vbetool
 vdpauinfo
 vlc
 waybar-git
-wireguard-arch
 wireguard-tools
 wl-clipboard
 wmctrl
@@ -198,6 +203,7 @@ xf86-video-amdgpu
 xfsprogs
 xreader
 youtube-dl
+ytop
 yubico-pam
 yubikey-manager-qt
 zenity
