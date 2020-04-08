@@ -129,7 +129,7 @@ alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's
 tree2() {
   find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
 }
-alias c="cat"
+alias c="bat"
 alias dv="dirs -v"
 alias s='sudo'
 complete -F _complete_alias s
