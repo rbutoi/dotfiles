@@ -46,11 +46,11 @@ Start benchmark for user config load time.
 ;; more convenient M-binds. * because M-binds are frequently rebound
 (bind-keys*
  ("M-0"     . delete-window)
- ("M-1"     . (lambda () (interactive) (delete-other-windows)))
- ("M-2"     . (lambda () (interactive) (split-window-below)))
- ("M-3"     . (lambda () (interactive) (split-window-right))))
+ ("M-1"     . delete-other-windows)
+ ("M-2"     . split-window-below)
+ ("M-3"     . split-window-right))
 (map!
- "M-o"     (lambda! (other-window +1))
+ "M-o"     'other-window
  "M-i"     (lambda! (other-window -1))
  "M-l"     (lambda! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
@@ -101,9 +101,10 @@ Start benchmark for user config load time.
       "C-x b"   'counsel-buffer-or-recentf
       "C-o"     'counsel-semantic-or-imenu
       "C-M-s"   (lambda! (counsel-rg (thing-at-point 'symbol)))
-                                        ; doesn't show hidden files
-      "C-x f"   (lambda! (execute-extended-command t "counsel-file-jump"))
-      "C-x M-f" (lambda! (execute-extended-command t "counsel-file-jump"))
+      ;; doesn't show hidden files
+      "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
+                       (execute-extended-command t "counsel-file-jump"))
+      "C-x M-f" 'counsel-file-jump-ask-dir
       "C-s"     'swiper-isearch
       "C-r"     'swiper-isearch-backward
       "C-M-o"   'swiper-isearch-thing-at-point
