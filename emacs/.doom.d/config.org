@@ -1,7 +1,6 @@
 This file contains my [[github:hlissner/doom-emacs][Doom Emacs]] configuration.
 
 * Preamble
-
 Enable lexical binding [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#use-lexical-binding-everywhere][by default]].
 
 #+BEGIN_SRC emacs-lisp
@@ -15,7 +14,6 @@ Start benchmark for user config load time.
 #+END_SRC
 
 ** Packages
-
 #+BEGIN_SRC emacs-lisp :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
 (package! buffer-move)
@@ -28,12 +26,12 @@ Start benchmark for user config load time.
 (package! defrepeater)
 (package! keychain-environment)
 (package! exec-path-from-shell)
+(package! notmuch)
 #+END_SRC
 
 * UI
 
 ** Theme
-
 #+BEGIN_SRC emacs-lisp
 ;; TODO: add font, colour theme
 
@@ -42,7 +40,6 @@ Start benchmark for user config load time.
 #+END_SRC
 
 ** Buffers and windows
-
 #+BEGIN_SRC emacs-lisp
 ;; more convenient M-binds. * because M-binds are frequently rebound
 (bind-keys*
@@ -51,7 +48,7 @@ Start benchmark for user config load time.
  ("M-2"     . split-window-below)
  ("M-3"     . split-window-right))
 (map!
- "M-o"     'other-window
+ "M-o"     (lambda! (other-window +1))
  "M-i"     (lambda! (other-window -1))
  "M-l"     (lambda! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
@@ -85,15 +82,13 @@ Start benchmark for user config load time.
 #+END_SRC
 
 ** Popups
-
 #+BEGIN_SRC emacs-lisp
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
       "M-~" 'tmm-menubar)  ; this aliases not-modified
-(set-popup-rule! "^\\*compilation\\*$" :ignore t)
+(set-popup-rule! "^\\*Man.*\\*$" :ignore t)
 #+END_SRC
 
 ** Ivy / counsel
-
 #+BEGIN_SRC emacs-lisp
 (map! "C-c C-r" 'ivy-resume
       "C-x m"   'counsel-M-x
@@ -118,15 +113,20 @@ Start benchmark for user config load time.
 #+END_SRC
 
 ** Defrepeater
-
 #+BEGIN_SRC emacs-lisp
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers))
 (map! [remap +word-wrap-mode] (defrepeater #'+word-wrap-mode))
 (map! [remap string-inflection-cycle] (defrepeater #'string-inflection-cycle))
 #+END_SRC
 
-** Misc / one-offs
+** Email: notmuch
+#+BEGIN_SRC emacs-lisp
+(after! notmuch
+  (setq notmuch-search-oldest-first nil) ; why does this default to t
+)
+#+END_SRC
 
+** Misc / one-offs
 #+BEGIN_SRC emacs-lisp
 ;; Don't display line numbers by default.
 (setq display-line-numbers-type nil)
@@ -138,7 +138,6 @@ Start benchmark for user config load time.
 * Editing
 
 ** Revert file
-
 #+BEGIN_SRC emacs-lisp
 (map! "C-c r" 'revert-buffer)
 (global-auto-revert-mode)
@@ -169,14 +168,12 @@ or are no longer readable will be killed."
 #+END_SRC
 
 ** M-{n,p} for paragraph movement
-
 #+BEGIN_SRC emacs-lisp
 (map! "M-p" 'backward-paragraph
       "M-n" 'forward-paragraph)
 #+END_SRC
 
 ** goto-chg
-
 #+BEGIN_SRC emacs-lisp
 (use-package goto-chg
   :bind (("C-." . goto-last-change)
@@ -184,7 +181,6 @@ or are no longer readable will be killed."
 #+END_SRC
 
 ** comment-or-uncomment-line-or-region
-
 The default M-; without a region adds a comment to the end of a line, where I
 generally want to comment out the line.
 
@@ -202,7 +198,6 @@ generally want to comment out the line.
 #+END_SRC
 
 ** Better C-w
-
 #+BEGIN_SRC emacs-lisp
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
@@ -218,10 +213,11 @@ generally want to comment out the line.
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 #+END_SRC
-** Misc / one-offs
 
+** Misc / one-offs
 #+BEGIN_SRC emacs-lisp
-(use-package string-inflection :bind ("C-c C-u" . string-inflection-cycle))
+(use-package string-inflection
+  :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
 
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
@@ -230,6 +226,10 @@ generally want to comment out the line.
 (map! "C-M-%" 'query-replace
       "M-%"   'query-replace-regexp ; prioritize for terminal availability
       "M-="   'er/expand-region)
+(defun case-sensitive-query-replace ()
+  (interactive)
+  (let ((case-fold-search nil))
+    (call-interactively 'query-replace)))
 
 ;; can keep C-u C-SPC C-SPC C-SPC...
 (setq set-mark-command-repeat-pop t)
@@ -238,14 +238,13 @@ generally want to comment out the line.
 * Programming
 
 ** Languages
-
 #+BEGIN_SRC emacs-lisp
 ;; Perl
-(with-eval-after-load 'perl-mode
+(after! perl-mode
   (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
 
 ;; Assembler
-(with-eval-after-load 'asm-mode
+(after! asm-mode
   (map! "TAB" :map asm-mode-map 'asm-indent-line))
 
 ;; Data/config
@@ -253,7 +252,7 @@ generally want to comment out the line.
   (run-mode-hooks 'prog-mode-hook))
 
 ;; C/C++
-(with-eval-after-load 'cc-mode
+(after! cc-mode
   (map! "C-c C-o" :map c-mode-base-map
         (lambda! (ff-find-other-file nil 'ignore-include))))
 (add-hook! c++-mode (c-set-offset 'innamespace [0]))
@@ -269,7 +268,6 @@ generally want to comment out the line.
 #+END_SRC
 
 ** Company
-
 #+BEGIN_SRC emacs-lisp
 (map! "TAB"     'company-indent-or-complete-common
       "C-<tab>" 'dabbrev-expand ;; low-tech alternative
@@ -278,15 +276,19 @@ generally want to comment out the line.
       company-dabbrev-downcase nil)
 #+END_SRC
 
-** Diffing
+** Flycheck
+#+BEGIN_SRC emacs-lisp
+(after! flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+#+END_SRC
 
+** Diffing
 #+BEGIN_SRC emacs-lisp
 (add-hook! diff-mode (read-only-mode t))
 (map! "C-x C-v" 'vc-prefix-map)
 #+END_SRC
 
 ** Compiling
-
 #+BEGIN_SRC emacs-lisp
 (defun close-compile-window-if-successful (buffer string)
   " close a compilation window if succeeded without warnings "
@@ -308,7 +310,6 @@ generally want to comment out the line.
 #+END_SRC
 
 ** Magit
-
 #+BEGIN_SRC emacs-lisp
 (map! "C-x   g" 'magit-status
       "C-x C-g" 'magit-status)
@@ -318,7 +319,6 @@ generally want to comment out the line.
 #+END_SRC
 
 ** Misc / one-offs
-
 #+BEGIN_SRC emacs-lisp
 (add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
 
@@ -327,7 +327,6 @@ generally want to comment out the line.
 #+END_SRC
 
 * Closing
-
 Load host-specific setup.
 
 #+BEGIN_SRC emacs-lisp
@@ -337,7 +336,7 @@ Load host-specific setup.
 Start server if not running.
 
 #+BEGIN_SRC emacs-lisp
-(require 'server) (unless (server-running-p) (server-start))
+(use-package server :config (unless (server-running-p) (server-start)))
 #+END_SRC
 
 Echo benchmarked startup time.

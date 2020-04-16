@@ -43,8 +43,8 @@ append_history() { history -a; }
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 precmd_functions+=(append_history)
 
-[ -f ~/bin/starship ] && eval "$(~/bin/starship init bash)" \
-  || eval "$(starship init bash)"
+# prompt
+command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 
 # disable history expansion
 set +H
