@@ -116,6 +116,7 @@ nerd-fonts-hack
 netctl
 nload
 nmap
+notmuch
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
@@ -145,7 +146,10 @@ psmisc
 pulseaudio
 pulseaudio-alsa
 pv
+python-google-api-python-client
+python-oauth2client
 python-pip
+python-tqdm
 qalculate-gtk
 reflector
 reiserfsprogs
