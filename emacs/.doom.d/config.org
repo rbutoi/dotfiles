@@ -43,12 +43,12 @@ Start benchmark for user config load time.
 #+BEGIN_SRC emacs-lisp
 ;; more convenient M-binds. * because M-binds are frequently rebound
 (bind-keys*
- ("M-0"     . delete-window)
- ("M-1"     . delete-other-windows)
- ("M-2"     . split-window-below)
- ("M-3"     . split-window-right))
+ ("M-0"  . delete-window)
+ ("M-1"  . delete-other-windows)
+ ("M-2"  . split-window-below)
+ ("M-3"  . split-window-right))
 (map!
- "M-o"     (lambda! (other-window +1))
+ "M-o"     (lambda! (other-window +1)) ; if not lambda, would trigger ace-window
  "M-i"     (lambda! (other-window -1))
  "M-l"     (lambda! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
