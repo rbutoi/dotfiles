@@ -2,9 +2,11 @@
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [icdiff]
 	options = --line-numbers
+[cola]
+	spellcheck = false
+[pull]
+	rebase = true
 
 # personal config
 [include]
 	path = ~/.gitconfig.local
-[cola]
-	spellcheck = false

@@ -151,6 +151,8 @@ if [ "$TERM" != "dumb" ]; then
   source-if-e /usr/share/fzf/completion.bash
   source-if-e /usr/share/doc/fzf/examples/key-bindings.bash # Debian
   source-if-e /usr/share/doc/fzf/examples/completion.bash
+  source-if-e /usr/local/opt/fzf/shell/key-bindings.bash # Mac homebrew
+  source-if-e /usr/local/opt/fzf/shell/completion.bash
   export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
   export FZF_DEFAULT_COMMAND='fd --hidden'
 fi

@@ -27,6 +27,7 @@ Start benchmark for user config load time.
 (package! goto-chg)
 (package! defrepeater)
 (package! keychain-environment)
+(package! exec-path-from-shell)
 #+END_SRC
 
 * UI
@@ -320,6 +321,9 @@ generally want to comment out the line.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
+
+;; macos section?
+(when (eq system-type 'darwin) (exec-path-from-shell-initialize))
 #+END_SRC
 
 * Closing
