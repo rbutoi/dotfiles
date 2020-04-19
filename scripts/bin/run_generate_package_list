@@ -1,2 +1,0 @@
-#!/bin/sh
-cd /home/radu/dotfiles/macos_configs_and_other_data/.config/macos_configs_and_other_data && sudo -u radu /home/radu/bin/generate_package_list.sh
