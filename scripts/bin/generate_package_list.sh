@@ -18,6 +18,6 @@ Raspbian)
     apt-mark showmanual > $outname
     ;;
 Darwin)
-    port installed requested | tail -n +2 | cut -d' ' -f3 > $outname
+    brew leaves > $outname
     ;;
 esac
