@@ -16,6 +16,7 @@ Start benchmark for user config load time.
 ** Packages
 #+BEGIN_SRC emacs-lisp :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
+(package! solarized-theme)
 (package! buffer-move)
 (package! zoom-window)
 (package! string-inflection)
@@ -26,14 +27,28 @@ Start benchmark for user config load time.
 (package! defrepeater)
 (package! keychain-environment)
 (package! exec-path-from-shell)
-(package! notmuch)
 #+END_SRC
 
 * UI
 
 ** Theme
 #+BEGIN_SRC emacs-lisp
-;; TODO: add font, colour theme
+(setq
+ my-theme   'solarized-dark
+ doom-theme my-theme
+ doom-font  (font-spec :family "Fira Code" :size 14))
+
+;; Machinery to automatically toggle themed mode if in terminal or not
+(defun themed-if-window-system (frame)
+  (if (window-system frame)
+      (unless doom-theme
+        (setq doom-theme my-theme)
+        (load-theme my-theme t))
+    (when doom-theme
+      (setq doom-theme nil)
+      (disable-theme my-theme))))
+(add-hook 'after-make-frame-functions 'themed-if-window-system)
+(add-hook! 'focus-in-hook (themed-if-window-system (selected-frame)))
 
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))

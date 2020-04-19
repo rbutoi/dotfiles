@@ -164,6 +164,8 @@ bindsym $mod+Shift+e exec $editor
 bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym Pause                exec ~/bin/inc_pa_vol.sh # to prevent going over 100
+bindsym Scroll_Lock          exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86AudioNext exec playerctl next

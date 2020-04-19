@@ -4,11 +4,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-  . /etc/bashrc
-fi
-
 #########################
 # Bash/terminal options #
 #########################
@@ -119,7 +114,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-alias m="less"
+alias m="bat"
 alias M='$(history -p \!\!) | less'
 export LESS=-RMiSeF
 alias xo="xdg-open"

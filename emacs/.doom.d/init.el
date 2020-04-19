@@ -11,11 +11,10 @@
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        ivy                 ; a search engine for love and life
-       ;;ivy
 
        :ui
        ;;deft              ; notational velocity for Emacs
-       ;;doom              ; what makes DOOM look the way it does
+       doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        fill-column       ; a `fill-column' indicator
@@ -93,7 +92,8 @@
        :lang
        ;;agda              ; types of types of types of types...
        ;;assembly          ; assembly for fun or debugging
-       (:if (not WORK) cc) ; C/C++/Obj-C madness
+       (:if (not WORK) ; has custom setup
+           cc)             ; C/C++/Obj-C madness
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -153,7 +153,7 @@
 
        :email
        ;;(mu4e +gmail)
-       ;;notmuch
+       notmuch
        ;;(wanderlust +gmail)
 
        :app

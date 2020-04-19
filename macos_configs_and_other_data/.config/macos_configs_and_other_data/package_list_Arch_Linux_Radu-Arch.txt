@@ -7,6 +7,7 @@ archlinux-xdg-menu
 aspell-en
 at
 auracle-git
+bandwhich
 baobab
 base
 bash
@@ -81,6 +82,7 @@ iproute2
 iputils
 j4-dmenu-desktop
 jfsutils
+jq
 keychain
 kitty
 lastpass-cli
@@ -108,6 +110,7 @@ mlocate
 moreutils
 mosh
 mpv
+msmtp
 mullvad-vpn
 nano
 nemo
@@ -140,6 +143,7 @@ pikaur
 playerctl
 polkit-gnome
 powder-player-bin
+prettier
 procps-ng
 protobuf
 psmisc
@@ -195,6 +199,8 @@ util-linux
 valgrind
 vbetool
 vdpauinfo
+virtualbox
+virtualbox-ext-oracle
 vlc
 waybar-git
 wireguard-tools
