@@ -27,6 +27,7 @@ Start benchmark for user config load time.
 (package! defrepeater)
 (package! keychain-environment)
 (package! exec-path-from-shell)
+(package! ztree)
 #+END_SRC
 
 * UI
@@ -134,13 +135,6 @@ Start benchmark for user config load time.
 (map! [remap string-inflection-cycle] (defrepeater #'string-inflection-cycle))
 #+END_SRC
 
-** Email: notmuch
-#+BEGIN_SRC emacs-lisp
-(after! notmuch
-  (setq notmuch-search-oldest-first nil) ; why does this default to t
-)
-#+END_SRC
-
 ** Misc / one-offs
 #+BEGIN_SRC emacs-lisp
 ;; Don't display line numbers by default.
@@ -148,6 +142,11 @@ Start benchmark for user config load time.
 
 ;; Don't confirm exit.
 (setq confirm-kill-emacs nil)
+
+;; Print URL when opening browser when working over SSH, and to keep a log in
+;; the messages buffer.
+(define-advice browse-url (:before (url &rest args))
+  (message "Opening %s in browser." url))
 #+END_SRC
 
 * Editing
