@@ -101,12 +101,14 @@ e() { ew "$@"; }
 export EDITOR="emacsclient -nw -a="
 export ALTERNATE_EDITOR=zile
 
-
 export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
 export CLICOLOR=1
 
 alias g="grep --color=always -i"
 alias pg="pgrep"
+psg() {
+  ps aux | grep "$@" | egrep -v 'grep|shell-history'
+}
 alias chmox="chmod +x"
 alias -- -="cd -"
 alias ..="cd .."
@@ -114,16 +116,20 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-alias m="bat"
-alias M='$(history -p \!\!) | less'
+m() {
+  [ -n "$@" ] && bat "$@" || bat -
+}
+alias M='$(history -p \!\!) | bat -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
-alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+if ! command -v tree >/dev/null 2>&1; then
+  alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+  tree2() {
+    find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
+  }
+fi
 [ `uname` == "Linux" ] && alias rmdir="rmdir -p --ignore-fail-on-non-empty"
-tree2() {
-  find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
-}
 alias c="bat"
 alias dv="dirs -v"
 alias s='sudo'
@@ -136,7 +142,7 @@ find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
 }
 
-alias alert='notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 source-if-e () {
   [ -f "$@" ] && . "$@"

@@ -147,6 +147,12 @@ Start benchmark for user config load time.
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
   (message "Opening %s in browser." url))
+
+;; useful across buffers
+(setq highlight-thing-all-visible-buffers-p t
+      highlight-thing-limit-to-region-in-large-buffers-p nil
+      highlight-thing-narrow-region-lines 15
+      highlight-thing-large-buffer-limit 5000)
 #+END_SRC
 
 * Editing
@@ -247,6 +253,8 @@ generally want to comment out the line.
 
 ;; can keep C-u C-SPC C-SPC C-SPC...
 (setq set-mark-command-repeat-pop t)
+
+(add-hook! text-mode 'auto-fill-mode 'flyspell-mode)
 #+END_SRC
 
 * Programming
