@@ -28,6 +28,7 @@ Start benchmark for user config load time.
 (package! keychain-environment)
 (package! exec-path-from-shell)
 (package! ztree)
+(package! notmuch-unread)
 #+END_SRC
 
 * UI
@@ -130,9 +131,98 @@ Start benchmark for user config load time.
 
 ** Defrepeater
 #+BEGIN_SRC emacs-lisp
-(map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers))
-(map! [remap +word-wrap-mode] (defrepeater #'+word-wrap-mode))
-(map! [remap string-inflection-cycle] (defrepeater #'string-inflection-cycle))
+(map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
+      [remap +word-wrap-mode]          (defrepeater #'+word-wrap-mode)
+      [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
+#+END_SRC
+
+** notmuch
+#+BEGIN_SRC emacs-lisp
+(map! "C-c m" 'notmuch)
+
+(after! notmuch
+  (map! :map notmuch-search-mode-map
+        "w"     (lambda! (notmuch-search-filter-by-tag "work"))
+        "W"     (lambda! (notmuch-search-filter-by-tag "personal"))
+        "u"     (lambda! (notmuch-search-filter-by-tag "unread"))
+        "i"     (lambda! (notmuch-search-filter-by-tag "important"))
+        "I"     (lambda! (notmuch-search
+                          (concat notmuch-search-query-string
+                                  " and not is:important")
+                          notmuch-search-oldest-first))
+        "d"     (lambda! (notmuch-search-add-tag
+                          (list "+trash" "-inbox" "-unread"))
+                         (notmuch-search-next-thread))
+        :map (notmuch-search-mode-map
+              notmuch-tree-mode-map)
+        "x"     (lambda! (ignore-errors (interrupt-process)))
+        "d"     (lambda! (notmuch-tree-add-tag
+                          (list "+trash" "-inbox" "-unread"))
+                         (notmuch-tree-next-matching-message))
+        :map (notmuch-hello-mode-map
+              notmuch-search-mode-map
+              notmuch-tree-mode-map)
+        "C-M-s" 'counsel-notmuch
+        "G"     (lambda! (set-process-sentinel
+                          (start-process-shell-command "notmuch update" nil
+                                                       +notmuch-sync-command)
+                          ;; refresh notmuch buffers if sync was successful
+                          (lambda (_process event)
+                            (when (string= event "finished\n")
+                              (notmuch-refresh-all-buffers)
+                              (message "Synced mail."))))))
+  (setq
+   sendmail-program "msmtp"
+   notmuch-saved-searches                 ; limit time range for performance
+   '((:key "j" :name "unified inbox"      :query "date:2w.. and not is:list and is:inbox")
+     (:key "i" :name "work inbox"         :query "date:2w.. and not is:list and is:inbox and is:work")
+     (:key "I" :name "personal inbox"     :query "date:2w.. and not is:list and is:inbox and is:personal")
+     (:key "u" :name "unread work"        :query "date:2w.. and not is:list and is:inbox and is:unread and is:work")
+     (:key "U" :name "unread personal"    :query "date:2w.. and not is:list and is:inbox and is:unread and is:personal")
+     (:key "m" :name "important work"     :query "date:2w.. and not is:list and is:inbox and is:important and is:work")
+     (:key "M" :name "important personal" :query "date:2w.. and not is:list and is:inbox and is:important and is:personal")
+     (:key "f" :name "flagged"            :query "is:flagged")
+     (:key "s" :name "sent"               :query "is:sent")
+     (:key "d" :name "drafts"             :query "is:draft")
+     (:key "a" :name "all"                :query "*"))
+
+   ;; Wrap to 100 cols and disable colours for readable HTML mail.
+   notmuch-wash-wrap-lines-length 100
+   shr-width notmuch-wash-wrap-lines-length
+   shr-use-colors nil
+
+   ;; I don't mind the full hello.
+   notmuch-hello-sections '(notmuch-hello-insert-header
+                            notmuch-hello-insert-saved-searches
+                            notmuch-hello-insert-search
+                            notmuch-hello-insert-recent-searches
+                            notmuch-hello-insert-alltags
+                            notmuch-hello-insert-footer)
+   notmuch-show-all-tags-list t
+   notmuch-show-logo t
+
+   notmuch-tag-formats
+   '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
+     ("inbox"     ()) ; the default, doesn't need to be shown
+     ("work"      ()) ; work inbox is default
+     ("personal"  "p"))
+
+  ;; Refresh notmuch every five minutes if it's active.
+   notmuch-refresh-timer
+   (run-with-timer 0 (* 5 60)
+                   (lambda () (when (string-match-p "notmuch" (buffer-name))
+                                (notmuch-refresh-all-buffers))))
+
+   notmuch-unread-search-term "tag:unread and tag:inbox")
+  (notmuch-unread-mode)
+
+  ;; > modeline doesn't have much use in these modes
+  ;; I beg to differ. Showing the current search term is useful, and removing
+  ;; the modeline is disorienting.
+  (remove-hook! '(notmuch-show-mode-hook
+                  notmuch-tree-mode-hook
+                  notmuch-search-mode-hook)
+    #'hide-mode-line-mode))
 #+END_SRC
 
 ** Misc / one-offs

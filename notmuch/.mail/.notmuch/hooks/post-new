@@ -1,0 +1,19 @@
+#!/bin/sh -x
+
+# sort emails into appropriate account tag
+notmuch tag +work     -- tag:new path:work/**
+notmuch tag +personal -- tag:new path:personal/**
+
+# since the "primary" is represented by a lack of a category tag, give it a tag
+# to make it easier
+notmuch tag +primary  -- tag:new and tag:personal and \
+  not tag:social                                  and \
+  not tag:promotions                              and \
+  not tag:updates                                 and \
+  not tag:forums
+
+# remove new tag
+notmuch tag -new      -- tag:new
+
+# all of real filtering and tagging is done by Gmail, so they are accessible
+# from the web, mobile, etc
