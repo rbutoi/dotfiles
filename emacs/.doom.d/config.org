@@ -141,47 +141,20 @@ Start benchmark for user config load time.
 (map! "C-c m" 'notmuch)
 
 (after! notmuch
-  (map! :map notmuch-search-mode-map
-        "w"     (lambda! (notmuch-search-filter-by-tag "work"))
-        "W"     (lambda! (notmuch-search-filter-by-tag "personal"))
-        "u"     (lambda! (notmuch-search-filter-by-tag "unread"))
-        "i"     (lambda! (notmuch-search-filter-by-tag "important"))
-        "I"     (lambda! (notmuch-search
-                          (concat notmuch-search-query-string
-                                  " and not is:important")
-                          notmuch-search-oldest-first))
-        "d"     (lambda! (notmuch-search-add-tag
-                          (list "+trash" "-inbox" "-unread"))
-                         (notmuch-search-next-thread))
-        :map (notmuch-search-mode-map
-              notmuch-tree-mode-map)
-        "x"     (lambda! (ignore-errors (interrupt-process)))
-        "d"     (lambda! (notmuch-tree-add-tag
-                          (list "+trash" "-inbox" "-unread"))
-                         (notmuch-tree-next-matching-message))
-        :map (notmuch-hello-mode-map
-              notmuch-search-mode-map
-              notmuch-tree-mode-map)
-        "C-M-s" 'counsel-notmuch
-        "G"     (lambda! (set-process-sentinel
-                          (start-process-shell-command "notmuch update" nil
-                                                       +notmuch-sync-command)
-                          ;; refresh notmuch buffers if sync was successful
-                          (lambda (_process event)
-                            (when (string= event "finished\n")
-                              (notmuch-refresh-all-buffers)
-                              (message "Synced mail."))))))
   (setq
    notmuch-poll-script
-   "~/bin/poll_gmi"
+   "~/bin/poll_gmi.sh"
    +notmuch-sync-backend nil
    +notmuch-sync-command notmuch-poll-script
    sendmail-program "msmtp"
+   message-sendmail-f-is-evil t
+   message-sendmail-extra-arguments '("--read-envelope-from")
 
    ;; Wrap to 100 cols and disable colours for readable HTML mail.
    notmuch-wash-wrap-lines-length 100
    shr-width notmuch-wash-wrap-lines-length
    shr-use-colors nil
+   notmuch-message-headers-visible t ; CCs are important
 
    ;; I don't mind the full hello.
    notmuch-hello-sections '(notmuch-hello-insert-header
@@ -194,42 +167,90 @@ Start benchmark for user config load time.
    notmuch-show-logo t
 
    notmuch-saved-searches
-   '((:key "f" :name "flagged" :query "is:flagged")
-     (:key "s" :name "sent"    :query "is:sent")
-     (:key "d" :name "drafts"  :query "is:draft")
-     (:key "a" :name "all"     :query "*")
-     (:key "l" :name "lists"   :query "is:list" :search-type tree))
-   notmuch-saved-searches
    (append
-    notmuch-saved-searches
+    '((:key "f" :name "flagged"   :query "is:flagged")
+      (:key "s" :name "sent"      :query "is:sent")
+      (:key "d" :name "drafts"    :query "is:draft")
+      (:key "a" :name "all"       :query "*")
+      (:key "b" :name "broadcast" :query "is:broadcast")
+      (:key "l" :name "lists"     :query "is:list" :search-type tree))
     (if WORK                                 ; limit time range for performance
-        '((:key "j" :name "unified inbox"      :query "date:2w.. and not is:list and is:inbox")
-          (:key "i" :name "work inbox"         :query "date:2w.. and not is:list and is:inbox and is:work")
-          (:key "I" :name "personal inbox"     :query "date:2w.. and not is:list and is:inbox and is:personal")
-          (:key "u" :name "unread work"        :query "date:2w.. and not is:list and is:inbox and is:unread and is:work")
-          (:key "U" :name "unread personal"    :query "date:2w.. and not is:list and is:inbox and is:unread and is:personal")
-          (:key "m" :name "important work"     :query "date:2w.. and not is:list and is:inbox and is:important and is:work")
-          (:key "M" :name "important personal" :query "date:2w.. and not is:list and is:inbox and is:important and is:personal"))
-      '((:key "i" :name "inbox"      :query "date:2w.. and not is:list and is:inbox")
-        (:key "u" :name "unread"     :query "date:2w.. and not is:list and is:inbox and is:unread")
-        (:key "m" :name "important"  :query "date:2w.. and not is:list and is:inbox and is:important"))))
+        '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
+          (:key "i" :name "work inbox"         :query "date:2w.. and is:inbox and is:work")
+          (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and is:personal")
+          (:key "u" :name "unread work"        :query "date:2w.. and is:inbox and is:unread and is:work")
+          (:key "U" :name "unread personal"    :query "date:2w.. and is:inbox and is:unread and is:personal")
+          (:key "m" :name "important work"     :query "date:2w.. and is:inbox and is:important and is:work")
+          (:key "M" :name "important personal" :query "date:2w.. and is:inbox and is:important and is:personal"))
+      '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
+        (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
+        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important"))))
 
    notmuch-tag-formats
-   '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
-     ("inbox"     "i")
-     ("work"      nil))
-   notmuch-tag-formats
-   (append notmuch-tag-formats (if WORK '(("personal" "p")) '(("personal" nil))))
+   (append '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
+             ("inbox"     "i")
+             ("work"      nil)
+             ("important" "im"))
+           (list (list "personal" (if WORK "p" ""))))
 
    ;; Refresh notmuch every five minutes if it's active.
    notmuch-refresh-timer
-   (run-with-timer 0 (* 5 60)
-                   (lambda () (when (string-match-p "notmuch" (buffer-name))
-                                (notmuch-refresh-all-buffers))))
+   (run-with-idle-timer (* 5 60) t
+                        (lambda () (when (string-match-p "notmuch" (buffer-name))
+                                     (ignore-errors
+                                       (notmuch-refresh-all-buffers)))))
 
-   notmuch-unread-search-term (concat "tag:unread and tag:inbox"
-                                      (if WORK " and tag:work" "")))
+   notmuch-unread-search-term
+   (concat "is:unread and is:inbox"
+           (if WORK " and is:work or (is:broadcast and is:unread)" "")))
   (notmuch-unread-mode)
+
+  (defun notmuch-search-filter-by-not-tag (tag)
+    (notmuch-search (concat notmuch-search-query-string " and not is:" tag)))
+  (defun notmuch-tree-filter-by-tag (tag)
+    (notmuch-tree (concat notmuch-tree-basic-query " and is:" tag)))
+  (defun notmuch-tree-filter-by-not-tag (tag)
+    (notmuch-tree (concat notmuch-tree-basic-query " and not is:" tag)))
+  (map! :map notmuch-search-mode-map
+        "i"     (lambda! (notmuch-search-filter-by-tag "work"))
+        "I"     (lambda! (notmuch-search-filter-by-tag "personal"))
+        "u"     (lambda! (notmuch-search-filter-by-tag "unread"))
+        "m"     (lambda! (notmuch-search-filter-by-tag "important"))
+        "M"     (lambda! (notmuch-search-filter-by-not-tag "important"))
+        "d"     (lambda! (notmuch-search-add-tag
+                          '("+trash" "-inbox" "-unread"))
+                         (notmuch-search-next-thread))
+        "M-u"   (lambda! (notmuch-search-add-tag '("-unread"))
+                         (notmuch-search-next-thread))
+        "C-M-u" (lambda! (notmuch-search-tag-all '("-unread")))
+        :map notmuch-tree-mode-map
+        "w"     (lambda! (notmuch-tree-filter-by-tag "work"))
+        "W"     (lambda! (notmuch-tree-filter-by-tag "personal"))
+        "u"     (lambda! (notmuch-tree-filter-by-tag "unread"))
+        "i"     (lambda! (notmuch-tree-filter-by-tag "important"))
+        "I"     (lambda! (notmuch-tree-filter-by-not-tag "important"))
+        "d"     (lambda! (notmuch-tree-add-tag
+                          '("+trash" "-inbox" "-unread"))
+                         (notmuch-tree-next-matching-message))
+        "M-u"   (lambda! (notmuch-tree-add-tag '("-unread"))
+                         (notmuch-tree-next-message))
+        "C-M-u" (lambda! (notmuch-tree-tag-thread '("-unread"))
+                         (notmuch-tree-next-thread))
+        :map (notmuch-hello-mode-map
+              notmuch-search-mode-map
+              notmuch-tree-mode-map
+              notmuch-show-mode-map)
+        "C-M-s" 'counsel-notmuch
+        "G"     (lambda! (minibuffer-message "Syncing mail...")
+                         (set-process-sentinel
+                          (start-process-shell-command "notmuch update" nil
+                                                       +notmuch-sync-command)
+                          ;; refresh notmuch buffers if sync was successful
+                          (lambda (_process event)
+                            (when (string= event "finished\n")
+                              (message "Synced mail.")
+                              (notmuch-refresh-all-buffers)))))
+        "Q"     (lambda! (doom-kill-matching-buffers "^\\*notmuch")))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
@@ -237,7 +258,34 @@ Start benchmark for user config load time.
   (remove-hook! '(notmuch-show-mode-hook
                   notmuch-tree-mode-hook
                   notmuch-search-mode-hook)
-    #'hide-mode-line-mode))
+    #'hide-mode-line-mode)
+
+  (defun notmuch-tree-show-message-in ()
+    "Show the current message (in split-pane)."
+    (interactive)
+    (let ((id (notmuch-tree-get-message-id))
+          (inhibit-read-only t)
+          buffer)
+      (when id
+        ;; We close and reopen the window to kill off un-needed buffers
+        ;; this might cause flickering but seems ok.
+        (notmuch-tree-close-message-window)
+        (setq notmuch-tree-message-window
+              ;; (split-window-horizontally (/ (window-height) 4))
+              (split-window-sensibly)) ; TODO: send this upstream
+        (with-selected-window notmuch-tree-message-window
+          ;; Since we are only displaying one message do not indent.
+          (let ((notmuch-show-indent-messages-width 0)
+                (notmuch-show-only-matching-messages t))
+            (setq buffer (notmuch-show id))))
+        ;; We need the `let' as notmuch-tree-message-window is buffer local.
+        (let ((window notmuch-tree-message-window))
+          (with-current-buffer buffer
+            (setq notmuch-tree-message-window window)
+            (add-hook 'kill-buffer-hook 'notmuch-tree-message-window-kill-hook)))
+        (when notmuch-show-mark-read-tags
+          (notmuch-tree-tag-update-display notmuch-show-mark-read-tags))
+        (setq notmuch-tree-message-buffer buffer)))))
 #+END_SRC
 
 ** Misc / one-offs
