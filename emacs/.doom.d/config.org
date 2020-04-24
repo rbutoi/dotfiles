@@ -172,19 +172,11 @@ Start benchmark for user config load time.
                               (notmuch-refresh-all-buffers)
                               (message "Synced mail."))))))
   (setq
+   notmuch-poll-script
+   "~/bin/poll_gmi"
+   +notmuch-sync-backend nil
+   +notmuch-sync-command notmuch-poll-script
    sendmail-program "msmtp"
-   notmuch-saved-searches                 ; limit time range for performance
-   '((:key "j" :name "unified inbox"      :query "date:2w.. and not is:list and is:inbox")
-     (:key "i" :name "work inbox"         :query "date:2w.. and not is:list and is:inbox and is:work")
-     (:key "I" :name "personal inbox"     :query "date:2w.. and not is:list and is:inbox and is:personal")
-     (:key "u" :name "unread work"        :query "date:2w.. and not is:list and is:inbox and is:unread and is:work")
-     (:key "U" :name "unread personal"    :query "date:2w.. and not is:list and is:inbox and is:unread and is:personal")
-     (:key "m" :name "important work"     :query "date:2w.. and not is:list and is:inbox and is:important and is:work")
-     (:key "M" :name "important personal" :query "date:2w.. and not is:list and is:inbox and is:important and is:personal")
-     (:key "f" :name "flagged"            :query "is:flagged")
-     (:key "s" :name "sent"               :query "is:sent")
-     (:key "d" :name "drafts"             :query "is:draft")
-     (:key "a" :name "all"                :query "*"))
 
    ;; Wrap to 100 cols and disable colours for readable HTML mail.
    notmuch-wash-wrap-lines-length 100
@@ -201,19 +193,42 @@ Start benchmark for user config load time.
    notmuch-show-all-tags-list t
    notmuch-show-logo t
 
+   notmuch-saved-searches
+   '((:key "f" :name "flagged" :query "is:flagged")
+     (:key "s" :name "sent"    :query "is:sent")
+     (:key "d" :name "drafts"  :query "is:draft")
+     (:key "a" :name "all"     :query "*")
+     (:key "l" :name "lists"   :query "is:list" :search-type tree))
+   notmuch-saved-searches
+   (append
+    notmuch-saved-searches
+    (if WORK                                 ; limit time range for performance
+        '((:key "j" :name "unified inbox"      :query "date:2w.. and not is:list and is:inbox")
+          (:key "i" :name "work inbox"         :query "date:2w.. and not is:list and is:inbox and is:work")
+          (:key "I" :name "personal inbox"     :query "date:2w.. and not is:list and is:inbox and is:personal")
+          (:key "u" :name "unread work"        :query "date:2w.. and not is:list and is:inbox and is:unread and is:work")
+          (:key "U" :name "unread personal"    :query "date:2w.. and not is:list and is:inbox and is:unread and is:personal")
+          (:key "m" :name "important work"     :query "date:2w.. and not is:list and is:inbox and is:important and is:work")
+          (:key "M" :name "important personal" :query "date:2w.. and not is:list and is:inbox and is:important and is:personal"))
+      '((:key "i" :name "inbox"      :query "date:2w.. and not is:list and is:inbox")
+        (:key "u" :name "unread"     :query "date:2w.. and not is:list and is:inbox and is:unread")
+        (:key "m" :name "important"  :query "date:2w.. and not is:list and is:inbox and is:important"))))
+
    notmuch-tag-formats
    '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
-     ("inbox"     ()) ; the default, doesn't need to be shown
-     ("work"      ()) ; work inbox is default
-     ("personal"  "p"))
+     ("inbox"     "i")
+     ("work"      nil))
+   notmuch-tag-formats
+   (append notmuch-tag-formats (if WORK '(("personal" "p")) '(("personal" nil))))
 
-  ;; Refresh notmuch every five minutes if it's active.
+   ;; Refresh notmuch every five minutes if it's active.
    notmuch-refresh-timer
    (run-with-timer 0 (* 5 60)
                    (lambda () (when (string-match-p "notmuch" (buffer-name))
                                 (notmuch-refresh-all-buffers))))
 
-   notmuch-unread-search-term "tag:unread and tag:inbox")
+   notmuch-unread-search-term (concat "tag:unread and tag:inbox"
+                                      (if WORK " and tag:work" "")))
   (notmuch-unread-mode)
 
   ;; > modeline doesn't have much use in these modes

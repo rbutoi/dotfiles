@@ -1,6 +1,8 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(setq WORK (string-match-p "google" (system-name)))
+(setq WORK
+      ; double-negate to extract truthy value
+      (not (not (string-match-p "google" (system-name)))))
 
 (doom! :input
        ;;chinese
