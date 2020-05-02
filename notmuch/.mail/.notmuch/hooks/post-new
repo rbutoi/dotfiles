@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # sort emails into appropriate account tag
 notmuch tag +work     -- tag:new path:work/**
