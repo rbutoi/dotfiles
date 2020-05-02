@@ -503,7 +503,9 @@ generally want to comment out the line.
 (add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
 
 ;; macos section?
-(when (eq system-type 'darwin) (exec-path-from-shell-initialize))
+(when IS-MAC
+  (exec-path-from-shell-initialize)
+  (menu-bar-mode -1)) ; needed on macos?
 #+END_SRC
 
 * Closing
