@@ -175,7 +175,6 @@ Start benchmark for user config load time.
       (:key "s" :name "sent"      :query "is:sent")
       (:key "d" :name "drafts"    :query "is:draft")
       (:key "a" :name "all"       :query "*")
-      (:key "b" :name "broadcast" :query "is:broadcast")
       (:key "l" :name "lists"     :query "is:list" :search-type tree))
     (if WORK                                 ; limit time range for performance
         '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
@@ -184,7 +183,8 @@ Start benchmark for user config load time.
           (:key "u" :name "unread work"        :query "date:2w.. and is:inbox and is:unread and is:work")
           (:key "U" :name "unread personal"    :query "date:2w.. and is:inbox and is:unread and is:personal")
           (:key "m" :name "important work"     :query "date:2w.. and is:inbox and is:important and is:work")
-          (:key "M" :name "important personal" :query "date:2w.. and is:inbox and is:important and is:personal"))
+          (:key "M" :name "important personal" :query "date:2w.. and is:inbox and is:important and is:personal")
+          (:key "b" :name "broadcast"          :query "is:broadcast"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
         (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important"))))
