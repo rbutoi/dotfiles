@@ -1,3 +1,7 @@
 # tangled from .org files
 emacs/.doom.d/packages.el
 emacs/.doom.d/config.el
+
+# what happens if the whole .notmuch dir is symlinked. harmless ¯\_(ツ)_/¯
+notmuch/.mail/.notmuch/xapian/
+notmuch/.mail/.notmuch/dump-*

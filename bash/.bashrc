@@ -168,8 +168,12 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
-# Specific
-[ -f ~/.bashrc_specific ] && source ~/.bashrc_specific
+# Specific -- mac takes precedence
+if [ -f ~/.bashrc_specific_mac ]; then
+  . ~/.bashrc_specific_mac
+elif [ -f ~/.bashrc_specific ]; then
+  . ~/.bashrc_specific
+fi
 
 # https://the.exa.website
 # needs to be after PATH setting

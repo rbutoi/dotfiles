@@ -38,8 +38,8 @@ Start benchmark for user config load time.
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (cond (WORK     (font-spec :family "Monaco" :size 10.5))
-                  (IS-MAC   (font-spec :family "Monaco" :size 10.5))
+ doom-font  (cond (IS-MAC   (font-spec :family "Fira Code" :size 14))
+                  (WORK     (font-spec :family "Monaco" :size 10.5))
                   (IS-LINUX (font-spec :family "Fira Code" :size 14)))) ; home
 
 ;; Machinery to automatically toggle themed mode if in terminal or not
