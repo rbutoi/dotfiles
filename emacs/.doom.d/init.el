@@ -66,6 +66,7 @@
        notmuch
 
        :app
+       irc               ; how neckbeards socialize
 
        :config
        literate

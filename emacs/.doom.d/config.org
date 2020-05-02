@@ -38,7 +38,9 @@ Start benchmark for user config load time.
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "Fira Code" :size 14))
+ doom-font  (cond (WORK     (font-spec :family "Monaco" :size 10.5))
+                  (IS-MAC   (font-spec :family "Monaco" :size 10.5))
+                  (IS-LINUX (font-spec :family "Fira Code" :size 14)))) ; home
 
 ;; Machinery to automatically toggle themed mode if in terminal or not
 (defun themed-if-window-system (frame)
@@ -103,6 +105,7 @@ Start benchmark for user config load time.
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
       "M-~" 'tmm-menubar)  ; this aliases not-modified
 (set-popup-rule! "^\\*Man.*\\*$" :ignore t)
+(set-popup-rule! "^vterm.*$" :ignore t)
 #+END_SRC
 
 ** Ivy / counsel
@@ -306,6 +309,8 @@ Start benchmark for user config load time.
       highlight-thing-limit-to-region-in-large-buffers-p nil
       highlight-thing-narrow-region-lines 15
       highlight-thing-large-buffer-limit 5000)
+
+(after! circe (setq circe-default-nick "radu242"))
 #+END_SRC
 
 * Editing

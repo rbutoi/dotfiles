@@ -97,6 +97,10 @@ en() {
   [ ! -e "$@" ] && return 1
   emacsclient -a= -n "$@"
 }
+enc() {
+  [ ! -e "$@" ] && return 1
+  emacsclient -a= -nc "$@"
+}
 e() { ew "$@"; }
 export EDITOR="emacsclient -nw -a="
 export ALTERNATE_EDITOR=zile
