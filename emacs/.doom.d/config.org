@@ -28,7 +28,7 @@ Start benchmark for user config load time.
 (package! keychain-environment)
 (package! exec-path-from-shell)
 (package! ztree)
-(package! notmuch-unread)
+(package! notmuch-unread :recipe (:host github :repo "tmearnest/notmuch-unread"))
 #+END_SRC
 
 * UI
@@ -512,7 +512,8 @@ generally want to comment out the line.
 Load host-specific setup.
 
 #+BEGIN_SRC emacs-lisp
-(load (concat doom-private-dir "specific.el") 'noerror)
+(when IS-LINUX
+  (load (concat doom-private-dir "specific.el") 'noerror))
 #+END_SRC
 
 Start server if not running.
