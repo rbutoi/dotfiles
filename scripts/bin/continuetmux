@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/bin/sh
+
+command -v tmx2 >/dev/null || export PATH=~/bin:$PATH
+
 if tmx2 has-session 2>/dev/null; then
   tmx2 attach -d
 else
