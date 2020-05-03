@@ -1,9 +1,9 @@
 #!/bin/sh
 
-command -v tmx2 >/dev/null || export PATH=~/bin:$PATH
+command -v tmx2 >/dev/null && TMUX=tmx2 || TMUX=tmux
 
-if tmx2 has-session 2>/dev/null; then
-  tmx2 attach -d
+if $TMUX has-session 2>/dev/null; then
+  $TMUX attach -d
 else
-  tmx2 new-session
+  $TMUX new-session
 fi
