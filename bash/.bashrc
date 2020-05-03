@@ -32,11 +32,13 @@ export HISTSIZE=
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
 export HISTFILE=~/.bash_eternal_history
 
-# Force prompt to write history after every command.
-# http://superuser.com/questions/20900/bash-history-loss
-append_history() { history -a; }
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-precmd_functions+=(append_history)
+if [ $HOSTNAME != "Radu-Arch" ]; then
+  # Force prompt to write history after every command.
+  # http://superuser.com/questions/20900/bash-history-loss
+  append_history() { history -a; }
+  export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+  precmd_functions+=(append_history)
+fi
 
 # prompt
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
