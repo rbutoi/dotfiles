@@ -48,7 +48,7 @@
        lookup              ; navigate your code and its documentation
        (:if IS-MAC macos)  ; MacOS-specific commands
        magit               ; a git porcelain for Emacs
-       tmux              ; an API for interacting with tmux
+       rgb               ; creating color strings
 
        :lang
        (:if (not WORK) ; has custom setup

@@ -9,29 +9,21 @@
 #########################
 
 ulimit -c unlimited
-
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
-
 shopt -s extglob
-
 shopt -s checkwinsize
-
 # https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
 stty -ixon
-
 # Avoid duplicates
 export HISTCONTROL=ignoredups:erasedups
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend
-
 export HISTFILESIZE=
 export HISTSIZE=
-
 # Change the file location because certain bash sessions truncate .bash_history file upon close.
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
 export HISTFILE=~/.bash_eternal_history
-
 if [ $HOSTNAME != "Radu-Arch" ]; then
   # Force prompt to write history after every command.
   # http://superuser.com/questions/20900/bash-history-loss
@@ -39,12 +31,11 @@ if [ $HOSTNAME != "Radu-Arch" ]; then
   export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
   precmd_functions+=(append_history)
 fi
+# disable history expansion
+set +H
 
 # prompt
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
-
-# disable history expansion
-set +H
 
 #######################################
 # User specific aliases and functions #

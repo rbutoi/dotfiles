@@ -28,7 +28,7 @@ Start benchmark for user config load time.
 (package! keychain-environment)
 (package! exec-path-from-shell)
 (package! ztree)
-(package! notmuch-unread :recipe (:host github :repo "tmearnest/notmuch-unread"))
+(package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
 #+END_SRC
 
 * UI
@@ -89,9 +89,6 @@ Start benchmark for user config load time.
   (balance-windows))
 
 (use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
-
-(setq split-height-threshold nil
-      split-width-threshold 120)
 
 (use-package buffer-move
   :bind (("<C-S-up>" . buf-move-up)
@@ -443,8 +440,8 @@ generally want to comment out the line.
 ;; LaTeX
 (setq TeX-auto-untabify t)
 
-;; YAML
-(add-hook! yaml-mode (run-mode-hooks 'prog-mode-hook))
+;; Rust
+(add-hook! rust-mode (run-mode-hooks 'prog-mode-hook))
 #+END_SRC
 
 ** Company
