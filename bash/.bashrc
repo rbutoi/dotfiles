@@ -34,8 +34,9 @@ fi
 # disable history expansion
 set +H
 
-# prompt
-command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
+# prompt. prefer ~/bin version which has personal patchess
+[ -x ~/bin/starship ] && STARSHIP=~/bin/starship || STARSHIP=starship
+command -v $STARSHIP >/dev/null 2>&1 && eval "$($STARSHIP init bash)"
 
 #######################################
 # User specific aliases and functions #
