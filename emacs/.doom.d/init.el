@@ -54,6 +54,7 @@
        (:if (not WORK) ; has custom setup
            cc)             ; C/C++/Obj-C madness
        data              ; config/data formats
+       yaml              ; JSON, but readable
        emacs-lisp        ; drown in parentheses
        markdown          ; writing docs for people to ignore
        (org              ; organize your plain life in plain text
