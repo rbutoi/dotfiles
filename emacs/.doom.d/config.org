@@ -181,7 +181,7 @@ Start benchmark for user config load time.
           (:key "U" :name "unread personal"    :query "date:2w.. and is:inbox and is:unread and is:personal")
           (:key "m" :name "important work"     :query "date:2w.. and is:inbox and is:important and is:work")
           (:key "M" :name "important personal" :query "date:2w.. and is:inbox and is:important and is:personal")
-          (:key "b" :name "broadcast"          :query "is:broadcast"))
+          (:key "b" :name "work broadcasts"    :query "date:2w.. and is:broadcast"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
         (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important"))))

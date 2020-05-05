@@ -373,7 +373,7 @@
 		</dict>
 	</dict>
 	<key>Default Bookmark Guid</key>
-	<string>E6C3908A-E11F-4F12-8D13-9EEF790E76AD</string>
+	<string>A6A1B752-DF13-406D-BFE8-CB6634F86F5C</string>
 	<key>DefaultURLScheme</key>
 	<string>http</string>
 	<key>DeleteProfile_SilenceUntil</key>
@@ -567,8 +567,10 @@
 	<string>0 160 224 275 0 0 1680 1027 </string>
 	<key>NSWindow Frame NSFontPanel</key>
 	<string>-1637 269 670 291 -2560 -360 2560 1417 </string>
+	<key>NSWindow Frame NSNavPanelAutosaveName</key>
+	<string>1106 946 347 181 0 0 2560 1417 </string>
 	<key>NSWindow Frame ProfilesPanel</key>
-	<string>407 611 735 382 0 0 2560 1417 </string>
+	<string>-1273 1001 735 382 -1680 390 1680 1027 </string>
 	<key>NSWindow Frame SUAutomaticUpdateAlert</key>
 	<string>532 657 616 174 0 0 1680 1027 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
@@ -578,9 +580,9 @@
 	<key>NSWindow Frame SharedPreferences</key>
 	<string>375 633 928 394 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>3 80 1674 943 0 0 1680 1027 </string>
+	<string>-970 645 650 467 -1680 390 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>272 444 650 467 0 0 1680 1027 </string>
+	<string>0 76 2560 1341 0 0 2560 1417 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
 	<string>2560 360 1920 1057 2560 360 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 3</key>
@@ -2169,7 +2171,7 @@
 		<key>screenFrame</key>
 		<string>{{0, 0}, {2560, 1440}}</string>
 		<key>topLeft</key>
-		<string>{1000, 1075}</string>
+		<string>{243, 808}</string>
 	</dict>
 	<key>NoSyncHaveRequestedFullDiskAccess</key>
 	<true/>
@@ -2178,7 +2180,7 @@
 	<key>NoSyncInstallationId</key>
 	<string>9370C7D6-388D-4D45-B25F-CA5A28407A81</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>65</integer>
+	<integer>70</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -2969,7 +2971,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-04-26T00:11:25Z</date>
+	<date>2020-05-04T00:11:31Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SUUpdateGroupIdentifier</key>
