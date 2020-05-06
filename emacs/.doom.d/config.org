@@ -172,7 +172,7 @@ Start benchmark for user config load time.
       (:key "s" :name "sent"      :query "is:sent")
       (:key "d" :name "drafts"    :query "is:draft")
       (:key "a" :name "all"       :query "*")
-      (:key "l" :name "lists"     :query "is:list" :search-type tree))
+      (:key "l" :name "lists"     :query "date:1w.. is:list" :search-type tree))
     (if WORK                                 ; limit time range for performance
         '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
           (:key "i" :name "work inbox"         :query "date:2w.. and is:inbox and is:work")
@@ -259,6 +259,12 @@ Start benchmark for user config load time.
                   notmuch-tree-mode-hook
                   notmuch-search-mode-hook)
     #'hide-mode-line-mode)
+
+  ;; Send plaintext email as long lines, let receivers soft-wrap.
+  (add-hook! notmuch-message-mode
+    (auto-fill-mode -1)
+    (hl-fill-column-mode -1)
+    (visual-fill-column-mode +1))
 
   (defun notmuch-tree-show-message-in ()
     "Show the current message (in split-pane)."
