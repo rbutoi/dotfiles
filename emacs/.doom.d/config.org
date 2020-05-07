@@ -30,6 +30,7 @@ Start benchmark for user config load time.
 (package! ztree)
 (package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
 (package! visual-fill-column)
+(package! password-store)
 #+END_SRC
 
 * UI
@@ -315,7 +316,20 @@ Start benchmark for user config load time.
       highlight-thing-narrow-region-lines 15
       highlight-thing-large-buffer-limit 5000)
 
-(after! circe (setq circe-default-nick "radu242"))
+(after! circe
+  (setq circe-default-nick "radu242"
+        circe-network-options
+        '(("Freenode" :host "chat.freenode.net" :port (6667 . 6697)
+           :tls t
+           :nickserv-password (lambda (server) (password-store-get "freenode"))
+           :channels (:after-auth "#emacs")
+           :nickserv-mask "^NickServ!NickServ@services\\.$"
+           :nickserv-identify-challenge "\C-b/msg\\s-NickServ\\s-identify\\s-<password>\C-b"
+           :nickserv-identify-command "PRIVMSG NickServ :IDENTIFY {nick} {password}"
+           :nickserv-identify-confirmation "^You are now identified for .*\\.$"
+           :nickserv-ghost-command "PRIVMSG NickServ :GHOST {nick} {password}"
+           :nickserv-ghost-confirmation "has been ghosted\\.$\\|is not online\\.$"
+           ))))
 #+END_SRC
 
 * Editing
