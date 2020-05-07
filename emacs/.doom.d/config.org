@@ -316,9 +316,6 @@ Start benchmark for user config load time.
         highlight-thing-narrow-region-lines 15
         highlight-thing-large-buffer-limit 5000))
 
-;; if on X11-over-SSH, disable transient-mark-mode which is slow
-(when (string= (getenv "DISPLAY") "localhost:10.0") (transient-mark-mode -1))
-
 (after! circe
   (setq circe-default-nick "radu242"
         circe-network-options
