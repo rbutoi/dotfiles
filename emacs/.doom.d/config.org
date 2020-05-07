@@ -40,9 +40,7 @@ Start benchmark for user config load time.
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (cond (IS-MAC   (font-spec :family "Fira Code" :size 14))
-                  (WORK     (font-spec :family "Monaco" :size 10.5))
-                  (IS-LINUX (font-spec :family "Fira Code" :size 14)))) ; home
+ doom-font  (font-spec :family "Fira Code" :size 14))
 
 ;; Machinery to automatically toggle themed mode if in terminal or not
 (defun themed-if-window-system (frame)
@@ -299,22 +297,27 @@ Start benchmark for user config load time.
 
 ** Misc / one-offs
 #+BEGIN_SRC emacs-lisp
-;; Don't display line numbers by default.
-(setq display-line-numbers-type nil)
-
-;; Don't confirm exit.
-(setq confirm-kill-emacs nil)
+(setq
+ ;; Don't display line numbers by default.
+ display-line-numbers-type nil
+ ;; Don't confirm exit.
+ confirm-kill-emacs nil)
 
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
   (message "Opening %s in browser." url))
 
-;; useful across buffers
-(setq highlight-thing-all-visible-buffers-p t
-      highlight-thing-limit-to-region-in-large-buffers-p nil
-      highlight-thing-narrow-region-lines 15
-      highlight-thing-large-buffer-limit 5000)
+(use-package highlight-thing
+  :config
+  ;; useful across buffers
+  (setq highlight-thing-all-visible-buffers-p t
+        highlight-thing-limit-to-region-in-large-buffers-p nil
+        highlight-thing-narrow-region-lines 15
+        highlight-thing-large-buffer-limit 5000))
+
+;; if on X11-over-SSH, disable transient-mark-mode which is slow
+(when (string= (getenv "DISPLAY") "localhost:10.0") (transient-mark-mode -1))
 
 (after! circe
   (setq circe-default-nick "radu242"
