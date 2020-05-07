@@ -29,6 +29,7 @@ Start benchmark for user config load time.
 (package! exec-path-from-shell)
 (package! ztree)
 (package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
+(package! visual-fill-column)
 #+END_SRC
 
 * UI
@@ -265,6 +266,7 @@ Start benchmark for user config load time.
     (auto-fill-mode -1)
     (hl-fill-column-mode -1)
     (visual-fill-column-mode +1))
+  (add-to-list '+word-wrap-text-modes 'notmuch-message-mode)
 
   (defun notmuch-tree-show-message-in ()
     "Show the current message (in split-pane)."
