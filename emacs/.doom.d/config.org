@@ -531,8 +531,7 @@ generally want to comment out the line.
 Load host-specific setup.
 
 #+BEGIN_SRC emacs-lisp
-(when IS-LINUX
-  (load (concat doom-private-dir "specific.el") 'noerror))
+(load (concat doom-private-dir "specific.el") 'noerror)
 #+END_SRC
 
 Start server if not running.

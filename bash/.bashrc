@@ -162,11 +162,11 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
-# Specific -- mac takes precedence
 if [ -f ~/.bashrc_specific_mac ] && [ $(uname) == "Darwin" ]; then
-  # TODO fix "specific"
   . ~/.bashrc_specific_mac
-elif [ -f ~/.bashrc_specific ]; then
+fi
+
+if [ -f ~/.bashrc_specific ]; then
   . ~/.bashrc_specific
 fi
 
