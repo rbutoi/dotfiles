@@ -169,7 +169,7 @@ Start benchmark for user config load time.
    notmuch-saved-searches
    (append
     '((:key "f" :name "flagged"   :query "is:flagged")
-      (:key "s" :name "sent"      :query "is:sent")
+      (:key "s" :name "sent"      :query "date:1M.. is:sent")
       (:key "d" :name "drafts"    :query "is:draft")
       (:key "a" :name "all"       :query "*")
       (:key "l" :name "lists"     :query "date:1w.. is:list" :search-type tree))
@@ -204,6 +204,19 @@ Start benchmark for user config load time.
    (concat "is:unread and is:inbox"
            (if WORK " and is:work or (is:broadcast and is:unread)" "")))
   (notmuch-unread-mode)
+
+  ;; Make search coloured like tree (why are they different?)
+  (face-spec-set 'notmuch-search-date
+                 '((t :inherit notmuch-tree-match-date-face)))
+  (face-spec-set 'notmuch-search-matching-authors
+                 '((t :inherit notmuch-tree-match-author-face)))
+  ;; TODO: this one inexplicably doesn't work when the previous do:
+  (face-spec-set 'notmuch-tree-match-tag-face
+                 '((t :inherit notmuch-tag-face)))
+  ;; Add some more visibility besides bold, which is invisible on non-Retina Mac
+  ;; screens.
+  (face-spec-set 'notmuch-search-unread-face
+                 '((t :bold 't :underline t)))
 
   (defun notmuch-search-filter-by-not-tag (tag)
     (notmuch-search (concat notmuch-search-query-string " and not is:" tag)))
@@ -524,7 +537,9 @@ generally want to comment out the line.
 ;; macos section?
 (when IS-MAC
   (exec-path-from-shell-initialize)
-  (menu-bar-mode -1)) ; needed on macos?
+  (menu-bar-mode -1) ; needed on macos?
+  (when (fboundp 'mac-auto-operator-composition-mode)
+    (mac-auto-operator-composition-mode)))
 #+END_SRC
 
 * Closing
