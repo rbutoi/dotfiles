@@ -8,10 +8,12 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "Fira Code" :size 14)
+ doom-font  (font-spec :family "Fira Code" :size 14))
 
- display-line-numbers-type nil ; Undo doom's setting
- confirm-kill-emacs nil)
+;;;; Startup/shutdown
+(setq
+ confirm-kill-emacs nil
+ initial-major-mode 'lisp-interaction-mode) ; Undo doom
 
 ;;;; Buffers and windows
 ;; more convenient M-binds. * because M-binds are frequently rebound
@@ -48,6 +50,8 @@
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
+
+(setq display-line-numbers-type nil) ; undo Doom
 
 ;;;; Popups
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
@@ -212,9 +216,6 @@ or are no longer readable will be killed."
 ;;;; Flycheck
 (after! flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
-;; Local Variables:
-;; byte-compile-warnings: (not free-vars interactive-only unresolved)
-;; End:
 
 ;;;; Diffing
 (add-hook! diff-mode (read-only-mode t))
@@ -491,3 +492,7 @@ or are no longer readable will be killed."
                                                      user-config-start-time)))
 (add-hook! 'window-setup-hook :append
   (message "User config loaded in %.03fs" user-config-runtime) (message ""))
+
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars interactive-only unresolved)
+;; End:
