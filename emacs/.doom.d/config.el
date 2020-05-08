@@ -1,42 +1,10 @@
-This file contains my [[github:hlissner/doom-emacs][Doom Emacs]] configuration.
+;; -*- lexical-binding: t; -*-
+;;; UI
 
-* Preamble
-Enable lexical binding [[https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#use-lexical-binding-everywhere][by default]].
-
-#+BEGIN_SRC emacs-lisp
-;;; -*- lexical-binding: t; -*-
-#+END_SRC
-
-Start benchmark for user config load time.
-
-#+BEGIN_SRC emacs-lisp
+;;;; Theme
+;; TODO: maybe remove?
 (setq user-config-start-time (current-time))
-#+END_SRC
 
-** Packages
-#+BEGIN_SRC emacs-lisp :tangle packages.el
-;; -*- no-byte-compile: t; -*-
-(package! solarized-theme)
-(package! buffer-move)
-(package! zoom-window)
-(package! string-inflection)
-(package! dired-hide-dotfiles)
-(package! pkgbuild-mode)
-(package! highlight-thing)
-(package! goto-chg)
-(package! defrepeater)
-(package! keychain-environment)
-(package! exec-path-from-shell)
-(package! ztree)
-(package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
-(package! visual-fill-column)
-(package! password-store)
-#+END_SRC
-
-* UI
-
-** Theme
-#+BEGIN_SRC emacs-lisp
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
@@ -56,10 +24,8 @@ Start benchmark for user config load time.
 
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
-#+END_SRC
 
-** Buffers and windows
-#+BEGIN_SRC emacs-lisp
+;;;; Buffers and windows
 ;; more convenient M-binds. * because M-binds are frequently rebound
 (bind-keys*
  ("M-0"  . delete-window)
@@ -95,18 +61,14 @@ Start benchmark for user config load time.
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
-#+END_SRC
 
-** Popups
-#+BEGIN_SRC emacs-lisp
+;;;; Popups
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
       "M-~" 'tmm-menubar)  ; this aliases not-modified
 (set-popup-rule! "^\\*Man.*\\*$" :ignore t)
 (set-popup-rule! "^vterm.*$" :ignore t)
-#+END_SRC
 
-** Ivy / counsel
-#+BEGIN_SRC emacs-lisp
+;;;; Ivy / counsel
 (map! "C-c C-r" 'ivy-resume
       "C-x m"   'counsel-M-x
       "C-x C-m" 'counsel-M-x
@@ -127,17 +89,13 @@ Start benchmark for user config load time.
         "C-l"   'counsel-up-directory))
 ;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
 (setq ivy-extra-directories '("."))
-#+END_SRC
 
-** Defrepeater
-#+BEGIN_SRC emacs-lisp
+;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
       [remap +word-wrap-mode]          (defrepeater #'+word-wrap-mode)
       [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
-#+END_SRC
 
-** notmuch
-#+BEGIN_SRC emacs-lisp
+;;;; notmuch
 (map! "C-c m" 'notmuch)
 
 (after! notmuch
@@ -307,10 +265,8 @@ Start benchmark for user config load time.
         (when notmuch-show-mark-read-tags
           (notmuch-tree-tag-update-display notmuch-show-mark-read-tags))
         (setq notmuch-tree-message-buffer buffer)))))
-#+END_SRC
 
-** Misc / one-offs
-#+BEGIN_SRC emacs-lisp
+;;;; Misc / one-offs
 (setq
  ;; Don't display line numbers by default.
  display-line-numbers-type nil
@@ -344,12 +300,10 @@ Start benchmark for user config load time.
            :nickserv-ghost-command "PRIVMSG NickServ :GHOST {nick} {password}"
            :nickserv-ghost-confirmation "has been ghosted\\.$\\|is not online\\.$"
            ))))
-#+END_SRC
 
-* Editing
+;;; Editing
 
-** Revert file
-#+BEGIN_SRC emacs-lisp
+;;;; Revert file
 (map! "C-c r" 'revert-buffer)
 (global-auto-revert-mode)
 
@@ -376,26 +330,17 @@ or are no longer readable will be killed."
             (message "Killed non-existing/unreadable file buffer: %s" filename))))))
   (message "Finished reverting buffers containing unmodified files."))
 (map! "C-c R" 'modi/revert-all-file-buffers)
-#+END_SRC
 
-** M-{n,p} for paragraph movement
-#+BEGIN_SRC emacs-lisp
+;;;; M-{n,p} for paragraph movement
 (map! "M-p" 'backward-paragraph
       "M-n" 'forward-paragraph)
-#+END_SRC
 
-** goto-chg
-#+BEGIN_SRC emacs-lisp
+;;;; goto-chg
 (use-package goto-chg
   :bind (("C-." . goto-last-change)
          ("C-," . goto-last-change-reverse)))
-#+END_SRC
 
-** comment-or-uncomment-line-or-region
-The default M-; without a region adds a comment to the end of a line, where I
-generally want to comment out the line.
-
-#+BEGIN_SRC emacs-lisp
+;;;; comment-or-uncomment-line-or-region
 (defun comment-or-uncomment-line-or-region ()
   "Comments or uncomments the current line or region."
   (interactive)
@@ -406,10 +351,8 @@ generally want to comment out the line.
       (forward-line))))
 (map! "M-[ q" 'comment-or-uncomment-line-or-region
       "M-;"   'comment-or-uncomment-line-or-region)
-#+END_SRC
 
-** Better C-w
-#+BEGIN_SRC emacs-lisp
+;;;; Better C-w
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
@@ -423,10 +366,8 @@ generally want to comment out the line.
    (if mark-active (list (region-beginning) (region-end))
      (list (line-beginning-position)
            (line-beginning-position 2)))))
-#+END_SRC
 
-** Misc / one-offs
-#+BEGIN_SRC emacs-lisp
+;;;; Misc / one-offs
 (use-package string-inflection
   :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
 
@@ -446,12 +387,10 @@ generally want to comment out the line.
 (setq set-mark-command-repeat-pop t)
 
 (add-hook! text-mode 'auto-fill-mode 'flyspell-mode)
-#+END_SRC
 
-* Programming
+;;; Programming
 
-** Languages
-#+BEGIN_SRC emacs-lisp
+;;;; Languages
 ;; Perl
 (after! perl-mode
   (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
@@ -478,31 +417,23 @@ generally want to comment out the line.
 
 ;; Rust
 (add-hook! rust-mode (run-mode-hooks 'prog-mode-hook))
-#+END_SRC
 
-** Company
-#+BEGIN_SRC emacs-lisp
+;;;; Company
 (map! "TAB"     'company-indent-or-complete-common
       "C-<tab>" 'dabbrev-expand ;; low-tech alternative
       "M-/"     'dabbrev-expand)
 (setq tab-always-indent        'complete
       company-dabbrev-downcase nil)
-#+END_SRC
 
-** Flycheck
-#+BEGIN_SRC emacs-lisp
+;;;; Flycheck
 (after! flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
-#+END_SRC
 
-** Diffing
-#+BEGIN_SRC emacs-lisp
+;;;; Diffing
 (add-hook! diff-mode (read-only-mode t))
 (map! "C-x C-v" 'vc-prefix-map)
-#+END_SRC
 
-** Compiling
-#+BEGIN_SRC emacs-lisp
+;;;; Compiling
 (defun close-compile-window-if-successful (buffer string)
   " close a compilation window if succeeded without warnings "
   (if (and
@@ -520,47 +451,34 @@ generally want to comment out the line.
       "<f7>" 'compile
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
-#+END_SRC
 
-** Magit
-#+BEGIN_SRC emacs-lisp
+;;;; Magit
 (map! "C-x   g" 'magit-status
       "C-x C-g" 'magit-status)
 (setq magit-log-auto-more t
       magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
 (use-package keychain-environment :config (keychain-refresh-environment))
-#+END_SRC
 
-** Misc / one-offs
-#+BEGIN_SRC emacs-lisp
+;;;; Misc / one-offs
 (add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
 
-;; macos section?
+;;; End
+
+;;;; macos section?
 (when IS-MAC
   (exec-path-from-shell-initialize)
   (menu-bar-mode -1) ; needed on macos?
   (when (fboundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode)))
-#+END_SRC
 
-* Closing
-Load host-specific setup.
+;;;; endend
 
-#+BEGIN_SRC emacs-lisp
 (load (concat doom-private-dir "specific.el") 'noerror)
-#+END_SRC
 
-Start server if not running.
-
-#+BEGIN_SRC emacs-lisp
 (use-package server :config (unless (server-running-p) (server-start)))
-#+END_SRC
 
-Echo benchmarked startup time.
-
-#+BEGIN_SRC emacs-lisp
+;; echo benchmarked time
 (setq user-config-runtime (float-time (time-subtract (current-time)
                                                      user-config-start-time)))
 (add-hook! 'window-setup-hook :append
   (message "User config loaded in %.03fs" user-config-runtime) (message ""))
-#+END_SRC

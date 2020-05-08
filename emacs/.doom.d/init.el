@@ -70,5 +70,4 @@
        irc               ; how neckbeards socialize
 
        :config
-       literate
        (default +bindings +smartparens))
