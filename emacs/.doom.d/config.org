@@ -263,7 +263,8 @@ Start benchmark for user config load time.
                             (when (string= event "finished\n")
                               (message "Synced mail.")
                               (notmuch-refresh-all-buffers)))))
-        "Q"     (lambda! (doom-kill-matching-buffers "^\\*notmuch")))
+        "Q"     (lambda! (doom-kill-matching-buffers
+                          "^\\*notmuch-.*\\(search\\|tree\\)")))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
