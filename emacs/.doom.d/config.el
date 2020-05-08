@@ -8,22 +8,10 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "Fira Code" :size 14))
+ doom-font  (font-spec :family "Fira Code" :size 14)
 
-;; Machinery to automatically toggle themed mode if in terminal or not
-(defun themed-if-window-system (frame)
-  (if (window-system frame)
-      (unless doom-theme
-        (setq doom-theme my-theme)
-        (load-theme my-theme t))
-    (when doom-theme
-      (setq doom-theme nil)
-      (disable-theme my-theme))))
-(add-hook 'after-make-frame-functions 'themed-if-window-system)
-(add-hook! 'focus-in-hook (themed-if-window-system (selected-frame)))
-
-;; make window divider prettier in terminal
-(set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
+ display-line-numbers-type nil ; Undo doom's setting
+ confirm-kill-emacs nil)
 
 ;;;; Buffers and windows
 ;; more convenient M-binds. * because M-binds are frequently rebound
@@ -39,7 +27,6 @@
  "C-k"     'kill-current-buffer
  "C-S-k"   'doom/kill-other-buffers
  "C-S-M-k" 'doom/kill-all-buffers
- "C-x M-k" 'doom/kill-other-buffers ; for when in terminal
  "C-x C-M-k" 'doom/kill-all-buffers)
 
 ;; might fix query-replace somehow??
@@ -95,27 +82,15 @@
       [remap +word-wrap-mode]          (defrepeater #'+word-wrap-mode)
       [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
 
-;;;; Misc / one-offs
-(setq
- ;; Don't display line numbers by default.
- display-line-numbers-type nil
- ;; Don't confirm exit.
- confirm-kill-emacs nil)
-
-;; Print URL when opening browser when working over SSH, and to keep a log in
-;; the messages buffer.
-(define-advice browse-url (:before (url &rest args))
-  (message "Opening %s in browser." url))
-
-(use-package highlight-thing
-  :config
-  ;; useful across buffers
-  (setq highlight-thing-all-visible-buffers-p t
-        highlight-thing-limit-to-region-in-large-buffers-p nil
-        highlight-thing-narrow-region-lines 15
-        highlight-thing-large-buffer-limit 5000))
-
 ;;; Editing
+
+;;;; Movement
+(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+(map! "M-p" 'backward-paragraph
+      "M-n" 'forward-paragraph)
+(use-package goto-chg
+  :bind (("C-." . goto-last-change)
+         ("C-," . goto-last-change-reverse)))
 
 ;;;; Revert file
 (map! "C-c r" 'revert-buffer)
@@ -145,14 +120,6 @@ or are no longer readable will be killed."
   (message "Finished reverting buffers containing unmodified files."))
 (map! "C-c R" 'modi/revert-all-file-buffers)
 
-;;;; M-{n,p} for paragraph movement
-(map! "M-p" 'backward-paragraph
-      "M-n" 'forward-paragraph)
-
-;;;; goto-chg
-(use-package goto-chg
-  :bind (("C-." . goto-last-change)
-         ("C-," . goto-last-change-reverse)))
 
 ;;;; comment-or-uncomment-line-or-region
 (defun comment-or-uncomment-line-or-region ()
@@ -181,7 +148,7 @@ or are no longer readable will be killed."
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
-;;;; Misc / one-offs
+;;;; Dired
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
@@ -279,10 +246,18 @@ or are no longer readable will be killed."
       magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
 (use-package keychain-environment :config (keychain-refresh-environment))
 
-;;;; Misc / one-offs
+;;;; String-inflection
 (use-package string-inflection
   :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
 
+;;;; highlight-thing, which-function
+(use-package highlight-thing
+  :config
+  ;; useful across buffers
+  (setq highlight-thing-all-visible-buffers-p t
+        highlight-thing-limit-to-region-in-large-buffers-p nil
+        highlight-thing-narrow-region-lines 15
+        highlight-thing-large-buffer-limit 5000))
 (add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
 
 ;;; External
@@ -474,7 +449,33 @@ or are no longer readable will be killed."
            :nickserv-ghost-confirmation "has been ghosted\\.$\\|is not online\\.$"
            ))))
 
-;;;; Host config
+;;;; Terminal support
+;; Automatically toggle themed mode if in terminal or not
+(defun themed-if-window-system (frame)
+  (if (window-system frame)
+      (unless doom-theme
+        (setq doom-theme my-theme)
+        (load-theme my-theme t))
+    (when doom-theme
+      (setq doom-theme nil)
+      (disable-theme my-theme))))
+(add-hook 'after-make-frame-functions 'themed-if-window-system)
+(add-hook! 'focus-in-hook (themed-if-window-system (selected-frame)))
+
+;; make window divider prettier in terminal
+(set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
+
+(map! ; for terminal availability
+ "M-="     'er/expand-region
+ "C-x M-k" 'doom/kill-other-buffers)
+
+;; Print URL when opening browser when working over SSH, and to keep a log in
+;; the messages buffer.
+(define-advice browse-url (:before (url &rest args))
+  (message "Opening %s in browser." url))
+
+;;; Epilogue
+;; Host-specific support
 (when IS-MAC
   (exec-path-from-shell-initialize)
   (menu-bar-mode -1) ; needed on macos?
@@ -482,10 +483,10 @@ or are no longer readable will be killed."
     (mac-auto-operator-composition-mode)))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
-;;;; Server
+;; Server
 (use-package server :config (unless (server-running-p) (server-start)))
 
-;;;; Epilogue
+;; Benchmark config
 (setq user-config-runtime (float-time (time-subtract (current-time)
                                                      user-config-start-time)))
 (add-hook! 'window-setup-hook :append
