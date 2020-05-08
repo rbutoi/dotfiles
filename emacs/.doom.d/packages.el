@@ -14,3 +14,4 @@
 (package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
 (package! visual-fill-column)
 (package! password-store)
+(package! outshine)

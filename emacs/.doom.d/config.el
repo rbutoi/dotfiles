@@ -1,10 +1,10 @@
 ;; -*- lexical-binding: t; -*-
+;;;; Prologue
+(setq user-config-start-time (current-time))
+
 ;;; UI
 
 ;;;; Theme
-;; TODO: maybe remove?
-(setq user-config-start-time (current-time))
-
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
@@ -94,6 +94,198 @@
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
       [remap +word-wrap-mode]          (defrepeater #'+word-wrap-mode)
       [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
+
+;;;; Misc / one-offs
+(setq
+ ;; Don't display line numbers by default.
+ display-line-numbers-type nil
+ ;; Don't confirm exit.
+ confirm-kill-emacs nil)
+
+;; Print URL when opening browser when working over SSH, and to keep a log in
+;; the messages buffer.
+(define-advice browse-url (:before (url &rest args))
+  (message "Opening %s in browser." url))
+
+(use-package highlight-thing
+  :config
+  ;; useful across buffers
+  (setq highlight-thing-all-visible-buffers-p t
+        highlight-thing-limit-to-region-in-large-buffers-p nil
+        highlight-thing-narrow-region-lines 15
+        highlight-thing-large-buffer-limit 5000))
+
+;;; Editing
+
+;;;; Revert file
+(map! "C-c r" 'revert-buffer)
+(global-auto-revert-mode)
+
+(defun modi/revert-all-file-buffers ()
+  "Refresh all open file buffers without confirmation.
+Buffers in modified (not yet saved) state in emacs will not be
+reverted. They will be reverted though if they were modified
+outside emacs. Buffers visiting files which do not exist any more
+or are no longer readable will be killed."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (let ((filename (buffer-file-name buf)))
+      ;; Revert only buffers containing files, which are not modified;
+      ;; do not try to revert non-file buffers like *Messages*.
+      (when (and filename
+                 (not (buffer-modified-p buf)))
+        (if (file-readable-p filename)
+            ;; If the file exists and is readable, revert the buffer.
+            (with-current-buffer buf
+              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
+          ;; Otherwise, kill the buffer.
+          (let (kill-buffer-query-functions) ; No query done when killing buffer
+            (kill-buffer buf)
+            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
+  (message "Finished reverting buffers containing unmodified files."))
+(map! "C-c R" 'modi/revert-all-file-buffers)
+
+;;;; M-{n,p} for paragraph movement
+(map! "M-p" 'backward-paragraph
+      "M-n" 'forward-paragraph)
+
+;;;; goto-chg
+(use-package goto-chg
+  :bind (("C-." . goto-last-change)
+         ("C-," . goto-last-change-reverse)))
+
+;;;; comment-or-uncomment-line-or-region
+(defun comment-or-uncomment-line-or-region ()
+  "Comments or uncomments the current line or region."
+  (interactive)
+  (if (region-active-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (progn
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+      (forward-line))))
+(map! "M-[ q" 'comment-or-uncomment-line-or-region
+      "M-;"   'comment-or-uncomment-line-or-region)
+
+;;;; Better C-w
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defadvice kill-ring-save (before slick-cut activate compile)
+  "When called interactively with no active region, save a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+;;;; Misc / one-offs
+(use-package dired-hide-dotfiles
+  :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
+
+;; for terminal availability
+(map! "C-M-%" 'query-replace
+      "M-%"   'query-replace-regexp ; prioritize for terminal availability
+      "M-="   'er/expand-region)
+(defun case-sensitive-query-replace ()
+  (interactive)
+  (let ((case-fold-search nil))
+    (call-interactively 'query-replace)))
+
+;; can keep C-u C-SPC C-SPC C-SPC...
+(setq set-mark-command-repeat-pop t)
+
+;; enable auto fill in text modes, and prog mode comments
+(toggle-text-mode-auto-fill)
+(add-hook! prog-mode 'auto-fill-mode)
+(setq comment-auto-fill-only-comments t)
+
+;;; Programming
+
+;;;; Languages
+;; Perl
+(after! perl-mode
+  (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
+
+;; Assembler
+(after! asm-mode
+  (map! "TAB" :map asm-mode-map 'asm-indent-line))
+
+;; Data/config
+(add-hook! (yaml-mode conf-unix-mode conf-space-mode)
+  (run-mode-hooks 'prog-mode-hook))
+
+;; C/C++
+(after! cc-mode
+  (map! "C-c C-o" :map c-mode-base-map
+        (lambda! (ff-find-other-file nil 'ignore-include))))
+(add-hook! c++-mode (c-set-offset 'innamespace [0]))
+(sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
+(add-hook! 'c-mode-common-hook ; formatting
+  (fset 'c-indent-region 'clang-format-region))
+
+;; LaTeX
+(setq TeX-auto-untabify t)
+
+;; Rust
+(add-hook! rust-mode (run-mode-hooks 'prog-mode-hook))
+
+;; Elisp: enable outshine to fold away parts of config
+(use-package outshine :hook (emacs-lisp-mode . outshine-mode))
+
+;;;; Company
+(map! "TAB"     'company-indent-or-complete-common
+      "C-<tab>" 'dabbrev-expand ;; low-tech alternative
+      "M-/"     'dabbrev-expand)
+(setq tab-always-indent        'complete
+      company-dabbrev-downcase nil)
+
+;;;; Flycheck
+(after! flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars interactive-only unresolved)
+;; End:
+
+;;;; Diffing
+(add-hook! diff-mode (read-only-mode t))
+(map! "C-x C-v" 'vc-prefix-map)
+
+;;;; Compiling
+(defun close-compile-window-if-successful (buffer string)
+  " close a compilation window if succeeded without warnings "
+  (if (and
+       (string-match "compilation" (buffer-name buffer))
+       (string-match "finished" string)
+       (not
+        (with-current-buffer buffer
+          (search-forward "warning" nil t))))
+      (run-with-timer 1 nil
+                      (lambda (window) (quit-window nil window))
+                      (get-buffer-window buffer))))
+(add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
+(map! "S-<f7>" (lambda! (switch-to-buffer "*compilation*"))
+      :map prog-mode
+      "<f7>" 'compile
+      "<f8>" 'recompile)
+(setq compilation-message-face 'default)
+
+;;;; Magit
+(map! "C-x   g" 'magit-status
+      "C-x C-g" 'magit-status)
+(setq magit-log-auto-more t
+      magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
+(use-package keychain-environment :config (keychain-refresh-environment))
+
+;;;; Misc / one-offs
+(use-package string-inflection
+  :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
+
+(add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
+
+;;; External
 
 ;;;; notmuch
 (map! "C-c m" 'notmuch)
@@ -266,26 +458,7 @@
           (notmuch-tree-tag-update-display notmuch-show-mark-read-tags))
         (setq notmuch-tree-message-buffer buffer)))))
 
-;;;; Misc / one-offs
-(setq
- ;; Don't display line numbers by default.
- display-line-numbers-type nil
- ;; Don't confirm exit.
- confirm-kill-emacs nil)
-
-;; Print URL when opening browser when working over SSH, and to keep a log in
-;; the messages buffer.
-(define-advice browse-url (:before (url &rest args))
-  (message "Opening %s in browser." url))
-
-(use-package highlight-thing
-  :config
-  ;; useful across buffers
-  (setq highlight-thing-all-visible-buffers-p t
-        highlight-thing-limit-to-region-in-large-buffers-p nil
-        highlight-thing-narrow-region-lines 15
-        highlight-thing-large-buffer-limit 5000))
-
+;;;; Circe
 (after! circe
   (setq circe-default-nick "radu242"
         circe-network-options
@@ -301,183 +474,18 @@
            :nickserv-ghost-confirmation "has been ghosted\\.$\\|is not online\\.$"
            ))))
 
-;;; Editing
-
-;;;; Revert file
-(map! "C-c r" 'revert-buffer)
-(global-auto-revert-mode)
-
-(defun modi/revert-all-file-buffers ()
-  "Refresh all open file buffers without confirmation.
-Buffers in modified (not yet saved) state in emacs will not be
-reverted. They will be reverted though if they were modified
-outside emacs. Buffers visiting files which do not exist any more
-or are no longer readable will be killed."
-  (interactive)
-  (dolist (buf (buffer-list))
-    (let ((filename (buffer-file-name buf)))
-      ;; Revert only buffers containing files, which are not modified;
-      ;; do not try to revert non-file buffers like *Messages*.
-      (when (and filename
-                 (not (buffer-modified-p buf)))
-        (if (file-readable-p filename)
-            ;; If the file exists and is readable, revert the buffer.
-            (with-current-buffer buf
-              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
-          ;; Otherwise, kill the buffer.
-          (let (kill-buffer-query-functions) ; No query done when killing buffer
-            (kill-buffer buf)
-            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
-  (message "Finished reverting buffers containing unmodified files."))
-(map! "C-c R" 'modi/revert-all-file-buffers)
-
-;;;; M-{n,p} for paragraph movement
-(map! "M-p" 'backward-paragraph
-      "M-n" 'forward-paragraph)
-
-;;;; goto-chg
-(use-package goto-chg
-  :bind (("C-." . goto-last-change)
-         ("C-," . goto-last-change-reverse)))
-
-;;;; comment-or-uncomment-line-or-region
-(defun comment-or-uncomment-line-or-region ()
-  "Comments or uncomments the current line or region."
-  (interactive)
-  (if (region-active-p)
-      (comment-or-uncomment-region (region-beginning) (region-end))
-    (progn
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-      (forward-line))))
-(map! "M-[ q" 'comment-or-uncomment-line-or-region
-      "M-;"   'comment-or-uncomment-line-or-region)
-
-;;;; Better C-w
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defadvice kill-ring-save (before slick-cut activate compile)
-  "When called interactively with no active region, save a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-;;;; Misc / one-offs
-(use-package string-inflection
-  :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
-
-(use-package dired-hide-dotfiles
-  :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
-
-;; for terminal availability
-(map! "C-M-%" 'query-replace
-      "M-%"   'query-replace-regexp ; prioritize for terminal availability
-      "M-="   'er/expand-region)
-(defun case-sensitive-query-replace ()
-  (interactive)
-  (let ((case-fold-search nil))
-    (call-interactively 'query-replace)))
-
-;; can keep C-u C-SPC C-SPC C-SPC...
-(setq set-mark-command-repeat-pop t)
-
-(add-hook! text-mode 'auto-fill-mode 'flyspell-mode)
-
-;;; Programming
-
-;;;; Languages
-;; Perl
-(after! perl-mode
-  (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
-
-;; Assembler
-(after! asm-mode
-  (map! "TAB" :map asm-mode-map 'asm-indent-line))
-
-;; Data/config
-(add-hook! (yaml-mode conf-unix-mode conf-space-mode)
-  (run-mode-hooks 'prog-mode-hook))
-
-;; C/C++
-(after! cc-mode
-  (map! "C-c C-o" :map c-mode-base-map
-        (lambda! (ff-find-other-file nil 'ignore-include))))
-(add-hook! c++-mode (c-set-offset 'innamespace [0]))
-(sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
-(add-hook! 'c-mode-common-hook ; formatting
-  (fset 'c-indent-region 'clang-format-region))
-
-;; LaTeX
-(setq TeX-auto-untabify t)
-
-;; Rust
-(add-hook! rust-mode (run-mode-hooks 'prog-mode-hook))
-
-;;;; Company
-(map! "TAB"     'company-indent-or-complete-common
-      "C-<tab>" 'dabbrev-expand ;; low-tech alternative
-      "M-/"     'dabbrev-expand)
-(setq tab-always-indent        'complete
-      company-dabbrev-downcase nil)
-
-;;;; Flycheck
-(after! flycheck
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
-
-;;;; Diffing
-(add-hook! diff-mode (read-only-mode t))
-(map! "C-x C-v" 'vc-prefix-map)
-
-;;;; Compiling
-(defun close-compile-window-if-successful (buffer string)
-  " close a compilation window if succeeded without warnings "
-  (if (and
-       (string-match "compilation" (buffer-name buffer))
-       (string-match "finished" string)
-       (not
-        (with-current-buffer buffer
-          (search-forward "warning" nil t))))
-      (run-with-timer 1 nil
-                      (lambda (window) (quit-window nil window))
-                      (get-buffer-window buffer))))
-(add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
-(map! "S-<f7>" (lambda! (switch-to-buffer "*compilation*"))
-      :map prog-mode
-      "<f7>" 'compile
-      "<f8>" 'recompile)
-(setq compilation-message-face 'default)
-
-;;;; Magit
-(map! "C-x   g" 'magit-status
-      "C-x C-g" 'magit-status)
-(setq magit-log-auto-more t
-      magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
-(use-package keychain-environment :config (keychain-refresh-environment))
-
-;;;; Misc / one-offs
-(add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
-
-;;; End
-
-;;;; macos section?
+;;;; Host config
 (when IS-MAC
   (exec-path-from-shell-initialize)
   (menu-bar-mode -1) ; needed on macos?
   (when (fboundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode)))
-
-;;;; endend
-
 (load (concat doom-private-dir "specific.el") 'noerror)
 
+;;;; Server
 (use-package server :config (unless (server-running-p) (server-start)))
 
-;; echo benchmarked time
+;;;; Epilogue
 (setq user-config-runtime (float-time (time-subtract (current-time)
                                                      user-config-start-time)))
 (add-hook! 'window-setup-hook :append
