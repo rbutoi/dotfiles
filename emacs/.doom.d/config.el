@@ -303,11 +303,12 @@ or are no longer readable will be killed."
         '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
           (:key "i" :name "work inbox"         :query "date:2w.. and is:inbox and is:work")
           (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and is:personal")
-          (:key "u" :name "unread work"        :query "date:2w.. and is:inbox and is:unread and is:work")
-          (:key "U" :name "unread personal"    :query "date:2w.. and is:inbox and is:unread and is:personal")
-          (:key "m" :name "important work"     :query "date:2w.. and is:inbox and is:important and is:work")
-          (:key "M" :name "important personal" :query "date:2w.. and is:inbox and is:important and is:personal")
-          (:key "b" :name "work broadcasts"    :query "date:2w.. and is:broadcast"))
+          (:key "u" :name "work unread"        :query "date:2w.. and is:inbox and is:unread and is:work")
+          (:key "U" :name "personal unread"    :query "date:2w.. and is:inbox and is:unread and is:personal")
+          (:key "m" :name "work important"     :query "date:2w.. and is:inbox and is:important and is:work")
+          (:key "M" :name "personal important" :query "date:2w.. and is:inbox and is:important and is:personal")
+          (:key "b" :name "work broadcast"     :query "date:2w.. and is:broadcast and is:work")
+          (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and is:personal"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
         (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important"))))
@@ -327,8 +328,8 @@ or are no longer readable will be killed."
                                        (notmuch-refresh-all-buffers)))))
 
    notmuch-unread-search-term
-   (concat "is:unread and is:inbox"
-           (if WORK " and is:work or (is:broadcast and is:unread)" "")))
+   (concat "is:unread and (is:inbox or is:broadcast)"
+           (if WORK " and is:work" "")))
   (notmuch-unread-mode)
 
   ;; Make search coloured like tree (why are they different?)
