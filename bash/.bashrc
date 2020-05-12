@@ -82,6 +82,10 @@ unescape() {
   python3 -c "import sys; print(sys.stdin.read().decode('unicode_escape'))"
 }
 
+pip3_upgrade() {
+  pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"
+}
+
 # editor
 ew() {
   [ ! -e "$@" ] && return 1
@@ -96,7 +100,7 @@ enc() {
   emacsclient -a= -nc "$@"
 }
 e() { ew "$@"; }
-export EDITOR="emacsclient -nw -a="
+export EDITOR=emacsclient
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
@@ -105,7 +109,7 @@ export CLICOLOR=1
 alias g="grep --color=always -i"
 alias pg="pgrep"
 psg() {
-  ps aux | grep "$@" | egrep -v 'grep|shell-history'
+  ps aux | grep "$@" | grep -iv 'grep\|shell-history'
 }
 alias chmox="chmod +x"
 alias -- -="cd -"

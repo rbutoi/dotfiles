@@ -14,7 +14,7 @@
 ;;;; Startup/shutdown
 (setq
  confirm-kill-emacs nil
- initial-major-mode 'lisp-interaction-mode) ; Undo doom
+ initial-major-mode 'lisp-interaction-mode) ; undo Doom
 
 ;;;; Buffers and windows
 ;; more convenient M-binds. * because M-binds are frequently rebound
@@ -298,8 +298,7 @@ or are no longer readable will be killed."
     '((:key "f" :name "flagged"   :query "is:flagged")
       (:key "s" :name "sent"      :query "date:1M.. is:sent")
       (:key "d" :name "drafts"    :query "is:draft")
-      (:key "a" :name "all"       :query "*")
-      (:key "l" :name "lists"     :query "date:1w.. is:list" :search-type tree))
+      (:key "a" :name "all"       :query "*"))
     (if WORK                                 ; limit time range for performance
         '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
           (:key "i" :name "work inbox"         :query "date:2w.. and is:inbox and is:work")
@@ -444,12 +443,6 @@ or are no longer readable will be killed."
            :tls t
            :nickserv-password (lambda (server) (password-store-get "freenode"))
            :channels (:after-auth "#emacs")
-           :nickserv-mask "^NickServ!NickServ@services\\.$"
-           :nickserv-identify-challenge "\C-b/msg\\s-NickServ\\s-identify\\s-<password>\C-b"
-           :nickserv-identify-command "PRIVMSG NickServ :IDENTIFY {nick} {password}"
-           :nickserv-identify-confirmation "^You are now identified for .*\\.$"
-           :nickserv-ghost-command "PRIVMSG NickServ :GHOST {nick} {password}"
-           :nickserv-ghost-confirmation "has been ghosted\\.$\\|is not online\\.$"
            ))))
 
 ;;;; Terminal support
@@ -486,7 +479,8 @@ or are no longer readable will be killed."
   (exec-path-from-shell-initialize)
   (menu-bar-mode -1) ; needed on macos?
   (when (fboundp 'mac-auto-operator-composition-mode)
-    (mac-auto-operator-composition-mode)))
+    (mac-auto-operator-composition-mode))
+  (mac-pseudo-daemon-mode))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server

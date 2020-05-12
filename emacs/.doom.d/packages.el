@@ -15,3 +15,4 @@
 (package! visual-fill-column)
 (package! password-store)
 (package! outshine)
+(package! mac-pseudo-daemon :disable (not IS-MAC))
