@@ -8,7 +8,8 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "Fira Code" :size 14))
+ doom-font  (font-spec :family "Fira Code" :size 14)
+ doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
 (setq
@@ -235,7 +236,7 @@ or are no longer readable will be killed."
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 (map! "S-<f7>" (lambda! (switch-to-buffer "*compilation*"))
-      :map prog-mode
+      :map prog-mode-map
       "<f7>" 'compile
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
