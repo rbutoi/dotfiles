@@ -466,6 +466,7 @@ or are no longer readable will be killed."
   (interactive) (themed-if-window-system (selected-frame)))
 (add-hook 'after-make-frame-functions 'themed-if-window-system)
 (add-hook! 'focus-in-hook 'themed-if-window-system-this-frame)
+(themed-if-window-system-this-frame)
 
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
