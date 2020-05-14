@@ -36,6 +36,7 @@ devtools
 dex
 dhcpcd
 diffutils
+dmidecode
 dust
 e2fsprogs
 efibootmgr
@@ -99,6 +100,7 @@ linux-firmware
 logrotate
 lostfiles
 lsb-release
+lshw
 lvm2
 lxappearance
 mako
@@ -172,7 +174,7 @@ s-nail
 solaar
 speedtest-cli
 spotify
-starship
+starship-bin
 stow
 strace
 sway
@@ -183,6 +185,7 @@ systemd
 systemd-swap
 systemd-sysvcompat
 tar
+thelounge
 tmux
 transmission-gtk
 ttf-bitstream-vera
