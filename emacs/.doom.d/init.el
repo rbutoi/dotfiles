@@ -8,7 +8,7 @@
 
        :completion
        company             ; the ultimate code completion backend
-       ivy                 ; a search engine for love and life
+       (ivy +icons)        ; a search engine for love and life
 
        :ui
        doom                ; what makes DOOM look the way it does
@@ -59,7 +59,7 @@
        emacs-lisp          ; drown in parentheses
        markdown            ; writing docs for people to ignore
        org                 ; organize your plain life in plain text
-       rust                ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       (rust +lsp)         ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        sh                  ; she sells {ba,z,fi}sh shells on the C xor
 
        :email

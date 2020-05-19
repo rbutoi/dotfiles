@@ -93,9 +93,6 @@
 (setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
 (map! "M-p" 'backward-paragraph
       "M-n" 'forward-paragraph)
-(use-package goto-chg
-  :bind (("C-." . goto-last-change)
-         ("C-," . goto-last-change-reverse)))
 
 ;;;; Revert file
 (map! "C-c r" 'revert-buffer)
@@ -202,7 +199,11 @@ or are no longer readable will be killed."
 (setq TeX-auto-untabify t)
 
 ;; Rust
-(add-hook! rust-mode (run-mode-hooks 'prog-mode-hook))
+(use-package rustic
+  :init
+  (setq rustic-lsp-server 'rust-analyzer
+        rustic-lsp-client 'eglot)
+  (add-hook! rustic-mode (run-mode-hooks 'prog-mode-hook)))
 
 ;; Elisp: enable outshine to fold away parts of config
 (use-package outshine :hook (emacs-lisp-mode . outshine-mode))
@@ -214,7 +215,10 @@ or are no longer readable will be killed."
 (setq tab-always-indent        'complete
       company-dabbrev-downcase nil)
 
-;;;; Flycheck
+;;;; Fly{make,check}
+(after! flymake
+  (map! :map flymake-mode-map
+      "C-c C-e" #'flymake-show-diagnostics-buffer))
 (after! flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
@@ -281,6 +285,7 @@ or are no longer readable will be killed."
    notmuch-wash-wrap-lines-length 100
    shr-width notmuch-wash-wrap-lines-length
    shr-use-colors nil
+   notmuch-show-text/html-blocked-images nil ; enable images
    notmuch-message-headers-visible t ; CCs are important
 
    ;; I don't mind the full hello.
@@ -320,12 +325,9 @@ or are no longer readable will be killed."
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
 
-   ;; Refresh notmuch every five minutes if it's active.
-   notmuch-refresh-timer
-   (run-with-idle-timer (* 5 60) t
-                        (lambda () (when (string-match-p "notmuch" (buffer-name))
-                                     (ignore-errors
-                                       (notmuch-refresh-all-buffers)))))
+   notmuch-refresh-timer ; Refresh notmuch every five minutes.
+   (run-with-idle-timer
+    (* 5 60) t (lambda () (ignore-errors (notmuch-refresh-all-buffers))))
 
    notmuch-unread-search-term
    (concat "is:unread and (is:inbox or is:broadcast)"
@@ -476,11 +478,11 @@ or are no longer readable will be killed."
 ;;; Epilogue
 ;; Host-specific support
 (when IS-MAC
-  (exec-path-from-shell-initialize)
   (menu-bar-mode -1) ; needed on macos?
   (when (fboundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode))
-  (mac-pseudo-daemon-mode))
+  (mac-pseudo-daemon-mode)
+  (setq dired-use-ls-dired nil))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server
