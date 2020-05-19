@@ -26,6 +26,8 @@
 	<false/>
 	<key>CloseBookmarksWindowAfterOpening</key>
 	<true/>
+	<key>Command</key>
+	<string>bash</string>
 	<key>ConvertDosNewlines</key>
 	<false/>
 	<key>Custom Color Presets</key>
@@ -570,7 +572,7 @@
 	<key>NSWindow Frame NSNavPanelAutosaveName</key>
 	<string>1106 946 347 181 0 0 2560 1417 </string>
 	<key>NSWindow Frame ProfilesPanel</key>
-	<string>-1273 1001 735 382 -1680 390 1680 1027 </string>
+	<string>560 390 735 382 0 0 2560 1417 </string>
 	<key>NSWindow Frame SUAutomaticUpdateAlert</key>
 	<string>532 657 616 174 0 0 1680 1027 </string>
 	<key>NSWindow Frame SUUpdateAlert</key>
@@ -580,11 +582,11 @@
 	<key>NSWindow Frame SharedPreferences</key>
 	<string>375 633 928 394 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>-970 645 650 467 -1680 390 1680 1027 </string>
+	<string>-1615 453 1474 926 -1680 390 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>0 76 2560 1341 0 0 2560 1417 </string>
+	<string>1525 77 1034 1147 0 0 2560 1417 </string>
 	<key>NSWindow Frame iTerm Window 2</key>
-	<string>2560 360 1920 1057 2560 360 1920 1057 </string>
+	<string>-1680 950 650 467 -1680 390 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 3</key>
 	<string>275 550 650 477 0 0 1680 1027 </string>
 	<key>NSWindow Frame iTerm Window 4</key>
@@ -878,7 +880,7 @@
 			<key>Columns</key>
 			<integer>80</integer>
 			<key>Command</key>
-			<string>bash</string>
+			<string>/usr/local/bin/bash -il</string>
 			<key>Cursor Boost</key>
 			<real>0.0</real>
 			<key>Cursor Color</key>
@@ -921,7 +923,7 @@
 				<real>0.027450980618596077</real>
 			</dict>
 			<key>Custom Command</key>
-			<string>No</string>
+			<string>Yes</string>
 			<key>Custom Directory</key>
 			<string>No</string>
 			<key>Default Bookmark</key>
@@ -953,6 +955,8 @@
 			<real>1</real>
 			<key>Idle Code</key>
 			<integer>0</integer>
+			<key>Initial Text</key>
+			<string></string>
 			<key>Jobs to Ignore</key>
 			<array>
 				<string>rlogin</string>
@@ -1643,7 +1647,7 @@
 			<key>Columns</key>
 			<integer>80</integer>
 			<key>Command</key>
-			<string>bash</string>
+			<string>/usr/local/bin/bash -il</string>
 			<key>Cursor Boost</key>
 			<real>0.0</real>
 			<key>Cursor Color</key>
@@ -1686,7 +1690,7 @@
 				<real>0.027450980618596077</real>
 			</dict>
 			<key>Custom Command</key>
-			<string>No</string>
+			<string>Yes</string>
 			<key>Custom Directory</key>
 			<string>No</string>
 			<key>Default Bookmark</key>
@@ -2171,7 +2175,7 @@
 		<key>screenFrame</key>
 		<string>{{0, 0}, {2560, 1440}}</string>
 		<key>topLeft</key>
-		<string>{243, 808}</string>
+		<string>{232, 1026}</string>
 	</dict>
 	<key>NoSyncHaveRequestedFullDiskAccess</key>
 	<true/>
@@ -2180,7 +2184,7 @@
 	<key>NoSyncInstallationId</key>
 	<string>9370C7D6-388D-4D45-B25F-CA5A28407A81</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>70</integer>
+	<integer>81</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -2971,7 +2975,7 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-05-04T00:11:31Z</date>
+	<date>2020-05-19T14:56:41Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SUUpdateGroupIdentifier</key>
@@ -2983,7 +2987,7 @@
 	<key>Selection Respects Soft Boundaries</key>
 	<true/>
 	<key>ShowFullScreenTabBar</key>
-	<false/>
+	<true/>
 	<key>SoundForEsc</key>
 	<false/>
 	<key>SplitPaneDimmingAmount</key>

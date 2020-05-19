@@ -131,7 +131,6 @@ if ! command -v tree >/dev/null 2>&1; then
     find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
   }
 fi
-[ `uname` == "Linux" ] && alias rmdir="rmdir -p --ignore-fail-on-non-empty"
 alias c="bat"
 alias dv="dirs -v"
 alias s='sudo'
@@ -146,19 +145,9 @@ find_pi() {
 
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-source-if-e () {
-  [ -f "$@" ] && . "$@"
-}
-if [ "$TERM" != "dumb" ]; then
-  source-if-e /usr/share/fzf/key-bindings.bash # Arch
-  source-if-e /usr/share/fzf/completion.bash
-  source-if-e /usr/share/doc/fzf/examples/key-bindings.bash # Debian
-  source-if-e /usr/share/doc/fzf/examples/completion.bash
-  source-if-e /usr/local/opt/fzf/shell/key-bindings.bash # Mac homebrew
-  source-if-e /usr/local/opt/fzf/shell/completion.bash
-  export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
-  export FZF_DEFAULT_COMMAND='fd --hidden'
-fi
+# sourced in .[bash_]profile
+export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
+export FZF_DEFAULT_COMMAND='fd --hidden'
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias
@@ -181,7 +170,6 @@ if command -v exa >/dev/null 2>&1; then
   alias ll='l -la'
 else
   alias l='ls -F'
-  [ `uname` == "Linux" ] && alias l='ls -F --color=auto --group-directories-first'
   alias ll='l -lA -h'
 fi
 
