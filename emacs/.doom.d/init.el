@@ -1,7 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(setq WORK
-      ; double-negate to extract truthy value
+(setq WORK ; has custom coding setup
+      ;; double-negate to extract truthy value
       (not (not (string-match-p "google" (system-name)))))
 
 (doom! :input
@@ -45,13 +45,14 @@
 
        :tools
        (eval +overlay)     ; run code, run (also, repls)
-       lookup              ; navigate your code and its documentation
+       (:if (not WORK)
+        lookup)            ; navigate your code and its documentation
        (:if IS-MAC macos)  ; MacOS-specific commands
        magit               ; a git porcelain for Emacs
        rgb                 ; creating color strings
 
        :lang
-       (:if (not WORK)     ; has custom setup
+       (:if (not WORK)
            cc)             ; C/C++/Obj-C madness
        data                ; config/data formats
        yaml                ; JSON, but readable
