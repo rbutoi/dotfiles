@@ -16,4 +16,4 @@
 (package! password-store)
 (package! outshine)
 (package! mac-pseudo-daemon :disable (not IS-MAC))
-(package! ivy-xref :disable (not WORK))
+(package! ivy-xref)
