@@ -154,10 +154,6 @@ or are no longer readable will be killed."
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
-;; for terminal availability
-(map! "C-M-%" 'query-replace
-      "M-%"   'query-replace-regexp ; prioritize for terminal availability
-      "M-="   'er/expand-region)
 (defun case-sensitive-query-replace ()
   (interactive)
   (let ((case-fold-search nil))
@@ -453,10 +449,12 @@ or are no longer readable will be killed."
   (if (window-system frame)
       (unless doom-theme
         (setq doom-theme my-theme)
-        (load-theme my-theme t))
+        (load-theme my-theme t)
+        (ivy-rich-mode t))
     (when doom-theme
       (setq doom-theme nil)
-      (disable-theme my-theme))))
+      (disable-theme my-theme)
+      (ivy-rich-mode -1))))
 (defun themed-if-window-system-this-frame ()
   (interactive) (themed-if-window-system (selected-frame)))
 (add-hook 'after-make-frame-functions 'themed-if-window-system)
@@ -467,6 +465,8 @@ or are no longer readable will be killed."
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
 
 (map! ; for terminal availability
+ "C-M-%"   'query-replace
+ "M-%"     'query-replace-regexp
  "M-="     'er/expand-region
  "C-x M-k" 'doom/kill-other-buffers)
 
