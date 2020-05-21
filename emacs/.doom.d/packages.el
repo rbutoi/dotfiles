@@ -16,3 +16,4 @@
 (package! mac-pseudo-daemon :disable (not IS-MAC))
 (package! ivy-xref)
 (package! eglot)
+(package! better-jumper :disable WORK)
