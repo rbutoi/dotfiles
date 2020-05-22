@@ -16,16 +16,38 @@
  confirm-kill-emacs nil
  initial-major-mode 'lisp-interaction-mode) ; undo Doom
 
+;; Persist Emacs’ initial frame position, dimensions and/or full-screen state
+;; across sessions (from Doom "Interesting snippets")
+(when-let (dims (doom-store-get 'last-frame-size))
+  (cl-destructuring-bind ((left . top) width height fullscreen) dims
+    (setq initial-frame-alist
+          (append initial-frame-alist
+                  `((left . ,left)
+                    (top . ,top)
+                    (width . ,width)
+                    (height . ,height)
+                    (fullscreen . ,fullscreen))))))
+
+(defun save-frame-dimensions ()
+  (doom-store-put 'last-frame-size
+                  (list (frame-position)
+                        (frame-width)
+                        (frame-height)
+                        (frame-parameter nil 'fullscreen))))
+
+(add-hook 'kill-emacs-hook #'save-frame-dimensions)
+
 ;;;; Buffers and windows
-;; more convenient M-binds. * because M-binds are frequently rebound
+;; bind-keys* because M-binds are frequently rebound (magit, vterm for example)
 (bind-keys*
  ("M-0"  . delete-window)
  ("M-1"  . delete-other-windows)
  ("M-2"  . split-window-below)
- ("M-3"  . split-window-right))
+ ("M-3"  . split-window-right)
+ ;; if not lambda, would trigger ace-window
+ ("M-o"  . (lambda () (interactive) (other-window +1)))
+ ("M-i"  . (lambda () (interactive) (other-window -1))))
 (map!
- "M-o"     (lambda! (other-window +1)) ; if not lambda, would trigger ace-window
- "M-i"     (lambda! (other-window -1))
  "M-l"     (lambda! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
  "C-S-k"   'doom/kill-other-buffers
@@ -355,6 +377,7 @@ or are no longer readable will be killed."
         "u"     (lambda! (notmuch-search-filter-by-tag "unread"))
         "m"     (lambda! (notmuch-search-filter-by-tag "important"))
         "M"     (lambda! (notmuch-search-filter-by-not-tag "important"))
+        "M-m"   'notmuch-mua-new-mail ; to replace above
         "d"     (lambda! (notmuch-search-add-tag
                           '("+trash" "-inbox" "-unread"))
                          (notmuch-search-next-thread))
@@ -442,6 +465,12 @@ or are no longer readable will be killed."
            :nickserv-password (lambda (server) (password-store-get "freenode"))
            :channels (:after-auth "#emacs")
            ))))
+
+;;;; vterm
+(map! :map vterm-mode-map
+      "C-c" 'vterm-send-C-c
+      "<C-backspace>" (lambda! (vterm-send-key (kbd "C-w")))
+      "C-x C-t" 'vterm-copy-mode)
 
 ;;;; Terminal support
 ;; Automatically toggle themed mode if in terminal or not
