@@ -58,9 +58,10 @@
 ;; https://github.com/syl20bnr/spacemacs/issues/10938#issuecomment-407291657
 (setq frame-title-format nil)
 
-;; always keep windows balanced
+;; keep windows balanced
 (defadvice split-window-below (after restore-balanace-below activate)
-  (balance-windows))
+  (unless (derived-mode-p 'notmuch-tree-mode)
+    (balance-windows)))
 (defadvice split-window-right (after restore-balance-right activate)
   (balance-windows))
 (defadvice delete-window (after restore-balance activate)
@@ -427,34 +428,7 @@ or are no longer readable will be killed."
     (auto-fill-mode -1)
     (hl-fill-column-mode -1)
     (visual-fill-column-mode +1))
-  (add-to-list '+word-wrap-text-modes 'notmuch-message-mode)
-
-  (defun notmuch-tree-show-message-in ()
-    "Show the current message (in split-pane)."
-    (interactive)
-    (let ((id (notmuch-tree-get-message-id))
-          (inhibit-read-only t)
-          buffer)
-      (when id
-        ;; We close and reopen the window to kill off un-needed buffers
-        ;; this might cause flickering but seems ok.
-        (notmuch-tree-close-message-window)
-        (setq notmuch-tree-message-window
-              ;; (split-window-horizontally (/ (window-height) 4))
-              (split-window-sensibly)) ; TODO: send this upstream
-        (with-selected-window notmuch-tree-message-window
-          ;; Since we are only displaying one message do not indent.
-          (let ((notmuch-show-indent-messages-width 0)
-                (notmuch-show-only-matching-messages t))
-            (setq buffer (notmuch-show id))))
-        ;; We need the `let' as notmuch-tree-message-window is buffer local.
-        (let ((window notmuch-tree-message-window))
-          (with-current-buffer buffer
-            (setq notmuch-tree-message-window window)
-            (add-hook 'kill-buffer-hook 'notmuch-tree-message-window-kill-hook)))
-        (when notmuch-show-mark-read-tags
-          (notmuch-tree-tag-update-display notmuch-show-mark-read-tags))
-        (setq notmuch-tree-message-buffer buffer)))))
+  (add-to-list '+word-wrap-text-modes 'notmuch-message-mode))
 
 ;;;; Circe
 (after! circe
