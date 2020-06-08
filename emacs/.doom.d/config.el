@@ -48,7 +48,7 @@
  ("M-o"  . (lambda () (interactive) (other-window +1)))
  ("M-i"  . (lambda () (interactive) (other-window -1))))
 (map!
- "M-l"     (lambda! (select-window (get-mru-window t t t)))
+ "M-l"     (cmd! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
  "C-S-k"   'doom/kill-other-buffers
  "C-S-M-k" 'doom/kill-all-buffers
@@ -90,7 +90,7 @@
       "C-x C-b" 'counsel-switch-buffer
       "C-x b"   'counsel-buffer-or-recentf
       "C-o"     'counsel-semantic-or-imenu
-      "C-M-s"   (lambda! (counsel-rg (thing-at-point 'symbol)))
+      "C-M-s"   (cmd! (counsel-rg (thing-at-point 'symbol)))
       ;; doesn't show hidden files
       "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
                        (execute-extended-command t "counsel-file-jump"))
@@ -99,9 +99,9 @@
       "C-r"     'swiper-isearch-backward
       "C-M-o"   'swiper-isearch-thing-at-point
       (:map ivy-minibuffer-map
-        "C-k"   'ivy-alt-done) ; because C-j is used by tmux
+       "C-k"    'ivy-alt-done) ; because C-j is used by tmux
       (:map counsel-find-file-map
-        "C-l"   'counsel-up-directory))
+       "C-l"    'counsel-up-directory))
 ;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
 (setq ivy-extra-directories '("."))
 
@@ -208,7 +208,7 @@ or are no longer readable will be killed."
 ;; C/C++
 (after! cc-mode
   (map! "C-c C-o" :map c-mode-base-map
-        (lambda! (ff-find-other-file nil 'ignore-include))))
+        (cmd! (ff-find-other-file nil 'ignore-include))))
 (add-hook! c++-mode (c-set-offset 'innamespace [0]))
 (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
 (add-hook! 'c-mode-common-hook ; formatting
@@ -237,7 +237,7 @@ or are no longer readable will be killed."
 ;;;; Fly{make,check}
 (after! flymake
   (map! :map flymake-mode-map
-      "C-c C-e" #'flymake-show-diagnostics-buffer))
+        "C-c C-e" #'flymake-show-diagnostics-buffer))
 (after! flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
@@ -258,7 +258,7 @@ or are no longer readable will be killed."
                       (lambda (window) (quit-window nil window))
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
-(map! "S-<f7>" (lambda! (switch-to-buffer "*compilation*"))
+(map! "S-<f7>" (cmd! (switch-to-buffer "*compilation*"))
       :map prog-mode-map
       "<f7>" 'compile
       "<f8>" 'recompile)
@@ -373,47 +373,47 @@ or are no longer readable will be killed."
   (defun notmuch-tree-filter-by-not-tag (tag)
     (notmuch-tree (concat notmuch-tree-basic-query " and not is:" tag)))
   (map! :map notmuch-search-mode-map
-        "i"     (lambda! (notmuch-search-filter-by-tag "work"))
-        "I"     (lambda! (notmuch-search-filter-by-tag "personal"))
-        "u"     (lambda! (notmuch-search-filter-by-tag "unread"))
-        "m"     (lambda! (notmuch-search-filter-by-tag "important"))
-        "M"     (lambda! (notmuch-search-filter-by-not-tag "important"))
+        "i"     (cmd! (notmuch-search-filter-by-tag "work"))
+        "I"     (cmd! (notmuch-search-filter-by-tag "personal"))
+        "u"     (cmd! (notmuch-search-filter-by-tag "unread"))
+        "m"     (cmd! (notmuch-search-filter-by-tag "important"))
+        "M"     (cmd! (notmuch-search-filter-by-not-tag "important"))
         "M-m"   'notmuch-mua-new-mail ; to replace above
-        "d"     (lambda! (notmuch-search-add-tag
-                          '("+trash" "-inbox" "-unread"))
-                         (notmuch-search-next-thread))
-        "M-u"   (lambda! (notmuch-search-add-tag '("-unread"))
-                         (notmuch-search-next-thread))
-        "C-M-u" (lambda! (notmuch-search-tag-all '("-unread")))
+        "d"     (cmd! (notmuch-search-add-tag
+                       '("+trash" "-inbox" "-unread"))
+                      (notmuch-search-next-thread))
+        "M-u"   (cmd! (notmuch-search-add-tag '("-unread"))
+                      (notmuch-search-next-thread))
+        "C-M-u" (cmd! (notmuch-search-tag-all '("-unread")))
         :map notmuch-tree-mode-map
-        "w"     (lambda! (notmuch-tree-filter-by-tag "work"))
-        "W"     (lambda! (notmuch-tree-filter-by-tag "personal"))
-        "u"     (lambda! (notmuch-tree-filter-by-tag "unread"))
-        "i"     (lambda! (notmuch-tree-filter-by-tag "important"))
-        "I"     (lambda! (notmuch-tree-filter-by-not-tag "important"))
-        "d"     (lambda! (notmuch-tree-add-tag
-                          '("+trash" "-inbox" "-unread"))
-                         (notmuch-tree-next-matching-message))
-        "M-u"   (lambda! (notmuch-tree-add-tag '("-unread"))
-                         (notmuch-tree-next-message))
-        "C-M-u" (lambda! (notmuch-tree-tag-thread '("-unread"))
-                         (notmuch-tree-next-thread))
+        "w"     (cmd! (notmuch-tree-filter-by-tag "work"))
+        "W"     (cmd! (notmuch-tree-filter-by-tag "personal"))
+        "u"     (cmd! (notmuch-tree-filter-by-tag "unread"))
+        "i"     (cmd! (notmuch-tree-filter-by-tag "important"))
+        "I"     (cmd! (notmuch-tree-filter-by-not-tag "important"))
+        "d"     (cmd! (notmuch-tree-add-tag
+                       '("+trash" "-inbox" "-unread"))
+                      (notmuch-tree-next-matching-message))
+        "M-u"   (cmd! (notmuch-tree-add-tag '("-unread"))
+                      (notmuch-tree-next-message))
+        "C-M-u" (cmd! (notmuch-tree-tag-thread '("-unread"))
+                      (notmuch-tree-next-thread))
         :map (notmuch-hello-mode-map
               notmuch-search-mode-map
               notmuch-tree-mode-map
               notmuch-show-mode-map)
         "C-M-s" 'counsel-notmuch
-        "G"     (lambda! (minibuffer-message "Syncing mail...")
-                         (set-process-sentinel
-                          (start-process-shell-command "notmuch update" nil
-                                                       +notmuch-sync-command)
-                          ;; refresh notmuch buffers if sync was successful
-                          (lambda (_process event)
-                            (when (string= event "finished\n")
-                              (message "Synced mail.")
-                              (notmuch-refresh-all-buffers)))))
-        "Q"     (lambda! (doom-kill-matching-buffers
-                          "^\\*notmuch-.*\\(search\\|tree\\)")))
+        "G"     (cmd! (minibuffer-message "Syncing mail...")
+                      (set-process-sentinel
+                       (start-process-shell-command "notmuch update" nil
+                                                    +notmuch-sync-command)
+                       ;; refresh notmuch buffers if sync was successful
+                       (lambda (_process event)
+                         (when (string= event "finished\n")
+                           (message "Synced mail.")
+                           (notmuch-refresh-all-buffers)))))
+        "Q"     (cmd! (doom-kill-matching-buffers
+                       "^\\*notmuch-.*\\(search\\|tree\\)")))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
@@ -443,7 +443,7 @@ or are no longer readable will be killed."
 ;;;; vterm
 (map! :map vterm-mode-map
       "C-c" 'vterm-send-C-c
-      "<C-backspace>" (lambda! (vterm-send-key (kbd "C-w")))
+      "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w")))
       "C-x C-t" 'vterm-copy-mode)
 
 ;;;; Terminal support
