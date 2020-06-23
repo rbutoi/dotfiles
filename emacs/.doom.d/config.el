@@ -349,7 +349,7 @@ or are no longer readable will be killed."
     (* 5 60) t (lambda () (ignore-errors (notmuch-refresh-all-buffers))))
 
    notmuch-unread-search-term
-   (concat "is:unread and (is:inbox or is:broadcast)"
+   (concat "is:unread and is:inbox"
            (if WORK " and is:work" "")))
   (notmuch-unread-mode)
 
