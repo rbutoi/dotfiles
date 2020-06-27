@@ -1,6 +1,12 @@
-.config/google-chrome/**
-.config/chromium/**
-.config/chrome-remote-desktop/**
-.rustup/**
+.cache/**
 .cargo/**
+.config/chrome-remote-desktop/**
+.config/chromium/**
+.config/google-chrome/**
 .git/**
+.glide/**
+.local/**
+.mail/**
+.node-gyp/**
+.rustup/**
+go/**

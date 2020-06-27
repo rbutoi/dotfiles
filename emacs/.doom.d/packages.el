@@ -1,4 +1,4 @@
-;; -*- no-byte-compile: t; -*-
+;;; packages.el -*- lexical-binding: t; -*-
 (package! solarized-theme)
 (package! buffer-move)
 (package! zoom-window)

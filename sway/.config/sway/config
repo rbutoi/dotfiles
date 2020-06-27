@@ -1,5 +1,5 @@
 set $term kitty
-set $web firefox-nightly
+set $web chromium
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
 set $locker swaylock -c 000000
@@ -22,10 +22,10 @@ input * {
     pointer_accel 0.1
 }
 
-# exec swayidle -w \
-#          timeout 900 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
-#               resume '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms on"' \
-#         before-sleep 'swaylock -c 000000'
+exec swayidle -w \
+         timeout 900 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
+              resume 'swaymsg "output * dpms on"' \
+        before-sleep 'swaylock -c 000000'
 
 # startup
 exec dex -a
@@ -72,7 +72,7 @@ set $down j
 set $up k
 set $right l
 
-bindsym $mod+Return exec $term
+bindsym $mod+Ctrl+Return exec $term
 bindsym $mod+Shift+Return exec $term -e ~/bin/continuetmux
 bindsym $mod+c kill
 bindsym $mod+space exec $menu
@@ -143,14 +143,14 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 #
 
 bindsym $mod+Shift+Ctrl+l exec $locker
-# bindsym $mod+Shift+Ctrl+s exec systemctl suspend
+bindsym $mod+Shift+Ctrl+s exec systemctl suspend
 
-set $mode_system System (l) lock, (e) logout, (s) suspend (disabled), (r) reboot, (Shift+s) shutdown
+set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
-    bindsym l exec swaylock, mode "default"
-    bindsym e exec swaymsg exit, mode "default"
-    # bindsym s exec systemctl suspend, mode "default"
-    bindsym r exec systemctl reboot, mode "default"
+    bindsym l exec swaylock                 , mode "default"
+    bindsym e exec swaymsg exit             , mode "default"
+    bindsym s exec systemctl suspend        , mode "default"
+    bindsym r exec systemctl reboot         , mode "default"
     bindsym Shift+s exec systemctl poweroff , mode "default"  
 
     # back to normal: Enter or Escape

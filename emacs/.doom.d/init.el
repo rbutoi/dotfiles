@@ -49,6 +49,8 @@
        :tools
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
+       (:if (not WORK)
+        lsp +eglot)
        magit               ; a git porcelain for Emacs
        rgb                 ; creating color strings
 
@@ -60,6 +62,7 @@
        (:if (not WORK)
            cc)             ; C/C++/Obj-C madness
        data                ; config/data formats
+       json                ; At least it ain't XML
        yaml                ; JSON, but readable
        emacs-lisp          ; drown in parentheses
        markdown            ; writing docs for people to ignore

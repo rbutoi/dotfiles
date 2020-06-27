@@ -81,8 +81,10 @@
 ;;;; Popups
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
       "M-~" 'tmm-menubar)  ; this aliases not-modified
-(set-popup-rule! "^\\*Man.*\\*$" :ignore t)
-(set-popup-rule! "^vterm.*$" :ignore t)
+(set-popup-rule! "^\\*Man.*\\*$"             :ignore t)
+(set-popup-rule! "^vterm.*$"                 :ignore t)
+(after! rustic
+  (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
 
 ;;;; Ivy / counsel
 (map! "C-c C-r" 'ivy-resume
@@ -214,7 +216,7 @@ or are no longer readable will be killed."
 
 ;; Rust
 (use-package rustic
-  :init
+  :config
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'eglot)
   (add-hook! rustic-mode (run-mode-hooks 'prog-mode-hook)))
@@ -336,7 +338,8 @@ or are no longer readable will be killed."
           (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
-        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important"))))
+        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important")
+        (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"))))
 
    notmuch-tag-formats
    (append '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
