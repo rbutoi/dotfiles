@@ -344,10 +344,6 @@ or are no longer readable will be killed."
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
 
-   notmuch-refresh-timer ; Refresh notmuch every five minutes.
-   (run-with-idle-timer
-    (* 5 60) t (lambda () (ignore-errors (notmuch-refresh-all-buffers))))
-
    notmuch-unread-search-term
    (concat "is:unread and is:inbox"
            (if WORK " and is:work" "")))
@@ -372,9 +368,16 @@ or are no longer readable will be killed."
     (notmuch-tree (concat notmuch-tree-basic-query " and is:" tag)))
   (defun notmuch-tree-filter-by-not-tag (tag)
     (notmuch-tree (concat notmuch-tree-basic-query " and not is:" tag)))
+  (defun notmuch-rm-deleted-tag ()
+      "Delete emails tagged 'deleted' from the filesystem."
+    (interactive)
+    (shell-command (concat
+                    "notmuch search --output=files --format=text0 tag:deleted"
+                    " | xargs -0 rm && notmuch new"))
+    (notmuch-refresh-all-buffers))
   (map! :map notmuch-search-mode-map
-        "i"     (cmd! (notmuch-search-filter-by-tag "work"))
-        "I"     (cmd! (notmuch-search-filter-by-tag "personal"))
+        "w"     (cmd! (notmuch-search-filter-by-tag "work"))
+        "W"     (cmd! (notmuch-search-filter-by-tag "personal"))
         "u"     (cmd! (notmuch-search-filter-by-tag "unread"))
         "m"     (cmd! (notmuch-search-filter-by-tag "important"))
         "M"     (cmd! (notmuch-search-filter-by-not-tag "important"))
@@ -385,6 +388,7 @@ or are no longer readable will be killed."
         "M-u"   (cmd! (notmuch-search-add-tag '("-unread"))
                       (notmuch-search-next-thread))
         "C-M-u" (cmd! (notmuch-search-tag-all '("-unread")))
+        "f"     (cmd! (notmuch-search-add-tag '("+flagged")))
         :map notmuch-tree-mode-map
         "w"     (cmd! (notmuch-tree-filter-by-tag "work"))
         "W"     (cmd! (notmuch-tree-filter-by-tag "personal"))
@@ -412,8 +416,15 @@ or are no longer readable will be killed."
                          (when (string= event "finished\n")
                            (message "Synced mail.")
                            (notmuch-refresh-all-buffers)))))
-        "Q"     (cmd! (doom-kill-matching-buffers
-                       "^\\*notmuch-.*\\(search\\|tree\\)")))
+        "Q"     (cmd! (dolist (buf (buffer-list))
+                        (with-current-buffer buf
+                          ;; can't get the list working
+                          (when (or (derived-mode-p 'notmuch-search-mode)
+                                    (derived-mode-p 'notmuch-tree-mode)
+                                    (derived-mode-p 'notmuch-show-mode))
+                            (kill-buffer)))))
+        "D"     'notmuch-rm-deleted-tag
+        )
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
