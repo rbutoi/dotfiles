@@ -3,6 +3,13 @@
 # sort emails into appropriate account tag
 notmuch tag +work     -- tag:new path:work/**
 notmuch tag +personal -- tag:new path:personal/**
+notmuch tag +hotmail  -- tag:new path:hotmail/**
+
+# mbsync doesn't do any notmuch tagging, just maildir syncing
+notmuch tag +inbox    -- tag:new path:hotmail/Inbox/**
+notmuch tag +sent     -- tag:new path:hotmail/Sent/**
+notmuch tag +draft    -- tag:new path:hotmail/Drafts/**
+
 
 # since the "primary" is represented by a lack of a category tag, give it a tag
 # to make it easier
