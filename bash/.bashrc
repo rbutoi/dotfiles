@@ -148,6 +148,7 @@ alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo t
 # sourced in .[bash_]profile
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
 export FZF_DEFAULT_COMMAND='fd --hidden'
+alias fzfp="fd -tf | fzf --preview 'bat --style=numbers --color=always {}'"
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias

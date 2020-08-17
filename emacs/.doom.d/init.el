@@ -4,6 +4,8 @@
       ;; double-negate to extract truthy value
       (not (not (string-match-p "google" (system-name)))))
 
+(when WORK (load (concat doom-private-dir "specific-init.el")))
+
 (doom! :input
 
        :completion
@@ -45,11 +47,13 @@
 
        :tools
        (eval +overlay)     ; run code, run (also, repls)
-       (:if (not WORK)
-        lookup)            ; navigate your code and its documentation
-       (:if IS-MAC macos)  ; MacOS-specific commands
+       lookup              ; navigate your code and its documentation
        magit               ; a git porcelain for Emacs
        rgb                 ; creating color strings
+
+       :os
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       tty                 ; improve the terminal Emacs experience
 
        :lang
        (:if (not WORK)

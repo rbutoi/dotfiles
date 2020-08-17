@@ -95,13 +95,13 @@
       "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
                        (execute-extended-command t "counsel-file-jump"))
       "C-x M-f" 'counsel-file-jump-ask-dir
-      "C-s"     'swiper-isearch
-      "C-r"     'swiper-isearch-backward
       "C-M-o"   'swiper-isearch-thing-at-point
-      (:map ivy-minibuffer-map
-       "C-k"    'ivy-alt-done) ; because C-j is used by tmux
-      (:map counsel-find-file-map
-       "C-l"    'counsel-up-directory))
+      :map isearch-mode-map
+      "C-o"     'swiper-from-isearch
+      :map ivy-minibuffer-map
+      "C-k"    'ivy-alt-done ; because C-j is used by tmux
+      :map counsel-find-file-map
+      "C-l"    'counsel-up-directory)
 ;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
 (setq ivy-extra-directories '("."))
 
@@ -116,6 +116,16 @@
 (setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
 (map! "M-p" 'backward-paragraph
       "M-n" 'forward-paragraph)
+
+(defun case-sensitive-query-replace ()
+  (interactive)
+  (let ((case-fold-search nil))
+    (call-interactively 'query-replace)))
+
+;; enable auto fill in text modes, and prog mode comments
+(toggle-text-mode-auto-fill)
+(add-hook! prog-mode 'auto-fill-mode)
+(setq comment-auto-fill-only-comments t)
 
 ;;;; Revert file
 (map! "C-c r" 'revert-buffer)
@@ -144,7 +154,6 @@ or are no longer readable will be killed."
             (message "Killed non-existing/unreadable file buffer: %s" filename))))))
   (message "Finished reverting buffers containing unmodified files."))
 (map! "C-c R" 'modi/revert-all-file-buffers)
-
 
 ;;;; comment-or-uncomment-line-or-region
 (defun comment-or-uncomment-line-or-region ()
@@ -177,29 +186,12 @@ or are no longer readable will be killed."
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
-(defun case-sensitive-query-replace ()
-  (interactive)
-  (let ((case-fold-search nil))
-    (call-interactively 'query-replace)))
-
-;; can keep C-u C-SPC C-SPC C-SPC...
-(setq set-mark-command-repeat-pop t)
-
-;; enable auto fill in text modes, and prog mode comments
-(toggle-text-mode-auto-fill)
-(add-hook! prog-mode 'auto-fill-mode)
-(setq comment-auto-fill-only-comments t)
-
 ;;; Programming
 
 ;;;; Languages
 ;; Perl
 (after! perl-mode
   (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
-
-;; Assembler
-(after! asm-mode
-  (map! "TAB" :map asm-mode-map 'asm-indent-line))
 
 ;; Data/config
 (add-hook! (yaml-mode conf-unix-mode conf-space-mode)
@@ -213,6 +205,8 @@ or are no longer readable will be killed."
 (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
 (add-hook! 'c-mode-common-hook ; formatting
   (fset 'c-indent-region 'clang-format-region))
+; disable c-indent-line-or-region so completing can work
+(map! :map c-mode-base-map "TAB" nil)
 
 ;; LaTeX
 (setq TeX-auto-untabify t)
@@ -225,14 +219,19 @@ or are no longer readable will be killed."
   (add-hook! rustic-mode (run-mode-hooks 'prog-mode-hook)))
 
 ;; Elisp: enable outshine to fold away parts of config
-(use-package outshine :hook (emacs-lisp-mode . outshine-mode))
+(use-package outshine
+  :hook (emacs-lisp-mode . outshine-mode)
+  :config (setq outshine-cycle-emulate-tab nil))
 
-;;;; Company
-(map! "TAB"     'company-indent-or-complete-common
-      "C-<tab>" 'dabbrev-expand ;; low-tech alternative
-      "M-/"     'dabbrev-expand)
-(setq tab-always-indent        'complete
-      company-dabbrev-downcase nil)
+;;;; Completion
+(setq tab-always-indent 'complete)
+(after! company
+  (unless WORK
+    (setq company-dabbrev-downcase nil)
+    (map! :map (global-map c-mode-base-map)
+          "TAB"     'company-indent-or-complete-common
+          "C-<tab>" '+company/dabbrev ;; low-tech alternative
+          "M-/"     '+company/dabbrev)))
 
 ;;;; Fly{make,check}
 (after! flymake
@@ -273,7 +272,8 @@ or are no longer readable will be killed."
 
 ;;;; String-inflection
 (use-package string-inflection
-  :bind (:map prog-mode-map ("C-c C-u" . string-inflection-cycle)))
+  :config
+  (map! :map (prog-mode-map c-mode-base-map) "C-c C-u" 'string-inflection-cycle))
 
 ;;;; highlight-thing, which-function
 (use-package highlight-thing
