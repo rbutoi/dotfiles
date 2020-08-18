@@ -521,7 +521,8 @@ Return an event vector."
   (when (fboundp 'mac-auto-operator-composition-mode)
     (mac-auto-operator-composition-mode))
   (mac-pseudo-daemon-mode)
-  (setq dired-use-ls-dired nil))
+  (setq dired-use-ls-dired nil)
+  (map! "s-m" 'suspend-frame))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server
