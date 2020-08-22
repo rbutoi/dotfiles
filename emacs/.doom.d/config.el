@@ -51,6 +51,7 @@
  "M-l"     (cmd! (select-window (get-mru-window t t t)))
  "C-k"     'kill-current-buffer
  "C-S-k"   'doom/kill-other-buffers
+ "C-x M-k" 'doom/kill-other-buffers
  "C-S-M-k" 'doom/kill-all-buffers
  "C-x C-M-k" 'doom/kill-all-buffers)
 
@@ -478,16 +479,40 @@ or are no longer readable will be killed."
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
 
-(map! ; for terminal availability
- "C-M-%"   'query-replace
- "M-%"     'query-replace-regexp
- "M-="     'er/expand-region
- "C-x M-k" 'doom/kill-other-buffers)
-
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
   (message "Opening %s in browser." url))
+
+(add-hook! 'after-make-frame-functions
+  (unless (display-graphic-p)
+    ;; Take advantage of iterm2's CSI u support (https://gitlab.com/gnachman/iterm2/-/issues/8382).
+    (xterm--init-modify-other-keys)
+    ;; Courtesy https://emacs.stackexchange.com/a/13957, modified per
+    ;; https://gitlab.com/gnachman/iterm2/-/issues/8382#note_365264207
+    (defun character-apply-modifiers (c &rest modifiers)
+      "Apply modifiers to the character C.
+MODIFIERS must be a list of symbols amongst (meta control shift).
+Return an event vector."
+      (if (memq 'control modifiers) (setq c (if (and (<= ?a c) (<= c ?z))
+                                                (logand c ?\x1f)
+                                              (logior (lsh 1 26) c))))
+      (if (memq 'meta modifiers) (setq c (logior (lsh 1 27) c)))
+      (if (memq 'shift modifiers) (setq c (logior (lsh 1 25) c)))
+      (vector c))
+    (when (and (boundp 'xterm-extra-capabilities) (boundp 'xterm-function-map))
+      (let ((c 32))
+        (while (<= c 126)
+          (mapc (lambda (x)
+                  (define-key xterm-function-map (format (car x) c)
+                    (apply 'character-apply-modifiers c (cdr x))))
+                '(("\e\[%d;3u" meta)
+                  ("\e\[%d;5u" control)
+                  ("\e\[%d;6u" control shift)
+                  ("\e\[%d;7u" control meta)
+                  ("\e\[%d;8u" control meta shift)))
+          (setq c (1+ c)))))
+    ))
 
 ;;; Epilogue
 ;; Host-specific support
