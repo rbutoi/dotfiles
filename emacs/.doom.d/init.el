@@ -29,7 +29,8 @@
        (:if (not WORK)
            file-templates) ; auto-snippets for empty files
        fold                ; (nigh) universal code folding
-       (format +onsave)    ; automated prettiness
+       (format             ; automated prettiness
+        (:if (not WORK) +onsave)) ; breaks work setup
        word-wrap           ; soft wrapping with language-aware indent
 
        :emacs
