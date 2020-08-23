@@ -1,70 +1,80 @@
 // -*- mode: json; -*-
 {
-    "layer": "bottom",
-    "position": "bottom",
-    "modules-left": [ "custom/apps", "custom/home", "sway/workspaces", "sway/mode",
-                      "custom/spotify"],
-    "modules-center": ["sway/window"],
-    "modules-right": ["custom/updates", "custom/load", "pulseaudio", "tray",
-                      "clock", "custom/power"],
-    "sway/workspaces": {
-        "format": "{name}",
-        "disable-scroll": false
-    },
-    "sway/window": {
-        "max-length": 200,
-        "tooltip": false
-    },
-    "custom/updates": {
-        "exec": "checkupdates | wc -l",
-        "format": "🎁 {}",
-        "interval": 3600,
-        "on-click": "(tmux neww pikaur -Syu && swaymsg '[app_id=\"kitty\"] focus') || kitty pikaur -Syu; pkill -RTMIN+8 waybar",
-        "tooltip": false,
-        "signal": 8
-    },
-    "custom/load": {
-        "exec": "cut -f1-3 -d' ' /proc/loadavg",
-        "on-click": "(tmux neww glances && swaymsg '[app_id=\"kitty\"] focus') || kitty glances",
-        "interval": 60
-    },
-    "custom/spotify": {
-        "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
-        "escape": true,
-        "on-click": "swaymsg '[class=\"Spotify\"] focus'",
-        "on-click-right": "playerctl play-pause",
-        "tooltip": false
-    },
-    "clock": {
-        "format": "{:%a %d %b %H:%M}",
-        "on-click": "gsimplecal",
-        "tooltip": false
-    },
-    "pulseaudio": {
-        "format": "🔉 {volume}%",
-        "format-muted": "🔇 0%",
-        "scroll-step": 5,
-        "on-click": "pavucontrol",
-        "on-click-right": "pamixer -t",
-        "tooltip": false
-    },
-    "tray": {
-        "icon-size": 24
-    },
-    "custom/power": {
-        "format": "⏻",
-        "on-click": "swaymsg 'mode $mode_system'",
-        "tooltip": false
-    },
-    "custom/apps": {
-        "format": "Applications",
-        "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
-        "on-click-right": "j4-dmenu-desktop --dmenu='/usr/bin/rofi -dmenu -p launch -show run -i -lines 40'",
-        "tooltip": false
-    },
-    "custom/home": {
-        "format": "🏠 ",
-        "on-click": "xdg-open ~",
-        "tooltip": false
-    }
+  "position": "bottom",
+  "modules-left": [
+    "custom/apps",
+    "custom/home",
+    "sway/workspaces",
+    "sway/mode",
+    "custom/spotify"
+  ],
+  "modules-center": ["sway/window"],
+  "modules-right": [
+    "custom/updates",
+    "custom/load",
+    "pulseaudio",
+    "tray",
+    "clock",
+    "custom/power"
+  ],
+  "sway/workspaces": {
+    "format": "{name}",
+    "disable-scroll": false
+  },
+  "sway/window": {
+    "max-length": 200,
+    "tooltip": false
+  },
+  "custom/updates": {
+    "exec": "checkupdates | wc -l",
+    "format": "🎁 {}",
+    "interval": 3600,
+    "on-click": "(tmux neww pikaur -Syu && swaymsg '[app_id=\"kitty\"] focus') || kitty pikaur -Syu; pkill -RTMIN+8 waybar",
+    "tooltip": false,
+    "signal": 8
+  },
+  "custom/load": {
+    "exec": "cut -f1-3 -d' ' /proc/loadavg",
+    "on-click": "(tmux neww glances && swaymsg '[app_id=\"kitty\"] focus') || kitty glances",
+    "interval": 60
+  },
+  "custom/spotify": {
+    "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
+    "escape": true,
+    "on-click": "swaymsg '[class=\"Spotify\"] focus'",
+    "on-click-right": "playerctl play-pause",
+    "tooltip": false
+  },
+  "clock": {
+    "format": "{:%a %d %b %H:%M}",
+    "on-click": "gsimplecal",
+    "tooltip": false
+  },
+  "pulseaudio": {
+    "format": "🔉 {volume}%",
+    "format-muted": "🔇 0%",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer -t",
+    "tooltip": false
+  },
+  "tray": {
+    "icon-size": 24
+  },
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "swaymsg 'mode $mode_system'",
+    "tooltip": false
+  },
+  "custom/apps": {
+    "format": "Applications",
+    "on-click": "zenity --info --no-wrap --title=\"App list\" --text=\"$(xdg_menu --format readable | sed -e 's/ MENU//' -e 's/\"//g' | grep -v Applications | cut -c 2-)\"",
+    "on-click-right": "j4-dmenu-desktop --dmenu='/usr/bin/rofi -dmenu -p launch -show run -i -lines 40'",
+    "tooltip": false
+  },
+  "custom/home": {
+    "format": "🏠 ",
+    "on-click": "xdg-open ~",
+    "tooltip": false
+  }
 }
