@@ -457,9 +457,7 @@ or are no longer readable will be killed."
 
 ;;;; vterm
 (map! :map vterm-mode-map
-      "C-c" 'vterm-send-C-c
-      "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w")))
-      "C-x C-t" 'vterm-copy-mode)
+      "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w"))))
 
 (defun run-in-vterm-kill (process event)
   "A process sentinel. Kills PROCESS's buffer if it is live."
