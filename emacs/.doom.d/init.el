@@ -10,7 +10,8 @@
 
        :completion
        company             ; the ultimate code completion backend
-       (ivy +icons)        ; a search engine for love and life
+       (ivy                ; a search engine for love and life
+        (:if IS-MAC +icons))
 
        :ui
        doom                ; what makes DOOM look the way it does

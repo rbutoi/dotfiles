@@ -467,12 +467,10 @@ or are no longer readable will be killed."
   (if (window-system frame)
       (unless doom-theme
         (setq doom-theme my-theme)
-        (load-theme my-theme t)
-        (ivy-rich-mode t))
+        (load-theme my-theme t))
     (when doom-theme
       (setq doom-theme nil)
-      (disable-theme my-theme)
-      (ivy-rich-mode -1))))
+      (disable-theme my-theme))))
 (defun themed-if-window-system-this-frame ()
   (interactive) (themed-if-window-system (selected-frame)))
 (add-hook 'after-make-frame-functions 'themed-if-window-system)

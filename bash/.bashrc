@@ -4,6 +4,8 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+export PATH="~/bin:~/.cargo/bin:~/.emacs.d/bin:$PATH"
+
 #########################
 # Bash/terminal options #
 #########################
@@ -34,9 +36,8 @@ fi
 # disable history expansion
 set +H
 
-# prompt. prefer ~/bin version which has personal patchess
-[ -x ~/bin/starship ] && STARSHIP=~/bin/starship || STARSHIP=starship
-command -v $STARSHIP >/dev/null 2>&1 && eval "$($STARSHIP init bash)"
+# prompt
+eval "$(starship init bash)"
 
 #######################################
 # User specific aliases and functions #

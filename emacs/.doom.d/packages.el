@@ -15,5 +15,5 @@
 (package! outshine)
 (package! mac-pseudo-daemon :disable (not IS-MAC))
 (package! ivy-xref)
-(package! eglot   :built-in 'prefer)
-(package! project :built-in 'prefer)
+(package! eglot   :disable WORK)
+(package! project :disable WORK)
