@@ -348,6 +348,10 @@ or are no longer readable will be killed."
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
 
+   notmuch-refresh-timer ; Refresh notmuch every five minutes.
+   (run-with-idle-timer
+    (* 5 60) t (lambda () (ignore-errors (notmuch-refresh-this-buffer))))
+
    notmuch-unread-search-term
    (concat "is:unread and is:inbox"
            (if WORK " and is:work" "")))
@@ -411,15 +415,6 @@ or are no longer readable will be killed."
               notmuch-tree-mode-map
               notmuch-show-mode-map)
         "C-M-s" 'counsel-notmuch
-        "G"     (cmd! (minibuffer-message "Syncing mail...")
-                      (set-process-sentinel
-                       (start-process-shell-command "notmuch update" nil
-                                                    +notmuch-sync-command)
-                       ;; refresh notmuch buffers if sync was successful
-                       (lambda (_process event)
-                         (when (string= event "finished\n")
-                           (message "Synced mail.")
-                           (notmuch-refresh-all-buffers)))))
         "Q"     (cmd! (dolist (buf (buffer-list))
                         (with-current-buffer buf
                           ;; can't get the list working
