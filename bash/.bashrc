@@ -4,8 +4,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-export PATH="~/bin:~/.cargo/bin:~/.emacs.d/bin:$PATH"
-
 #########################
 # Bash/terminal options #
 #########################

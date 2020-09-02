@@ -1,8 +1,8 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(setq WORK ; has custom coding setup
-      ;; double-negate to extract truthy value
-      (not (not (string-match-p "google" (system-name)))))
+(defconst WORK ; has custom coding setup
+  ;; double-negate to extract truthy value
+  (not (not (string-match-p "google" (system-name)))))
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 
