@@ -102,7 +102,8 @@
       :map isearch-mode-map
       "C-o"     'swiper-from-isearch
       :map ivy-minibuffer-map
-      "C-k"    'ivy-alt-done ; because C-j is used by tmux
+      "C-k"    'ivy-alt-done ; C-j is used by tmux
+      "C-M-i"  'ivy-insert-current ; M-i used to change windows
       :map counsel-find-file-map
       "C-l"    'counsel-up-directory)
 ;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
@@ -265,6 +266,7 @@ or are no longer readable will be killed."
       "<f7>" 'compile
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
+(add-hook! compilation-mode (setq truncate-lines nil))
 
 ;;;; Magit
 (map! "C-x   g" 'magit-status
