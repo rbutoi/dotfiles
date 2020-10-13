@@ -14,6 +14,7 @@
 ;;;; Startup/shutdown
 (setq
  confirm-kill-emacs nil
+ confirm-kill-processes nil
  initial-major-mode 'lisp-interaction-mode) ; undo Doom
 
 ;; Persist Emacs’ initial frame position, dimensions and/or full-screen state
@@ -301,7 +302,9 @@ or are no longer readable will be killed."
 ;;; External
 
 ;;;; notmuch
-(map! "C-c m" 'notmuch)
+(map! "C-c m" (cmd! (notmuch)
+                    ;; why is this necessary??
+                    (delete-other-windows)))
 
 (after! notmuch
   (setq
@@ -436,6 +439,11 @@ or are no longer readable will be killed."
                                     (derived-mode-p 'notmuch-show-mode))
                             (kill-buffer)))))
         "D"     'notmuch-rm-deleted-tag
+        "<f7>"  (cmd!
+                 (browse-url
+                  (concat "https://mail.google.com"
+                          (if (string-match-p "broadcast" (buffer-name))
+                              "/mail/u/0/#label/broadcast" ""))))
         )
 
   ;; > modeline doesn't have much use in these modes

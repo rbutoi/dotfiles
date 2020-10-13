@@ -2,7 +2,7 @@
 
 # macOS compat
 if command -v brew >/dev/null; then
-  export PYTHONPATH="$(brew --prefix)/lib/python3.8/site-packages:$PYTHONPATH"
+  export PYTHONPATH="$(brew --prefix)/lib/python3.9/site-packages:$PYTHONPATH"
 fi
 
 command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
