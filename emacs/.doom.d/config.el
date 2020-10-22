@@ -108,18 +108,19 @@
       "C-l"    'counsel-up-directory)
 ;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
 (setq ivy-extra-directories '("."))
-(plist-put! ivy-rich-display-transformers-list
-            'ivy-switch-buffer
-            '(:columns
-              ;; only part changed from default: width of filename
-             ((ivy-switch-buffer-transformer (:width 70))
-              (ivy-rich-switch-buffer-size (:width 7))
-              (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-              (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
-              (ivy-rich-switch-buffer-project (:width 15 :face success))
-              (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-             :predicate
-             (lambda (cand) (get-buffer cand))))
+(after! ivy-rich
+  (plist-put! ivy-rich-display-transformers-list
+              'ivy-switch-buffer
+              '(:columns
+                ;; only part changed from default: width of filename
+                ((ivy-switch-buffer-transformer (:width 70))
+                 (ivy-rich-switch-buffer-size (:width 7))
+                 (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
+                 (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
+                 (ivy-rich-switch-buffer-project (:width 15 :face success))
+                 (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
+                :predicate
+                (lambda (cand) (get-buffer cand)))))
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
