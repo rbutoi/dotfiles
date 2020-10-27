@@ -1,3 +1,4 @@
+advcp
 adwaita-qt
 alsa-utils
 amd-ucode
@@ -25,12 +26,14 @@ bmon
 breezy
 bzip2
 cargo-bloat
+cargo-edit
 cargo-expand
 cargo-watch
 celluloid
 cheese
 chromium
 chromium-widevine
+clamav
 clang
 cmake
 code
@@ -51,6 +54,7 @@ e2fsprogs
 efibootmgr
 emacs
 eog
+etc-update
 exa
 fd
 ferdi-bin
@@ -75,6 +79,7 @@ gnome-logs
 gnome-system-monitor
 gnome-themes-extra
 gnu-free-fonts
+go
 gotop-bin
 gparted
 grim
@@ -91,7 +96,6 @@ icdiff
 iftop
 imgurbash2
 inetutils
-informant
 inotify-tools
 inxi
 iperf
@@ -136,6 +140,7 @@ mpv
 msmtp
 mullvad-vpn
 nano
+needrestart
 nemo
 nemo-share
 nerd-fonts-hack
@@ -155,6 +160,7 @@ openssh
 pacman-cleanup-hook
 pacman-contrib
 pamixer
+paru
 pastebinit
 pavucontrol
 pbzip2
@@ -165,6 +171,7 @@ perl-file-mimeinfo
 pigz
 pikaur-git
 playerctl
+plex-media-server
 polkit-gnome
 powder-player-bin
 prettier
@@ -217,6 +224,7 @@ tesseract-data-eng
 thelounge
 tmux
 topgrade
+tree
 ttf-bitstream-vera
 ttf-droid
 ttf-liberation
@@ -233,7 +241,7 @@ vdpauinfo
 vlc
 vnstat
 wasm-pack
-waybar
+waybar-git
 wireguard-tools
 wlay-git
 wl-clipboard
@@ -244,7 +252,6 @@ xdg-user-dirs
 xf86-video-amdgpu
 xfsprogs
 xreader
-yay
 youtube-dl
 ytop
 yubico-pam

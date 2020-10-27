@@ -32,6 +32,7 @@ exec dex -a
 
 exec mako
 exec udiskie --tray --appindicator
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec spotify >/dev/null 2>&1
 exec $term -e tmux a -d
 exec $web
