@@ -10,6 +10,7 @@
   ],
   "modules-center": ["sway/window"],
   "modules-right": [
+    "custom/weather",
     "custom/updates",
     "custom/load",
     "pulseaudio",
@@ -43,6 +44,9 @@
     "escape": true,
     "on-click": "swaymsg '[class=\"Spotify\"] focus'",
     "on-click-right": "playerctl play-pause",
+    "on-click-middle": "gyrc",
+    "on-scroll-up": "curl http://192.168.1.156/YamahaExtendedControl/v1/main/setVolume?volume=up",
+    "on-scroll-down": "curl http://192.168.1.156/YamahaExtendedControl/v1/main/setVolume?volume=down",
     "tooltip": false
   },
   "clock": {
@@ -76,5 +80,13 @@
     "format": "🏠 ",
     "on-click": "xdg-open ~",
     "tooltip": false
-  }
+  },
+  "custom/weather": {
+    "format": "{}",
+    "tooltip": true,
+    "interval": 3600,
+    "exec": "waybar-wttr.py",
+    "return-type": "json",
+    "on-click": "xdg-open 'https://www.google.com/search?q=weather'",
+  },
 }
