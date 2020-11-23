@@ -1,5 +1,5 @@
 set $term kitty
-set $web chromium
+set $web firefox
 set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
 set $editor emacsclient -c -a=
 set $locker swaylock -c 000000
@@ -23,7 +23,7 @@ input * {
 }
 
 exec swayidle -w \
-         timeout 900 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
+         timeout 1800 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
               resume 'swaymsg "output * dpms on"' \
         before-sleep 'swaylock -c 000000'
 
@@ -34,7 +34,7 @@ exec mako
 exec udiskie --tray --appindicator
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec spotify >/dev/null 2>&1
-exec $term -e tmux a -d
+exec $term -e ~/bin/continuetmux
 exec $web
 
 workspace 1 output HDMI-A-1
@@ -58,10 +58,16 @@ bar swaybar_command waybar
 
 # per window config
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
-for_window [app_id="pavucontrol"] floating enable
-for_window [app_id="xfce4-appfinder"] floating enable
+for_window [app_id="pavucontrol"]           floating enable
+for_window [app_id="xfce4-appfinder"]       floating enable
 for_window [app_id="exo-desktop-item-edit"] floating enable
-for_window [app_id="zenity"] floating enable
+for_window [app_id="zenity"]                floating enable
+for_window [app_id="org.gnome.Weather"]     floating enable
+for_window [app_id="gyrc"]                  floating enable
+for_window [app_id="qalculate-gtk"]         floating enable
+assign [class="Ferdi"]   workspace 4
+assign [class="Signal"]  workspace 4
+assign [class="Spotify"] workspace 4
 
 #
 # Keybindings - basics:
@@ -145,6 +151,8 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 
 bindsym $mod+Shift+Ctrl+l exec $locker
 bindsym $mod+Shift+Ctrl+s exec systemctl suspend
+bindsym $mod+Print exec grim ~/screen.png
+bindsym $mod+Shift+Print exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'))" ~/window.png
 
 set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
