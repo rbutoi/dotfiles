@@ -1,3 +1,4 @@
+2048-rs
 advcp
 adwaita-qt
 alsa-utils
@@ -17,6 +18,7 @@ bash
 bash-completion
 bashmount
 bat
+bazarr
 bdf-unifont
 bemenu-git
 blueman
@@ -24,6 +26,7 @@ bluez
 bluez-utils
 bmon
 breezy
+brother-hll2370dw
 bzip2
 cargo-bloat
 cargo-edit
@@ -41,6 +44,7 @@ coreutils
 cronie
 cryptsetup
 csfml
+cups
 darkstat
 device-mapper
 devtools
@@ -58,6 +62,7 @@ etc-update
 exa
 fd
 ferdi-bin
+filebot47
 file-roller
 filesystem
 firefox
@@ -87,6 +92,7 @@ grive
 gsimplecal
 gtk-theme-elementary
 handlr-bin
+hddtemp
 hdparm
 htop
 hunspell
@@ -103,10 +109,12 @@ iproute2
 iputils
 isync
 j4-dmenu-desktop
+jackett
 jfsutils
 jq
 keychain
 kitty
+l3afpad
 lastpass-cli
 less
 libappindicator-gtk3
@@ -153,9 +161,11 @@ noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 noto-fonts-extra
+nss-mdns
 ntfs-3g
 ntp
 numix-gtk-theme
+onedrive-git
 openssh
 pacman-cleanup-hook
 pacman-contrib
@@ -181,12 +191,20 @@ psmisc
 pulseaudio
 pulseaudio-alsa
 pv
+python-attrdict
+python-bottle
 python-google-api-python-client
+python-matplotlib
+python-netifaces
 python-oauth2client
 python-pip
+python-plexapi
+python-tabulate
 python-tqdm
+python-zeroconf
 qalculate-gtk
 qbittorrent
+radarr-nightly
 reflector
 reiserfsprogs
 ripgrep
@@ -206,6 +224,7 @@ signal-desktop
 slurp
 s-nail
 solaar
+sonarr-phantom
 speedtest-cli
 spotify
 starship
@@ -216,6 +235,7 @@ swayidle
 swaylock
 sysbench
 sysfsutils
+system-config-printer
 systemd
 systemd-swap
 systemd-sysvcompat
@@ -242,18 +262,19 @@ vlc
 vnstat
 wasm-pack
 waybar-git
+wget
 wireguard-tools
 wlay-git
 wl-clipboard
 wmctrl
 wofi-hg
+wttr
 xclip
 xdg-user-dirs
 xf86-video-amdgpu
 xfsprogs
 xreader
 youtube-dl
-ytop
 yubico-pam
 yubikey-manager-qt
 zenity

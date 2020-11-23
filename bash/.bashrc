@@ -167,7 +167,7 @@ fi
 # needs to be after PATH setting
 if command -v exa >/dev/null 2>&1; then
   alias l='exa'
-  alias ll='l -la'
+  alias ll='exa -aagl'
 else
   alias l='ls -F'
   alias ll='l -lA -h'
