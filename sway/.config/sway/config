@@ -154,13 +154,14 @@ bindsym $mod+Shift+Ctrl+s exec systemctl suspend
 bindsym $mod+Print exec grim ~/screen.png
 bindsym $mod+Shift+Print exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'))" ~/window.png
 
-set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
+set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (w) windows, (Shift+s) shutdown
 mode "$mode_system" {
     bindsym l exec swaylock                 , mode "default"
     bindsym e exec swaymsg exit             , mode "default"
     bindsym s exec systemctl suspend        , mode "default"
     bindsym r exec systemctl reboot         , mode "default"
-    bindsym Shift+s exec systemctl poweroff , mode "default"  
+    bindsym w exec systemctl reboot --boot-loader-entry=auto-windows, mode "default"
+    bindsym Shift+s exec systemctl poweroff , mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"

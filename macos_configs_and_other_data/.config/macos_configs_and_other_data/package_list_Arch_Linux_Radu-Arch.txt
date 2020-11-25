@@ -19,6 +19,7 @@ bash-completion
 bashmount
 bat
 bazarr
+bcm20702a1-firmware
 bdf-unifont
 bemenu-git
 blueman
@@ -39,7 +40,6 @@ chromium-widevine
 clamav
 clang
 cmake
-code
 coreutils
 cronie
 cryptsetup
@@ -55,11 +55,13 @@ discord
 dmidecode
 dust
 e2fsprogs
+edk2-shell
 efibootmgr
 emacs
 eog
 etc-update
 exa
+fbset
 fd
 ferdi-bin
 filebot47
@@ -83,6 +85,7 @@ gnome-disk-utility
 gnome-logs
 gnome-system-monitor
 gnome-themes-extra
+gnu-efi
 gnu-free-fonts
 go
 gotop-bin
@@ -138,6 +141,7 @@ mako
 man-db
 man-pages
 mdadm
+memtest86-efi
 mesa-demos
 mesa-vdpau
 mlocate
@@ -204,6 +208,7 @@ python-tqdm
 python-zeroconf
 qalculate-gtk
 qbittorrent
+r8168
 radarr-nightly
 reflector
 reiserfsprogs
@@ -237,9 +242,11 @@ sysbench
 sysfsutils
 system-config-printer
 systemd
+systemd-boot-pacman-hook
 systemd-swap
 systemd-sysvcompat
 tar
+terminus-font
 tesseract-data-eng
 thelounge
 tmux
@@ -253,6 +260,7 @@ ttf-roboto
 ttf-ubuntu-font-family
 udiskie
 unzip
+upd72020x-fw
 usbutils
 util-linux
 valgrind
