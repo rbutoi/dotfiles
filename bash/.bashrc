@@ -117,9 +117,11 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
+export PAGER=less
 m() {
   [ -n "$@" ] && bat "$@" || bat -
 }
+alias m=bat
 alias M='$(history -p \!\!) | bat -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
@@ -135,7 +137,7 @@ alias dv="dirs -v"
 alias s='sudo'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
-alias tm='tmux a -d || tmux'
+alias tm='tmux new -A -s auto'
 alias xa='xargs'
 
 find_pi() {

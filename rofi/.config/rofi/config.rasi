@@ -1,0 +1,6 @@
+configuration {
+	modi: "combi";
+	font: "sans 13";
+	combi-modi: "window,drun,run";
+	theme: "glue_pro_blue";
+}

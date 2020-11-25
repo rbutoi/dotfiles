@@ -1,15 +1,15 @@
 set $term kitty
 set $web firefox
-set $menu "rofi -modi combi,calc -combi-modi window#drun#run -show combi"
-set $editor emacsclient -c -a=
-set $locker swaylock -c 000000
+set $menu "rofi -modi combi -combi-modi drun#run -show combi"
+set $editor emacsclient -c
+set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
 
 output HDMI-A-1 {
-    background "~/Pictures/macosx-desert/Mojave_Day.jpg" fill
+    background "~/Pictures/mac/mojave/Mojave_Day.jpg" fill
     position 0 0
 }
 output DVI-D-1 {
-    background "~/Pictures/macosx-desert/Mojave_Night.jpg" fill
+    background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
 }
 
 input * {
@@ -19,23 +19,28 @@ input * {
     repeat_rate 30
 # mouse
     accel_profile flat
-    pointer_accel 0.1
+    pointer_accel 0.35
 }
 
-exec swayidle -w \
-         timeout 1800 '[ $(playerctl metadata -f {{status}}) == Playing ] || swaymsg "output * dpms off"' \
-              resume 'swaymsg "output * dpms on"' \
-        before-sleep 'swaylock -c 000000'
+# blank screen after 30 minutes, lock after 2 hours
+exec systemd-cat -t swayidle swayidle -w \
+    timeout 1800 '[[ "$(playerctl metadata -f {{status}})" == Playing ]] || swaymsg "output * dpms off"' \
+        resume 'swaymsg "output * dpms on"' \
+    timeout 7200 "$locker" \
+    before-sleep "$locker"
 
-# startup
-exec dex -a
+exec systemd-cat -t dex dex -a                            # startup applications
+exec systemd-cat -t mako mako                             # notifications
+exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
+exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O*
+exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
+exec systemd-cat -t nm-applet nm-applet --indicator       # network status
 
-exec mako
-exec udiskie --tray --appindicator
-exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec spotify >/dev/null 2>&1
-exec $term -e ~/bin/continuetmux
+exec $term ~/bin/continuetmux
+exec $editor
 exec $web
+exec spotify
 
 workspace 1 output HDMI-A-1
 workspace 3 output HDMI-A-1
@@ -65,9 +70,16 @@ for_window [app_id="zenity"]                floating enable
 for_window [app_id="org.gnome.Weather"]     floating enable
 for_window [app_id="gyrc"]                  floating enable
 for_window [app_id="qalculate-gtk"]         floating enable
-assign [class="Ferdi"]   workspace 4
-assign [class="Signal"]  workspace 4
-assign [class="Spotify"] workspace 4
+for_window [class="1Password"]              floating enable
+for_window [class="PCSX2"]                  floating enable
+for_window [app_id="blueman-manager"]       floating enable
+for_window [class="steam_proton"]           floating enable
+for_window [class="steam_app_.*"]           floating enable
+for_window [title="Firefox — Sharing Indicator"] floating enable
+assign [class="hl2_linux"] workspace 3
+assign [class="Ferdi"]     workspace 4
+assign [class="Signal"]    workspace 4
+assign [class="Spotify"]   workspace 4
 
 #
 # Keybindings - basics:
@@ -80,7 +92,7 @@ set $up k
 set $right l
 
 bindsym $mod+Ctrl+Return exec $term
-bindsym $mod+Shift+Return exec $term -e ~/bin/continuetmux
+bindsym $mod+Shift+Return exec $term ~/bin/continuetmux
 bindsym $mod+c kill
 bindsym $mod+space exec $menu
 floating_modifier $mod normal
@@ -149,38 +161,22 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 # Radu-Arch keys:
 #
 
-bindsym $mod+Shift+Ctrl+l exec $locker
-bindsym $mod+Shift+Ctrl+s exec systemctl suspend
-bindsym $mod+Print exec grim ~/screen.png
-bindsym $mod+Shift+Print exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'))" ~/window.png
-
-set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (w) windows, (Shift+s) shutdown
-mode "$mode_system" {
-    bindsym l exec swaylock                 , mode "default"
-    bindsym e exec swaymsg exit             , mode "default"
-    bindsym s exec systemctl suspend        , mode "default"
-    bindsym r exec systemctl reboot         , mode "default"
-    bindsym w exec systemctl reboot --boot-loader-entry=auto-windows, mode "default"
-    bindsym Shift+s exec systemctl poweroff , mode "default"
-
-    # back to normal: Enter or Escape
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-bindsym $mod+Pause mode "$mode_system"
-
-bindsym $mod+Shift+e exec $editor
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume exec ~/bin/inc_pa_vol.sh # to prevent going over 100
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym Pause                exec ~/bin/inc_pa_vol.sh # to prevent going over 100
-bindsym Scroll_Lock          exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioStop exec playerctl stop
-bindsym XF86Calculator exec "rofi -show calc"
+bindsym $mod+Pause           exec wlogout
+bindsym Shift+Ctrl+l         exec $locker
+bindsym $mod+Shift+Ctrl+l    exec sleep 0.5s && killall -USR1 swayidle
+bindsym $mod+Print           exec grim ~/screen.png
+bindsym $mod+Shift+Print     exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | \"\(.x),\(.y) \(.width)x\(.height)\"'))" ~/window.png
+bindsym $mod+Shift+e         exec $editor
+bindsym XF86AudioMute        exec pamixer --toggle-mute
+bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
+bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
+bindsym Pause                exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
+bindsym Scroll_Lock          exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
+bindsym XF86AudioPlay        exec playerctl play-pause
+bindsym XF86AudioPrev        exec playerctl previous
+bindsym XF86AudioNext        exec playerctl next
+bindsym XF86AudioStop        exec playerctl stop
+bindsym XF86Calculator       exec "rofi -show calc"
 
 # system configs
 include /etc/sway/config.d/*

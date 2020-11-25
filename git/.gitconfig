@@ -1,3 +1,7 @@
+# personal config
+[include]
+	path = ~/.gitconfig.local
+
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 [icdiff]
@@ -6,7 +10,5 @@
 	spellcheck = false
 [pull]
 	rebase = true
-
-# personal config
-[include]
-	path = ~/.gitconfig.local
+[credential]
+	helper = store

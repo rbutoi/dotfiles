@@ -2,8 +2,4 @@
 
 command -v tmx2 >/dev/null && TMUX=tmx2 || TMUX=tmux
 
-if $TMUX has-session 2>/dev/null; then
-  $TMUX attach -d
-else
-  $TMUX new-session
-fi
+$TMUX new-session -ADs auto

@@ -17,3 +17,4 @@
 (package! ivy-xref)
 (package! eglot   :disable WORK)
 (package! project :disable WORK)
+(package! logview)

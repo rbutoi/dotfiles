@@ -358,13 +358,16 @@ or are no longer readable will be killed."
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
 
-   notmuch-refresh-timer ; Refresh notmuch every five minutes.
-   (run-with-idle-timer
-    (* 5 60) t (lambda () (ignore-errors (notmuch-refresh-this-buffer))))
+   notmuch-refresh-timer ; Poll & refresh notmuch every five minutes.
+   (run-with-timer
+    10 (* 5 60) (lambda ()
+                  (notmuch-poll)
+                  (ignore-errors (notmuch-refresh-this-buffer))))
 
    notmuch-unread-search-term
    (concat "is:unread and is:inbox"
-           (if WORK " and is:work" "")))
+           (if WORK " and is:work" ""))
+   )
   (notmuch-unread-mode)
 
   ;; Make search coloured like tree (why are they different?)
@@ -446,7 +449,6 @@ or are no longer readable will be killed."
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
-    (hl-fill-column-mode -1)
     (visual-fill-column-mode +1))
   (add-to-list '+word-wrap-text-modes 'notmuch-message-mode))
 
@@ -526,7 +528,8 @@ shell exits, the buffer is killed."
 (add-hook! 'after-make-frame-functions
   (unless (display-graphic-p)
     ;; Take advantage of iterm2's CSI u support (https://gitlab.com/gnachman/iterm2/-/issues/8382).
-    (xterm--init-modify-other-keys)
+    (when (fboundp 'xterm--init-modify-other-keys)
+      (xterm--init-modify-other-keys))
     ;; Courtesy https://emacs.stackexchange.com/a/13957, modified per
     ;; https://gitlab.com/gnachman/iterm2/-/issues/8382#note_365264207
     (defun character-apply-modifiers (c &rest modifiers)

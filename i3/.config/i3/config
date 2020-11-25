@@ -20,11 +20,11 @@ exec --no-startup-id xset r rate 250 25
 exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
 
 # startup
-exec --no-startup-id dex -ae i3
-exec --no-startup-id $editor
-exec --no-startup-id $term ~/bin/my_tmux.sh
-exec --no-startup-id google-chrome
-exec --no-startup-id ~/bin/firefox
+#exec --no-startup-id dex -ae i3
+#exec --no-startup-id $editor
+exec --no-startup-id $term ~/bin/continuetmux
+#exec --no-startup-id google-chrome
+#exec --no-startup-id ~/bin/firefox
 
 workspace_auto_back_and_forth yes
 mouse_warping output
@@ -63,8 +63,8 @@ set $down j
 set $up k
 set $right l
 
-bindsym $mod+Return exec $term
-bindsym $mod+Shift+Return exec $term ~/bin/my_tmux.sh
+bindsym $mod+Ctrl+Return exec $term
+bindsym $mod+Shift+Return exec $term ~/bin/continuetmux
 bindsym $mod+c kill
 bindsym $mod+space exec $menu
 floating_modifier $mod

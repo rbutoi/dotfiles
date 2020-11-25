@@ -2,3 +2,5 @@
 $if Bash
   Space: magic-space
 $endif
+
+set enable-bracketed-paste on
