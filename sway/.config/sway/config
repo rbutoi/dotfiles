@@ -1,5 +1,5 @@
 set $term kitty
-set $web firefox
+set $web google-chrome-dev
 set $menu "rofi -modi combi -combi-modi drun#run -show combi"
 set $editor emacsclient -c
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
@@ -41,6 +41,7 @@ exec $term ~/bin/continuetmux
 exec $editor
 exec $web
 exec spotify
+exec 1password
 
 workspace 1 output HDMI-A-1
 workspace 3 output HDMI-A-1
@@ -77,7 +78,6 @@ for_window [class="steam_proton"]           floating enable
 for_window [class="steam_app_.*"]           floating enable
 for_window [title="Firefox — Sharing Indicator"] floating enable
 assign [class="hl2_linux"] workspace 3
-assign [class="Ferdi"]     workspace 4
 assign [class="Signal"]    workspace 4
 assign [class="Spotify"]   workspace 4
 
