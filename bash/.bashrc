@@ -78,7 +78,7 @@ escape() {
 }
 
 unescape() {
-  python3 -c "import sys; print(sys.stdin.read().decode('unicode_escape'))"
+  python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"
 }
 
 pip3_upgrade() {
