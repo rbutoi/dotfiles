@@ -38,6 +38,7 @@ cargo-expand
 cargo-watch
 celluloid
 cheese
+chiaki
 chromium-widevine
 clamav
 clang
@@ -58,7 +59,7 @@ diffutils
 discord
 dmidecode
 docker
-dolphin-emu
+dolphin-emu-git
 dust
 e2fsprogs
 edk2-shell
@@ -115,7 +116,7 @@ i3lock
 i3status
 icdiff
 iftop
-imgurbash2
+imgurbash2-git
 imv
 inetutils
 inotify-tools
@@ -132,7 +133,6 @@ jfsutils
 joycond-git
 jq
 jre11-openjdk
-keep-cli-git
 keychain
 kitty
 kodi
@@ -160,7 +160,6 @@ lxappearance
 mako-git
 man-db
 man-pages
-mcedit-unified
 mdadm
 mediainfo
 memtest86-efi
@@ -185,7 +184,6 @@ netctl
 networkmanager
 network-manager-applet
 nfs-utils
-nginx-mainline
 nload
 nmap
 nm-connection-editor
@@ -217,7 +215,6 @@ peco
 perl
 perl-file-mimeinfo
 pigz
-pikaur-git
 playerctl
 plex-media-server
 plymouth
@@ -240,8 +237,11 @@ python-keyrings-alt
 python-matplotlib
 python-netifaces
 python-oauth2client
+python-pandas
 python-pip
 python-plexapi
+python-plotly
+python-pycryptodome
 python-pyfiglet
 python-pyinquirer
 python-tabulate
@@ -282,6 +282,9 @@ solaar
 sonarr-phantom
 speedtest-cli
 spotify
+spotifyd
+spotify-qt
+spotify-tui
 starship
 steam
 stow

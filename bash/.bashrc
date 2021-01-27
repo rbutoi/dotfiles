@@ -118,11 +118,8 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 export PAGER=less
-m() {
-  [ -n "$@" ] && bat "$@" || bat -
-}
-alias m=bat
-alias M='$(history -p \!\!) | bat -'
+alias m=less
+alias M='$(history -p \!\!) | less -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"

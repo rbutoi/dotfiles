@@ -77,6 +77,7 @@ for_window [app_id="blueman-manager"]       floating enable
 for_window [class="steam_proton"]           floating enable
 for_window [class="steam_app_.*"]           floating enable
 for_window [title="Firefox — Sharing Indicator"] floating enable
+for_window [title="Save File"]              floating enable
 assign [class="hl2_linux"] workspace 3
 assign [class="Signal"]    workspace 4
 assign [class="Spotify"]   workspace 4
