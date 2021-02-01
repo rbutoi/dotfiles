@@ -10,6 +10,7 @@ output HDMI-A-1 {
 }
 output DVI-D-1 {
     background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
+    transform 90
 }
 
 input * {
@@ -60,7 +61,7 @@ hide_edge_borders --i3 both
 client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 #            only non-default, bright to indicate active -^
 
-bar swaybar_command waybar
+exec systemctl --user restart waybar
 
 # per window config
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
@@ -162,17 +163,20 @@ bindsym $mod+Ctrl+$right resize grow width 40px
 # Radu-Arch keys:
 #
 
-bindsym $mod+Pause           exec wlogout
+bindsym $mod+Ctrl+Pause      exec wlogout
 bindsym Shift+Ctrl+l         exec $locker
 bindsym $mod+Shift+Ctrl+l    exec sleep 0.5s && killall -USR1 swayidle
-bindsym $mod+Print           exec grim ~/screen.png
-bindsym $mod+Shift+Print     exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | \"\(.x),\(.y) \(.width)x\(.height)\"'))" ~/window.png
+bindsym Print                exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
+bindsym $mod+Print           exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
+#bindsym $mod+Ctrl+Print      exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | \"\(.x),\(.y) \(.width)x\(.height)\"'))" /tmp/window.png  && notify-send 'saved /tmp/window.png'
 bindsym $mod+Shift+e         exec $editor
 bindsym XF86AudioMute        exec pamixer --toggle-mute
 bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym Pause                exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym Scroll_Lock          exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
+bindsym $mod+Pause           exec python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=up');   s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob
+bindsym $mod+Scroll_Lock     exec python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=down'); s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob
 bindsym XF86AudioPlay        exec playerctl play-pause
 bindsym XF86AudioPrev        exec playerctl previous
 bindsym XF86AudioNext        exec playerctl next

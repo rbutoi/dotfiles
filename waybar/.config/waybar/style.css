@@ -22,7 +22,7 @@
     border-radius: 0;
     font-family: Ubuntu, sans-serif;
     font-size: 13pt;
-    min-height: 24px;
+    min-height: 32px;
 }
 
 window#waybar {
@@ -36,6 +36,13 @@ window#waybar {
 
 /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 #workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: #657b83;
+    border-bottom: 3px solid transparent;
+}
+
+#taskbar button {
     padding: 0 5px;
     background-color: transparent;
     color: #657b83;
@@ -56,9 +63,9 @@ window#waybar {
     border-bottom: 1px solid #dc322f;
 }
 
-#clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio,
-#custom-updates, #custom-load, #custom-spotify, #tray, #mode, #custom-power,
-#custom-apps, #idle_inhibitor {
+#clock, #battery, #cpu, #memory, #temperature, #backlight, #network,
+#pulseaudio, #custom-updates, #custom-load, #tray, #mode, #custom-power,
+#custom-apps, #custom-weather, #idle_inhibitor {
     padding: 0 6px;
     margin: 0 2px;
     color: #657b83;

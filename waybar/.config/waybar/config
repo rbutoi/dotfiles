@@ -1,5 +1,6 @@
 // -*- mode: json; -*-
-{
+[{
+  "output": "HDMI-A-1",
   "position": "bottom",
   "modules-left": [
     "custom/apps",
@@ -8,7 +9,7 @@
     "sway/mode",
     "custom/spotify"
   ],
-  "modules-center": ["sway/window"],
+  "modules-center": ["wlr/taskbar"],
   "modules-right": [
     "custom/weather",
     "custom/updates",
@@ -19,36 +20,41 @@
     "clock",
     "custom/power"
   ],
-  "sway/workspaces": {
-    "format": "{name}",
-    "disable-scroll": false
-  },
   "sway/window": {
     "max-length": 200,
     "tooltip": false
+  },
+  "wlr/taskbar": {
+    "format": " {icon}{title:.17} ",
+    "max-length": 200,
+    "icon-size": 32,
+    "on-click": "activate",
+    "on-click-middle": "close"
   },
   "custom/updates": {
     "exec": "checkupdates | wc -l",
     "format": "🎁 {}",
     "interval": 3600,
-    "on-click": "(tmux neww 'pikaur -Syu && topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'pikaur -Syu && topgrade'; pkill -RTMIN+8 waybar",
+    "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
     "tooltip": false,
     "signal": 8
   },
   "custom/load": {
     "exec": "cut -f1-3 -d' ' /proc/loadavg",
-    "on-click": "(tmux neww glances && swaymsg '[app_id=\"kitty\"] focus') || kitty glances",
-    "interval": 60
+    "on-click": "(tmux neww htop && swaymsg '[app_id=\"kitty\"] focus') || kitty htop",
+    "interval": 30
   },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
-    "on-click": "swaymsg '[class=\"Spotify\"] focus'",
+    "format": "🎵{}",
+    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
     "on-click-right": "playerctl play-pause",
     "on-click-middle": "gyrc",
-    "on-scroll-up":   "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=up');   s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
-    "on-scroll-down": "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=down'); s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
-    "tooltip": false
+    "on-scroll-up":   "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main'; requests.get(f'{api}/setVolume?volume=up');   s = requests.get(f'{api}/getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
+    "on-scroll-down": "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main'; requests.get(f'{api}/setVolume?volume=down'); s = requests.get(f'{api}/getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
+    "tooltip": true,
+    "max-length": 25
   },
   "clock": {
     "format": "{:%a %d %b %H:%M}",
@@ -56,7 +62,7 @@
     "tooltip": false
   },
   "pulseaudio": {
-    "format": "🔉 {volume}%",
+    "format": "🔉{volume}%",
     "format-muted": "🔇 0%",
     "scroll-step": 5,
     "on-click": "pavucontrol",
@@ -66,7 +72,7 @@
     "tooltip": false
   },
   "tray": {
-    "icon-size": 24
+    "icon-size": 28
   },
   "custom/power": {
     "format": "⏻",
@@ -74,7 +80,7 @@
     "tooltip": false
   },
   "custom/apps": {
-    "format": "Applications",
+    "format": "Apps",
     "on-click": "sgtk-menu --bottom --favourites -s 32 -d 19 -y 30",
     "tooltip": false
   },
@@ -97,4 +103,18 @@
     "on-click-right": "clipman clear --notify --tool rofi",
     "on-click-right": "clipman clear --notify --all",
   }
-}
+}, {
+  "output": "DVI-D-1",
+  "position": "bottom",
+  "modules-left": [
+    "sway/workspaces",
+  ],
+  "modules-center": ["wlr/taskbar"],
+  "wlr/taskbar": {
+    "format": " {icon}{title:.17} ",
+    "max-length": 200,
+    "icon-size": 32,
+    "on-click": "activate",
+    "on-click-middle": "close"
+  },
+}]
