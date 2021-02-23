@@ -31,7 +31,6 @@
        fold                ; (nigh) universal code folding
        (format             ; automated prettiness
         (:if (not WORK) +onsave)) ; breaks work setup
-       word-wrap           ; soft wrapping with language-aware indent
 
        :emacs
        (dired +icons)      ; making dired pretty [functional]

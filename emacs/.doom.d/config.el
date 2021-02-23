@@ -8,9 +8,7 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font (if (string-match-p "penguin" (system-name))
-               (font-spec :family "DejaVu Sans Mono" :size 14)
-             (font-spec :family "Fira Code" :size 14))
+ doom-font  (font-spec :family "JetBrains Mono" :size 14)
  doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
@@ -127,15 +125,15 @@
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
-      [remap +word-wrap-mode]          (defrepeater #'+word-wrap-mode)
       [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
+
+;;;; Word wrap
+(map! "C-c C-w" 'toggle-truncate-lines)
 
 ;;; Editing
 
 ;;;; Movement
 (setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
-(map! "M-p" 'backward-paragraph
-      "M-n" 'forward-paragraph)
 
 (defun case-sensitive-query-replace ()
   (interactive)
@@ -363,12 +361,7 @@ or are no longer readable will be killed."
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
 
-   notmuch-refresh-timer ; Poll & refresh notmuch every five minutes.
-   (run-with-timer
-    10 (* 5 60) (lambda ()
-                  ;; actually, this blocks emacs, let cronjob handle
-                  ;; (notmuch-poll)
-                  (ignore-errors (notmuch-refresh-this-buffer))))
+   notmuch-refresh-timer (run-with-timer 0 (* 5 60) 'notmuch-refresh-this-buffer)
 
    notmuch-unread-search-term
    (concat "is:unread and is:inbox"
@@ -460,8 +453,7 @@ or are no longer readable will be killed."
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
-    (visual-fill-column-mode +1))
-  (add-to-list '+word-wrap-text-modes 'notmuch-message-mode))
+    (visual-fill-column-mode +1)))
 
 ;;;; Circe
 (after! circe
@@ -527,6 +519,13 @@ shell exits, the buffer is killed."
 (add-hook 'after-make-frame-functions 'themed-if-window-system)
 (add-hook! 'focus-in-hook 'themed-if-window-system-this-frame)
 (themed-if-window-system-this-frame)
+
+(map! "C-M-]" 'query-replace-regexp)
+(map! "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
+
+;; chromeos ssh too slow for scrolling apparently, override Doom to emacs default
+(when WORK
+  (setq scroll-conservatively 0))
 
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
