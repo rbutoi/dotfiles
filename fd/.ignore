@@ -5,8 +5,8 @@
 .config/google-chrome/**
 .git/**
 .glide/**
-.local/**
 .mail/**
 .node-gyp/**
+.nuget
 .rustup/**
 go/**

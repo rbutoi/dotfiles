@@ -143,7 +143,10 @@ find_pi() {
 
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-# sourced in .[bash_]profile
+if [ -f /usr/share/fzf/completion.bash ]; then
+  source /usr/share/fzf/completion.bash
+  source /usr/share/fzf/key-bindings.bash
+fi
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
 export FZF_DEFAULT_COMMAND='fd --hidden'
 alias fzfp="fd -tf | fzf --preview 'bat --style=numbers --color=always {}'"

@@ -35,6 +35,7 @@ bzip2
 cargo-bloat
 cargo-edit
 cargo-expand
+cargo-update
 cargo-watch
 celluloid
 cheese
@@ -60,6 +61,7 @@ discord
 dmidecode
 docker
 dolphin-emu-git
+dotnet-runtime
 dust
 e2fsprogs
 edk2-shell
@@ -70,6 +72,7 @@ eog
 etc-update
 exa
 exfat-utils
+expac
 fbset
 fd
 file-roller
@@ -80,6 +83,8 @@ fontforge
 font-manager
 fwupd
 fzf
+gamemode
+gammastep
 gcc-libs
 gdb
 gimp
@@ -135,7 +140,8 @@ jq
 jre11-openjdk
 keychain
 kitty
-kodi
+kodi-gbm
+kodi-x11
 l3afpad
 lastpass-cli
 less
@@ -155,6 +161,7 @@ lostfiles
 lsb-release
 lshw
 lsof
+lutris
 lvm2
 lxappearance
 mako-git
@@ -215,6 +222,8 @@ peco
 perl
 perl-file-mimeinfo
 pigz
+pipewire-alsa
+pipewire-pulse
 playerctl
 plex-media-server
 plymouth
@@ -223,9 +232,9 @@ powder-player-bin
 prettier
 procps-ng
 protobuf
+proton-ge-custom-bin
 protontricks
 psmisc
-pulseaudio
 pulseaudio-alsa
 pv
 python-argparse
@@ -238,6 +247,7 @@ python-matplotlib
 python-netifaces
 python-oauth2client
 python-pandas
+python-pathvalidate
 python-pip
 python-plexapi
 python-plotly
@@ -261,6 +271,7 @@ rmlint
 rofi-1pass
 rofi-calc
 rofi-lbonn-wayland-git
+rpcs3-git
 rsync
 ruby
 rust-analyzer
@@ -316,6 +327,7 @@ ttf-monaco
 ttf-roboto
 ttf-ubuntu-font-family
 udiskie
+unrar
 unzip
 upd72020x-fw
 usbutils
