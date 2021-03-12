@@ -8,7 +8,9 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "Fira Code" :size 14)
+ doom-font (if (string-match-p "penguin" (system-name))
+               (font-spec :family "DejaVu Sans Mono" :size 14)
+             (font-spec :family "Fira Code" :size 14))
  doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
@@ -341,13 +343,13 @@ or are no longer readable will be killed."
       (:key "a" :name "all"       :query "*"))
     (if WORK                                 ; limit time range for performance
         '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
-          (:key "i" :name "work inbox"         :query "date:2w.. and is:inbox and is:work")
+          (:key "i" :name "work inbox"         :query "date:1w.. and is:inbox and is:work")
           (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and not is:work")
-          (:key "u" :name "work unread"        :query "date:2w.. and is:inbox and is:unread and is:work")
+          (:key "u" :name "work unread"        :query "date:1w.. and is:inbox and is:unread and is:work")
           (:key "U" :name "personal unread"    :query "date:2w.. and is:inbox and is:unread and not is:work")
-          (:key "m" :name "work important"     :query "date:2w.. and is:inbox and is:important and is:work")
+          (:key "m" :name "work important"     :query "date:1w.. and is:inbox and is:important and is:work")
           (:key "M" :name "personal important" :query "date:2w.. and is:inbox and is:important and not is:work")
-          (:key "b" :name "work broadcast"     :query "date:2w.. and is:broadcast and is:work")
+          (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work")
           (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
@@ -364,7 +366,8 @@ or are no longer readable will be killed."
    notmuch-refresh-timer ; Poll & refresh notmuch every five minutes.
    (run-with-timer
     10 (* 5 60) (lambda ()
-                  (notmuch-poll)
+                  ;; actually, this blocks emacs, let cronjob handle
+                  ;; (notmuch-poll)
                   (ignore-errors (notmuch-refresh-this-buffer))))
 
    notmuch-unread-search-term

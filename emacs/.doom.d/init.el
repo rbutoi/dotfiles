@@ -2,7 +2,7 @@
 
 (defconst WORK ; has custom coding setup
   ;; double-negate to extract truthy value
-  (not (not (string-match-p "google" (system-name)))))
+  (not (not (string-match-p "google\\|penguin" (system-name)))))
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 

@@ -35,7 +35,9 @@ fi
 set +H
 
 # prompt
-eval "$(starship init bash)"
+STARSHIP=starship
+[ -x ~/bin/starship ] && STARSHIP=~/bin/starship
+eval "$($STARSHIP init bash)"
 
 #######################################
 # User specific aliases and functions #
