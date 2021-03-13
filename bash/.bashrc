@@ -139,6 +139,7 @@ alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
 alias xa='xargs'
 alias ssha='ssh -t radu@192.168.1.2 tmux new -ADs auto'
+alias stow='stow -v' # nice to see the actions taken by default
 
 find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'

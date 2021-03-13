@@ -13,6 +13,7 @@
   "modules-right": [
     "custom/weather",
     "custom/updates",
+    "network",
     "custom/load",
     "pulseaudio",
     "battery",
@@ -41,6 +42,11 @@
     "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
     "tooltip": false,
     "signal": 8
+  },
+  "network": {
+    "format": "{bandwidthUpOctets} 🖧 {bandwidthDownOctets}",
+    "interval": 15,
+    "tooltip": false,
   },
   "custom/load": {
     "exec": "cut -f1 -d' ' /proc/loadavg",

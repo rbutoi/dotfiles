@@ -354,6 +354,7 @@ or are no longer readable will be killed."
           (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work")
           (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"))
       '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
+        (:key "I" :name "inbox"      :query "date:2w.. and is:inbox") ; redundant
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
         (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important")
         (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"))))
@@ -531,10 +532,6 @@ shell exits, the buffer is killed."
 (map! "C-M-]" 'query-replace-regexp)
 (map! "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
 
-;; chromeos ssh too slow for scrolling apparently, override Doom to emacs default
-(when WORK
-  (setq scroll-conservatively 0))
-
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
 
@@ -583,8 +580,12 @@ Return an event vector."
   (mac-pseudo-daemon-mode)
   (setq dired-use-ls-dired nil)
   (map! "s-m" 'suspend-frame))
-(if (string-match-p "penguin" (system-name)) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
-    (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu))
+(when (string-match-p "penguin" (system-name))
+  (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
+  ;; chromeos ssh too slow for scrolling apparently, override Doom to emacs default
+  (when WORK
+    (setq scroll-conservatively 0)))
+
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server
