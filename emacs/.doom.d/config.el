@@ -200,6 +200,10 @@ or are no longer readable will be killed."
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
+;; fix doom :/ backspace is really slow in notmuch reply buffers when writing
+;; replies inline
+(advice-remove 'delete-backward-char #'+default--delete-backward-char-a)
+
 ;;;; Dired
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
@@ -453,7 +457,12 @@ or are no longer readable will be killed."
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
-    (visual-fill-column-mode +1)))
+    (visual-fill-column-mode +1))
+
+  ;; Include date in "on <date> <sender> wrote..." reply text
+  (after! message
+    (setq message-citation-line-function 'message-insert-formatted-citation-line)
+    (setq message-citation-line-format "\n\nOn %a, %d %b %Y at %H:%M, %f wrote:\n")))
 
 ;;;; Circe
 (after! circe
