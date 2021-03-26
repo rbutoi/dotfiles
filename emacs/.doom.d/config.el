@@ -584,6 +584,8 @@ Return an event vector."
   (mac-pseudo-daemon-mode)
   (setq dired-use-ls-dired nil)
   (map! "s-m" 'suspend-frame))
+(if (string-match-p "penguin" (system-name)) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
+    (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server
