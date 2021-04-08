@@ -138,9 +138,14 @@ complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
 alias xa='xargs'
+alias ssha='ssh -t radu@192.168.1.2 tmux new -ADs auto'
 
 find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
+}
+
+fix_swaysock() {
+  export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock
 }
 
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -152,6 +157,16 @@ fi
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
 export FZF_DEFAULT_COMMAND='fd --hidden'
 alias fzfp="fd -tf | fzf --preview 'bat --style=numbers --color=always {}'"
+
+# https://the.exa.website
+# needs to be after PATH setting
+if command -v exa >/dev/null 2>&1; then
+  alias l='exa'
+  alias ll='exa -aagl'
+else
+  alias l='ls -F'
+  alias ll='l -lA -h'
+fi
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias
@@ -165,16 +180,6 @@ fi
 
 if [ -f ~/.bashrc_specific ]; then
   . ~/.bashrc_specific
-fi
-
-# https://the.exa.website
-# needs to be after PATH setting
-if command -v exa >/dev/null 2>&1; then
-  alias l='exa'
-  alias ll='exa -aagl'
-else
-  alias l='ls -F'
-  alias ll='l -lA -h'
 fi
 
 # to not be annoying if previous fails

@@ -403,9 +403,8 @@ or are no longer readable will be killed."
         "w"     (cmd! (notmuch-search-filter-by-tag "work"))
         "W"     (cmd! (notmuch-search-filter-by-tag "personal"))
         "u"     (cmd! (notmuch-search-filter-by-tag "unread"))
-        "m"     (cmd! (notmuch-search-filter-by-tag "important"))
-        "M"     (cmd! (notmuch-search-filter-by-not-tag "important"))
-        "M-m"   'notmuch-mua-new-mail ; to replace above
+        "i"     (cmd! (notmuch-search-filter-by-tag "important"))
+        "I"     (cmd! (notmuch-search-filter-by-not-tag "important"))
         "d"     (cmd! (notmuch-search-add-tag
                        '("+trash" "-inbox" "-unread"))
                       (notmuch-search-next-thread))

@@ -30,7 +30,7 @@ workspace_auto_back_and_forth yes
 mouse_warping output
 
 # display
-font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+font pango:Noto Sans 10
 default_border pixel 3
 hide_edge_borders both
 # class                 border  backgr. text    indicator child_border
@@ -38,6 +38,7 @@ client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
 #            only non-default, bright to indicate active -^
 
 bar {
+    font pango:Noto Sans 9
     status_command i3blocks
 
     position bottom

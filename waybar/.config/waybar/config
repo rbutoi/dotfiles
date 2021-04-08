@@ -1,13 +1,13 @@
 // -*- mode: json; -*-
 [{
-  "output": "HDMI-A-1",
+  "output": ["HDMI-A-1", "eDP-1", "DP-1"],
   "position": "bottom",
   "modules-left": [
     "custom/apps",
     "custom/home",
     "sway/workspaces",
     "sway/mode",
-    "custom/spotify"
+    "custom/spotify",
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
@@ -15,9 +15,11 @@
     "custom/updates",
     "custom/load",
     "pulseaudio",
+    "battery",
+    "backlight",
     "custom/clipman",
     "tray",
-    "clock",
+    "custom/clock",
     "custom/power"
   ],
   "sway/window": {
@@ -25,13 +27,14 @@
     "tooltip": false
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.17} ",
+    "format": " {icon}{title:.12} ",
     "max-length": 200,
     "icon-size": 32,
     "on-click": "activate",
     "on-click-middle": "close"
   },
   "custom/updates": {
+    "exec-if": "pacman --version",
     "exec": "checkupdates | wc -l",
     "format": "🎁 {}",
     "interval": 3600,
@@ -40,8 +43,9 @@
     "signal": 8
   },
   "custom/load": {
-    "exec": "cut -f1-3 -d' ' /proc/loadavg",
-    "on-click": "(tmux neww htop && swaymsg '[app_id=\"kitty\"] focus') || kitty htop",
+    "exec": "cut -f1 -d' ' /proc/loadavg",
+    "format": "{}",
+    "on-click": "kitty --start-as fullscreen htop",
     "interval": 30
   },
   "custom/spotify": {
@@ -51,18 +55,19 @@
     "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
     "on-click-right": "playerctl play-pause",
     "on-click-middle": "gyrc",
-    "on-scroll-up":   "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main'; requests.get(f'{api}/setVolume?volume=up');   s = requests.get(f'{api}/getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
-    "on-scroll-down": "python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main'; requests.get(f'{api}/setVolume?volume=down'); s = requests.get(f'{api}/getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob",
+    "on-scroll-up":   "yamaha_vol up",
+    "on-scroll-down": "yamaha_vol down",
     "tooltip": true,
-    "max-length": 25
+    "max-length": 45
   },
-  "clock": {
-    "format": "{:%a %d %b %H:%M}",
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
+    "exec": "date '+%a %d/%m %H:%M'",
+    "tooltip": false,
     "on-click": "gsimplecal",
-    "tooltip": false
+    "interval": 5
   },
   "pulseaudio": {
-    "format": "🔉{volume}%",
+    "format": "🔉{volume}",
     "format-muted": "🔇 0%",
     "scroll-step": 5,
     "on-click": "pavucontrol",
@@ -71,12 +76,27 @@
     "on-scroll-down": "pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob",
     "tooltip": false
   },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon}{capacity}",
+    "format-charging": "{icon}{capacity}+",
+    "format-icons": ["", "", "", "", ""],
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["", ""],
+    "on-scroll-up":   "brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob",
+    "on-scroll-down": "brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob",
+  },
   "tray": {
     "icon-size": 28
   },
   "custom/power": {
     "format": "⏻",
-    "on-click": "wlogout",
+    "on-click": "wlogout -b2",
     "tooltip": false
   },
   "custom/apps": {
@@ -90,8 +110,6 @@
     "tooltip": false
   },
   "custom/weather": {
-    "format": "{}",
-    "tooltip": true,
     "interval": 3600,
     "exec": "waybar-wttr.py",
     "return-type": "json",
@@ -104,17 +122,17 @@
     "on-click-right": "clipman clear --notify --all",
   }
 }, {
-  "output": "DVI-D-1",
+  "output": ["DVI-D-1", "DP-2"],
   "position": "bottom",
   "modules-left": [
     "sway/workspaces",
   ],
   "modules-center": ["wlr/taskbar"],
   "wlr/taskbar": {
-    "format": " {icon}{title:.17} ",
+    "format": " {icon}{title:.7} ",
     "max-length": 200,
     "icon-size": 32,
     "on-click": "activate",
     "on-click-middle": "close"
-  },
+  }
 }]

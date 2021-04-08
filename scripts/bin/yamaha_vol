@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+# change yamaha volume and show on wob
+
+import os, requests, sys
+
+api = 'http://192.168.1.17/YamahaExtendedControl/v1/main'
+sock = os.getenv('SWAYSOCK') + '.wob'
+
+if len(sys.argv) != 2:
+    print(f'usage: {sys.argv[0]} {{up|down}}', file=sys.stderr)
+    exit(1)
+
+requests.get(f'{api}/setVolume?volume={sys.argv[1]}')
+
+# re-jigger
+if os.system('pgrep -x wob >/dev/null') != 0:
+    os.system('swaymsg \'exec rm -f $SWAYSOCK.wob'
+              + ' && mkfifo $SWAYSOCK.wob'
+              + ' && tail -f $SWAYSOCK.wob 2>/dev/null'
+              + '  | wob -O* \'')
+
+s = requests.get(f'{api}/getStatus').json()
+with open(sock, 'w') as f:
+    f.write(str(int(100 * s['volume']/s['max_volume'])) + '\n')
+
+# also keep bedroom in sync, but use single.py/a lockfile to not slow this down
+os.system('single.py -c yamaha_match_bedroom.py &')

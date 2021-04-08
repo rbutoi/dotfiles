@@ -1,8 +1,8 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (defconst WORK ; has custom coding setup
-  ;; double-negate to extract truthy value
-  (not (not (string-match-p "google\\|penguin" (system-name)))))
+  ;; double-negate to extract truthy value                               for FQDN
+  (not (not (string-match-p "google\\|penguin" (shell-command-to-string "hostname -f")))))
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 

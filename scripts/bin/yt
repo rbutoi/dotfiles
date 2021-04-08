@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euox pipefail
+
+if [ $# -eq 0 ]; then
+  url="$(wl-paste)"
+elif [ $# -eq 1 ]; then
+  url="$1"
+else
+  exit 1
+fi
+
+tmpdir=/tmp/youtube
+mkdir -p $tmpdir
+cd $tmpdir
+
+vertical_res="$(swaymsg -t get_outputs | jq 'max_by(.current_mode.height).current_mode.height')"
+youtubedl_format="bestvideo[height<=${vertical_res}]+bestaudio/best[height<=${vertical_res}]"
+
+# check if stdin is a terminal, i.e. if interactive. if not fire up a new kitty
+# to show download progress
+if [ -t 0 ] ; then
+           youtube-dl "$url" -f $youtubedl_format --write-sub --write-auto-sub --sub-lang en --embed-subs --merge-output-format mkv
+else
+  kitty -- youtube-dl "$url" -f $youtubedl_format --write-sub --write-auto-sub --sub-lang en --embed-subs --merge-output-format mkv
+fi
+playerctl pause
+mpv --speed=1.5 "$(youtube-dl "$url" -f $youtubedl_format --merge-output-format mkv --get-filename)"
+

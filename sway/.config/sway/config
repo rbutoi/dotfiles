@@ -1,9 +1,26 @@
+# sway config
+
+#
+# basics
+#
 set $term kitty
-set $web google-chrome-dev
+set $web google-chrome --enable-features=UseOzonePlatform --ozone-platform=wayland
 set $menu "rofi -modi combi -combi-modi drun#run -show combi"
 set $editor emacsclient -c
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
 
+#
+# input/output
+#
+input * {
+# keyboard
+    xkb_options ctrl:nocaps
+    repeat_delay 250
+    repeat_rate 30
+# mouse
+    accel_profile flat
+    pointer_accel 0.35
+}
 output HDMI-A-1 {
     background "~/Pictures/mac/mojave/Mojave_Day.jpg" fill
     position 0 0
@@ -12,59 +29,33 @@ output DVI-D-1 {
     background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
     transform 90
 }
-
-input * {
-# keyboard
-    xkb_options ctrl:nocaps,altwin:ctrl_win
-    repeat_delay 250
-    repeat_rate 30
-# mouse
-    accel_profile flat
-    pointer_accel 0.35
-}
-
-# blank screen after 30 minutes, lock after 2 hours
-exec systemd-cat -t swayidle swayidle -w \
-    timeout 1800 '[[ "$(playerctl metadata -f {{status}})" == Playing ]] || swaymsg "output * dpms off"' \
-        resume 'swaymsg "output * dpms on"' \
-    timeout 7200 "$locker" \
-    before-sleep "$locker"
-
-exec systemd-cat -t dex dex -a                            # startup applications
-exec systemd-cat -t mako mako                             # notifications
-exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
-exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O*
-exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
-exec systemd-cat -t nm-applet nm-applet --indicator       # network status
-
-exec $term ~/bin/continuetmux
-exec $editor
-exec $web
-exec spotify
-exec 1password
-
 workspace 1 output HDMI-A-1
 workspace 3 output HDMI-A-1
 workspace 2 output DVI-D-1
 workspace 4 output DVI-D-1
 
-workspace_auto_back_and_forth yes
-mouse_warping output
+#
+# startup applications
+#
+bar swaybar_command waybar
+exec systemd-cat -t dex dex -a                            # autostart
+exec systemd-cat -t mako mako                             # notifications
+exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
+exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
+exec systemd-cat -t nm-applet nm-applet --indicator       # network status
+exec_always killall wob \; rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O*
 
-# display
-font Ubuntu 12
-default_border pixel 3
-smart_borders on
-hide_edge_borders --i3 both
-# class                 border  backgr. text    indicator child_border
-client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
-#            only non-default, bright to indicate active -^
-
-exec systemctl --user restart waybar
+# initial desktop
+exec $term tmx2 new -ADs auto
+exec $editor
+exec $web
+exec spotify
+exec 1password
 
 # per window config
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
+for_window [class="Emacs"] opacity 0.9
 for_window [app_id="pavucontrol"]           floating enable
 for_window [app_id="xfce4-appfinder"]       floating enable
 for_window [app_id="exo-desktop-item-edit"] floating enable
@@ -84,17 +75,28 @@ assign [class="Signal"]    workspace 4
 assign [class="Spotify"]   workspace 4
 
 #
+# display
+#
+font Noto Sans 12
+default_border pixel 3
+smart_borders on
+hide_edge_borders --i3 both
+client.focused #4c7899 #285577 #ffffff #2e9ef4 #20B9A5
+
+#
 # Keybindings - basics:
 #
-set $mod Mod1
+set $mod Mod4
 
 set $left h
 set $down j
 set $up k
 set $right l
 
-bindsym $mod+Ctrl+Return exec $term
-bindsym $mod+Shift+Return exec $term ~/bin/continuetmux
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term tmx2 new -ADs auto
+bindsym $mod+w exec $web
+bindsym $mod+Shift+e exec $editor
 bindsym $mod+c kill
 bindsym $mod+space exec $menu
 floating_modifier $mod normal
@@ -115,23 +117,34 @@ bindsym $mod+Shift+$right move right
 #
 # Workspaces:
 #
-# switch to workspace (ctrl for emacs)
+workspace_auto_back_and_forth yes
+mouse_warping output
+# switch to workspace
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
 bindsym $mod+Ctrl+1 workspace 1
 bindsym $mod+Ctrl+2 workspace 2
 bindsym $mod+Ctrl+3 workspace 3
 bindsym $mod+Ctrl+4 workspace 4
+bindsym $mod+Ctrl+5 workspace 5
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
 bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+m move container to output right; focus output right
+bindsym $mod+Shift+5 move container to workspace 5
 # other monitor
-bindsym $mod+m focus output right
+bindsym $mod+Shift+n move container to output left ; focus output left
+bindsym $mod+Shift+m move container to output right; focus output right
 # next and previous workspace
-bindsym $mod+Shift+n workspace next_on_output --create
+bindsym $mod+n focus output left
+bindsym $mod+m focus output right
+bindsym $mod+Ctrl+n workspace next_on_output --create
 bindsym --whole-window $mod+button5 workspace next_on_output --create
-bindsym $mod+Shift+p workspace prev_on_output --create
+bindsym $mod+Ctrl+p workspace prev_on_output --create
 bindsym --whole-window $mod+button4 workspace prev_on_output --create
 #
 # Layout stuff:
@@ -143,7 +156,7 @@ bindsym $mod+Shift+s layout tabbed
 bindsym $mod+e layout toggle split
 bindsym $mod+Shift+f fullscreen
 bindsym $mod+Shift+t floating toggle
-bindsym $mod+t focus mode_toggle
+bindsym $mod+Ctrl+t focus mode_toggle
 bindsym $mod+a focus parent
 bindsym $mod+Shift+a focus child
 #
@@ -160,28 +173,40 @@ bindsym $mod+Ctrl+$up resize shrink height 40px
 bindsym $mod+Ctrl+$right resize grow width 40px
 
 #
-# Radu-Arch keys:
+# App keys:
 #
-
 bindsym $mod+Ctrl+Pause      exec wlogout
 bindsym Shift+Ctrl+l         exec $locker
 bindsym $mod+Shift+Ctrl+l    exec sleep 0.5s && killall -USR1 swayidle
 bindsym Print                exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
 bindsym $mod+Print           exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
-#bindsym $mod+Ctrl+Print      exec grim -g "$(eval echo $(swaymsg -t get_tree | jq '.. | (.nodes? // empty)[] | select(.focused and .pid) | .rect | \"\(.x),\(.y) \(.width)x\(.height)\"'))" /tmp/window.png  && notify-send 'saved /tmp/window.png'
-bindsym $mod+Shift+e         exec $editor
+bindsym $mod+p               exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
+bindsym $mod+Shift+p         exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
+bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
 bindsym XF86AudioMute        exec pamixer --toggle-mute
 bindsym XF86AudioRaiseVolume exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym XF86AudioLowerVolume exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym Pause                exec pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob
 bindsym Scroll_Lock          exec pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob
-bindsym $mod+Pause           exec python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=up');   s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob
-bindsym $mod+Scroll_Lock     exec python -c \"import requests; api='http://192.168.1.17/YamahaExtendedControl/v1/main/'; requests.get(f'{api}setVolume?volume=down'); s = requests.get(f'{api}getStatus').json(); print(int(100 * s['volume']/s['max_volume']))\" > $SWAYSOCK.wob
+bindsym $mod+Scroll_Lock     exec pamixer --toggle-mute
+bindsym $mod+F1              exec playerctl play-pause
+bindsym $mod+F2              exec yamaha_vol down
+bindsym $mod+F3              exec yamaha_vol up
+bindsym $mod+F4              exec yamaha_toggle_link.sh
+bindsym $mod+Shift+F2        exec playerctl previous
+bindsym $mod+Shift+F3        exec playerctl next
+bindsym $mod+Shift+F4        exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
 bindsym XF86AudioPlay        exec playerctl play-pause
 bindsym XF86AudioPrev        exec playerctl previous
 bindsym XF86AudioNext        exec playerctl next
 bindsym XF86AudioStop        exec playerctl stop
 bindsym XF86Calculator       exec "rofi -show calc"
+bindsym $mod+y               exec yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
+
 
 # system configs
 include /etc/sway/config.d/*
+
+# host-specific config
+include ~/.config/sway/specific
