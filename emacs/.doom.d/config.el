@@ -256,7 +256,7 @@ or are no longer readable will be killed."
       "<f7>" 'compile
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
-(add-hook! compilation-mode (setq truncate-lines nil))
+(add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
 
 ;;;; Magit
 (map! "C-x   g" 'magit-status
