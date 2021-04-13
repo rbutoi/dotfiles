@@ -38,7 +38,7 @@ workspace 4 output DVI-D-1
 # startup applications
 #
 bar swaybar_command waybar
-exec systemd-cat -t dex dex -a                            # autostart
+exec systemd-cat -t dex dex -a -e SWAY                    # autostart
 exec systemd-cat -t mako mako                             # notifications
 exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
 exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
@@ -50,8 +50,9 @@ exec_always killall wob \; rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -
 exec $term tmx2 new -ADs auto
 exec $editor
 exec $web
-exec spotify
 exec 1password
+exec spotify
+for_window [class="Spotify"] move window to scratchpad
 
 # per window config
 for_window [title="gsimplecal"] move position mouse, move up 100 px, move left 120 px
@@ -73,7 +74,6 @@ for_window [title="Firefox — Sharing Indicator"] floating enable
 for_window [title="Save File"]              floating enable
 assign [class="hl2_linux"] workspace 3
 assign [class="Signal"]    workspace 4
-assign [class="Spotify"]   workspace 4
 
 #
 # display
@@ -101,7 +101,7 @@ bindsym $mod+w exec $web
 bindsym $mod+Shift+e exec $editor
 bindsym $mod+c kill
 bindsym $mod+space exec $menu
-bindsym $mod+q exec wlogout
+bindsym $mod+q exec wlogout -p layer-shell
 bindsym $mod+Shift+q reload
 bindsym $mod+Shift+Backspace exec swaymsg exit
 #

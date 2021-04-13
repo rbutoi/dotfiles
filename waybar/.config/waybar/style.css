@@ -42,10 +42,18 @@ window#waybar {
 }
 
 #taskbar button {
-    padding: 0 5px;
+    margin:  0 4px;
+    padding: 0 2px;
     background-color: transparent;
     color: #657b83;
-    border-bottom: 3px solid transparent;
+    border-bottom: 2px solid #586e75;
+}
+
+#taskbar button.active {
+    padding: 0 8px;
+    background-color: #073642;
+    color: #657b83;
+    border-bottom: 2px solid #ff0;
 }
 
 #workspaces button.focused {
@@ -62,16 +70,23 @@ window#waybar {
     border-bottom: 1px solid #dc322f;
 }
 
-#clock, #custom-clock, #battery, #cpu, #memory, #temperature, #backlight,
-#network, #pulseaudio, #custom-updates, #custom-load, #tray, #mode,
-#custom-power, custom-apps, #custom-weather, #custom-mail, #idle_inhibitor {
-    padding: 0 6px;
+#clock, #custom-clock, #cpu, #memory, #temperature, #backlight, network,
+##custom-updates, #custom-load, #mode, idle_inhibitor, #custom-weather, #battery {
+    padding: 0 4px;
     margin: 0 2px;
     color: #657b83;
 }
 
-#custom-power {
-    background-color: #073642;
+#pulseaudio, #tray {
+    padding: 0;
+    margin: 0;
+    color: #657b83;
+}
+
+#custom-mail {
+    padding: 0 4px;
+    margin: 0 2px;
+    color: #859900;
 }
 
 #pulseaudio.muted {
@@ -80,8 +95,8 @@ window#waybar {
 
 #custom-spotify {
     /* https://usbrandcolors.com/spotify-colors/ */
+    /* background-color: #191414 */
     color: #1db954;
-    background-color: #191414
 }
 
 #battery.warning {

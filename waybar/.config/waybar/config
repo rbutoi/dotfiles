@@ -3,7 +3,6 @@
   "output": ["HDMI-A-1", "eDP-1", "DP-1"],
   "position": "bottom",
   "modules-left": [
-    "custom/apps",
     "custom/home",
     "sway/workspaces",
     "sway/mode",
@@ -11,16 +10,13 @@
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
+    "custom/mail",
     "custom/weather",
     "custom/updates",
-    "custom/mail",
+    "tray",
     "pulseaudio",
     "battery",
-    "backlight",
-    "custom/clipman",
-    "tray",
     "custom/clock",
-    "custom/power"
   ],
   "sway/window": {
     "max-length": 200,
@@ -43,16 +39,15 @@
     "signal": 8
   },
   "custom/mail": {
-    "exec": "notmuch count 'is:unread and is:inbox'",
+    "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
     "tooltip": false,
     "format": "✉{}",
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
-    "interval": 30,
+    "interval": 5,
   },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
-    "format": "🎵{}",
     "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
     "on-click-right": "playerctl play-pause",
     "on-click-middle": "gyrc",
@@ -69,13 +64,12 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "format-icons": {"default": ["🔈", "🔉",  "🔊"]},
+    "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
-    "scroll-step": 5,
     "on-click": "pavucontrol",
     "on-click-right": "pamixer --toggle-mute && ( pamixer --get-mute && echo 0 > $SWAYSOCK.wob ) || notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
-    "on-scroll-up":   "pamixer --unmute --increase 5 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
-    "on-scroll-down": "pamixer --unmute --decrease 5 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
     "tooltip": false,
   },
   "battery": {
@@ -83,28 +77,15 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}{capacity}",
-    "format-charging": "{icon}{capacity}+",
-    "format-icons": ["", "", "", "", ""],
-  },
-  "backlight": {
     "format": "{icon}",
-    "format-icons": ["", ""],
-    "on-scroll-up":   "brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob",
-    "on-scroll-down": "brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob",
+    "format-charging": "{icon}{capacity}+",
+    "format-warning": "{icon}{capacity}",
+    "format-critical": "{icon}{capacity}",
+    "format-unknown": "{icon}(l)",
+    "format-icons": ["", "", "", "", ""],
   },
   "tray": {
     "icon-size": 28
-  },
-  "custom/power": {
-    "format": "⏻",
-    "on-click": "wlogout -b2",
-    "tooltip": false
-  },
-  "custom/apps": {
-    "format": "Apps",
-    "on-click": "sgtk-menu --bottom --favourites -s 32 -d 19 -y 30",
-    "tooltip": false
   },
   "custom/home": {
     "format": "🏠 ",
@@ -116,11 +97,6 @@
     "exec": "waybar-wttr.py",
     "return-type": "json",
     "on-click": "xdg-open 'https://www.google.com/search?q=weather'",
-  },
-  "custom/clipman": {
-    "format": "📋",
-    "on-click":       "clipman pick  --notify --tool rofi",
-    "on-click-right": "clipman clear --notify --all",
   }
 }, {
   "output": ["DVI-D-1", "DP-2"],

@@ -204,6 +204,9 @@ or are no longer readable will be killed."
 ;; replies inline
 (advice-remove 'delete-backward-char #'+default--delete-backward-char-a)
 
+;; recentf: files seem to get lost otherwise
+(setq recentf-save-timer (run-at-time nil (* 5 60) 'recentf-save-list))
+
 ;;;; Dired
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
