@@ -306,7 +306,10 @@ or are no longer readable will be killed."
 ;;; External
 
 ;;;; notmuch
-(map! "C-c m" (cmd! (notmuch)
+(map!
+ "C-c m" (cmd! (notmuch-search
+                (concat "is:inbox and " (if WORK "is:work and date:1w.." "date:2w.."))))
+ "C-c M" (cmd! (notmuch)
                     ;; why is this necessary??
                     (delete-other-windows)))
 
@@ -344,7 +347,7 @@ or are no longer readable will be killed."
       (:key "d" :name "drafts"    :query "is:draft")
       (:key "a" :name "all"       :query "*"))
     (if WORK                                 ; limit time range for performance
-        '((:key "j" :name "unified inbox"      :query "date:2w.. and is:inbox")
+        '((:key "j" :name "unified inbox"      :query "date:1w.. and is:inbox")
           (:key "i" :name "work inbox"         :query "date:1w.. and is:inbox and is:work")
           (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and not is:work")
           (:key "u" :name "work unread"        :query "date:1w.. and is:inbox and is:unread and is:work")
@@ -426,6 +429,8 @@ or are no longer readable will be killed."
                       (notmuch-tree-next-message))
         "C-M-u" (cmd! (notmuch-tree-tag-thread '("-unread"))
                       (notmuch-tree-next-thread))
+        :map notmuch-show-mode-map
+        "<C-return>" 'browse-url-at-point
         :map (notmuch-hello-mode-map
               notmuch-search-mode-map
               notmuch-tree-mode-map

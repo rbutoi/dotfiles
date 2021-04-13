@@ -13,8 +13,7 @@
   "modules-right": [
     "custom/weather",
     "custom/updates",
-    "network",
-    "custom/load",
+    "custom/mail",
     "pulseaudio",
     "battery",
     "backlight",
@@ -32,7 +31,7 @@
     "max-length": 200,
     "icon-size": 32,
     "on-click": "activate",
-    "on-click-middle": "close"
+    "on-click-middle": "close",
   },
   "custom/updates": {
     "exec-if": "pacman --version",
@@ -43,16 +42,12 @@
     "tooltip": false,
     "signal": 8
   },
-  "network": {
-    "format": "{bandwidthUpOctets} 🖧 {bandwidthDownOctets}",
-    "interval": 15,
+  "custom/mail": {
+    "exec": "notmuch count 'is:unread and is:inbox'",
     "tooltip": false,
-  },
-  "custom/load": {
-    "exec": "cut -f1 -d' ' /proc/loadavg",
-    "format": "{}",
-    "on-click": "kitty --start-as fullscreen htop",
-    "interval": 30
+    "format": "✉{}",
+    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "interval": 30,
   },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
@@ -67,20 +62,21 @@
     "max-length": 45
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
-    "exec": "date '+%a %d/%m %H:%M'",
+    "exec": "date '+%a %d⏰%H:%M'",
     "tooltip": false,
     "on-click": "gsimplecal",
     "interval": 5
   },
   "pulseaudio": {
-    "format": "🔉{volume}",
-    "format-muted": "🔇 0%",
+    "format": "{icon}",
+    "format-icons": {"default": ["🔈", "🔉",  "🔊"]},
+    "format-muted": "🔇",
     "scroll-step": 5,
     "on-click": "pavucontrol",
-    "on-click-right": "pamixer --toggle-mute && ( pamixer --get-mute && echo 0 > $SWAYSOCK.wob ) || pamixer --get-volume > $SWAYSOCK.wob",
-    "on-scroll-up":   "pamixer --unmute --increase 5 && pamixer --get-volume > $SWAYSOCK.wob",
-    "on-scroll-down": "pamixer --unmute --decrease 5 && pamixer --get-volume > $SWAYSOCK.wob",
-    "tooltip": false
+    "on-click-right": "pamixer --toggle-mute && ( pamixer --get-mute && echo 0 > $SWAYSOCK.wob ) || notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "on-scroll-up":   "pamixer --unmute --increase 5 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "on-scroll-down": "pamixer --unmute --decrease 5 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "tooltip": false,
   },
   "battery": {
     "states": {
@@ -124,7 +120,6 @@
   "custom/clipman": {
     "format": "📋",
     "on-click":       "clipman pick  --notify --tool rofi",
-    "on-click-right": "clipman clear --notify --tool rofi",
     "on-click-right": "clipman clear --notify --all",
   }
 }, {

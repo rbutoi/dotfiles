@@ -25,3 +25,8 @@ with open(sock, 'w') as f:
 
 # also keep bedroom in sync, but use single.py/a lockfile to not slow this down
 os.system('single.py -c yamaha_match_bedroom.py &')
+
+# and notify dB
+vol=s['actual_volume']['value']
+unit=s['actual_volume']['unit']
+os.system(f'notify-send -c volume -- "{vol}{unit}"')

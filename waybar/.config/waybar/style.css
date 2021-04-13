@@ -64,7 +64,7 @@ window#waybar {
 
 #clock, #custom-clock, #battery, #cpu, #memory, #temperature, #backlight,
 #network, #pulseaudio, #custom-updates, #custom-load, #tray, #mode,
-#custom-power, custom-apps, #custom-weather, #idle_inhibitor {
+#custom-power, custom-apps, #custom-weather, #custom-mail, #idle_inhibitor {
     padding: 0 6px;
     margin: 0 2px;
     color: #657b83;
