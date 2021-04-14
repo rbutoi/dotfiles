@@ -73,6 +73,7 @@
     "tooltip": false,
   },
   "battery": {
+    "bat": "BAT0",
     "states": {
       "warning": 30,
       "critical": 15
@@ -83,6 +84,9 @@
     "format-critical": "{icon}{capacity}",
     "format-unknown": "{icon}(l)",
     "format-icons": ["", "", "", "", ""],
+    // when i can compile this: https://github.com/Alexays/Waybar/issues/1069
+    "tooltip-format": "{capacity} {timeTo}",
+    "on-click": "battery-toggle-full-or-limit-charge.sh",
   },
   "tray": {
     "icon-size": 28
