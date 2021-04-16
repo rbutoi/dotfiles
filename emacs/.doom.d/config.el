@@ -591,10 +591,7 @@ Return an event vector."
   (setq dired-use-ls-dired nil)
   (map! "s-m" 'suspend-frame))
 (when (string-match-p "penguin" (system-name))
-  (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
-  ;; chromeos ssh too slow for scrolling apparently, override Doom to emacs default
-  (when WORK
-    (setq scroll-conservatively 0)))
+  (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu)) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
 
 (load (concat doom-private-dir "specific.el") 'noerror)
 
