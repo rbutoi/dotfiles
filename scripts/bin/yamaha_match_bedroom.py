@@ -14,8 +14,7 @@ bedroom_vol = int(receiver['volume'] / receiver['max_volume']
 requests.get(f'{bedroom_api}/setVolume?volume={bedroom_vol}')
 bedroom_new = requests.get(f'{bedroom_api}/getStatus').json()
 
-print(f'''\
-receiver volume: {receiver['actual_volume']['value']}{receiver['actual_volume']['unit']}
-bedroom volume before: {bedroom['volume']} / {bedroom['max_volume']}
-bedroom volume: {bedroom_new['volume']} / {bedroom_new['max_volume']}
-''')
+print(f"receiver volume: {receiver['actual_volume']['value']}{receiver['actual_volume']['unit']}")
+print(f"bedroom volume: {bedroom_new['volume']} / {bedroom_new['max_volume']}")
+if bedroom['volume'] != bedroom_new['volume']:
+    print(f"bedroom volume before: {bedroom['volume']} / {bedroom['max_volume']}")

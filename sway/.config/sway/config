@@ -4,7 +4,7 @@
 # basics
 #
 set $term kitty
-set $web google-chrome --enable-features=UseOzonePlatform --ozone-platform=wayland
+set $web firefox
 set $menu "rofi -modi combi -combi-modi drun#run -show combi"
 set $editor emacsclient -c
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
@@ -44,7 +44,7 @@ exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
 exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
 exec systemd-cat -t nm-applet nm-applet --indicator       # network status
-exec_always killall wob \; rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O*
+exec_always killall wob \; rm -f $SWAYSOCK.wob && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O* 2> ~/.cache/.wob_errors
 
 # initial desktop
 exec $term tmx2 new -ADs auto
@@ -71,7 +71,8 @@ for_window [app_id="blueman-manager"]       floating enable
 for_window [class="steam_proton"]           floating enable
 for_window [class="steam_app_.*"]           floating enable
 for_window [title="Firefox — Sharing Indicator"] floating enable
-for_window [title="Save File"]              floating enable
+for_window [title="^(Open|Save) Files?$"]   floating enable
+for_window [app_id="goobuntu_indicator.py"] floating enable
 assign [class="hl2_linux"] workspace 3
 assign [class="Signal"]    workspace 4
 

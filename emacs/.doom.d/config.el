@@ -8,7 +8,7 @@
 (setq
  my-theme   'solarized-dark
  doom-theme my-theme
- doom-font  (font-spec :family "JetBrains Mono" :size 14)
+ doom-font  (font-spec :family "JetBrains Mono" :size 15)
  doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
@@ -204,9 +204,6 @@ or are no longer readable will be killed."
 ;; replies inline
 (advice-remove 'delete-backward-char #'+default--delete-backward-char-a)
 
-;; recentf: files seem to get lost otherwise
-(setq recentf-save-timer (run-at-time nil (* 5 60) 'recentf-save-list))
-
 ;;;; Dired
 (use-package dired-hide-dotfiles
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
@@ -364,19 +361,22 @@ or are no longer readable will be killed."
         (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
         (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important")
         (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"))))
-
    notmuch-tag-formats
    (append '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
-             ("inbox"     "i")
+             ("inbox"     nil)
              ("work"      nil)
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
+   notmuch-search-result-format '(("date" . "%12s ")
+                                  ("count" . "%-7s ")
+                                  ("authors" . "%-20s ")
+                                  ("subject" . "%-60.60s ")
+                                  ("tags" . "%s"))
 
-   notmuch-refresh-timer (run-with-timer 0 (* 5 60) 'notmuch-refresh-this-buffer)
+   notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer)
 
-   notmuch-unread-search-term
-   (concat "is:unread and is:inbox"
-           (if WORK " and is:work" ""))
+   notmuch-unread-search-term (concat "is:unread and is:inbox"
+                                      (if WORK " and is:work" ""))
    )
   (notmuch-unread-mode)
 
@@ -434,6 +434,8 @@ or are no longer readable will be killed."
                       (notmuch-tree-next-thread))
         :map notmuch-show-mode-map
         "<C-return>" 'browse-url-at-point
+        "B"     'notmuch-show-resend-message
+        "b"     'notmuch-show-browse-urls
         :map (notmuch-hello-mode-map
               notmuch-search-mode-map
               notmuch-tree-mode-map

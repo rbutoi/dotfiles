@@ -15,8 +15,8 @@ shopt -s extglob
 shopt -s checkwinsize
 # https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
 stty -ixon
-# Avoid duplicates
-export HISTCONTROL=ignoredups:erasedups
+# Avoid duplicates and leading spaces
+export HISTCONTROL=ignoreboth:erasedups
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend
 export HISTFILESIZE=
