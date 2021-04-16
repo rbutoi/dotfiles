@@ -42,7 +42,7 @@
     "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
     "tooltip": false,
     "format": "✉{}",
-    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "on-click": "emacsclient -s gui -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 5,
   },
   "custom/spotify": {
@@ -84,8 +84,7 @@
     "format-critical": "{icon}{capacity}",
     "format-unknown": "{icon}(l)",
     "format-icons": ["", "", "", "", ""],
-    // when i can compile this: https://github.com/Alexays/Waybar/issues/1069
-    "tooltip-format": "{capacity} {timeTo}",
+    "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "battery-toggle-full-or-limit-charge.sh",
   },
   "tray": {

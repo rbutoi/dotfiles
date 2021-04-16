@@ -1,8 +1,11 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+(defconst
+  GLAPTOP
+  (not (not (and IS-LINUX (string-match-p
+                           "roam" (shell-command-to-string "hostname -f"))))))
 (defconst WORK ; has custom coding setup
-  ;; double-negate to extract truthy value                               for FQDN
-  (not (not (string-match-p "google\\|penguin" (shell-command-to-string "hostname -f")))))
+  (or GLAPTOP (not (not (string-match-p "google\\|penguin" (system-name))))))
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 

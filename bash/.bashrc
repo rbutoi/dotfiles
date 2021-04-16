@@ -179,6 +179,9 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
+command -v pipx >/dev/null && \
+  eval "$(register-python-argcomplete pipx)"
+
 if [ -f ~/.bashrc_specific_mac ] && [ $(uname) == "Darwin" ]; then
   . ~/.bashrc_specific_mac
 fi

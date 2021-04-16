@@ -44,7 +44,8 @@ exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
 exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
 exec systemd-cat -t nm-applet nm-applet --indicator       # network status
-exec killall wob \; rm -f $SWAYSOCK.wb && mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob 2>/dev/null | wob -O* 2> ~/.cache/.wob_errors
+exec systemd-cat -t make_pipe_run_wob.sh make_pipe_run_wob.sh # volume/brightness bar
+# exec systemd-cat -t gammastep-indicator gammastep-
 
 # initial desktop
 exec $term tmx2 new -ADs auto
@@ -71,11 +72,13 @@ for_window [class="PCSX2"]                       floating enable
 for_window [app_id="blueman-manager"]            floating enable
 for_window [class="steam_proton"]                floating enable
 for_window [class="steam_app_.*"]                floating enable
+for_window [title="Sign in - Google Accounts"]   floating enable
 for_window [title="Firefox — Sharing Indicator"] floating enable
-for_window [title="^(Open|Save) Files?$"]        floating enable
+for_window [title="^Close Firefox$"]             floating enable
 for_window [app_id="goobuntu_indicator.py"]      floating enable
 for_window [title="Find Directory"]              floating enable
-for_window [title="^Close Firefox$"]             floating enable
+for_window [title="^(Open|Save) Files?$"]        floating enable
+for_window [app_id="wdisplays"]                  floating enable
 assign [class="hl2_linux"]                       workspace 3
 assign [class="Signal"]                          workspace 4
 
@@ -100,8 +103,9 @@ set $right  l
 
 bindsym $mod+Return          exec $term
 bindsym $mod+Shift+Return    exec $term tmx2 new -ADs auto
-bindsym $mod+w               exec $web
-bindsym $mod+Shift+e         exec swaymsg '[class="Emacs"] focus' || $editor
+bindsym $mod+w               exec swaymsg '[app_id="firefox-esr"] focus' || $web
+bindsym $mod+Shift+w         exec $web
+bindsym $mod+Shift+e         exec swaymsg '[app_id="emacs"] focus' || $editor
 bindsym $mod+Ctrl+Shift+e    exec $editor
 bindsym $mod+c               kill
 bindsym $mod+space           exec $menu
@@ -185,12 +189,9 @@ bindsym $mod+Ctrl+$right  resize grow width 40px
 #
 # App keys:
 #
-bindsym Shift+Ctrl+l          exec $locker
-bindsym $mod+Shift+Ctrl+l     exec sleep 0.5s && killall -USR1 swayidle
+bindsym $mod+Shift+Ctrl+l     exec $locker
 bindsym Print                 exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
 bindsym $mod+Print            exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
-bindsym $mod+Home             exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
-bindsym $mod+Shift+Home       exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
 bindsym XF86AudioMute         exec pamixer --toggle-mute
@@ -213,7 +214,7 @@ bindsym XF86AudioStop         exec playerctl stop
 bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool rofi
-bindsym $mod+Shift+Ctrl+h     exec kitty --start-as fullscreen htop
+bindsym $mod+Mod1+h           exec kitty --start-as fullscreen htop
 
 
 # system configs

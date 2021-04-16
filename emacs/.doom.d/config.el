@@ -351,11 +351,16 @@ or are no longer readable will be killed."
                                   ("subject" . "%-60.60s " )
                                   ("tags"    . "%s"        ))
    notmuch-tag-formats
-   (append '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
-             ("inbox"     nil)
-             ("work"      nil)
-             ("important" "im"))
-           (list (list "personal" (if WORK "p" ""))))
+   (append notmuch-tag-formats
+           '(("unread"     (propertize tag 'face 'notmuch-tag-unread))
+             ("inbox"      nil)
+             ("work"       nil)
+             ("primary"    (propertize tag 'face '(:foreground "red")))
+             ("updates"    (propertize tag 'face '(:foreground "blue")))
+             ("promotions" (propertize tag 'face '(:foreground "magenta")))
+             ("forums"     (propertize tag 'face '(:foreground "yellow"))))
+           (list (list "personal"  (if WORK "p" ""))
+                 (list "important" (if WORK "im" (propertize "im" 'face '(:foreground "green"))))))
 
    notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer)
 

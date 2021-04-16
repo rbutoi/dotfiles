@@ -21,7 +21,7 @@
     border: none;
     border-radius: 0;
     font-family: Noto Sans;
-    font-size: 12pt;
+    font-size: 11.5pt;
 }
 
 window#waybar {
@@ -104,4 +104,8 @@ window#waybar {
 }
 #battery.critical {
   color: #dc322f;
+}
+
+#custom-mail, #custom-weather, #battery, #custom-clock {
+  font-family: JetBrains Mono;
 }
