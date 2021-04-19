@@ -88,40 +88,31 @@
   (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
 
 ;;;; Ivy / counsel
-(map! "C-c C-r" 'ivy-resume
-      "C-x m"   'counsel-M-x
-      "C-x C-m" 'counsel-M-x
-      "C-x C-b" 'counsel-switch-buffer
-      "C-x b"   'counsel-buffer-or-recentf
-      "C-o"     'counsel-semantic-or-imenu
-      "C-M-s"   (cmd! (counsel-rg (thing-at-point 'symbol)))
-      ;; doesn't show hidden files
-      "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
-                       (execute-extended-command t "counsel-file-jump"))
-      "C-x M-f" 'counsel-file-jump-ask-dir
-      "C-M-o"   'swiper-isearch-thing-at-point
-      :map isearch-mode-map
-      "C-o"     'swiper-from-isearch
-      :map ivy-minibuffer-map
-      "C-k"    'ivy-alt-done ; C-j is used by tmux
-      "C-M-i"  'ivy-insert-current ; M-i used to change windows
-      :map counsel-find-file-map
-      "C-l"    'counsel-up-directory)
-;;.. can be replaced by DEL/C-l, but . is still useful for e.g. dired here
-(setq ivy-extra-directories '("."))
-(after! ivy-rich
-  (plist-put! ivy-rich-display-transformers-list
-              'ivy-switch-buffer
-              '(:columns
-                ;; only part changed from default: width of filename
-                ((ivy-switch-buffer-transformer (:width 70))
-                 (ivy-rich-switch-buffer-size (:width 7))
-                 (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-                 (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
-                 (ivy-rich-switch-buffer-project (:width 15 :face success))
-                 (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-                :predicate
-                (lambda (cand) (get-buffer cand)))))
+(after! counsel
+  (map! "C-c C-r" 'ivy-resume
+        "C-x m"   'counsel-M-x
+        "C-x C-m" 'counsel-M-x
+        "C-x C-b" 'counsel-switch-buffer
+        "C-x b"   'counsel-buffer-or-recentf
+        "C-o"     'counsel-semantic-or-imenu
+        "C-M-s"   (cmd! (counsel-rg (thing-at-point 'symbol)))
+        ;; doesn't show hidden files
+        "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
+                         (execute-extended-command t "counsel-file-jump"))
+        "C-x M-f" 'counsel-file-jump-ask-dir
+        "C-M-o"   'swiper-isearch-thing-at-point
+        :map isearch-mode-map
+        "C-o"     'swiper-from-isearch
+        :map ivy-minibuffer-map
+        "C-k"    'ivy-alt-done ; C-j is used by tmux
+        "C-M-i"  'ivy-insert-current ; M-i used to change windows
+        :map counsel-find-file-map
+        "C-l"    'counsel-up-directory)
+  (setq ; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
+   ivy-extra-directories '(".")
+   ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
+   counsel-rg-base-command
+   (concat (string-join counsel-rg-base-command " ") " --no-ignore 2>/dev/null || true")))
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
@@ -185,7 +176,7 @@ or are no longer readable will be killed."
 (map! "M-[ q" 'comment-or-uncomment-line-or-region
       "M-;"   'comment-or-uncomment-line-or-region)
 
-;;;; Better C-w
+;;;; Better C/M-w
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
@@ -211,15 +202,11 @@ or are no longer readable will be killed."
 ;;; Programming
 
 ;;;; Languages
-;; Perl
-(after! perl-mode
-  (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
+(after! perl-mode (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
 
-;; Data/config
 (add-hook! (yaml-mode conf-unix-mode conf-space-mode)
   (run-mode-hooks 'prog-mode-hook))
 
-;; C/C++
 (after! cc-mode
   (map! "C-c C-o" :map c-mode-base-map
         (cmd! (ff-find-other-file nil 'ignore-include))))
@@ -227,13 +214,11 @@ or are no longer readable will be killed."
 (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
 (add-hook! 'c-mode-common-hook ; formatting
   (fset 'c-indent-region 'clang-format-region))
-; disable c-indent-line-or-region so completing can work
-(map! :map c-mode-base-map "TAB" nil)
+(map! :map c-mode-base-map "TAB" nil) ; disable c-indent-line-or-region so completing
+                                      ; can work
 
-;; LaTeX
-(setq TeX-auto-untabify t)
+(after! tex (setq TeX-auto-untabify t))
 
-;; Rust
 (use-package rustic
   :config
   (setq rustic-lsp-server 'rust-analyzer
@@ -310,8 +295,8 @@ or are no longer readable will be killed."
  "C-c m" (cmd! (notmuch-search
                 (concat "is:inbox and " (if WORK "is:work and date:1w.." "date:2w.."))))
  "C-c M" (cmd! (notmuch)
-                    ;; why is this necessary??
-                    (delete-other-windows)))
+               ;; why is this necessary??
+               (delete-other-windows)))
 
 (after! notmuch
   (setq
@@ -330,7 +315,6 @@ or are no longer readable will be killed."
    notmuch-show-text/html-blocked-images nil ; enable images
    notmuch-message-headers-visible t ; CCs are important
 
-   ;; I don't mind the full hello.
    notmuch-hello-sections '(notmuch-hello-insert-header
                             notmuch-hello-insert-saved-searches
                             notmuch-hello-insert-search
@@ -342,42 +326,41 @@ or are no longer readable will be killed."
 
    notmuch-saved-searches
    (append
-    '((:key "f" :name "flagged"   :query "is:flagged")
-      (:key "s" :name "sent"      :query "date:1M.. is:sent")
-      (:key "d" :name "drafts"    :query "is:draft")
-      (:key "a" :name "all"       :query "*"))
+    '((:key "f" :name "flagged"   :query "is:flagged"        )
+      (:key "s" :name "sent"      :query "date:1M.. is:sent" )
+      (:key "d" :name "drafts"    :query "is:draft"          )
+      (:key "a" :name "all"       :query "*"                 ))
     (if WORK                                 ; limit time range for performance
-        '((:key "j" :name "unified inbox"      :query "date:1w.. and is:inbox")
-          (:key "i" :name "work inbox"         :query "date:1w.. and is:inbox and is:work")
-          (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and not is:work")
-          (:key "u" :name "work unread"        :query "date:1w.. and is:inbox and is:unread and is:work")
-          (:key "U" :name "personal unread"    :query "date:2w.. and is:inbox and is:unread and not is:work")
-          (:key "m" :name "work important"     :query "date:1w.. and is:inbox and is:important and is:work")
-          (:key "M" :name "personal important" :query "date:2w.. and is:inbox and is:important and not is:work")
-          (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work")
-          (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"))
-      '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox")
-        (:key "I" :name "inbox"      :query "date:2w.. and is:inbox") ; redundant
-        (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread")
-        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important")
-        (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"))))
+        '((:key "j" :name "unified inbox"      :query "date:1w.. and is:inbox"                                  )
+          (:key "i" :name "work inbox"         :query "date:1w.. and is:inbox and is:work"                      )
+          (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and not is:work"                  )
+          (:key "u" :name "work unread"        :query "date:1w.. and is:inbox and is:unread and is:work"        )
+          (:key "U" :name "personal unread"    :query "date:2w.. and is:inbox and is:unread and not is:work"    )
+          (:key "m" :name "work important"     :query "date:1w.. and is:inbox and is:important and is:work"     )
+          (:key "M" :name "personal important" :query "date:2w.. and is:inbox and is:important and not is:work" )
+          (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work"  )
+          (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"              ))
+      '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox"                  )
+        (:key "I" :name "inbox"      :query "date:2w.. and is:inbox"                  ) ; redundant
+        (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread"    )
+        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important" )
+        (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"              ))))
+   notmuch-search-result-format '(("date"    . "%12s "     )
+                                  ("count"   . "%-7s "     )
+                                  ("authors" . "%-20s "    )
+                                  ("subject" . "%-60.60s " )
+                                  ("tags"    . "%s"        ))
    notmuch-tag-formats
    (append '(("unread"    (propertize tag 'face 'notmuch-tag-unread))
              ("inbox"     nil)
              ("work"      nil)
              ("important" "im"))
            (list (list "personal" (if WORK "p" ""))))
-   notmuch-search-result-format '(("date" . "%12s ")
-                                  ("count" . "%-7s ")
-                                  ("authors" . "%-20s ")
-                                  ("subject" . "%-60.60s ")
-                                  ("tags" . "%s"))
 
    notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer)
 
    notmuch-unread-search-term (concat "is:unread and is:inbox"
-                                      (if WORK " and is:work" ""))
-   )
+                                      (if WORK " and is:work" "")))
   (notmuch-unread-mode)
 
   ;; Make search coloured like tree (why are they different?)
@@ -400,7 +383,7 @@ or are no longer readable will be killed."
   (defun notmuch-tree-filter-by-not-tag (tag)
     (notmuch-tree (concat notmuch-tree-basic-query " and not is:" tag)))
   (defun notmuch-rm-deleted-tag ()
-      "Delete emails tagged 'deleted' from the filesystem."
+    "Delete emails tagged 'deleted' from the filesystem."
     (interactive)
     (shell-command (concat
                     "notmuch search --output=files --format=text0 tag:deleted"
@@ -453,8 +436,7 @@ or are no longer readable will be killed."
                  (browse-url
                   (concat "https://mail.google.com"
                           (if (string-match-p "broadcast" (buffer-name))
-                              "/mail/u/0/#label/broadcast" ""))))
-        )
+                              "/mail/u/0/#label/broadcast" "")))))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
@@ -467,12 +449,12 @@ or are no longer readable will be killed."
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
-    (visual-fill-column-mode +1))
+    (visual-fill-column-mode +1)))
 
-  ;; Include date in "on <date> <sender> wrote..." reply text
-  (after! message
-    (setq message-citation-line-function 'message-insert-formatted-citation-line)
-    (setq message-citation-line-format "\n\nOn %a, %d %b %Y at %H:%M, %f wrote:\n")))
+;; Include date in "on <date> <sender> wrote..." reply text
+(after! message
+  (setq message-citation-line-function 'message-insert-formatted-citation-line)
+  (setq message-citation-line-format "\n\nOn %a, %d %b %Y at %H:%M, %f wrote:\n"))
 
 ;;;; Circe
 (after! circe
