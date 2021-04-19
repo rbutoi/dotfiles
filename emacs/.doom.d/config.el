@@ -125,16 +125,11 @@
 
 ;;;; Movement
 (setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+(toggle-text-mode-auto-fill)
 
 (defun case-sensitive-query-replace ()
   (interactive)
-  (let ((case-fold-search nil))
-    (call-interactively 'query-replace)))
-
-;; enable auto fill in text modes, and prog mode comments
-(toggle-text-mode-auto-fill)
-(add-hook! prog-mode 'auto-fill-mode)
-(setq comment-auto-fill-only-comments t)
+  (let ((case-fold-search nil)) (call-interactively 'query-replace)))
 
 ;;;; Revert file
 (map! "C-c r" 'revert-buffer)
