@@ -1,14 +1,15 @@
 default-timeout=10000
 group-by=summary
 font=Noto Sans 13
-
+anchor=bottom-right
 width=360
+height=360
 
 [category=volume]
 default-timeout=2000
 group-by=category
 font=JetBrains Mono 50
-anchor=bottom-center
+anchor=top-center
 text-alignment=center
 # don't show number of grouped, irrelevant and distracting
 format=<b>%s</b>\n%b

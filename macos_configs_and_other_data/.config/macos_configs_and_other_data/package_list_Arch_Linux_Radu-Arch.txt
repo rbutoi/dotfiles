@@ -59,10 +59,12 @@ device-mapper
 devtools
 dex
 diffutils
+digikam
 discord
 dmidecode
 docker
 dolphin-emu-git
+downgrade
 dust
 e2fsprogs
 edk2-shell
@@ -92,7 +94,6 @@ gdb
 gimp
 git
 gitg
-gitkraken
 glibc
 gnome-boxes
 gnome-calendar
@@ -137,6 +138,7 @@ iperf
 iproute2
 iputils
 isync
+ix
 j4-dmenu-desktop
 jackett-bin
 jdk-openjdk
@@ -173,6 +175,7 @@ lxappearance
 mako-git
 man-db
 man-pages
+mariadb
 mdadm
 mediainfo
 memtest86-efi
@@ -219,7 +222,6 @@ pacman-contrib
 pamixer
 papermc
 paru-git
-pastebinit
 pavucontrol
 pbzip2
 pciutils
@@ -255,6 +257,7 @@ python-oauth2client
 python-pandas
 python-pathvalidate
 python-pip
+python-pipx
 python-plexapi
 python-plotly
 python-pycryptodome
@@ -353,13 +356,15 @@ vnstat
 wasm-pack
 waybar-git
 wdisplays-git
+wev-git
 wget
 wine-gecko
 wine-mono
 wireguard-tools
-wl-clipboard
+wl-clipboard-git
 wlclock-git
 wlogout
+wlroots
 wmctrl
 wob
 wofi-hg

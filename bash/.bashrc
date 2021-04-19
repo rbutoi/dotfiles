@@ -159,6 +159,10 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
 export FZF_DEFAULT_COMMAND='fd --hidden'
 alias fzfp="fd -tf | fzf --preview 'bat --style=numbers --color=always {}'"
 
+git-grep-blame() {
+  git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'
+}
+
 # https://the.exa.website
 # needs to be after PATH setting
 if command -v exa >/dev/null 2>&1; then
