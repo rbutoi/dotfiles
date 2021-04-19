@@ -5,11 +5,11 @@
 ;;; UI
 
 ;;;; Theme
-(setq
- my-theme   'solarized-dark
- doom-theme my-theme
- doom-font  (font-spec :family "JetBrains Mono" :size 15)
- doom-modeline-project-detection 'project)
+(setq doom-theme
+      (if (or (display-graphic-p) (string= (getenv "EMACS_SOCKET_NAME") "gui"))
+          'solarized-dark-high-contrast 'default)
+      doom-font  (font-spec :family "JetBrains Mono" :size 15)
+      doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
 (setq
@@ -506,21 +506,6 @@ shell exits, the buffer is killed."
     (vterm-send-return)))
 
 ;;;; Terminal support
-;; Automatically toggle themed mode if in terminal or not
-(defun themed-if-window-system (frame)
-  (if (window-system frame)
-      (unless doom-theme
-        (setq doom-theme my-theme)
-        (load-theme my-theme t))
-    (when doom-theme
-      (setq doom-theme nil)
-      (disable-theme my-theme))))
-(defun themed-if-window-system-this-frame ()
-  (interactive) (themed-if-window-system (selected-frame)))
-(add-hook 'after-make-frame-functions 'themed-if-window-system)
-(add-hook! 'focus-in-hook 'themed-if-window-system-this-frame)
-(themed-if-window-system-this-frame)
-
 (map! "C-M-]" 'query-replace-regexp)
 (map! "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
 

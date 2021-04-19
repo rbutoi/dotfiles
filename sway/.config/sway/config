@@ -6,7 +6,7 @@
 set $term kitty
 set $web firefox
 set $menu "rofi -modi combi -combi-modi drun#run -show combi"
-set $editor emacsclient -c
+set $editor EMACS_SOCKET_NAME=gui emacsclient -c -a ""
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
 
 #
