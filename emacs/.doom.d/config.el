@@ -326,19 +326,19 @@ or are no longer readable will be killed."
       (:key "d" :name "drafts"    :query "is:draft"          )
       (:key "a" :name "all"       :query "*"                 ))
     (if WORK                                 ; limit time range for performance
-        '((:key "j" :name "unified inbox"      :query "date:1w.. and is:inbox"                                  )
-          (:key "i" :name "work inbox"         :query "date:1w.. and is:inbox and is:work"                      )
-          (:key "I" :name "personal inbox"     :query "date:2w.. and is:inbox and not is:work"                  )
-          (:key "u" :name "work unread"        :query "date:1w.. and is:inbox and is:unread and is:work"        )
-          (:key "U" :name "personal unread"    :query "date:2w.. and is:inbox and is:unread and not is:work"    )
-          (:key "m" :name "work important"     :query "date:1w.. and is:inbox and is:important and is:work"     )
-          (:key "M" :name "personal important" :query "date:2w.. and is:inbox and is:important and not is:work" )
+        '((:key "j" :name "unified inbox"      :query "date:1w.. and (is:inbox or is:sent)"                                  )
+          (:key "i" :name "work inbox"         :query "date:1w.. and (is:inbox or is:sent) and is:work"                      )
+          (:key "I" :name "personal inbox"     :query "date:2w.. and (is:inbox or is:sent) and not is:work"                  )
+          (:key "u" :name "work unread"        :query "date:1w.. and (is:inbox or is:sent) and is:unread and is:work"        )
+          (:key "U" :name "personal unread"    :query "date:2w.. and (is:inbox or is:sent) and is:unread and not is:work"    )
+          (:key "m" :name "work important"     :query "date:1w.. and (is:inbox or is:sent) and is:important and is:work"     )
+          (:key "M" :name "personal important" :query "date:2w.. and (is:inbox or is:sent) and is:important and not is:work" )
           (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work"  )
           (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"              ))
-      '((:key "i" :name "inbox"      :query "date:2w.. and is:inbox"                  )
-        (:key "I" :name "inbox"      :query "date:2w.. and is:inbox"                  ) ; redundant
-        (:key "u" :name "unread"     :query "date:2w.. and is:inbox and is:unread"    )
-        (:key "m" :name "important"  :query "date:2w.. and is:inbox and is:important" )
+      '((:key "i" :name "inbox"      :query "date:2w.. and (is:inbox or is:sent)"                  )
+        (:key "I" :name "inbox"      :query "date:2w.. and (is:inbox or is:sent)"                  ) ; redundant
+        (:key "u" :name "unread"     :query "date:2w.. and (is:inbox or is:sent) and is:unread"    )
+        (:key "m" :name "important"  :query "date:2w.. and (is:inbox or is:sent) and is:important" )
         (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"              ))))
    notmuch-search-result-format '(("date"    . "%12s "     )
                                   ("count"   . "%-7s "     )
@@ -349,13 +349,17 @@ or are no longer readable will be killed."
    (append notmuch-tag-formats
            '(("unread"     (propertize tag 'face 'notmuch-tag-unread))
              ("inbox"      nil)
+             ("broadcast"  nil)
+             ("personal"   nil)
              ("work"       nil)
-             ("primary"    (propertize tag 'face '(:foreground "red")))
-             ("updates"    (propertize tag 'face '(:foreground "blue")))
+             ("primary"    (propertize tag 'face '(:foreground "tomato")))
+             ("updates"    (propertize tag 'face '(:foreground "royal blue")))
              ("promotions" (propertize tag 'face '(:foreground "magenta")))
-             ("forums"     (propertize tag 'face '(:foreground "yellow"))))
-           (list (list "personal"  (if WORK "p" ""))
-                 (list "important" (if WORK "im" (propertize "im" 'face '(:foreground "green"))))))
+             ("forums"     (propertize tag 'face '(:foreground "yellow")))
+             ("bills"      (propertize tag 'face '(:foreground "deep sky blue")))
+             ("amazon"     (propertize tag 'face '(:foreground "orange red")))
+             ("security-alert" (propertize tag 'face '(:foreground "brown"))))
+           (list (list "important" (if WORK "im" (propertize "im" 'face '(:foreground "green"))))))
 
    notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer)
 
@@ -449,6 +453,7 @@ or are no longer readable will be killed."
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
+    (setq-local fill-column 100)
     (visual-fill-column-mode +1)))
 
 ;; Include date in "on <date> <sender> wrote..." reply text

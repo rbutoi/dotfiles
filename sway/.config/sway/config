@@ -39,19 +39,14 @@ workspace 4 output DVI-D-1
 #
 bar swaybar_command waybar
 exec systemd-cat -t dex dex -a -e SWAY                    # autostart
-exec systemd-cat -t mako mako                             # notifications
 exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
-exec systemd-cat -t polkit-gnome-agent /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
 exec systemd-cat -t nm-applet nm-applet --indicator       # network status
 exec systemd-cat -t make_pipe_run_wob.sh make_pipe_run_wob.sh # volume/brightness bar
-# exec systemd-cat -t gammastep-indicator gammastep-
 
 # initial desktop
 exec $term tmx2 new -ADs auto
 exec $editor
-exec $web
-exec 1password
 exec spotify
 for_window [class="Spotify"] move window to scratchpad
 
@@ -73,7 +68,7 @@ for_window [app_id="blueman-manager"]            floating enable
 for_window [class="steam_proton"]                floating enable
 for_window [class="steam_app_.*"]                floating enable
 for_window [title="Sign in - Google Accounts"]   floating enable
-for_window [title="Firefox — Sharing Indicator"] floating enable
+for_window [title="Firefox - Sharing Indicator"] floating enable
 for_window [title="^Close Firefox$"]             floating enable
 for_window [app_id="goobuntu_indicator.py"]      floating enable
 for_window [title="Find Directory"]              floating enable
@@ -105,8 +100,8 @@ bindsym $mod+Return          exec $term
 bindsym $mod+Shift+Return    exec $term tmx2 new -ADs auto
 bindsym $mod+w               exec swaymsg '[app_id="firefox-esr"] focus' || $web
 bindsym $mod+Shift+w         exec $web
-bindsym $mod+Shift+e         exec swaymsg '[app_id="emacs"] focus' || $editor
-bindsym $mod+Ctrl+Shift+e    exec $editor
+bindsym $mod+e               exec swaymsg '[app_id="emacs"] focus' || $editor
+bindsym $mod+Shift+e         exec $editor
 bindsym $mod+c               kill
 bindsym $mod+space           exec $menu
 bindsym $mod+q               exec wlogout -p layer-shell
@@ -167,7 +162,7 @@ bindsym $mod+Shift+b  splith
 bindsym $mod+Shift+v  splitv
 bindsym $mod+s        layout stacking
 bindsym $mod+Shift+s  layout tabbed
-bindsym $mod+e        layout toggle split
+bindsym $mod+d        layout toggle split
 bindsym $mod+Shift+f  fullscreen
 bindsym $mod+Shift+t  floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
@@ -195,10 +190,10 @@ bindsym $mod+Print            exec grim /tmp/screen.png && notify-send 'saved /t
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
 bindsym XF86AudioMute         exec pamixer --toggle-mute
-bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 5 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 5 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym Pause                 exec pamixer --unmute --increase 5 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym Scroll_Lock           exec pamixer --unmute --decrease 5 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
+bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
+bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
+bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
+bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
 bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
 bindsym $mod+F1               exec playerctl play-pause
 bindsym $mod+F2               exec yamaha_vol down
