@@ -9,7 +9,7 @@ height=360
 default-timeout=2000
 group-by=category
 font=JetBrains Mono 50
-anchor=top-center
+anchor=center
 text-alignment=center
 # don't show number of grouped, irrelevant and distracting
 format=<b>%s</b>\n%b

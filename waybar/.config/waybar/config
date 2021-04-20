@@ -67,9 +67,9 @@
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
-    "on-click-right": "pamixer --toggle-mute && ( pamixer --get-mute && echo 0 > $SWAYSOCK.wob ) || notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
-    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
-    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume | tee $SWAYSOCK.wob)\"",
+    "on-click-right": "pamixer --toggle-mute || notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
     "tooltip": false,
   },
   "battery": {

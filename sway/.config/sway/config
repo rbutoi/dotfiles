@@ -42,7 +42,6 @@ exec systemd-cat -t dex dex -a -e SWAY                    # autostart
 exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
 exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
 exec systemd-cat -t nm-applet nm-applet --indicator       # network status
-exec systemd-cat -t make_pipe_run_wob.sh make_pipe_run_wob.sh # volume/brightness bar
 
 # initial desktop
 exec $term tmx2 new -ADs auto
@@ -187,13 +186,13 @@ bindsym $mod+Ctrl+$right  resize grow width 40px
 bindsym $mod+Shift+Ctrl+l     exec $locker
 bindsym Print                 exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
 bindsym $mod+Print            exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
-bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && echo $((100 * $(brightnessctl g) / $(brightnessctl m))) > $SWAYSOCK.wob
+bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86AudioMute         exec pamixer --toggle-mute
-bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
-bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume | tee $SWAYSOCK.wob)"
+bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
 bindsym $mod+F1               exec playerctl play-pause
 bindsym $mod+F2               exec yamaha_vol down
