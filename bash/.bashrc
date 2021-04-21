@@ -141,6 +141,7 @@ alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
 alias mosha='mosh radu@192.168.1.2 /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
+alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
 
 find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
