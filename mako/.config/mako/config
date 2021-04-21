@@ -13,3 +13,9 @@ anchor=center
 text-alignment=center
 # don't show number of grouped, irrelevant and distracting
 format=<b>%s</b>\n%b
+
+# notifymuch
+[category=email.arrived]
+default-timeout=20000
+width=1050
+height=1050

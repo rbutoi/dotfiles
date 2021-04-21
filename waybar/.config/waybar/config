@@ -30,7 +30,7 @@
     "on-click-middle": "close",
   },
   "custom/updates": {
-    "exec-if": "pacman --version",
+    "exec-if": "pacman --version 2>/dev/null",
     "exec": "checkupdates | wc -l",
     "format": "🎁 {}",
     "interval": 3600,
@@ -43,7 +43,8 @@
     "tooltip": false,
     "format": "✉{}",
     "on-click": "emacsclient -s gui -c -e '(notmuch-search \"is:unread and is:inbox\")'",
-    "interval": 5,
+    "interval": 3600, // 1 hour poll, 5 minute push
+    "signal": 9
   },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",

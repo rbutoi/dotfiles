@@ -10,7 +10,6 @@ notmuch tag +inbox    -- tag:new path:hotmail/Inbox/**
 notmuch tag +sent     -- tag:new path:hotmail/Sent/**
 notmuch tag +draft    -- tag:new path:hotmail/Drafts/**
 
-
 # since the "primary" is represented by a lack of a category tag, give it a tag
 # to make it easier
 notmuch tag +primary  -- tag:new and tag:personal and \
@@ -24,3 +23,14 @@ notmuch tag -new      -- tag:new
 
 # all of real filtering and tagging is done by Gmail, so they are accessible
 # from the web, mobile, etc
+
+################################################################################
+# notify new mail
+
+# don't notify in emacs, it blocks the cursor spinning for some reason and isn't
+# needed when looking at notmuch anyway
+[ -v INSIDE_EMACS ] || SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock \
+  swaymsg exec notifymuch
+
+# update waybar unread count
+pkill -RTMIN+9 waybar

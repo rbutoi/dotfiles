@@ -295,10 +295,6 @@ or are no longer readable will be killed."
 
 (after! notmuch
   (setq
-   notmuch-poll-script
-   "~/bin/poll_gmi.sh"
-   +notmuch-sync-backend nil
-   +notmuch-sync-command notmuch-poll-script
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t
    message-sendmail-extra-arguments '("--read-envelope-from")
@@ -454,7 +450,9 @@ or are no longer readable will be killed."
   (add-hook! notmuch-message-mode
     (auto-fill-mode -1)
     (setq-local fill-column 100)
-    (visual-fill-column-mode +1)))
+    (visual-fill-column-mode +1))
+  ;; Update waybar unread count faster than the 5 min poll
+  (add-hook! notmuch-search (call-process-shell-command "pkill -RTMIN+9 waybar")))
 
 ;; Include date in "on <date> <sender> wrote..." reply text
 (after! message
