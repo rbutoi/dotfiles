@@ -287,12 +287,10 @@ or are no longer readable will be killed."
 
 ;;;; notmuch
 (map!
- "C-c m" (cmd! (notmuch-search
-                (concat "is:inbox and " (if WORK "is:work and date:1w.." "date:2w.."))))
- "C-c M" (cmd! (notmuch)
-               ;; why is this necessary??
+ "C-c m" (cmd! (notmuch-search (concat "(is:inbox or is:sent) and date:"
+                                       (if WORK "1w.. and is:work" "2w.."))))
+ "C-c M" (cmd! (notmuch) ; why is this necessary??
                (delete-other-windows)))
-
 (after! notmuch
   (setq
    sendmail-program "msmtp"
@@ -321,21 +319,21 @@ or are no longer readable will be killed."
       (:key "s" :name "sent"      :query "date:1M.. is:sent" )
       (:key "d" :name "drafts"    :query "is:draft"          )
       (:key "a" :name "all"       :query "*"                 ))
-    (if WORK                                 ; limit time range for performance
-        '((:key "j" :name "unified inbox"      :query "date:1w.. and (is:inbox or is:sent)"                                  )
-          (:key "i" :name "work inbox"         :query "date:1w.. and (is:inbox or is:sent) and is:work"                      )
-          (:key "I" :name "personal inbox"     :query "date:2w.. and (is:inbox or is:sent) and not is:work"                  )
-          (:key "u" :name "work unread"        :query "date:1w.. and (is:inbox or is:sent) and is:unread and is:work"        )
-          (:key "U" :name "personal unread"    :query "date:2w.. and (is:inbox or is:sent) and is:unread and not is:work"    )
-          (:key "m" :name "work important"     :query "date:1w.. and (is:inbox or is:sent) and is:important and is:work"     )
-          (:key "M" :name "personal important" :query "date:2w.. and (is:inbox or is:sent) and is:important and not is:work" )
-          (:key "b" :name "work broadcast"     :query "date:1w.. and is:broadcast and not is:list and is:work"  )
-          (:key "B" :name "personal broadcast" :query "date:2w.. and is:broadcast and not is:work"              ))
-      '((:key "i" :name "inbox"      :query "date:2w.. and (is:inbox or is:sent)"                  )
-        (:key "I" :name "inbox"      :query "date:2w.. and (is:inbox or is:sent)"                  ) ; redundant
-        (:key "u" :name "unread"     :query "date:2w.. and (is:inbox or is:sent) and is:unread"    )
-        (:key "m" :name "important"  :query "date:2w.. and (is:inbox or is:sent) and is:important" )
-        (:key "b" :name "broadcast"  :query "date:2w.. and is:broadcast"              ))))
+    (if WORK
+        '((:key "j" :name "unified inbox"      :query "(is:inbox or is:sent) and date:1w.."                                  )
+          (:key "i" :name "work inbox"         :query "(is:inbox or is:sent) and date:1w.. and is:work"                      )
+          (:key "I" :name "personal inbox"     :query "(is:inbox or is:sent) and date:2w.. and not is:work"                  )
+          (:key "u" :name "work unread"        :query "(is:inbox or is:sent) and date:1w.. and is:unread and is:work"        )
+          (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and not is:work"    )
+          (:key "m" :name "work important"     :query "(is:inbox or is:sent) and date:1w.. and is:important and is:work"     )
+          (:key "M" :name "personal important" :query "(is:inbox or is:sent) and date:2w.. and is:important and not is:work" )
+          (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"  )
+          (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and not is:work"              ))
+      '((:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
+        (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  ) ; redundant
+        (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"    )
+        (:key "m" :name "important"  :query "(is:inbox or is:sent) and date:2w.. and is:important" )
+        (:key "b" :name "broadcast"  :query "is:broadcast date:2w.."              ))))
    notmuch-search-result-format '(("date"    . "%12s "     )
                                   ("count"   . "%-7s "     )
                                   ("authors" . "%-20s "    )

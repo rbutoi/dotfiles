@@ -138,7 +138,7 @@ complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
 alias xa='xargs'
-alias ssha='ssh -t radu@192.168.1.2 tmux new -ADs auto'
+alias mosha='mosh radu@192.168.1.2 /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 
 find_pi() {
