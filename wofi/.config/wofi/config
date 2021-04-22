@@ -1,0 +1,14 @@
+# default
+mode=drun,run
+
+display_generic=true
+insensitive=true
+allow_images=true
+allow_markup=true
+
+key_up=Control_L-p
+key_down=Control_L-n
+key_forward=Control_L-f
+key_backward=Control_L-b
+key_pgup=Alt_L-v
+key_pgdn=Control_L-v
