@@ -15,6 +15,7 @@
     "custom/updates",
     "tray",
     "pulseaudio",
+    "backlight",
     "battery",
     "custom/clock",
   ],
@@ -73,6 +74,12 @@
     "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
     "tooltip": false,
   },
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["🌑", "🌚", "🌘", "🌗", "🌖", "🌕", "🌝"],
+    "on-scroll-up":   "                                   brightnessctl set 2%+ && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
+    "on-scroll-down": "[ $(brightnessctl g) -lt 1200 ] || brightnessctl set 2%- && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
+  },
   "battery": {
     "bat": "BAT0",
     "states": {
@@ -100,7 +107,8 @@
     "interval": 3600,
     "exec": "waybar-wttr.py",
     "return-type": "json",
-    "on-click": "xdg-open 'https://www.google.com/search?q=weather'",
+    "on-click": "gnome-weather",
+    "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
   }
 }, {
   "output": ["DVI-D-1", "DP-2"],

@@ -26,11 +26,13 @@ notmuch tag -new      -- tag:new
 
 ################################################################################
 # notify new mail
+if pgrep '^sway$' >/dev/null; then
+  # don't notify in emacs, not needed when looking
+  export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock
+  [ "$(swaymsg -t get_tree | jq -r '.. | select(.type?) |
+  select(.focused==true).app_id')" == emacs ] ||
+    swaymsg exec notify-notmuch
 
-# don't notify in emacs, it blocks the cursor spinning for some reason and isn't
-# needed when looking at notmuch anyway
-[ -v INSIDE_EMACS ] || SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock \
-  swaymsg exec notifymuch
-
-# update waybar unread count
-pkill -RTMIN+9 waybar
+  # update waybar unread count
+  pkill -RTMIN+9 waybar
+fi

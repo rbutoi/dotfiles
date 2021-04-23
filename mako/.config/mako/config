@@ -14,8 +14,9 @@ text-alignment=center
 # don't show number of grouped, irrelevant and distracting
 format=<b>%s</b>\n%b
 
-# notifymuch
-[category=email.arrived]
+[category=my.email]
 default-timeout=20000
-width=1050
-height=1050
+font=JetBrains Mono 13
+width=1900
+height=800
+output=DP-1
