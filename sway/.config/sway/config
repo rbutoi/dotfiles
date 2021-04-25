@@ -198,17 +198,17 @@ bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send 
 bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
-bindsym $mod+F1               exec playerctl play-pause
+bindsym $mod+F1               exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=play_pause ; else playerctl play-pause ; fi"
 bindsym $mod+F2               exec yamaha_vol down
 bindsym $mod+F3               exec yamaha_vol up
 bindsym $mod+F4               exec yamaha_toggle_link.sh
-bindsym $mod+Shift+F2         exec playerctl previous
-bindsym $mod+Shift+F3         exec playerctl next
+bindsym $mod+Shift+F2         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=previous   ; else playerctl previous   ; fi"
+bindsym $mod+Shift+F3         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=next       ; else playerctl next       ; fi"
 bindsym $mod+Shift+F4         exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
-bindsym XF86AudioPlay         exec playerctl play-pause
-bindsym XF86AudioPrev         exec playerctl previous
-bindsym XF86AudioNext         exec playerctl next
-bindsym XF86AudioStop         exec playerctl stop
+bindsym XF86AudioPlay         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=play_pause ; else playerctl play-pause ; fi"
+bindsym XF86AudioPrev         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=previous   ; else playerctl previous   ; fi"
+bindsym XF86AudioNext         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=next       ; else playerctl next       ; fi"
+bindsym XF86AudioStop         exec sh -c "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=stop       ; else playerctl stop       ; fi"
 bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi

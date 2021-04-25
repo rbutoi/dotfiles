@@ -112,7 +112,7 @@
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   (concat (string-join counsel-rg-base-command " ") " --no-ignore 2>/dev/null || true")))
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --no-ignore %s 2>/dev/null || true"))
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)

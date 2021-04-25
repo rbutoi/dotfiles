@@ -51,7 +51,7 @@
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
     "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
-    "on-click-right": "playerctl play-pause",
+    "on-click-right": "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; set -x; then curl -s ${URL}/setPlayback?playback=play_pause; else playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
     "on-scroll-down": "yamaha_vol down",
