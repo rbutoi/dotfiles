@@ -7,6 +7,7 @@
     "sway/workspaces",
     "sway/mode",
     "custom/spotify",
+    "custom/cast",
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
@@ -47,11 +48,24 @@
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
+  "custom/cast": {
+    "exec": "waybar-catt.py",
+    "interval": 3,
+    "tooltip": true,
+    "return-type": "json",
+    "exec-if": "nmcli -t | grep -q 'i like turtles'",
+    "on-click":       "catt play_toggle && rm /tmp/cattstatus",
+    "on-click-right": "catt play_toggle && rm /tmp/cattstatus",
+    "on-click-middle": "gyrc",
+    "on-scroll-up":   "yamaha_vol up",
+    "on-scroll-down": "yamaha_vol down",
+    "max-length": 25
+  },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
     "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
-    "on-click-right": "URL=http://192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; set -x; then curl -s ${URL}/setPlayback?playback=play_pause; else playerctl play-pause; fi",
+    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; set -x; then curl -s ${URL}/setPlayback?playback=play_pause; else playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
     "on-scroll-down": "yamaha_vol down",
