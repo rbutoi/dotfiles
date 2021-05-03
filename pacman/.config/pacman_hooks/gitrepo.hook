@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Updating dotfiles repo...
+When = PostTransaction
+Exec = /home/radu/bin/run_generate_package_list

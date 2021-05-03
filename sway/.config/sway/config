@@ -55,26 +55,26 @@ for_window [title="gsimplecal"]                  move position mouse, move up 10
 for_window [class="Emacs"]                       opacity 0.9
 for_window [app_id="emacs"]                      opacity 0.9
 for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.8
-for_window [app_id="pavucontrol"]                floating enable
-for_window [app_id="xfce4-appfinder"]            floating enable
+for_window [app_id="blueman-manager"]            floating enable
+for_window [app_id="cinnamon-settings.py"]       floating enable
 for_window [app_id="exo-desktop-item-edit"]      floating enable
-for_window [app_id="zenity"]                     floating enable
-for_window [app_id="org.gnome.Weather"]          floating enable
+for_window [app_id="gnome-control-center"]       floating enable
+for_window [app_id="goobuntu_indicator.py"]      floating enable
 for_window [app_id="gyrc"]                       floating enable
+for_window [app_id="org.gnome.Weather"]          floating enable
+for_window [app_id="pavucontrol"]                floating enable
 for_window [app_id="qalculate-gtk"]              floating enable
+for_window [app_id="wdisplays"]                  floating enable
+for_window [app_id="xfce4-appfinder"]            floating enable
+for_window [app_id="zenity"]                     floating enable
 for_window [class="1Password"]                   floating enable
 for_window [class="PCSX2"]                       floating enable
-for_window [app_id="blueman-manager"]            floating enable
-for_window [class="steam_proton"]                floating enable
 for_window [class="steam_app_.*"]                floating enable
-for_window [title="Firefox - Sharing Indicator"] floating enable
-for_window [title="^Close Firefox$"]             floating enable
-for_window [app_id="goobuntu_indicator.py"]      floating enable
+for_window [class="steam_proton"]                floating enable
 for_window [title="Find Directory"]              floating enable
+for_window [title="Firefox - Sharing Indicator"] floating enable
 for_window [title="^(Open|Save) Files?$"]        floating enable
-for_window [app_id="wdisplays"]                  floating enable
-for_window [app_id="cinnamon-settings.py"]       floating enable
-for_window [app_id="gnome-control-center"]       floating enable
+for_window [title="^Close Firefox$"]             floating enable
 assign [class="hl2_linux"]                       workspace 3
 
 #
@@ -197,17 +197,17 @@ bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send 
 bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
-bindsym $mod+F1               exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=play_pause ; else playerctl play-pause ; fi"
 bindsym $mod+F2               exec yamaha_vol down
 bindsym $mod+F3               exec yamaha_vol up
 bindsym $mod+F4               exec yamaha_toggle_link.sh
-bindsym $mod+Shift+F2         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=previous   ; else playerctl previous   ; fi"
-bindsym $mod+Shift+F3         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=next       ; else playerctl next       ; fi"
 bindsym $mod+Shift+F4         exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
-bindsym XF86AudioPlay         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=play_pause ; else playerctl play-pause ; fi"
-bindsym XF86AudioPrev         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=previous   ; else playerctl previous   ; fi"
-bindsym XF86AudioNext         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=next       ; else playerctl next       ; fi"
-bindsym XF86AudioStop         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; set -x; then curl -s \${URL}/setPlayback?playback=stop       ; else playerctl stop       ; fi"
+bindsym $mod+F1               exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=play_pause ; else set -x; playerctl play-pause ; fi"
+bindsym $mod+Shift+F2         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=previous   ; else set -x; playerctl previous   ; fi"
+bindsym $mod+Shift+F3         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
+bindsym XF86AudioPlay         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=play_pause ; else set -x; playerctl play-pause ; fi"
+bindsym XF86AudioPrev         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=previous   ; else set -x; playerctl previous   ; fi"
+bindsym XF86AudioNext         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
+bindsym XF86AudioStop         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=stop       ; else set -x; playerctl stop       ; fi"
 bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi

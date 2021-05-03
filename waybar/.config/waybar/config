@@ -32,8 +32,9 @@
     "on-click-middle": "close",
   },
   "custom/updates": {
-    "exec-if": "pacman --version 2>/dev/null",
-    "exec": "checkupdates | wc -l",
+    "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
+    "exec": "python -c \"import json, subprocess; d={}; d['text'] = subprocess.run('checkupdates | wc -l | perl -pe chomp', shell=True, capture_output=True, encoding='utf-8').stdout; d['tooltip'] = subprocess.run('checkupdates', shell=True, capture_output=True, encoding='utf-8').stdout; print(json.dumps(d))\"",
+    "return-type": "json",
     "format": "🎁 {}",
     "interval": 3600,
     "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
@@ -59,18 +60,18 @@
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
     "on-scroll-down": "yamaha_vol down",
-    "max-length": 25
+    "max-length": 60
   },
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
     "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify",
-    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; set -x; then curl -s ${URL}/setPlayback?playback=play_pause; else playerctl play-pause; fi",
+    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
     "on-scroll-down": "yamaha_vol down",
     "tooltip": true,
-    "max-length": 45
+    "max-length": 80
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
     "exec": "date '+%a %d⏰%H:%M'",

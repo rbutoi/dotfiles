@@ -43,13 +43,11 @@ for m in exclude_recently_seen_threads(
         truncate_from_middle_or_pad(m['subject']),
         ' '.join(set(m['tags']).difference(HIDDEN_TAGS)))
 
-count = int(subprocess.run(f'notmuch count "{QUERY}"', shell=True,
-                           capture_output=True).stdout)
-if count > 0:
-    s = style = ''
+if out != '':
+    s = ''
+    count = int(subprocess.run(f'notmuch count "{QUERY}"', shell=True,
+                               capture_output=True).stdout)
     if count > 1:
         s = 's'
-    if out != '': # use large monospace style when displaying messages
-        style = '-c my.email'
-    subprocess.run(f'notify-send {style} "{count} new message{s}" "{out}"',
+    subprocess.run(f'notify-send -c my.email "{count} new message{s}" "{out}"',
                    shell=True, capture_output=True)
