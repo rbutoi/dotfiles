@@ -12,12 +12,12 @@ set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 10
 #
 # input/output
 #
-input * {
-# keyboard
+input type:keyboard {
     xkb_options ctrl:nocaps
     repeat_delay 250
     repeat_rate 30
-# mouse
+}
+input type:pointer {
     accel_profile flat
     pointer_accel 0.35
 }
@@ -48,6 +48,7 @@ exec $term tmx2 new -ADs auto
 exec $editor
 exec spotify
 for_window [class="Spotify"] move window to scratchpad
+exec signal-desktop-beta
 
 # per window config
 for_window [title="gsimplecal"]                  move position mouse, move up 100 px, move left 120 px
@@ -66,7 +67,6 @@ for_window [class="PCSX2"]                       floating enable
 for_window [app_id="blueman-manager"]            floating enable
 for_window [class="steam_proton"]                floating enable
 for_window [class="steam_app_.*"]                floating enable
-for_window [title="Sign in - Google Accounts"]   floating enable
 for_window [title="Firefox - Sharing Indicator"] floating enable
 for_window [title="^Close Firefox$"]             floating enable
 for_window [app_id="goobuntu_indicator.py"]      floating enable
@@ -76,7 +76,6 @@ for_window [app_id="wdisplays"]                  floating enable
 for_window [app_id="cinnamon-settings.py"]       floating enable
 for_window [app_id="gnome-control-center"]       floating enable
 assign [class="hl2_linux"]                       workspace 3
-assign [class="Signal"]                          workspace 4
 
 #
 # display

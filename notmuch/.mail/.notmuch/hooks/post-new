@@ -28,7 +28,7 @@ notmuch tag -new      -- tag:new
 # notify new mail
 if pgrep '^sway$' >/dev/null; then
   # don't notify in emacs, not needed when looking
-  export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock
+  export SWAYSOCK=$(sway --get-socketpath)
   [ "$(swaymsg -t get_tree | jq -r '.. | select(.type?) |
   select(.focused==true).app_id')" == emacs ] ||
     swaymsg exec notify-notmuch

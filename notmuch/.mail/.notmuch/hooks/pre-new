@@ -1,7 +1,5 @@
 #!/bin/sh
 
-ping -c1 imap.gmail.com >/dev/null || exit 1
-
 # poll gmi and mbsync
 command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
 

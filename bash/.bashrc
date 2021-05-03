@@ -89,15 +89,15 @@ pip3_upgrade() {
 
 # editor
 ew() {
-  [ ! -e "$@" ] && return 1
   emacsclient -a= -nw "$@"
 }
 en() {
-  [ ! -e "$@" ] && return 1
   emacsclient -a= -n "$@"
 }
+eng() {
+  emacsclient -sgui -a= -n "$@"
+}
 enc() {
-  [ ! -e "$@" ] && return 1
   emacsclient -a= -nc "$@"
 }
 e() { ew "$@"; }
@@ -137,6 +137,7 @@ alias s='sudo'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
+alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
 alias mosha='mosh radu@192.168.1.2 /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
@@ -146,7 +147,7 @@ find_pi() {
 }
 
 fix_swaysock() {
-  export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock
+  export SWAYSOCK=$(sway --get-socketpath)
 }
 
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'

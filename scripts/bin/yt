@@ -9,7 +9,7 @@ else
   exit 1
 fi
 
-export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock
+export SWAYSOCK=$(sway --get-socketpath)
 
 vertical_res="$(swaymsg -t get_outputs | jq 'max_by(.current_mode.height).current_mode.height')"
 youtubedl_format="bestvideo[height<=${vertical_res}]+bestaudio/best[height<=${vertical_res}]"
