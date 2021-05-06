@@ -15,7 +15,7 @@ text-alignment=center
 format=<b>%s</b>\n%b
 
 [category=my.email]
-default-timeout=20000
+default-timeout=5000
 font=JetBrains Mono 13
 width=1900
 height=800
