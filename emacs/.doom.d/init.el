@@ -46,7 +46,7 @@
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
-       (spell +everywhere) ; tasing you for misspelling mispelling
+       spell               ; tasing you for misspelling mispelling
 
        :tools
        (eval +overlay)     ; run code, run (also, repls)

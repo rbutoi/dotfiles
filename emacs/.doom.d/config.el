@@ -6,8 +6,7 @@
 
 ;;;; Theme
 (setq doom-theme
-      (if (or (display-graphic-p) (string= (getenv "EMACS_SOCKET_NAME") "gui"))
-          'solarized-dark-high-contrast 'default)
+      'solarized-dark
       doom-font  (font-spec :family "JetBrains Mono" :size 15)
       doom-modeline-project-detection 'project)
 
@@ -56,9 +55,7 @@
  "C-S-M-k" 'doom/kill-all-buffers
  "C-x C-M-k" 'doom/kill-all-buffers)
 
-;; might fix query-replace somehow??
-;; https://github.com/syl20bnr/spacemacs/issues/10938#issuecomment-407291657
-(setq frame-title-format nil)
+(setq frame-title-format "%b: Editor MACroS")
 
 ;; keep windows balanced
 (defadvice split-window-below (after restore-balanace-below activate)

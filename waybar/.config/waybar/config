@@ -45,7 +45,7 @@
     "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
     "tooltip": false,
     "format": "✉{}",
-    "on-click": "emacsclient -s gui -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },

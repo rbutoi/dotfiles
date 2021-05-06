@@ -94,9 +94,6 @@ ew() {
 en() {
   emacsclient -a= -n "$@"
 }
-eng() {
-  emacsclient -sgui -a= -n "$@"
-}
 enc() {
   emacsclient -a= -nc "$@"
 }
