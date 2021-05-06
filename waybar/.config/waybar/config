@@ -12,8 +12,8 @@
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
     "custom/mail",
-    "custom/weather",
     "custom/updates",
+    "custom/weather",
     "tray",
     "pulseaudio",
     "backlight",

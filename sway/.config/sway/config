@@ -51,7 +51,7 @@ for_window [class="Spotify"] move window to scratchpad
 exec signal-desktop-beta
 
 # per window config
-for_window [title="gsimplecal"]                  move position mouse, move up 100 px, move left 120 px
+for_window [app_id="gsimplecal"]                 move position mouse, move up 30 px, move left 30 px
 for_window [class="Emacs"]                       opacity 0.9
 for_window [app_id="emacs"]                      opacity 0.9
 for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.8
