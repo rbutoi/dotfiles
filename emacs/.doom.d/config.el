@@ -38,18 +38,14 @@
 (add-hook 'kill-emacs-hook #'save-frame-dimensions)
 
 ;;;; Buffers and windows
-;; bind-keys* because M-binds are frequently rebound (magit, vterm for example)
-(bind-keys*
- ("M-0"  . delete-window)
- ("M-1"  . delete-other-windows)
- ("M-2"  . split-window-below)
- ("M-3"  . split-window-right)
- ;; if not lambda, would trigger ace-window
- ("M-o"  . (lambda () (interactive) (other-window +1)))
- ("M-i"  . (lambda () (interactive) (other-window -1))))
 (map!
  "M-l"     (cmd! (select-window (get-mru-window t t t)))
- "C-k"     'kill-current-buffer
+ "M-0"     'delete-window
+ "M-1"     'delete-other-windows
+ "M-2"     'split-window-below
+ "M-3"     'split-window-right
+ "M-o"     (cmd! (other-window +1))
+ "M-i"     (cmd! (other-window -1))
  "C-S-k"   'doom/kill-other-buffers
  "C-x M-k" 'doom/kill-other-buffers
  "C-S-M-k" 'doom/kill-all-buffers
