@@ -6,8 +6,8 @@
 
 ;;;; Theme
 (setq doom-theme
-      'solarized-dark
-      doom-font  (font-spec :family "JetBrains Mono" :size 15)
+      'doom-gruvbox
+      doom-font  (font-spec :family "JetBrains Mono" :size 14)
       doom-modeline-project-detection 'project)
 
 ;;;; Startup/shutdown
