@@ -16,27 +16,6 @@
  confirm-kill-processes nil
  initial-major-mode 'lisp-interaction-mode) ; undo Doom
 
-;; Persist Emacs’ initial frame position, dimensions and/or full-screen state
-;; across sessions (from Doom "Interesting snippets")
-(when-let (dims (doom-store-get 'last-frame-size))
-  (cl-destructuring-bind ((left . top) width height fullscreen) dims
-    (setq initial-frame-alist
-          (append initial-frame-alist
-                  `((left . ,left)
-                    (top . ,top)
-                    (width . ,width)
-                    (height . ,height)
-                    (fullscreen . ,fullscreen))))))
-
-(defun save-frame-dimensions ()
-  (doom-store-put 'last-frame-size
-                  (list (frame-position)
-                        (frame-width)
-                        (frame-height)
-                        (frame-parameter nil 'fullscreen))))
-
-(add-hook 'kill-emacs-hook #'save-frame-dimensions)
-
 ;;;; Buffers and windows
 (map!
  "M-l"     (cmd! (select-window (get-mru-window t t t)))
