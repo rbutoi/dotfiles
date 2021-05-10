@@ -111,7 +111,6 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
-google-chrome-dev
 gparted
 grim
 gsimplecal
@@ -209,7 +208,6 @@ nload
 nmap
 nm-connection-editor
 nmrpflash
-notifymuch-git
 notmuch
 noto-fonts
 noto-fonts-cjk
@@ -255,6 +253,7 @@ psmisc
 pulseaudio-alsa
 pv
 python-argparse
+python-arrow
 python-attrdict
 python-bottle
 python-google-api-python-client
@@ -299,11 +298,12 @@ samba
 sd
 sdl2-jstest-git
 seahorse
+selectdefaultapplication-git
 sfml
 sgtk-menu
 shadow
 shellcheck-bin
-signal-desktop-beta-bin
+signal-desktop
 skypeforlinux-preview-bin
 slurp
 smartmontools

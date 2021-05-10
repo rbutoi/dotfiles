@@ -49,7 +49,7 @@ exec $editor
 exec discord
 exec spotify
 for_window [class="Spotify"] move window to scratchpad
-exec signal-desktop-beta
+exec signal-desktop
 
 # per window config
 for_window [app_id="gsimplecal"]                 move position mouse, move up 30 px, move left 30 px
