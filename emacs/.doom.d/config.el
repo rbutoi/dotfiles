@@ -282,8 +282,7 @@ or are no longer readable will be killed."
 (map!
  "C-c m" (cmd! (notmuch-search (concat "(is:inbox or is:sent) and date:"
                                        (if WORK "1w.. and is:work" "2w.."))))
- "C-c M" (cmd! (notmuch) ; why is this necessary??
-               (delete-other-windows)))
+ "C-c M" 'notmuch)
 (after! notmuch
   (setq
    sendmail-program "msmtp"
@@ -424,6 +423,8 @@ or are no longer readable will be killed."
                   (concat "https://mail.google.com"
                           (if (string-match-p "broadcast" (buffer-name))
                               "/mail/u/0/#label/broadcast" "")))))
+  ;; ignore doom's rule, prefer fullscreen
+  (set-popup-rule! "^\\*notmuch-hello" :ignore t)
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
