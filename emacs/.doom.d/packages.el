@@ -1,4 +1,14 @@
 ;;; packages.el -*- lexical-binding: t; -*-
+(unpin!
+ counsel
+ flycheck
+ git-commit
+ ivy
+ magit
+ notmuch
+ swiper
+ with-editor)
+
 (package! solarized-theme)
 (package! buffer-move)
 (package! zoom-window)
