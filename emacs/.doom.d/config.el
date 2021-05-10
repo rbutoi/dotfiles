@@ -461,6 +461,7 @@ or are no longer readable will be killed."
            ))))
 
 ;;;; vterm
+(setq vterm-always-compile-module t)
 (map! :map vterm-mode-map
       "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w"))))
 
