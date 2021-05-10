@@ -348,7 +348,6 @@ or are no longer readable will be killed."
            (list (list "important" (if WORK "im" (propertize "im" 'face '(:foreground "green"))))))
 
    notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer))
-  (setq-default notmuch-search-oldest-first nil)
 
   ;; Make search coloured like tree (why are they different?)
   (face-spec-set 'notmuch-search-date
