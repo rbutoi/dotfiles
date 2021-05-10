@@ -136,7 +136,8 @@ alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
-alias mosha='mosh radu@192.168.1.2 /home/radu/bin/continuetmux'
+alias ssha='ssh -t a tmux new -ADs auto'
+alias mosha='mosh a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
 

@@ -515,49 +515,10 @@ shell exits, the buffer is killed."
     (vterm-send-return)))
 
 ;;;; Terminal support
-(setq xterm-set-window-title nil) ; seems to bug out
-(map! "C-M-]" 'query-replace-regexp
-      "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
-
-;; make window divider prettier in terminal
-(set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
-
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
   (message "Opening %s in browser." url))
-
-(add-hook! 'after-make-frame-functions
-  (unless (display-graphic-p)
-    (message "enabling xterm other keys stuff")
-    ;; Take advantage of iterm2's CSI u support (https://gitlab.com/gnachman/iterm2/-/issues/8382).
-    (when (fboundp 'xterm--init-modify-other-keys)
-      (xterm--init-modify-other-keys))
-    ;; Courtesy https://emacs.stackexchange.com/a/13957, modified per
-    ;; https://gitlab.com/gnachman/iterm2/-/issues/8382#note_365264207
-    (defun character-apply-modifiers (c &rest modifiers)
-      "Apply modifiers to the character C.
-MODIFIERS must be a list of symbols amongst (meta control shift).
-Return an event vector."
-      (if (memq 'control modifiers) (setq c (if (and (<= ?a c) (<= c ?z))
-                                                (logand c ?\x1f)
-                                              (logior (lsh 1 26) c))))
-      (if (memq 'meta modifiers) (setq c (logior (lsh 1 27) c)))
-      (if (memq 'shift modifiers) (setq c (logior (lsh 1 25) c)))
-      (vector c))
-    (when (and (boundp 'xterm-extra-capabilities) (boundp 'xterm-function-map))
-      (let ((c 32))
-        (while (<= c 126)
-          (mapc (lambda (x)
-                  (define-key xterm-function-map (format (car x) c)
-                    (apply 'character-apply-modifiers c (cdr x))))
-                '(("\e\[%d;3u" meta)
-                  ("\e\[%d;5u" control)
-                  ("\e\[%d;6u" control shift)
-                  ("\e\[%d;7u" control meta)
-                  ("\e\[%d;8u" control meta shift)))
-          (setq c (1+ c)))))
-    ))
 
 ;;; Epilogue
 ;; Host-specific support

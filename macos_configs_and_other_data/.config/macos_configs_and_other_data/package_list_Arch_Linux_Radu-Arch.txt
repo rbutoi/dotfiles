@@ -1,7 +1,9 @@
 1password
 2048-rs
+aconfmgr-git
 advcp
 adwaita-qt
+alacritty
 alsa-utils
 amd-ucode
 android-file-transfer
@@ -55,7 +57,7 @@ cryptsetup
 csfml
 cups
 darkstat
-darktable
+darktable-git
 dconf-editor
 device-mapper
 devtools
@@ -78,6 +80,7 @@ etc-update
 exa
 exfat-utils
 expac
+fail2ban
 fbset
 fd
 ffmpegthumbnailer
@@ -87,15 +90,18 @@ firefox
 fish
 fontforge
 font-manager
+foot-git
 fwupd
 fzf
 gamemode
 gammastep
 gcc-libs
 gdb
+geoip
 gimp
 git
 gitg
+glances
 glibc
 gnome-boxes
 gnome-calendar
@@ -151,7 +157,7 @@ joycond-git
 jq
 jre11-openjdk
 keychain
-kitty
+kitty-git
 kodi-gbm
 kodi-wayland
 l3afpad
@@ -173,6 +179,7 @@ lostfiles
 lsb-release
 lshw
 lsof
+lua
 lutris
 lvm2
 lxappearance
@@ -193,6 +200,7 @@ moreutils
 mosh-git
 mpv
 msmtp
+msmtp-mta
 multimc-git
 nano
 nautilus
@@ -367,6 +375,7 @@ wasm-pack
 waybar-git
 wdisplays-git
 wev-git
+wezterm-nightly-bin
 wget
 wine-gecko
 wine-mono

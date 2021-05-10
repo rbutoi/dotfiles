@@ -1,6 +1,7 @@
 ;;; packages.el -*- lexical-binding: t; -*-
 (unpin!
  counsel
+ doom-modeline
  flycheck
  git-commit
  ivy
@@ -31,3 +32,4 @@
 (package! emacs-w3m)
 (package! haskell-mode)
 (package! ssh-config-mode)
+(package! lua-mode)
