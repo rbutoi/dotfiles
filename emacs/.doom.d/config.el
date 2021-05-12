@@ -5,32 +5,32 @@
 ;;; UI
 
 ;;;; Theme
-(setq doom-theme
-      'doom-gruvbox
-      doom-font  (font-spec :family "JetBrains Mono" :size 14)
-      doom-modeline-project-detection 'project)
+(setq doom-theme 'doom-gruvbox
+      doom-font  (font-spec :family "JetBrains Mono" :size 14))
 
-;;;; Startup/shutdown
+;;;; Startup
 (setq
- confirm-kill-emacs nil
  confirm-kill-processes nil
  initial-major-mode 'lisp-interaction-mode) ; undo Doom
 
 ;;;; Buffers and windows
 (map!
- "M-l"     (cmd! (select-window (get-mru-window t t t)))
- "M-0"     'delete-window
- "M-1"     'delete-other-windows
- "M-2"     'split-window-below
- "M-3"     'split-window-right
- "M-o"     (cmd! (other-window +1))
- "M-i"     (cmd! (other-window -1))
- "C-S-k"   'doom/kill-other-buffers
- "C-x M-k" 'doom/kill-other-buffers
- "C-S-M-k" 'doom/kill-all-buffers
- "C-x C-M-k" 'doom/kill-all-buffers)
+ "M-l"       (cmd! (select-window (get-mru-window t t t)))
+ "M-0"       'delete-window
+ "M-1"       'delete-other-windows
+ "M-2"       'split-window-below
+ "M-3"       'split-window-right
+ "M-o"       (cmd! (other-window +1))
+ "M-i"       (cmd! (other-window -1))
+ "C-S-k"     'doom/kill-other-buffers
+ "C-x M-k"   'doom/kill-other-buffers
+ "C-S-M-k"   'doom/kill-all-buffers
+ "C-x C-M-k" 'doom/kill-all-buffers
+ ;; occassionally useful (e.g. w3m)
+ "C-c M-s"   'scroll-bar-mode)
 
-(setq frame-title-format "%b: Editor MACroS")
+(setq frame-title-format "%b: Editor MACroS"
+      doom-modeline-project-detection 'project)
 
 ;; keep windows balanced
 (defadvice split-window-below (after restore-balanace-below activate)
@@ -48,8 +48,6 @@
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
-
-(setq display-line-numbers-type nil) ; undo Doom
 
 ;;;; Popups
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
@@ -84,7 +82,30 @@
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --no-ignore %s 2>/dev/null || true"))
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --no-ignore %s 2>/dev/null || true")
+
+  ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
+  (define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
+  (defun counsel-find-file-fallback-command ()
+    "Fallback to non-counsel version of current command."
+    (interactive)
+    (when (bound-and-true-p ivy-mode)
+      (ivy-mode -1)
+      (add-hook 'minibuffer-setup-hook
+                'counsel-find-file-fallback-command--enable-ivy))
+    (ivy-set-action
+     (lambda (current-path)
+       (let ((old-default-directory default-directory))
+         (let ((i (length current-path)))
+           (while (> i 0)
+             (push (aref current-path (setq i (1- i))) unread-command-events)))
+         (let ((default-directory "")) (call-interactively 'find-file))
+         (setq default-directory old-default-directory))))
+    (ivy-done))
+  (defun counsel-find-file-fallback-command--enable-ivy ()
+    (remove-hook 'minibuffer-setup-hook
+                 'counsel-find-file-fallback-command--enable-ivy)
+    (ivy-mode t)))
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
@@ -305,15 +326,23 @@ or are no longer readable will be killed."
         (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"    )
         (:key "m" :name "important"  :query "(is:inbox or is:sent) and date:2w.. and is:important" )
         (:key "b" :name "broadcast"  :query "is:broadcast date:2w.."              ))))
-   notmuch-search-result-format '(("date"    . "%12s "     )
-                                  ("count"   . "%-7s "     )
-                                  ("authors" . "%-20s "    )
-                                  ("subject" . "%-60.60s " )
-                                  ("tags"    . "%s"        ))
+   notmuch-search-result-format--narrow
+   '(("date"    . "%12s "     )
+     ("count"   . "%-7s "     )
+     ("authors" . "%-20s "    )
+     ("subject" . "%-60.60s " )
+     ("tags"    . "%s"        ))
+   notmuch-search-result-format--wide
+   '(("date"    . "%12s "       )
+     ("count"   . "%-7s "       )
+     ("authors" . "%-50s "      )
+     ("subject" . "%-130.130s " )
+     ("tags"    . "%s"          ))
+   notmuch-search-result-format notmuch-search-result-format--narrow
+
    notmuch-tag-formats
    (append notmuch-tag-formats
-           '(("unread"     (propertize tag 'face 'notmuch-tag-unread))
-             ("inbox"      nil)
+           '(("inbox"      nil)
              ("broadcast"  nil)
              ("personal"   nil)
              ("work"       nil)
@@ -354,36 +383,45 @@ or are no longer readable will be killed."
                     "notmuch search --output=files --format=text0 tag:deleted"
                     " | xargs -0 rm && notmuch new"))
     (notmuch-refresh-all-buffers))
+  (defun toggle-notmuch-search-width ()
+    "Toggle width of Notmuch search results."
+    (interactive)
+    (setq notmuch-search-result-format
+          (if (eq notmuch-search-result-format notmuch-search-result-format--narrow)
+              notmuch-search-result-format--wide
+            notmuch-search-result-format--narrow))
+    (notmuch-search-refresh-view))
   (map! :map notmuch-search-mode-map
-        "w"     (cmd! (notmuch-search-filter-by-tag "work"))
-        "W"     (cmd! (notmuch-search-filter-by-tag "personal"))
-        "u"     (cmd! (notmuch-search-filter-by-tag "unread"))
-        "i"     (cmd! (notmuch-search-filter-by-tag "important"))
-        "I"     (cmd! (notmuch-search-filter-by-not-tag "important"))
-        "d"     (cmd! (notmuch-search-add-tag
-                       '("+trash" "-inbox" "-unread"))
-                      (notmuch-search-next-thread))
-        "M-u"   (cmd! (notmuch-search-add-tag '("-unread"))
-                      (notmuch-search-next-thread))
-        "C-M-u" (cmd! (notmuch-search-tag-all '("-unread")))
-        "f"     (cmd! (notmuch-search-add-tag '("+flagged")))
+        "w"          (cmd! (notmuch-search-filter-by-tag "work"))
+        "W"          (cmd! (notmuch-search-filter-by-tag "personal"))
+        "u"          (cmd! (notmuch-search-filter-by-tag "unread"))
+        "i"          (cmd! (notmuch-search-filter-by-tag "important"))
+        "I"          (cmd! (notmuch-search-filter-by-not-tag "important"))
+        "d"          (cmd! (notmuch-search-add-tag
+                            '("+trash" "-inbox" "-unread"))
+                           (notmuch-search-next-thread))
+        "M-u"        (cmd! (notmuch-search-add-tag '("-unread"))
+                           (notmuch-search-next-thread))
+        "C-M-u"      (cmd! (notmuch-search-tag-all '("-unread")))
+        "f"          (cmd! (notmuch-search-add-tag '("+flagged")))
+        "C-w"        'toggle-notmuch-search-width
         :map notmuch-tree-mode-map
-        "w"     (cmd! (notmuch-tree-filter-by-tag "work"))
-        "W"     (cmd! (notmuch-tree-filter-by-tag "personal"))
-        "u"     (cmd! (notmuch-tree-filter-by-tag "unread"))
-        "i"     (cmd! (notmuch-tree-filter-by-tag "important"))
-        "I"     (cmd! (notmuch-tree-filter-by-not-tag "important"))
-        "d"     (cmd! (notmuch-tree-add-tag
-                       '("+trash" "-inbox" "-unread"))
-                      (notmuch-tree-next-matching-message))
-        "M-u"   (cmd! (notmuch-tree-add-tag '("-unread"))
-                      (notmuch-tree-next-message))
-        "C-M-u" (cmd! (notmuch-tree-tag-thread '("-unread"))
-                      (notmuch-tree-next-thread))
+        "w"          (cmd! (notmuch-tree-filter-by-tag "work"))
+        "W"          (cmd! (notmuch-tree-filter-by-tag "personal"))
+        "u"          (cmd! (notmuch-tree-filter-by-tag "unread"))
+        "i"          (cmd! (notmuch-tree-filter-by-tag "important"))
+        "I"          (cmd! (notmuch-tree-filter-by-not-tag "important"))
+        "d"          (cmd! (notmuch-tree-add-tag
+                            '("+trash" "-inbox" "-unread"))
+                           (notmuch-tree-next-matching-message))
+        "M-u"        (cmd! (notmuch-tree-add-tag '("-unread"))
+                           (notmuch-tree-next-message))
+        "C-M-u"      (cmd! (notmuch-tree-tag-thread '("-unread"))
+                           (notmuch-tree-next-thread))
         :map notmuch-show-mode-map
         "<C-return>" 'browse-url-at-point
-        "B"     'notmuch-show-resend-message
-        "b"     'notmuch-show-browse-urls
+        "B"          'notmuch-show-resend-message
+        "b"          'notmuch-show-browse-urls
         :map (notmuch-hello-mode-map
               notmuch-search-mode-map
               notmuch-tree-mode-map
@@ -477,8 +515,9 @@ shell exits, the buffer is killed."
     (vterm-send-return)))
 
 ;;;; Terminal support
-(map! "C-M-]" 'query-replace-regexp)
-(map! "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
+(setq xterm-set-window-title nil) ; seems to bug out
+(map! "C-M-]" 'query-replace-regexp
+      "C-c M-m" 'xterm-mouse-mode) ; disable when copying things in minibuffer
 
 ;; make window divider prettier in terminal
 (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
@@ -490,6 +529,7 @@ shell exits, the buffer is killed."
 
 (add-hook! 'after-make-frame-functions
   (unless (display-graphic-p)
+    (message "enabling xterm other keys stuff")
     ;; Take advantage of iterm2's CSI u support (https://gitlab.com/gnachman/iterm2/-/issues/8382).
     (when (fboundp 'xterm--init-modify-other-keys)
       (xterm--init-modify-other-keys))

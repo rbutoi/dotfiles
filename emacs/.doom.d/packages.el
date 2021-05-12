@@ -28,3 +28,6 @@
 (package! logview)
 (package! journalctl-mode)
 (package! systemd)
+(package! emacs-w3m)
+(package! haskell-mode)
+(package! ssh-config-mode)
