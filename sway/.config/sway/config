@@ -208,8 +208,7 @@ bindsym $mod+Ctrl+$right  resize grow width 40px
 # App keys:
 #
 bindsym $mod+Shift+Ctrl+l     exec $locker
-bindsym Print                 exec grim -g "$(slurp)" /tmp/screenshot.png && notify-send 'saved /tmp/screenshot.png'
-bindsym $mod+Print            exec grim /tmp/screen.png && notify-send 'saved /tmp/screen.png'
+bindsym Print                 exec screenshot.sh
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86AudioMute         exec pamixer --toggle-mute
