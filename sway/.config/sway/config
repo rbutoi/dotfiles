@@ -81,10 +81,31 @@ assign [class="hl2_linux"]                       workspace 3
 # display
 #
 font Noto Sans 12
-default_border pixel 3
+default_border pixel 6
 smart_borders on
+smart_gaps on
 hide_edge_borders --i3 both
-client.focused #4c7899 #285577 #ffffff #2e9ef4 #20B9A5
+
+titlebar_border_thickness 0
+
+set $base00_ "#282828"
+set $base02_ "#504945"
+set $base03_ "#665c54"
+set $base04_ "#bdae93"
+set $base08_ "#fb4934"
+set $base0C_ "#8ec07c"
+set $base0D_ "#83a598"
+set $base10_ "#231f20"
+
+client.focused          $base0D_   $base0D_   $base00_ $base0C_ $base0D_
+client.focused_inactive $base02_c0 $base02_c0 $base04_ $base04_ $base02_
+client.unfocused        $base02_c0 $base10_c0 $base04_ $base03_ $base02_
+client.urgent           $base08_   $base08_   $base00_ $base08_ $base08_
+gaps inner   12
+gaps outer    8
+ # to grab scroll/tabbar, no right/top gap
+gaps top    -12
+gaps right  -12
 
 #
 # Keybindings - basics:
@@ -164,8 +185,8 @@ bindsym $mod+Shift+v  splitv
 bindsym $mod+s        layout stacking
 bindsym $mod+Shift+s  layout tabbed
 bindsym $mod+d        layout toggle split
-bindsym $mod+Shift+f  fullscreen
-bindsym $mod+Shift+t  floating toggle
+bindsym $mod+f        fullscreen
+bindsym $mod+t        floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
 bindsym $mod+a        focus parent
 bindsym $mod+Shift+a  focus child
@@ -219,3 +240,7 @@ include /etc/sway/config.d/*
 
 # host-specific config
 include ~/.config/sway/specific
+
+# Local Variables:
+# eval: (rainbow-mode)
+# End:
