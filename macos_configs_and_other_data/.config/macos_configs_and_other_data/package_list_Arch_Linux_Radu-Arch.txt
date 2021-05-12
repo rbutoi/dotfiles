@@ -198,6 +198,7 @@ multimc-git
 nano
 nautilus
 ncdu
+ncurses-git
 needrestart
 nerd-fonts-hack
 netctl
@@ -224,6 +225,7 @@ organizr-git
 p7zip
 pacman-cleanup-hook
 pacman-contrib
+pacolog
 pamixer
 papermc
 paru-git
