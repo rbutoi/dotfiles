@@ -1,111 +1,187 @@
-/* { */
-/*     --base03:    #002b36; */
-/*     --base02:    #073642; */
-/*     --base01:    #586e75; */
-/*     --base00:    #657b83; */
-/*     --base0:     #839496; */
-/*     --base1:     #93a1a1; */
-/*     --base2:     #eee8d5; */
-/*     --base3:     #fdf6e3; */
-/*     --yellow:    #b58900; */
-/*     --orange:    #cb4b16; */
-/*     --red:       #dc322f; */
-/*     --magenta:   #d33682; */
-/*     --violet:    #6c71c4; */
-/*     --blue:      #268bd2; */
-/*     --cyan:      #2aa198; */
-/*     --green:     #859900; */
-/* } */
+/* // Dark Background */
+/* $gb-dm-bg0: #282828; */
+/* $gb-dm-bg0-hard: #1d2021; */
+/* $gb-dm-bg0-soft: #32302f; */
+/* $gb-dm-bg1: #3c3836; */
+/* $gb-dm-bg2: #504945; */
+/* $gb-dm-bg3: #665c54; */
+/* $gb-dm-bg4: #7c6f64; */
+
+/* // Dark Foreground */
+/* $gb-dm-fg0: #fbf1c7; */
+/* $gb-dm-fg1: #ebdbb2; */
+/* $gb-dm-fg2: #d5c4a1; */
+/* $gb-dm-fg3: #bdae93; */
+/* $gb-dm-fg4: #a89984; */
+
+/* // Dark Colors */
+/* $gb-dm-dark-red: #cc241d; */
+/* $gb-dm-dark-green: #98971a; */
+/* $gb-dm-dark-yellow: #d79921; */
+/* $gb-dm-dark-blue: #458588; */
+/* $gb-dm-dark-purple: #b16286; */
+/* $gb-dm-dark-aqua: #689d6a; */
+/* $gb-dm-dark-orange: #d65d0e; */
+/* $gb-dm-dark-gray: #928374; */
+
+/* $gb-dm-light-red: #fb4934; */
+/* $gb-dm-light-green: #b8bb26; */
+/* $gb-dm-light-yellow: #fabd2f; */
+/* $gb-dm-light-blue: #83a598; */
+/* $gb-dm-light-purple: #d3869b; */
+/* $gb-dm-light-aqua: #8ec07c; */
+/* $gb-dm-light-orange: #f38019; */
+/* $gb-dm-light-gray: #a89984; */
 
 * {
-    border: none;
-    border-radius: 0;
-    font-family: Noto Sans;
-    font-size: 11.5pt;
+  border: none;
+  border-radius: 0;
+  font-family: Noto Sans;
+  font-size: 12pt;
+  min-height: 0;
 }
 
 window#waybar {
-    background-color: rgba(0, 43, 54, 0.9);
-    color: #859900;
+  background: rgba(29, 32, 33, 0.7);
+  color: #fbf1c7;
 }
 
-#workspaces {
-    border-bottom: 1px solid #586e75;
-}
-
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
 #workspaces button {
-    padding: 0 5px;
-    background-color: transparent;
-    color: #657b83;
-    border-bottom: 3px solid transparent;
-}
-
-#taskbar button {
-    margin:  0 4px;
-    padding: 0 2px;
-    background-color: transparent;
-    color: #657b83;
-    border-bottom: 2px solid #586e75;
-}
-
-#taskbar button.active {
-    padding: 0 8px;
-    background-color: #073642;
-    color: #657b83;
-    border-bottom: 2px solid #ff0;
+  padding: 0 4px;
+  background: transparent;
+  color: #fbf1c7;
+  border-bottom: 2px solid transparent;
 }
 
 #workspaces button.focused {
-    background-color: #073642;
-    border-bottom: 1px solid #ff0;
+  background: #080808;
+  border-bottom: 4px solid #d3869b;
 }
 
 #workspaces button.urgent {
-    background-color: #d33682;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
-#mode {
-    background-color: #002b36;
-    border-bottom: 1px solid #dc322f;
+#taskbar button {
+  margin:  0 4px;
+  padding: 0 2px;
+  background-color: transparent;
+  color: #fbf1c7;
+  border-bottom: 2px solid #83a598;
 }
 
-#clock, #custom-clock, #cpu, #memory, #temperature, #backlight, network,
-##custom-updates, #custom-load, #mode, idle_inhibitor, #custom-weather, #battery {
-    padding: 0 4px;
-    margin: 0 2px;
-    color: #657b83;
+#taskbar button.active {
+  border-bottom: 4px solid #d3869b;
 }
 
-#pulseaudio, #tray {
-    padding: 0;
-    margin: 0;
-    color: #657b83;
+#window,
+#clock,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#tray,
+#mode,
+#idle_inhibitor,
+#language,
+#custom-arch,
+#custom-disturb_on,
+#custom-disturb_off,
+#mpd {
+  padding: 0 8px;
+  margin: 0;
 }
 
-#custom-mail {
-    padding: 0 4px;
-    margin: 0 2px;
-    color: #859900;
+#window {
+  border-left: 2px solid #b16286;
 }
 
-#pulseaudio.muted {
-    color: #dc322f;
+#clock {
+  background-color: #282828;
 }
 
-#custom-spotify {
-    /* https://usbrandcolors.com/spotify-colors/ */
-    /* background-color: #191414 */
-    color: #1db954;
+#network {
+  border-bottom: 2px solid #b16286;
 }
 
-#battery.warning {
-  color: #b58900;
-}
-#battery.critical {
-  color: #dc322f;
+#pulseaudio {
+  border-bottom: 2px solid #83a598;
 }
 
-#custom-mail, #custom-weather, #battery, #custom-clock {
+#idle_inhibitor {
+  border-bottom: 2px solid #cc241d;
+}
+
+#idle_inhibitor.activated {
+  background-color: #fb4934;
+  color: white;
+}
+
+#language {
+  border-bottom: 2px solid #8ec07c;
+}
+
+#custom-disturb-on,
+#custom-disturb-off,
+#custom-arch {
+  color: white;
+  background: #e91e63;
+}
+
+@keyframes blink {
+  to {
+    background-color: #26a65b;
+    color: #fb4934;
+  }
+}
+
+#battery.full {
+  color: #b8bb26;
+}
+
+#battery.charging {
+  color: #98971a;
+}
+
+#battery.warning:not(.charging) {
+  color: #cc241d;
+}
+
+#battery.critical:not(.charging) {
+  background: #cc241d;
+  color: #26a65b;
+  animation-name: blink;
+  animation-duration: 0.5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#custom-mail, #custom-weather, #custom-load {
+  padding: 0 4px;
+  margin: 0 2px;
+}
+
+#custom-spotify-icon {
+  padding: 0 5px 0 5px;
+} /* https://usbrandcolors.com/spotify-colors/ */
+#custom-spotify-icon, #custom-spotify {
+  background-color: #191414;
+  color: #1db954;
+}
+
+#custom-mail, #custom-weather, #custom-load, #custom-clock {
   font-family: JetBrains Mono;
+  font-size: 11.5pt;
 }
+
+/* Local Variables: */
+/* eval: (rainbow-mode) */
+/* End: */
