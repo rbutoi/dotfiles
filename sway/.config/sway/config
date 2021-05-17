@@ -46,6 +46,7 @@ exec systemd-cat -t nm-applet nm-applet --indicator       # network status
 # initial desktop
 exec $term tmx2 new -ADs auto
 exec $editor
+exec discord
 exec spotify
 for_window [class="Spotify"] move window to scratchpad
 exec signal-desktop-beta

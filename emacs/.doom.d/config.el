@@ -314,13 +314,13 @@ or are no longer readable will be killed."
     (if WORK
         '((:key "j" :name "unified inbox"      :query "(is:inbox or is:sent) and date:1w.."                                  )
           (:key "i" :name "work inbox"         :query "(is:inbox or is:sent) and date:1w.. and is:work"                      )
-          (:key "I" :name "personal inbox"     :query "(is:inbox or is:sent) and date:2w.. and not is:work"                  )
+          (:key "I" :name "personal inbox"     :query "(is:inbox or is:sent) and date:2w.. and is:personal"                  )
           (:key "u" :name "work unread"        :query "(is:inbox or is:sent) and date:1w.. and is:unread and is:work"        )
-          (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and not is:work"    )
+          (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and is:personal"    )
           (:key "m" :name "work important"     :query "(is:inbox or is:sent) and date:1w.. and is:important and is:work"     )
-          (:key "M" :name "personal important" :query "(is:inbox or is:sent) and date:2w.. and is:important and not is:work" )
+          (:key "M" :name "personal important" :query "(is:inbox or is:sent) and date:2w.. and is:important and is:personal" )
           (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"  )
-          (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and not is:work"              ))
+          (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and is:personal"              ))
       '((:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
         (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  ) ; redundant
         (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"    )
