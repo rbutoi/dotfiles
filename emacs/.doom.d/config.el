@@ -49,13 +49,15 @@
          ("<C-S-left>" . buf-move-left)
          ("<C-S-right>" . buf-move-right)))
 
+(remove-hook! text-mode #'display-line-numbers-mode)
+
 ;;;; Popups
-(map! "M-`" '+popup/toggle ; aliases tmm-menubar
-      "M-~" 'tmm-menubar)  ; this aliases not-modified
-(set-popup-rule! "^\\*Man.*\\*$"             :ignore t)
-(set-popup-rule! "^vterm.*$"                 :ignore t)
+(set-popup-rules! '(("^\\*Async Shell Command\\*$" :ttl 0)))
 (after! rustic
   (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
+
+(map! "M-`" '+popup/toggle ; aliases tmm-menubar
+      "M-~" 'tmm-menubar) ; this aliases not-modified
 
 ;;;; Ivy / counsel
 (after! counsel
@@ -82,7 +84,7 @@
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --no-ignore %s 2>/dev/null || true")
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never %s 2>/dev/null || true")
 
   ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
   (define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)

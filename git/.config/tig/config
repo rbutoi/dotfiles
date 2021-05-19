@@ -1,0 +1,6 @@
+# emacs keys
+bind generic <Ctrl-v>          scroll-page-down
+bind generic <ESC>v            scroll-page-up
+bind generic <ESC><LessThan>   move-first-line
+bind generic <ESC>>            move-last-line
+# TODO: default highlight background is too bright / unreadable with gruvbox defaults
