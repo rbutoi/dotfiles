@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Sends a command to all tmux panes in the current server.
+
+for _pane in $(tmux list-panes -sF '#{window_id}.#{pane_id}_#{pane_index}' |
+                 # don't send to emacs panes
+                 grep -Fv _0); do
+  tmux send-keys -t ${_pane%_*} "$*" Enter
+done

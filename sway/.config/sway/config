@@ -56,6 +56,8 @@ for_window [app_id="gsimplecal"]                 move position mouse, move up 30
 for_window [class="Emacs"]                       opacity 0.9
 for_window [app_id="emacs"]                      opacity 0.9
 for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.8
+for_window [app_id="nemo"]                       opacity 0.95
+for_window [app_id="org.gnome.Nautilus"]         opacity 0.95
 for_window [app_id="blueman-manager"]            floating enable
 for_window [app_id="cinnamon-settings.py"]       floating enable
 for_window [app_id="exo-desktop-item-edit"]      floating enable

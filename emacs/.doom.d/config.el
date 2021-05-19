@@ -255,10 +255,12 @@ or are no longer readable will be killed."
 (add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
 
 ;;;; Magit
-(map! "C-x   g" 'magit-status
-      "C-x C-g" 'magit-status)
-(setq magit-log-auto-more t
+(setq magit-repository-directories `(("~" . 3))
+      magit-log-auto-more t
       magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
+(map! "C-x   g"   'magit-status
+      "C-x C-g"   'magit-status
+      "C-x C-M-g" 'magit-list-repositories)
 (use-package keychain-environment :config (keychain-refresh-environment))
 
 ;;;; String-inflection
