@@ -33,3 +33,4 @@
 (package! haskell-mode)
 (package! ssh-config-mode)
 (package! lua-mode)
+(package! edit-server)

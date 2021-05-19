@@ -508,6 +508,9 @@ shell exits, the buffer is killed."
     (vterm-send-string command)
     (vterm-send-return)))
 
+;;;; Edit with Emacs: edit web browser text boxes
+(edit-server-start)
+
 ;;;; Terminal support
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
