@@ -522,16 +522,9 @@ shell exits, the buffer is killed."
 
 ;;; Epilogue
 ;; Host-specific support
-(when IS-MAC
-  (menu-bar-mode -1) ; needed on macos?
-  (when (fboundp 'mac-auto-operator-composition-mode)
-    (mac-auto-operator-composition-mode))
-  (mac-pseudo-daemon-mode)
-  (setq dired-use-ls-dired nil)
-  (map! "s-m" 'suspend-frame))
-(when (string-match-p "penguin" (system-name))
-  (remove-hook 'after-init-hook #'debian-ispell-set-startup-menu)) ; debian is broken: https://discord.com/channels/406534637242810369/406554085794381833/817522711823646760
-
+(when IS-MAC (load (concat doom-private-dir "config-mac.el") 'noerror))
+(defconst IS-CROSTINI (string-match-p "penguin" (system-name)))
+(when IS-CROSTINI (load (concat doom-private-dir "config-crostini.el") 'noerror))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
 ;; Server
