@@ -88,6 +88,7 @@ file-roller
 filesystem
 firefox
 fish
+flat-remix
 fontforge
 font-manager
 foot-git
@@ -119,6 +120,8 @@ gnu-netcat
 go
 gparted
 grim
+gruvbox-dark-gtk
+gruvbox-dark-icons-gtk
 gsimplecal
 gtk-theme-elementary
 gvfs-google
@@ -344,7 +347,8 @@ tar
 tautulli
 terminus-font
 tesseract-data-eng
-thelounge
+thelounge-git
+tig
 tmux
 topgrade
 traceroute
@@ -373,6 +377,7 @@ vnstat
 vopono-git
 wasm-pack
 waybar-git
+waypipe-git
 wdisplays-git
 wev-git
 wezterm-nightly-bin
