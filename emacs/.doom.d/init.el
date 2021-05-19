@@ -74,8 +74,5 @@
        :email
        notmuch
 
-       :app
-       irc                 ; how neckbeards socialize
-
        :config
        (default +bindings +smartparens))

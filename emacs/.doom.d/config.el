@@ -464,16 +464,6 @@ or are no longer readable will be killed."
   (setq message-citation-line-function 'message-insert-formatted-citation-line)
   (setq message-citation-line-format "\n\nOn %a, %d %b %Y at %H:%M, %f wrote:\n"))
 
-;;;; Circe
-(after! circe
-  (setq circe-default-nick "radu242"
-        circe-network-options
-        '(("Freenode" :host "chat.freenode.net" :port (6667 . 6697)
-           :tls t
-           :nickserv-password (lambda (server) (password-store-get "freenode"))
-           :channels (:after-auth "#emacs")
-           ))))
-
 ;;;; vterm
 (setq vterm-always-compile-module t)
 (map! :map vterm-mode-map
