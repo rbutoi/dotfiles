@@ -38,10 +38,11 @@ workspace 4 output DVI-D-1
 # startup applications
 #
 bar swaybar_command waybar
-exec systemd-cat -t dex dex -a -e SWAY                    # autostart
-exec systemd-cat -t udiskie udiskie --tray --appindicator # automount manager
-exec systemd-cat -t clipman wl-paste -t text --watch clipman --notify store --no-persist # clipboard
-exec systemd-cat -t nm-applet nm-applet --indicator       # network status
+exec systemd-cat -t dex         dex -a -e SWAY                # autostart
+exec systemd-cat -t udiskie     udiskie --tray --appindicator # automount manager
+                                                              # clipboard
+exec systemd-cat -t clipman     wl-paste -t text --watch clipman --notify store --no-persist
+exec systemd-cat -t nm-applet   nm-applet --indicator         # network status
 
 # initial desktop
 exec $term tmx2 new -ADs auto

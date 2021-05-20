@@ -78,11 +78,6 @@ window#waybar {
   border-bottom: 4px solid #d3869b;
 }
 
-#taskbar button.active {
-    color: #fbf1c7;
-    border-bottom: 2px solid #d3869b;
-}
-
 #window,
 #clock,
 #battery,

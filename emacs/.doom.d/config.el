@@ -215,6 +215,13 @@ or are no longer readable will be killed."
         rustic-lsp-client 'eglot)
   (add-hook! rustic-mode (run-mode-hooks 'prog-mode-hook)))
 
+;;;; tree-sitter
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
 ;;;; Completion
 (setq tab-always-indent 'complete)
 (after! company
@@ -524,14 +531,12 @@ shell exits, the buffer is killed."
 (when IS-CROSTINI (load (concat doom-private-dir "config-crostini.el") 'noerror))
 (load (concat doom-private-dir "specific.el") 'noerror)
 
-;; Server
-(use-package server :config (unless (server-running-p) (server-start)))
-
 ;; Benchmark config
-(setq user-config-runtime (float-time (time-subtract (current-time)
-                                                     user-config-start-time)))
 (add-hook! 'window-setup-hook :append
-  (message "User config loaded in %.03fs" user-config-runtime) (message ""))
+  (message "User config loaded in %.03fs"
+           (float-time (time-subtract (current-time)
+                                      user-config-start-time)))
+  (message "")) ; empty out minibuffer
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars interactive-only unresolved)

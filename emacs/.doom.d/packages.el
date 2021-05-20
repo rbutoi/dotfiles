@@ -34,3 +34,6 @@
 (package! ssh-config-mode)
 (package! lua-mode)
 (package! edit-server)
+(package! tree-sitter)
+(package! tree-sitter-langs)
+(package! meson-mode)
