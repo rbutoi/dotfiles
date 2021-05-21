@@ -1,0 +1,42 @@
+# https://avizard.blogspot.com/2021/01/aggressive-yet-sane-persistent-ssh-with.html
+
+[Unit]
+Description=AutoSSH to a
+After=network-online.target
+# Use this instead if autossh will interact with the local SSH server
+# After=network-online.target sshd.service
+
+[Service]
+Environment="AUTOSSH_GATETIME=30"
+Environment="AUTOSSH_POLL=30"
+Environment="AUTOSSH_FIRST_POLL=30"
+Environment="SSOCK=/var/run/signald/signald.sock"
+
+# Set aggressive network timeouts not autossh systemd unit timeouts and also avoid Broken pipe errors.
+# After 30 seconds of no server response, Autossh will re-negotiate a new session.
+# This assumes SSH version >=2. See https://bit.ly/3bINv8v
+# Set 'ClientAliveInterval 10' in the remote sshd_config so unresponsive SSH clients will be
+# disconnected after approx. (10 x ClientAliveCountMax) = 30 seconds
+
+ExecStart=/usr/bin/autossh -M 0 \
+-o "ServerAliveInterval 10"     \
+-o "ServerAliveCountMax 3"      \
+-o "StreamLocalBindUnlink yes"  \
+-o "ExitOnForwardFailure yes"   \
+-o ControlMaster=no             \
+-N a
+# We set 'sleep 10' to make ssh exit in case no TCP connections are forwarded in 10 seconds.
+# Useful to get remote shell exit codes.
+
+ExecStop=/usr/bin/kill $MAINPID
+ExecReload=/usr/bin/kill -HUP $MAINPID
+
+Restart=always
+# On Linux TCP_TIMEWAIT_LEN is not tunable and set to (60*HZ), about 60 seconds. TCP_FIN_TIMEOUT also defauls to 60 seconds.
+RestartSec=60
+
+# See systemd.kill(5)
+KillMode=process
+
+[Install]
+WantedBy=default.target
