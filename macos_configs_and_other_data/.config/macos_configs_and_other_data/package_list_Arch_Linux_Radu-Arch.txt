@@ -255,6 +255,7 @@ plex-media-server
 plymouth
 polkit-gnome
 powder-player-bin
+poweralertd-git
 prettier
 procps-ng
 protobuf
@@ -388,6 +389,7 @@ wireguard-tools
 wl-clipboard-git
 wlclock-git
 wlogout
+wlsunset-git
 wmctrl
 wofi-hg
 wttr

@@ -43,6 +43,8 @@ exec systemd-cat -t udiskie     udiskie --tray --appindicator # automount manage
                                                               # clipboard
 exec systemd-cat -t clipman     wl-paste -t text --watch clipman --notify store --no-persist
 exec systemd-cat -t nm-applet   nm-applet --indicator         # network status
+exec systemd-cat -t poweralertd poweralertd                   # power notifications
+exec systemd-cat -t wlsunset    wlsunset_here                 # sunset screen darken
 
 # initial desktop
 exec $term tmx2 new -ADs auto
