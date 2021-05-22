@@ -37,6 +37,7 @@ bmon
 breezy
 brother-hll2370dw
 bzip2
+caddy-git
 cargo-bloat
 cargo-edit
 cargo-expand
@@ -67,6 +68,7 @@ digikam
 discord_arch_electron
 dmidecode
 docker
+docker-compose
 downgrade
 drive-git
 dust
@@ -89,6 +91,7 @@ filesystem
 firefox
 fish
 flat-remix
+flood-git
 fontforge
 font-manager
 foot-git
@@ -141,7 +144,6 @@ i3lock
 i3status
 icdiff
 iftop
-imgurbash2-git
 imv
 inetutils
 inotify-tools
@@ -213,8 +215,10 @@ ncurses-git
 needrestart
 nerd-fonts-hack
 netctl
+netdata-git
 networkmanager
 network-manager-applet
+nextcloud
 nfs-utils
 nload
 nmap
@@ -246,6 +250,8 @@ pcsx2
 peco
 perl
 perl-file-mimeinfo
+php-cgi
+php-fpm
 pigz
 pipewire-alsa
 pipewire-pulse
@@ -303,6 +309,7 @@ rofi-1pass
 rofi-calc
 rofi-lbonn-wayland-git
 rsync
+rtorrent
 ruby
 ruby-yard
 rust-analyzer
@@ -331,6 +338,7 @@ spotify-edge-snap
 spotify-qt
 starship
 steam
+stig-git
 stow
 strace
 sway-git
@@ -349,11 +357,13 @@ tar
 tautulli
 terminus-font
 tesseract-data-eng
-thelounge-git
+thelounge
 tig
 tmux
 topgrade
 traceroute
+transgui-gtk
+transmission-cli
 tree
 ttf-bitstream-vera
 ttf-droid
