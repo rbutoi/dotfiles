@@ -1,0 +1,12 @@
+[Unit]
+Description=Mount box:~ with sshfs
+
+[Install]
+WantedBy=multi-user.target
+
+[Mount]
+What=box:
+Where=/home/butoi/box
+Type=fuse.sshfs
+Options=_netdev,allow_other,reconnect,ServerAliveInterval=30,ServerAliveCountMax=5,x-systemd.automount
+TimeoutSec=60

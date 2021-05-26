@@ -264,7 +264,11 @@ or are no longer readable will be killed."
 (add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
 
 ;;;; Magit
-(setq magit-repository-directories `(("~" . 3))
+(setq magit-repository-directories
+      `(("~/dotfiles" . 0)
+        ("~/dotfiles-google" . 0)
+        ("~/oss" . 1)
+        ("~/.emacs.d" . 0))
       magit-log-auto-more t
       magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
 (map! "C-x   g"   'magit-status
@@ -519,6 +523,8 @@ shell exits, the buffer is killed."
 (edit-server-start)
 
 ;;;; Terminal support
+(setq xterm-set-window-title nil) ; seems to bug out
+
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
