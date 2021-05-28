@@ -256,7 +256,8 @@ or are no longer readable will be killed."
                       (lambda (window) (quit-window nil window))
                       (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
-(map! "S-<f7>" (cmd! (switch-to-buffer "*compilation*"))
+(map! "S-<f7>" (cmd! (switch-to-buffer (buffer-name (car (doom-matching-buffers
+                                                          "*compilation*")))))
       :map prog-mode-map
       "<f7>" 'compile
       "<f8>" 'recompile)
