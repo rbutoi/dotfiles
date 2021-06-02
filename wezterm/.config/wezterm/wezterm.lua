@@ -7,10 +7,10 @@ return {
    font_size = 11,
    color_scheme = "Gruvbox Dark",
    -- window
-   enable_wayland = false, -- key repeat broken atm. too slow/not sway config
+   enable_wayland = true,
    window_background_opacity = 0.9,
    hide_tab_bar_if_only_one_tab = true,
-   -- terminal
+   -- $TERM - includes 24-bit colour support
    term = "wezterm",
    keys = keys_extended_shortcuts,
 }

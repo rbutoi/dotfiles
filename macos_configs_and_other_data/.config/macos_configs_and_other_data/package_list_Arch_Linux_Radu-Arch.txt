@@ -163,6 +163,7 @@ keychain
 kitty-git
 kodi-gbm
 kodi-wayland
+konsole-git
 l3afpad
 lastpass-cli
 less

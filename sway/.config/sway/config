@@ -3,7 +3,7 @@
 #
 # basics
 #
-set $term kitty
+set $term konsole
 set $web firefox
 set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
@@ -47,7 +47,7 @@ exec systemd-cat -t poweralertd poweralertd                   # power notificati
 exec systemd-cat -t wlsunset    wlsunset_here                 # sunset screen darken
 
 # initial desktop
-exec $term tmx2 new -ADs auto
+exec $term -e tmx2 new -ADs auto
 exec $editor
 exec discord
 exec spotify
@@ -125,7 +125,7 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec $term tmx2 new -ADs auto
+bindsym $mod+Shift+Return    exec $term -e tmx2 new -ADs auto
 bindsym $mod+w               exec swaymsg '[app_id="firefox"] focus' || $web
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+e               exec swaymsg '[app_id="emacs"] focus' || $editor

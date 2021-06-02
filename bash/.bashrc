@@ -137,7 +137,7 @@ alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
 alias ssha='ssh -t a tmux new -ADs auto'
-alias mosha='mosh a /home/radu/bin/continuetmux'
+alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
 
@@ -163,6 +163,20 @@ git-grep-blame() {
   git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'
 }
 
+function pomo() {
+    arg1=$1
+    shift
+    args="$*"
+
+    min=${arg1:?Example: pomo 15 Take a break}
+    sec=$((min * 60))
+    msg="${args:?Example: pomo 15 Take a break}"
+
+    while true; do
+        sleep "${sec:?}" && echo "${msg:?}" && notify-send -u critical -t 0 "${msg:?}"
+    done
+}
+
 # https://the.exa.website
 # needs to be after PATH setting
 if command -v exa >/dev/null 2>&1; then
@@ -172,6 +186,10 @@ else
   alias l='ls -F'
   alias ll='l -lA -h'
 fi
+
+############
+# epilogue #
+############
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias
