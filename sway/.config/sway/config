@@ -82,6 +82,7 @@ for_window [title="Firefox - Sharing Indicator"] floating enable
 for_window [title="^(Open|Save) Files?$"]        floating enable
 for_window [title="^Close Firefox$"]             floating enable
 for_window [title="^Edit with Emacs FRAME$"]     floating enable
+for_window [app_id="^$" title="^$"]              floating enable
 assign [class="hl2_linux"]                       workspace 3
 
 #
