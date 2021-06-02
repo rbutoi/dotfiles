@@ -53,6 +53,7 @@ clipman
 cmake
 colordiff
 coreutils
+cpufetch-git
 cronie
 cryptsetup
 csfml
@@ -121,6 +122,8 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
+google-chrome
+google-chrome-dev
 gparted
 grim
 gruvbox-dark-gtk
@@ -133,7 +136,6 @@ gvfs-mtp
 handlr-bin
 hddtemp
 hdparm
-hid-nintendo-dkms
 htop
 hunspell
 hunspell-en_us
@@ -153,7 +155,6 @@ iperf
 iproute2
 iputils
 isync
-ix
 j4-dmenu-desktop
 jackett-bin
 jdk-openjdk
@@ -172,8 +173,9 @@ less
 libappindicator-gtk3
 libmicrodns
 libreoffice-fresh
-libva-mesa-driver
+libva-git
 libva-utils
+libva-vdpau-driver
 libvterm
 licenses
 linux
@@ -197,7 +199,7 @@ mdadm
 mediainfo
 memtest86-efi
 mesa-demos
-mesa-vdpau
+mesa-git
 meson
 miniupnpc
 mlocate
@@ -207,6 +209,7 @@ mosh-git
 mpv
 msmtp
 msmtp-mta
+mullvad-vpn
 multimc-git
 nano
 nautilus
@@ -242,7 +245,7 @@ pacman-contrib
 pacolog
 pamixer
 papermc
-paru-git
+paru
 pavucontrol
 pbzip2
 pciutils
@@ -261,12 +264,10 @@ playerctl
 plex-media-server
 plymouth
 polkit-gnome
-powder-player-bin
 poweralertd-git
 prettier
 procps-ng
 protobuf
-proton-ge-custom-bin
 protontricks
 psmisc
 pulseaudio-alsa
@@ -359,13 +360,14 @@ terminus-font
 tesseract-data-eng
 thelounge
 tig
-tmux
+tmux-git
 topgrade
 traceroute
 transgui-gtk
 transmission-cli
 tree
 ttf-bitstream-vera
+ttf-croscore
 ttf-droid
 ttf-jetbrains-mono
 ttf-liberation
@@ -378,6 +380,7 @@ udiskie
 unetbootin
 unrar
 unzip
+upaste
 upd72020x-fw
 usbutils
 util-linux
