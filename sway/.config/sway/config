@@ -237,7 +237,7 @@ bindsym XF86AudioPrev         exec sh -c "URL=192.168.1.17/YamahaExtendedControl
 bindsym XF86AudioNext         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
 bindsym XF86AudioStop         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=stop       ; else set -x; playerctl stop       ; fi"
 bindsym XF86Calculator        exec rofi -show calc
-bindsym $mod+y                exec yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
+bindsym $mod+y                exec $term -e yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi
 bindsym $mod+Mod1+h           exec kitty --start-as fullscreen htop
 

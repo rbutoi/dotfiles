@@ -185,8 +185,13 @@ or are no longer readable will be killed."
 ;; replies inline
 (advice-remove 'delete-backward-char #'+default--delete-backward-char-a)
 
+;; paste when it doesn't work™
+(map!
+ "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste")))))
+
 ;;;; Dired
 (use-package dired-hide-dotfiles
+  :hook (dired-mode . dired-hide-dotfiles-mode)
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
 ;;; Programming

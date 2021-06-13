@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 set -euox pipefail
 
+mkdir -p /tmp/yt
+cd /tmp/yt
+
 if [ $# -eq 0 ]; then
   url="$(wl-paste)"
 elif [ $# -eq 1 ]; then
   url="$1"
-else
-  exit 1
 fi
 
-export SWAYSOCK=$(sway --get-socketpath)
+SWAYSOCK=$(sway --get-socketpath)
+export SWAYSOCK
 
 vertical_res="$(swaymsg -t get_outputs | jq 'max_by(.current_mode.height).current_mode.height')"
 youtubedl_format="bestvideo[height<=${vertical_res}]+bestaudio/best[height<=${vertical_res}]"
 
 playerctl pause || :
-mpv --speed=1.5 --ytdl-format="$youtubedl_format" "$url"
+
+mpv --speed=1.5 --ytdl-format="$youtubedl_format" "$url" &
+sleep 1
+youtube-dl "$url" -f "$youtubedl_format" --write-sub \
+  --write-auto-sub --sub-lang en --embed-subs --merge-output-format mkv &
+wait %2 # while downloading the whole thing including subtitles, stream it and
+kill %1 # kill when ready.
+mpv --speed=1.5 "$(youtube-dl "$url" -f "$youtubedl_format" --merge-output-format mkv --get-filename)"

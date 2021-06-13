@@ -98,7 +98,7 @@ enc() {
   emacsclient -a= -nc "$@"
 }
 e() { ew "$@"; }
-export EDITOR="emacsclient -c"
+export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 
 export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
@@ -140,6 +140,7 @@ alias ssha='ssh -t a tmux new -ADs auto'
 alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
+alias fd="fd --one-file-system"
 
 find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'

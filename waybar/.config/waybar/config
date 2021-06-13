@@ -8,7 +8,6 @@
     "sway/mode",
     "custom/spotify-icon",
     "custom/spotify",
-    "custom/cast",
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
@@ -60,19 +59,6 @@
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
-  },
-  "custom/cast": {
-    "exec": "waybar-catt.py",
-    "interval": 3,
-    "tooltip": true,
-    "return-type": "json",
-    "exec-if": "nmcli -t | grep -q 'i like turtles'",
-    "on-click":       "catt play_toggle && rm /tmp/cattstatus",
-    "on-click-right": "catt play_toggle && rm /tmp/cattstatus",
-    "on-click-middle": "gyrc",
-    "on-scroll-up":   "yamaha_vol up",
-    "on-scroll-down": "yamaha_vol down",
-    "max-length": 60
   },
   "custom/spotify-icon": {
     "format": " ",

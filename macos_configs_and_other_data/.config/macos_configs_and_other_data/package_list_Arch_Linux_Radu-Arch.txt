@@ -43,6 +43,7 @@ cargo-edit
 cargo-expand
 cargo-update
 cargo-watch
+catt
 celluloid
 cheese
 chiaki
