@@ -3,7 +3,7 @@
 #
 # basics
 #
-set $term konsole
+set $term wezterm start --
 set $web firefox
 set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
@@ -47,7 +47,7 @@ exec systemd-cat -t poweralertd poweralertd                   # power notificati
 exec systemd-cat -t wlsunset    wlsunset_here                 # sunset screen darken
 
 # initial desktop
-exec $term -e tmx2 new -ADs auto
+exec $term tmux new -ADs auto
 exec $editor
 exec discord
 exec spotify
@@ -126,7 +126,7 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec $term -e tmx2 new -ADs auto
+bindsym $mod+Shift+Return    exec swaymsg '[app_id="wezterm\.tmux-auto"] focus' || wezterm start --class org.wezfurlong.wezterm.tmux-auto -- tmux new -ADs auto
 bindsym $mod+w               exec swaymsg '[app_id="firefox"] focus' || $web
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+e               exec swaymsg '[app_id="emacs"] focus' || $editor
@@ -237,10 +237,10 @@ bindsym XF86AudioPrev         exec sh -c "URL=192.168.1.17/YamahaExtendedControl
 bindsym XF86AudioNext         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
 bindsym XF86AudioStop         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=stop       ; else set -x; playerctl stop       ; fi"
 bindsym XF86Calculator        exec rofi -show calc
-bindsym $mod+y                exec $term -e yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
+bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi
-bindsym $mod+Mod1+h           exec kitty --start-as fullscreen htop
-
+bindsym $mod+Mod1+h           exec wezterm start --class org.wezfurlong.wezterm.htop -- htop
+for_window                    [app_id="wezterm\.htop"] fullscreen enable
 
 # system configs
 include /etc/sway/config.d/*

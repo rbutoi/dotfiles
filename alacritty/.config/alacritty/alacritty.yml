@@ -1,5 +1,9 @@
-env:
-  TERM: alacritty-direct
+# env:
+#   TERM: alacritty-direct
+
+font:
+  family: JetBrains Mono
+  size: 11
 
 # Colors (Gruvbox dark)
 colors:

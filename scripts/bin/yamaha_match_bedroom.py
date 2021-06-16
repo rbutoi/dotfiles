@@ -4,7 +4,7 @@
 import requests
 
 receiver_api = 'http://192.168.1.17/YamahaExtendedControl/v1/main'
-bedroom_api  =  'http://192.168.1.9/YamahaExtendedControl/v1/main'
+bedroom_api  =  'http://192.168.1.107/YamahaExtendedControl/v1/main'
 EXTRA_BEDROOM_FACTOR = 1.2
 
 receiver = requests.get(f'{receiver_api}/getStatus').json()

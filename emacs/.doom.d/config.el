@@ -486,7 +486,8 @@ or are no longer readable will be killed."
   (setq message-citation-line-format "\n\nOn %a, %d %b %Y at %H:%M, %f wrote:\n"))
 
 ;;;; vterm
-(setq vterm-always-compile-module t)
+(setq vterm-always-compile-module t
+      vterm-max-scrollback 20000)
 (map! :map vterm-mode-map
       "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w"))))
 
