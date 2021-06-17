@@ -24,20 +24,20 @@ export HISTSIZE=
 # Change the file location because certain bash sessions truncate .bash_history file upon close.
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
 export HISTFILE=~/.bash_eternal_history
-if [ $HOSTNAME != "Radu-Arch" ]; then
-  # Force prompt to write history after every command.
-  # http://superuser.com/questions/20900/bash-history-loss
-  append_history() { history -a; }
-  export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-  precmd_functions+=(append_history)
-fi
 # disable history expansion
 set +H
 
-# prompt
+# prompt + title
 STARSHIP=starship
 [ -x ~/bin/starship ] && STARSHIP=~/bin/starship
 eval "$($STARSHIP init bash)"
+function set_win_title()      { bpwd=$(basename $PWD); echo -ne "\033]0;${HOSTNAME/butoi-/}:${bpwd/#$USER/\~}\007"; }
+function set_win_title_tmux() { bpwd=$(basename $PWD); echo -ne   "\033k${HOSTNAME/butoi-/}:${bpwd/#$USER/\~}\033"; }
+if [ -z "$TMUX" ]; then
+  starship_precmd_user_func=set_win_title
+else
+  starship_precmd_user_func=set_win_title_tmux
+fi
 
 #######################################
 # User specific aliases and functions #
@@ -141,6 +141,7 @@ alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
 alias fd="fd --one-file-system"
+alias diff="diff --color=auto"
 
 find_pi() {
   sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'

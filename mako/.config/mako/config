@@ -1,4 +1,5 @@
 default-timeout=10000
+layer=overlay
 group-by=summary
 font=Noto Sans 13
 anchor=bottom-right

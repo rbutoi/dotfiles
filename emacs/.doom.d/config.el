@@ -443,6 +443,8 @@ or are no longer readable will be killed."
         "<C-return>" 'browse-url-at-point
         "B"          'notmuch-show-resend-message
         "b"          'notmuch-show-browse-urls
+        "F"          (cmd! (notmuch-show-add-tag '("+flagged")))
+        "C-M-u"      (cmd! (notmuch-show-tag-all '("-unread")))
         :map (notmuch-hello-mode-map
               notmuch-search-mode-map
               notmuch-tree-mode-map
