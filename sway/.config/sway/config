@@ -3,8 +3,8 @@
 #
 # basics
 #
-set $term wezterm start --
-set $web firefox
+set $term kitty
+set $web google-chrome-unstable
 set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
@@ -127,8 +127,8 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec swaymsg '[app_id="wezterm\.tmux-auto"] focus' || wezterm start --class org.wezfurlong.wezterm.tmux-auto -- tmux new -ADs auto
-bindsym $mod+w               exec swaymsg '[app_id="firefox"] focus' || $web
+bindsym $mod+Shift+Return    exec swaymsg '[app_id="kitty\.tmux-auto"] focus' || kitty --class kitty.tmux-auto -- tmux new -ADs auto
+bindsym $mod+w               exec swaymsg '[app_id="Google-chrome"] focus' || $web
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+e               exec swaymsg '[app_id="emacs"] focus' || $editor
 bindsym $mod+Shift+e         exec $editor
@@ -231,13 +231,13 @@ bindsym $mod+F2               exec yamaha_vol down
 bindsym $mod+F3               exec yamaha_vol up
 bindsym $mod+F4               exec yamaha_toggle_link.sh
 bindsym $mod+Shift+F4         exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
-bindsym $mod+F1               exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=play_pause ; else set -x; playerctl play-pause ; fi"
-bindsym $mod+Shift+F2         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=previous   ; else set -x; playerctl previous   ; fi"
-bindsym $mod+Shift+F3         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
-bindsym XF86AudioPlay         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=play_pause ; else set -x; playerctl play-pause ; fi"
-bindsym XF86AudioPrev         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=previous   ; else set -x; playerctl previous   ; fi"
-bindsym XF86AudioNext         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=next       ; else set -x; playerctl next       ; fi"
-bindsym XF86AudioStop         exec sh -c "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s \${URL}/getPlayInfo | jq -r .playback | grep -q 'play\|pause'; then set -x; curl -s \${URL}/setPlayback?playback=stop       ; else set -x; playerctl stop       ; fi"
+bindsym $mod+F1               exec yamaha_or_playerctl.sh play_pause
+bindsym $mod+Shift+F2         exec yamaha_or_playerctl.sh previous
+bindsym $mod+Shift+F3         exec yamaha_or_playerctl.sh next
+bindsym XF86AudioPlay         exec yamaha_or_playerctl.sh play_pause
+bindsym XF86AudioPrev         exec yamaha_or_playerctl.sh previous
+bindsym XF86AudioNext         exec yamaha_or_playerctl.sh next
+bindsym XF86AudioStop         exec yamaha_or_playerctl.sh stop
 bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi

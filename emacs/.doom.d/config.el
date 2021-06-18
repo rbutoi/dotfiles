@@ -575,6 +575,9 @@ shell exits, the buffer is killed."
 (define-advice browse-url (:before (url &rest args))
   (message "Opening %s in browser." url))
 
+;;;; Man
+(setq Man-width-max nil) ; as wide as it goes
+
 ;;; Epilogue
 ;; Host-specific support
 (when IS-MAC (load (concat doom-private-dir "config-mac.el") 'noerror))

@@ -124,7 +124,6 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
-google-chrome
 google-chrome-dev
 gparted
 grim
@@ -138,7 +137,7 @@ gvfs-mtp
 handlr-bin
 hddtemp
 hdparm
-htop
+htop-git
 hunspell
 hunspell-en_us
 hyperfine
@@ -164,6 +163,7 @@ jfsutils
 joycond-git
 jq
 jre11-openjdk
+jupyterlab
 keychain
 kitty-git
 kodi-gbm
@@ -206,7 +206,6 @@ mesa-git
 meson
 miniupnpc
 mlocate
-monitorix
 moreutils
 mosh-git
 mpv
@@ -313,7 +312,7 @@ rofi-1pass
 rofi-calc
 rofi-lbonn-wayland-git
 rsync
-rtorrent
+rtorrent-git
 ruby
 ruby-yard
 rust-analyzer
