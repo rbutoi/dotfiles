@@ -111,10 +111,6 @@ window#waybar {
   border-bottom: 2px solid #b16286;
 }
 
-#pulseaudio {
-  border-bottom: 2px solid #83a598;
-}
-
 #idle_inhibitor {
   border-bottom: 2px solid #cc241d;
 }

@@ -5,7 +5,7 @@ from gi.repository import GLib
 
 CACHE_DIR = os.path.join(GLib.get_user_cache_dir(), os.path.basename(sys.argv[0]))
 LAST_SEEN_FILE = os.path.join(CACHE_DIR, 'last_seen')
-SUBJECT_WIDTH = 103
+SUBJECT_WIDTH = 90
 QUERY = 'is:inbox and is:unread'
 HIDDEN_TAGS = ('inbox', 'unread', 'attachment', 'replied', 'sent', 'encrypted',
                'signed', 'work', 'personal', 'important')

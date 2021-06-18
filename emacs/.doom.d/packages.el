@@ -39,3 +39,4 @@
 (package! meson-mode)
 (package! php-mode)
 (package! dired-hide-dotfiles)
+(package! hideshowvis)

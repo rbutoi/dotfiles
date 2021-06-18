@@ -1,6 +1,146 @@
 // -*- mode: json; -*-
 [{
-  "output": ["HDMI-A-1", "eDP-1", "DP-1"],
+  "output": ["eDP-1"],
+  "position": "bottom",
+  "modules-left": [
+    "custom/home",
+    "sway/workspaces",
+    "sway/mode",
+    "custom/spotify-icon",
+    "custom/spotify",
+  ],
+  "modules-center": ["wlr/taskbar"],
+  "modules-right": [
+    "custom/mail",
+    "custom/updates",
+    "custom/weather",
+    "custom/load",
+    "tray",
+    "pulseaudio",
+    "backlight",
+    "battery",
+    "custom/clock",
+  ],
+  "sway/window": {
+    "max-length": 200,
+    "tooltip": false
+  },
+  "sway/workspaces": {
+    "persistent_workspaces": {
+      "1": ["DP-1", "eDP-1"],
+      "2": ["DP-2", "eDP-1"],
+      "3": ["DP-1", "eDP-1"],
+      "4": ["DP-2", "eDP-1"],
+      "5": ["eDP-1"],
+      "6": ["eDP-1"],
+    }
+  },
+  "wlr/taskbar": {
+    "format": " {icon}{title:.3} ",
+    "max-length": 200,
+    "icon-size": 32,
+    "on-click": "activate",
+    "on-click-middle": "close",
+  },
+  "custom/updates": {
+    "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
+    "exec": "python -c \"import json, subprocess; d={}; d['text'] = subprocess.run('checkupdates | wc -l | perl -pe chomp', shell=True, capture_output=True, encoding='utf-8').stdout; d['tooltip'] = subprocess.run('checkupdates', shell=True, capture_output=True, encoding='utf-8').stdout; print(json.dumps(d))\"",
+    "return-type": "json",
+    "format": "🎁 {}",
+    "interval": 3600,
+    "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
+    "tooltip": false,
+    "signal": 8
+  },
+  "custom/mail": {
+    "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
+    "tooltip": false,
+    "format": "✉{}",
+    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "interval": 3600, // 1 hour poll, 5 minute push
+    "signal": 9
+  },
+  "custom/spotify-icon": {
+    "format": " ",
+    "tooltip": false,
+    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
+    "on-click-middle": "gyrc",
+    "on-scroll-up":   "yamaha_vol up",
+    "on-scroll-down": "yamaha_vol down",
+  },
+  "custom/spotify": {
+    "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
+    "escape": true,
+    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
+    "on-click-middle": "gyrc",
+    "on-scroll-up":   "yamaha_vol up",
+    "on-scroll-down": "yamaha_vol down",
+    "tooltip": true,
+    "max-length": 80
+  },
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
+    "exec": "date '+%a %d⏰%H:%M'",
+    "tooltip": false,
+    "on-click": "gsimplecal",
+    "interval": 5
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-icons": {"default": ["🔈", "🔉", "🔊"]},
+    "format-muted": "🔇",
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer --toggle-mute || notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
+    "tooltip": false,
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["🌑", "🌚", "🌘", "🌗", "🌖", "🌕", "🌝"],
+    "on-scroll-up":   "                                   brightnessctl set 2%+ && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
+    "on-scroll-down": "[ $(brightnessctl g) -lt 1200 ] || brightnessctl set 2%- && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
+  },
+  "battery": {
+    "bat": "BAT0",
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon}",
+    "format-charging": "{icon}{capacity}+",
+    "format-warning": "{icon}{capacity}",
+    "format-critical": "{icon}{capacity}",
+    "format-unknown": "{icon}(l)",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip-format": "{capacity}%: {timeTo}",
+    "on-click": "battery-toggle-full-or-limit-charge.sh",
+  },
+  "tray": {
+    "icon-size": 28
+  },
+  "custom/home": {
+    "format": "🏠 ",
+    "on-click": "xdg-open ~",
+    "tooltip": false
+  },
+  "custom/weather": {
+    "interval": 3600,
+    "exec": "waybar-wttr.py",
+    "return-type": "json",
+    "on-click": "gnome-weather",
+    "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
+  },
+  "custom/load": {
+    "exec": "cut -f1 -d' ' /proc/loadavg",
+    "format": "💻{}",
+    "tooltip": false,
+    "on-click": "kitty --start-as fullscreen htop",
+    "interval": 30
+  },
+}, {
+  "output": ["HDMI-A-1", "DP-1"],
   "position": "bottom",
   "modules-left": [
     "custom/home",

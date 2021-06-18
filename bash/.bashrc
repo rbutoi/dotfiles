@@ -48,10 +48,6 @@ mcd() {
   cd "$@"
 }
 
-fcd() {
-  cd $(find . -name "$@" -type d)
-}
-
 upto ()
 {
   if [ -z "$1" ]; then
@@ -100,6 +96,21 @@ enc() {
 e() { ew "$@"; }
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
+
+# man in browser/emacs
+man() {
+  if [ $# -eq 0 ]; then
+    cmd="(call-interactively 'man)"
+  else
+    cmd="(man \"$@\")"
+  fi
+  if [ -n "$INSIDE_EMACS" ]; then
+    emacsclient -n --eval "$cmd"
+  else
+    emacsclient -t --eval "(progn $cmd (other-window 1) (delete-other-windows))"
+  fi
+}
+export BROWSER=xdg-open
 
 export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
 export CLICOLOR=1
@@ -179,6 +190,21 @@ function pomo() {
     done
 }
 
+############
+# epilogue #
+############
+
+## external
+
+# enable programmable completion features
+# worth mentioning: https://github.com/cykerway/complete-alias
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  . /etc/bash_completion
+fi
+
+command -v pipx >/dev/null && \
+  eval "$(register-python-argcomplete pipx)"
+
 # https://the.exa.website
 # needs to be after PATH setting
 if command -v exa >/dev/null 2>&1; then
@@ -189,18 +215,11 @@ else
   alias ll='l -lA -h'
 fi
 
-############
-# epilogue #
-############
-
-# enable programmable completion features
-# worth mentioning: https://github.com/cykerway/complete-alias
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-  . /etc/bash_completion
-fi
-
-command -v pipx >/dev/null && \
-  eval "$(register-python-argcomplete pipx)"
+[ -d ~/.config/broot ] && source ~/.config/broot/launcher/bash/br
+function dcd {
+    br --only-folders --cmd "$1:cd"
+}
+alias lb='br --sizes --dates --permissions'
 
 if [ -f ~/.bashrc_specific_mac ] && [ $(uname) == "Darwin" ]; then
   . ~/.bashrc_specific_mac

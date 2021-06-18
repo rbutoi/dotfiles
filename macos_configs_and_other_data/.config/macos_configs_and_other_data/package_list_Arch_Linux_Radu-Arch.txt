@@ -35,6 +35,7 @@ bluez
 bluez-utils
 bmon
 breezy
+broot-git
 brother-hll2370dw
 bzip2
 caddy-git
@@ -198,6 +199,7 @@ man-pages
 mariadb
 mdadm
 mediainfo
+meld-git
 memtest86-efi
 mesa-demos
 mesa-git

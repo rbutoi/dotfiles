@@ -51,8 +51,36 @@
 
 (remove-hook! text-mode #'display-line-numbers-mode)
 
-;;;; Popups
-(set-popup-rules! '(("^\\*Async Shell Command\\*$" :ttl 0)))
+;;;; Popups: have to copy and remove from doom's - Man removed
+(set-popup-rules!
+  '(("^\\*Completions" :ignore t)
+    ("^\\*Local variables\\*$"
+     :vslot -1 :slot 1 :size +popup-shrink-to-fit)
+    ("^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
+     :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
+    ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
+     :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit t :ttl 0)
+    ("^\\*doom:"  ; editing buffers (interaction required)
+     :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
+    ("^\\*doom:\\(?:v?term\\|e?shell\\)-popup"  ; editing buffers (interaction required)
+     :vslot -5 :size 0.35 :select t :modeline nil :quit nil :ttl nil)
+    ; man removed
+    ("^\\*Calc"
+     :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
+    ("^\\*Customize"
+     :slot 2 :side right :size 0.5 :select t :quit nil)
+    ("^ \\*undo-tree\\*"
+     :slot 2 :side left :size 20 :select t :quit t)
+    ;; `help-mode', `helpful-mode'
+    ("^\\*\\([Hh]elp\\|Apropos\\)"
+     :slot 2 :vslot -8 :size 0.35 :select t)
+    ("^\\*eww\\*"  ; `eww' (and used by dash docsets)
+     :vslot -11 :size 0.35 :select t)
+    ("^\\*info\\*$"  ; `Info-mode'
+     :slot 2 :vslot 2 :size 0.45 :select t)
+
+    ; mine:
+    ("^\\*Async Shell Command\\*$" :ttl 0)))
 (after! rustic
   (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
 
@@ -115,6 +143,13 @@
 
 ;;;; Word wrap
 (map! "C-c C-w" 'toggle-truncate-lines)
+
+;;;; Folding
+(setq folded-all nil)
+(map! "C-<tab>"   '+fold/toggle
+      "<backtab>" (cmd! (if folded-all (+fold/open-all) (+fold/close-all))
+                        (setq folded-all (not folded-all))))
+(add-hook! prog-mode #'hideshowvis-minor-mode)
 
 ;;; Editing
 
@@ -325,6 +360,7 @@ or are no longer readable will be killed."
                             notmuch-hello-insert-footer)
    notmuch-show-all-tags-list t
    notmuch-show-logo t
+   notmuch-show-indent-messages-width 2
 
    notmuch-saved-searches
    (append
@@ -357,7 +393,7 @@ or are no longer readable will be killed."
    '(("date"    . "%12s "       )
      ("count"   . "%-7s "       )
      ("authors" . "%-50s "      )
-     ("subject" . "%-130.130s " )
+     ("subject" . "%-120.120s " )
      ("tags"    . "%s"          ))
    notmuch-search-result-format notmuch-search-result-format--narrow
 

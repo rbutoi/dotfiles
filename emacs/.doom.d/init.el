@@ -23,7 +23,7 @@
        modeline            ; snazzy, Atom-inspired modeline, plus API
        nav-flash           ; blink the current line after jumping
        ophints             ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       popup               ; tame sudden yet inevitable temporary windows
        vc-gutter           ; vcs diff in the fringe
        vi-tilde-fringe     ; fringe tildes to mark beyond EOB
        window-select       ; visually switch windows

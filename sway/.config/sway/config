@@ -38,20 +38,21 @@ workspace 4 output DVI-D-1
 # startup applications
 #
 bar swaybar_command waybar
-exec systemd-cat -t dex         dex -a -e SWAY                # autostart
-exec systemd-cat -t udiskie     udiskie --tray --appindicator # automount manager
+exec systemd-cat dex -a -e SWAY                # autostart
+exec systemd-cat udiskie --tray --appindicator # automount manager
                                                               # clipboard
-exec systemd-cat -t clipman     wl-paste -t text --watch clipman --notify store --no-persist
-exec systemd-cat -t nm-applet   nm-applet --indicator         # network status
-exec systemd-cat -t poweralertd poweralertd                   # power notifications
-exec systemd-cat -t wlsunset    wlsunset_here                 # sunset screen darken
+exec systemd-cat wl-paste -t text --watch clipman --notify store --no-persist
+exec systemd-cat nm-applet --indicator         # network status
+exec systemd-cat poweralertd                   # power notifications
+exec systemd-cat wlsunset_here                 # sunset screen darken
 
 # initial desktop
 exec $term tmux new -ADs auto
 exec $editor
 exec discord
+for_window [class="Spotify"] move window to scratchpad, resize set 2200 1200
+floating_maximum_size 0 x 0
 exec spotify
-for_window [class="Spotify"] move window to scratchpad
 exec signal-desktop
 
 # per window config
@@ -194,7 +195,7 @@ bindsym $mod+s        layout stacking
 bindsym $mod+Shift+s  layout tabbed
 bindsym $mod+d        layout toggle split
 bindsym $mod+f        fullscreen
-bindsym $mod+Shift+f  move container to output HDMI-A-1 \; fullscreen
+bindsym $mod+Shift+f  move container to output HDMI-A-1; focus output HDMI-A-1; fullscreen enable
 bindsym $mod+t        floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
 bindsym $mod+a        focus parent
