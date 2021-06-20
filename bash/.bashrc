@@ -4,6 +4,9 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# set $PATH if not already
+[ -f ~/.config/path.sh ] && . ~/.config/path.sh
+
 #########################
 # Bash/terminal options #
 #########################
@@ -13,8 +16,7 @@ ulimit -c unlimited
 shopt -s nocaseglob
 shopt -s extglob
 shopt -s checkwinsize
-# https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
-stty -ixon
+stty -ixon # https://unix.stackexchange.com/questions/332791/how-to-permanently-disable-ctrl-s-in-terminal
 # Avoid duplicates and leading spaces
 export HISTCONTROL=ignoreboth:erasedups
 # Append to the Bash history file, rather than overwriting it
@@ -24,32 +26,29 @@ export HISTSIZE=
 # Change the file location because certain bash sessions truncate .bash_history file upon close.
 # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
 export HISTFILE=~/.bash_eternal_history
-# disable history expansion
-set +H
+set +H # disable history expansion
 
 # prompt + title
 STARSHIP=starship
 [ -x ~/bin/starship ] && STARSHIP=~/bin/starship
 eval "$($STARSHIP init bash)"
-function set_win_title()      { bpwd=$(basename $PWD); echo -ne "\033]0;${HOSTNAME/butoi-/}:${bpwd/#$USER/\~}\007"; }
-function set_win_title_tmux() { bpwd=$(basename $PWD); echo -ne   "\033k${HOSTNAME/butoi-/}:${bpwd/#$USER/\~}\033"; }
+set_win_title() {
+  bpwd="$(basename $PWD)"
+  printf "${1:-\033]0;%s\007}" "${bpwd/#$USER/\~}@${HOSTNAME/butoi-/}"
+}
+set_win_title_tmux() { set_win_title "\033k%s\033"; }
 if [ -z "$TMUX" ]; then
   starship_precmd_user_func=set_win_title
 else
   starship_precmd_user_func=set_win_title_tmux
 fi
+export starship_precmd_user_func
 
 #######################################
 # User specific aliases and functions #
 #######################################
 
-mcd() {
-  mkdir -p "$@"
-  cd "$@"
-}
-
-upto ()
-{
+upto () {
   if [ -z "$1" ]; then
     return
   fi
@@ -57,43 +56,41 @@ upto ()
   cd "${PWD/\/$upto\/*//$upto}"
 }
 
-_upto()
-{
+_upto() {
   local cur=${COMP_WORDS[COMP_CWORD]}
   local d=${PWD//\//\ }
   COMPREPLY=( $( compgen -W "$d" -- "$cur" ) )
 }
 complete -F _upto upto
 
-fork() { (setsid "$@" &); }
+pomo() {
+  arg1=$1
+  shift
+  args="$*"
 
-all_atq () {
-  atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'
+  min=${arg1:?Example: pomo 15 Take a break}
+  sec=$((min * 60))
+  msg="${args:?Example: pomo 15 Take a break}"
+
+  while true; do
+    sleep "${sec:?}" && echo "${msg:?}" && notify-send -u critical -t 0 "${msg:?}"
+  done
 }
 
-escape() {
-  python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'
-}
-
-unescape() {
-  python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"
-}
-
-pip3_upgrade() {
-  pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"
-}
+mcd           () { mkdir -p "$@" && cd "$@"                                                                     ; }
+fork          () { (setsid "$@" &)                                                                              ; }
+all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'      ; }
+escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'                           ; }
+unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"    ; }
+pip3_upgrade  () { pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"                            ; }
+wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));' ; }
+find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
+fix_swaysock  () { export SWAYSOCK=$(sway --get-socketpath)                                                     ; }
+git_grep_blame() { git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'                        ; }
+alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # editor
-ew() {
-  emacsclient -a= -nw "$@"
-}
-en() {
-  emacsclient -a= -n "$@"
-}
-enc() {
-  emacsclient -a= -nc "$@"
-}
-e() { ew "$@"; }
+ew() { emacsclient -a= -nw "$@"; }; e() { ew "$@"; }; en() { emacsclient -a= -n  "$@"; }; enc() { emacsclient -a= -nc "$@"; }
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 
@@ -111,15 +108,11 @@ man() {
   fi
 }
 export BROWSER=xdg-open
-
-export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
 export CLICOLOR=1
 
-alias g="grep --color=always -i"
+alias l='ls -F'
+alias ll='l -lA -h'
 alias pg="pgrep"
-psg() {
-  ps aux | grep "$@" | grep -iv 'grep\|shell-history'
-}
 alias chmox="chmod +x"
 alias -- -="cd -"
 alias ..="cd .."
@@ -127,21 +120,20 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-export PAGER=less
-alias m=less
+alias cdg='cd "$(git rev-parse --show-toplevel)"'
 alias M='$(history -p \!\!) | less -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
-alias xc="xclip -selection clipboard"
-if ! command -v tree >/dev/null 2>&1; then
+if ! command -v tree >/dev/null; then
   alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
   tree2() {
     find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
   }
 fi
-alias c="bat"
 alias dv="dirs -v"
 alias s='sudo'
+alias ss='s ss' # these silently degrade without sudo
+alias lsof='s lsof'
 complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
@@ -150,51 +142,61 @@ alias xa='xargs'
 alias ssha='ssh -t a tmux new -ADs auto'
 alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
-alias count_word_occurrences="python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'"
 alias fd="fd --one-file-system"
 alias diff="diff --color=auto"
 
-find_pi() {
-  sudo nmap -sP 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'
-}
+########################
+# external shell tools #
+########################
 
-fix_swaysock() {
-  export SWAYSOCK=$(sway --get-socketpath)
-}
-
-alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-if [ -f /usr/share/fzf/completion.bash ]; then
-  source /usr/share/fzf/completion.bash
-  source /usr/share/fzf/key-bindings.bash
+if command -v rg >/dev/null; then
+  export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
+  alias g="rg"
 fi
-export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up"
-export FZF_DEFAULT_COMMAND='fd --hidden'
-alias fzfp="fd -tf | fzf --preview 'bat --style=numbers --color=always {}'"
 
-git-grep-blame() {
-  git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'
-}
+if command -v procs >/dev/null; then
+  alias procs='s procs' # for network info to show
+  alias psg=/usr/bin/procs # doesn't need it
+fi
 
-function pomo() {
-    arg1=$1
-    shift
-    args="$*"
+if command -v bat >/dev/null; then
+  alias bat="bat --style=changes,header,rule,numbers --wrap=never"
+  alias c=bat
+  alias m=bat # used to be `most` for a long time
+  export PAGER="bat --plain"
+  export BAT_THEME=gruvbox-dark
+fi
 
-    min=${arg1:?Example: pomo 15 Take a break}
-    sec=$((min * 60))
-    msg="${args:?Example: pomo 15 Take a break}"
+if command -v delta >/dev/null; then
+  alias diff=delta
+fi
 
-    while true; do
-        sleep "${sec:?}" && echo "${msg:?}" && notify-send -u critical -t 0 "${msg:?}"
-    done
-}
+# have to conditionally enable since mcfly does too, for re-sourcing bashrc
+if [ -f /usr/share/fzf/completion.bash ] && [ -z "$FZF_SOURCED" ]; then
+  . /usr/share/fzf/completion.bash
+  . /usr/share/fzf/key-bindings.bash
+  # prefer mcfly but keep fzf's history search
+  bind -x '"\et": __fzf_history__'
+  # https://github.com/junegunn/fzf/wiki/Color-schemes
+  export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
+    --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+    --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
+  export FZF_DEFAULT_COMMAND='fd --hidden'
+  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  alias fzfp="$FZF_DEFAULT_COMMAND -tf | fzf --preview 'bat --style=numbers --color=always {}'"
 
-############
-# epilogue #
-############
+  export FZF_SOURCED=set
+fi
 
-## external
+if command -v mcfly >/dev/null; then
+  # run in a fn so a return continues bashrc execution
+  mcfly_init() { eval "$(mcfly init bash)"; }; mcfly_init
+  export MCFLY_FUZZY=true
+  # M-r for exact search
+  bind -x '"\er": "echo \#mcfly: ${READLINE_LINE[@]} >> $MCFLY_HISTORY ; READLINE_LINE= ; (unset MCFLY_FUZZY; mcfly search)"'
+  export MCFLY_RESULTS=50
+fi
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias
@@ -202,26 +204,25 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
-command -v pipx >/dev/null && \
-  eval "$(register-python-argcomplete pipx)"
-
-# https://the.exa.website
-# needs to be after PATH setting
-if command -v exa >/dev/null 2>&1; then
+if command -v exa >/dev/null; then
   alias l='exa'
   alias ll='exa -aagl'
-else
-  alias l='ls -F'
-  alias ll='l -lA -h'
 fi
 
-[ -d ~/.config/broot ] && source ~/.config/broot/launcher/bash/br
-function dcd {
-    br --only-folders --cmd "$1:cd"
-}
-alias lb='br --sizes --dates --permissions'
+if [ -d ~/.config/broot ]; then
+  . ~/.config/broot/launcher/bash/br
+   cdb() { br --only-folders --cmd "$*:cd"; }
+    lb() { br --sizes --dates --permissions; }
+  treb() { br --height $((LINES - 2)) --cmd :pt "$@"; }
+fi
 
-if [ -f ~/.bashrc_specific_mac ] && [ $(uname) == "Darwin" ]; then
+command -v duf  >/dev/null && alias df=duf
+command -v navi >/dev/null && eval "$(navi widget bash)"
+command -v pipx >/dev/null && eval "$(register-python-argcomplete pipx)"
+
+## other hosts
+
+if [ -f ~/.bashrc_specific_mac ] && [ "$(uname)" = "Darwin" ]; then
   . ~/.bashrc_specific_mac
 fi
 

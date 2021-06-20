@@ -1,0 +1,16 @@
+#!/bin/bash
+
+THRESHOLD=${1:-100}
+
+file=$(cat /proc/loadavg)
+load_float1=$(echo -n $file | cut -d' ' -f1)
+load_float5=$(echo -n $file | cut -d' ' -f2)
+load_float15=$(echo -n $file | cut -d' ' -f3)
+load1=${load_float1/./}
+load5=${load_float5/./}
+load15=${load_float15/./}
+if [ "$load1" -gt $THRESHOLD ] || [ "$load5" -gt $THRESHOLD ] ||
+    [ "$load15" -gt $THRESHOLD ]; then
+   exit 1 # return with failure if above any load threshold
+fi
+:

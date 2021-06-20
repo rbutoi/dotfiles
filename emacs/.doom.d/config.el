@@ -112,7 +112,7 @@
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never %s 2>/dev/null || true")
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true")
 
   ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
   (define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
@@ -149,7 +149,6 @@
 (map! "C-<tab>"   '+fold/toggle
       "<backtab>" (cmd! (if folded-all (+fold/open-all) (+fold/close-all))
                         (setq folded-all (not folded-all))))
-(add-hook! prog-mode #'hideshowvis-minor-mode)
 
 ;;; Editing
 

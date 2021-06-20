@@ -63,7 +63,7 @@
   "custom/spotify-icon": {
     "format": " ",
     "tooltip": false,
-    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
@@ -72,7 +72,7 @@
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
-    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
@@ -136,7 +136,7 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "kitty --start-as fullscreen htop",
+    "on-click": "footclient --fullscreen htop",
     "interval": 30
   },
 }, {
@@ -203,7 +203,7 @@
   "custom/spotify-icon": {
     "format": " ",
     "tooltip": false,
-    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
@@ -212,7 +212,7 @@
   "custom/spotify": {
     "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
     "escape": true,
-    "on-click": "swaymsg '[class=\"Spotify\"] focus' | grep error && swaymsg exec spotify && sleep 1 && swaymsg '[class=\"Spotify\"] focus'",
+    "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
     "on-click-middle": "gyrc",
     "on-scroll-up":   "yamaha_vol up",
@@ -276,7 +276,7 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "kitty --start-as fullscreen htop",
+    "on-click": "footclient --fullscreen htop",
     "interval": 30
   },
 }, {

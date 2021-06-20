@@ -3,7 +3,7 @@
 #
 # basics
 #
-set $term kitty
+set $term footclient
 set $web google-chrome-unstable
 set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
@@ -49,10 +49,9 @@ exec systemd-cat wlsunset_here                 # sunset screen darken
 # initial desktop
 exec $term tmux new -ADs auto
 exec $editor
-exec discord
-for_window [class="Spotify"] move window to scratchpad, resize set 2200 1200
-floating_maximum_size 0 x 0
-exec spotify
+exec ripcord
+for_window [title="^Spotify – Web Player$"] move window to scratchpad, resize set 2200 1100
+exec dex ~/.local/share/applications/chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop
 exec signal-desktop
 
 # per window config
@@ -94,7 +93,7 @@ default_border pixel 6
 smart_borders on
 smart_gaps on
 hide_edge_borders --i3 both
-
+floating_maximum_size 0 x 0
 titlebar_border_thickness 0
 
 set $base00_ "#282828"
@@ -127,7 +126,7 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec swaymsg '[app_id="kitty\.tmux-auto"] focus' || kitty --class kitty.tmux-auto -- tmux new -ADs auto
+bindsym $mod+Shift+Return    exec swaymsg '[app_id="^foot$" title=" \[auto\]$"] focus' || $term -- tmux new -ADs auto
 bindsym $mod+w               exec swaymsg '[app_id="Google-chrome"] focus' || $web
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+e               exec swaymsg '[app_id="emacs"] focus' || $editor
@@ -241,8 +240,7 @@ bindsym XF86AudioStop         exec yamaha_or_playerctl.sh stop
 bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi
-bindsym $mod+Mod1+h           exec wezterm start --class org.wezfurlong.wezterm.htop -- htop
-for_window                    [app_id="wezterm\.htop"] fullscreen enable
+bindsym $mod+Mod1+h           exec $term --fullscreen htop
 
 # system configs
 include /etc/sway/config.d/*

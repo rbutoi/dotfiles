@@ -210,35 +210,28 @@
 
         # Here's an example of a shortcut bringing you to your home directory
         {
-          invocation: home
-          key: ctrl-home
-          execution: ":focus ~"
+            invocation: home
+            key: ctrl-home
+            execution: ":focus ~"
         }
 
-        {
-          key: ctrl-p
-          execution: ":line_up"
-        }
-        {
-          key: ctrl-n
-          execution: ":line_down"
-        }
-        {
-          key: alt-v
-          execution: ":page_up"
-        }
-        {
-          key: ctrl-v
-          execution: ":page_down"
-        }
-        {
-          key: alt-p
-          execution: ":start_end_panel"
-        }
-        {
-          key: ctrl-h
-          execution: ":toggle_hidden"
-        }
+        { key: "ctrl-p",       execution: ":line_up" }
+        { key: "ctrl-n",       execution: ":line_down" }
+        { key: "alt-v",        execution: ":page_up" }
+        { key: "ctrl-v",       execution: ":page_down" }
+        { key: "alt-p",        execution: ":start_end_panel" }
+        { key: "ctrl-h",       execution: ":toggle_hidden" }
+        { key: "ctrl-o",        internal: ":focus" }
+        { key: "ctrl-l",        internal: ":focus .." }
+        { key: "ctrl-b",        internal: ":input_go_left" }
+        { key: "ctrl-f",        internal: ":input_go_right" }
+        { key: "alt-b",         internal: ":input_go_word_left" }
+        { key: "alt-f",         internal: ":input_go_word_right" }
+        { key: "ctrl-a",        internal: ":input_go_to_start" }
+        { key: "ctrl-e",        internal: ":input_go_to_end" }
+        { key: "alt-backspace", internal: ":input_del_word_left" }
+        { key: "alt-d",         internal: ":input_del_word_right" }
+        { key: "ctrl-d",        internal: ":input_del_char_below" }
 
         # If you develop using git, you might like to often switch
         # to the git status filter:

@@ -3,3 +3,6 @@
 --max-columns-preview
 --hidden
 --smart-case
+
+# for piping
+--color=always

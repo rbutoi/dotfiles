@@ -34,6 +34,8 @@ blueman
 bluez
 bluez-utils
 bmon
+bottom-git
+bpytop-git
 breezy
 broot-git
 brother-hll2370dw
@@ -48,6 +50,7 @@ catt
 celluloid
 cheese
 chiaki
+choose-rust-git
 chromium-widevine
 clamav
 clang
@@ -74,11 +77,13 @@ docker
 docker-compose
 downgrade
 drive-git
+duf-git
 dust
 e2fsprogs
 edk2-shell
 efibootmgr
 electron-cash
+element-desktop-nightly-bin
 emacs-gcc-wayland-devel-bin
 eog
 etc-update
@@ -107,6 +112,7 @@ gdb
 geoip
 gimp
 git
+git-delta-git
 gitg
 glances
 glibc
@@ -197,6 +203,9 @@ mako-git
 man-db
 man-pages
 mariadb
+matrix-synapse-git
+mautrix-facebook-git
+mautrix-whatsapp
 mdadm
 mediainfo
 meld-git
@@ -206,6 +215,9 @@ mesa-git
 meson
 miniupnpc
 mlocate
+mopidy-iris
+mopidy-mopify
+mopidy-spotify
 moreutils
 mosh-git
 mpv
@@ -215,6 +227,7 @@ mullvad-vpn
 multimc-git
 nano
 nautilus
+navi
 ncdu
 ncurses-git
 needrestart
@@ -269,11 +282,14 @@ polkit-gnome
 poweralertd-git
 prettier
 procps-ng
+procs-git
 protobuf
 protontricks
 psmisc
 pulseaudio-alsa
+pulseeffects-git
 pv
+python3-aur
 python-argparse
 python-arrow
 python-attrdict
@@ -306,6 +322,7 @@ rawtherapee
 rdfind
 reflector
 reiserfsprogs
+ripcord-arch-libs
 ripgrep
 rmlint
 rofi-1pass
@@ -337,7 +354,6 @@ sonarr
 speedtest-cli
 spot-client-git
 spotifyd
-spotify-edge-snap
 spotify-qt
 starship
 steam
@@ -416,11 +432,13 @@ xfsprogs
 xorg-xinit
 xreader
 xsv
+yambar-git
 ydotool
 youtube-dl
 yubico-pam
 yubikey-manager-qt
 zenity
 zile
+zsh
 zuki-themes
 zulip-desktop

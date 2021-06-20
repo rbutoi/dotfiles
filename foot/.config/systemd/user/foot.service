@@ -1,0 +1,6 @@
+[Service]
+ExecStart=/usr/bin/foot --server
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
