@@ -48,6 +48,7 @@ exec systemd-cat wlsunset_here                 # sunset screen darken
 
 # initial desktop
 exec $term tmux new -ADs auto
+exec $web
 exec $editor
 exec ripcord
 for_window [title="^Spotify – Web Player$"] move window to scratchpad, resize set 2200 1100

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Return with non-zero status if system load (1, 5, and 15) are under a
+# threshold.
 
 THRESHOLD=${1:-100}
 

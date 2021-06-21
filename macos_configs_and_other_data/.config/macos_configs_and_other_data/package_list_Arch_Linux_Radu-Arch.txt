@@ -42,10 +42,7 @@ brother-hll2370dw
 bzip2
 caddy-git
 cargo-bloat
-cargo-edit
-cargo-expand
 cargo-update
-cargo-watch
 catt
 celluloid
 cheese
@@ -84,6 +81,7 @@ edk2-shell
 efibootmgr
 electron-cash
 element-desktop-nightly-bin
+eless
 emacs-gcc-wayland-devel-bin
 eog
 etc-update
@@ -97,7 +95,6 @@ ffmpegthumbnailer
 file-roller
 filesystem
 firefox
-fish
 flat-remix
 flood-git
 fontforge
@@ -260,7 +257,7 @@ pacman-contrib
 pacolog
 pamixer
 papermc
-paru
+paru-git
 pavucontrol
 pbzip2
 pciutils
@@ -332,8 +329,8 @@ rsync
 rtorrent-git
 ruby
 ruby-yard
-rust-analyzer
-rustup
+rust-analyzer-git
+rustup-git
 samba
 sd
 sdl2-jstest-git
@@ -355,7 +352,7 @@ speedtest-cli
 spot-client-git
 spotifyd
 spotify-qt
-starship
+starship-git
 steam
 stig-git
 stow
