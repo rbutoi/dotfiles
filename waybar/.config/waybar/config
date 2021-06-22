@@ -27,10 +27,10 @@
   },
   "sway/workspaces": {
     "persistent_workspaces": {
-      "1": ["DP-1", "eDP-1"],
-      "2": ["DP-2", "eDP-1"],
-      "3": ["DP-1", "eDP-1"],
-      "4": ["DP-2", "eDP-1"],
+      "1": ["DP-2", "eDP-1"],
+      "2": ["DP-1", "eDP-1"],
+      "3": ["DP-2", "eDP-1"],
+      "4": ["DP-1", "eDP-1"],
       "5": ["eDP-1"],
       "6": ["eDP-1"],
     }
@@ -140,7 +140,7 @@
     "interval": 30
   },
 }, {
-  "output": ["HDMI-A-1", "DP-1"],
+  "output": ["HDMI-A-1", "DP-2"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -167,10 +167,10 @@
   },
   "sway/workspaces": {
     "persistent_workspaces": {
-      "1": ["DP-1", "eDP-1"],
-      "2": ["DP-2", "eDP-1"],
-      "3": ["DP-1", "eDP-1"],
-      "4": ["DP-2", "eDP-1"],
+      "1": ["DP-2", "eDP-1"],
+      "2": ["DP-1", "eDP-1"],
+      "3": ["DP-2", "eDP-1"],
+      "4": ["DP-1", "eDP-1"],
       "5": ["eDP-1"],
       "6": ["eDP-1"],
     }
@@ -280,7 +280,7 @@
     "interval": 30
   },
 }, {
-  "output": ["DVI-D-1", "DP-2"],
+  "output": ["DVI-D-1", "DP-1"],
   "position": "bottom",
   "modules-left": [
     "sway/workspaces",

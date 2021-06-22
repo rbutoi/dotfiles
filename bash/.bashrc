@@ -38,7 +38,9 @@ set_win_title() {
 }
 set_win_title_tmux() { set_win_title "\033k%s\033"; }
 if [ -z "$TMUX" ]; then
-  starship_precmd_user_func=set_win_title
+  if [ -z "$INSIDE_EMACS" ]; then
+    starship_precmd_user_func=set_win_title
+  fi
 else
   starship_precmd_user_func=set_win_title_tmux
 fi
@@ -131,10 +133,9 @@ if ! command -v tree >/dev/null; then
   }
 fi
 alias dv="dirs -v"
-alias s='sudo'
+alias s='sudo'; complete -F _complete_alias s
 alias ss='s ss' # these silently degrade without sudo
 alias lsof='s lsof'
-complete -F _complete_alias s
 alias .~='. ~/.bashrc'
 alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
@@ -155,12 +156,11 @@ if command -v rg >/dev/null; then
 fi
 
 if command -v procs >/dev/null; then
-  alias procs='s procs' # for network info to show
-  alias psg=/usr/bin/procs # doesn't need it
+  alias psg=procs
 fi
 
 if command -v bat >/dev/null; then
-  alias bat="bat --style=changes,header,rule,numbers --wrap=never"
+  alias bat="bat --style=changes,header,rule,numbers,snip --wrap=never"
   alias c=bat
   alias m=bat # used to be `most` for a long time
   export PAGER="bat --plain"
@@ -171,13 +171,10 @@ if command -v delta >/dev/null; then
   alias diff=delta
 fi
 
-# have to conditionally enable since mcfly does too, for re-sourcing bashrc
-if [ -f /usr/share/fzf/completion.bash ] && [ -z "$FZF_SOURCED" ]; then
-  . /usr/share/fzf/completion.bash
-  . /usr/share/fzf/key-bindings.bash
-  # prefer mcfly but keep fzf's history search
-  bind -x '"\et": __fzf_history__'
-  # https://github.com/junegunn/fzf/wiki/Color-schemes
+if [ -z "$FZF_SOURCED" ]; then
+  [ -f ~/.fzf.bash ] && . ~/.fzf.bash
+  [ -d /usr/share/fzf ] && . /usr/share/fzf/completion.bash && \
+    . /usr/share/fzf/key-bindings.bash
   export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
     --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
     --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
@@ -189,24 +186,15 @@ if [ -f /usr/share/fzf/completion.bash ] && [ -z "$FZF_SOURCED" ]; then
   export FZF_SOURCED=set
 fi
 
-if command -v mcfly >/dev/null; then
-  # run in a fn so a return continues bashrc execution
-  mcfly_init() { eval "$(mcfly init bash)"; }; mcfly_init
-  export MCFLY_FUZZY=true
-  # M-r for exact search
-  bind -x '"\er": "echo \#mcfly: ${READLINE_LINE[@]} >> $MCFLY_HISTORY ; READLINE_LINE= ; (unset MCFLY_FUZZY; mcfly search)"'
-  export MCFLY_RESULTS=50
-fi
-
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-  . /etc/bash_completion
-fi
+# Use bash-completion, if available
+[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+    . /usr/share/bash-completion/bash_completion
 
 if command -v exa >/dev/null; then
-  alias l='exa'
-  alias ll='exa -aagl'
+  alias l='exa';              complete -F _complete_alias l
+  alias ll='exa -aagl --git'; complete -F _complete_alias ll
 fi
 
 if [ -d ~/.config/broot ]; then
@@ -218,7 +206,6 @@ fi
 
 command -v duf  >/dev/null && alias df=duf
 command -v navi >/dev/null && eval "$(navi widget bash)"
-command -v pipx >/dev/null && eval "$(register-python-argcomplete pipx)"
 
 ## other hosts
 

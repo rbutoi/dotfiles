@@ -4,3 +4,6 @@ $if Bash
 $endif
 
 set enable-bracketed-paste on
+set show-all-if-ambiguous on
+set visible-stats on
+set page-completions off

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+( sleep 1; kill $$ ) &
+
+FOOTCLIENT=/usr/bin/footclient
+[ -e /usr/local/bin/footclient ] && FOOTCLIENT=/usr/local/bin/footclient
+
+$FOOTCLIENT "$@"
+
+if [ $? -eq 220 ]; then
+  pkill -f "foot --server"
+  setsid foot --server &
+  sleep 0.1
+  setsid $FOOTCLIENT "$@" &
+fi

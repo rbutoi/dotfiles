@@ -51,39 +51,9 @@
 
 (remove-hook! text-mode #'display-line-numbers-mode)
 
-;;;; Popups: have to copy and remove from doom's - Man removed
-(set-popup-rules!
-  '(("^\\*Completions" :ignore t)
-    ("^\\*Local variables\\*$"
-     :vslot -1 :slot 1 :size +popup-shrink-to-fit)
-    ("^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-     :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
-    ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
-     :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit t :ttl 0)
-    ("^\\*doom:"  ; editing buffers (interaction required)
-     :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
-    ("^\\*doom:\\(?:v?term\\|e?shell\\)-popup"  ; editing buffers (interaction required)
-     :vslot -5 :size 0.35 :select t :modeline nil :quit nil :ttl nil)
-    ; man removed
-    ("^\\*Calc"
-     :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
-    ("^\\*Customize"
-     :slot 2 :side right :size 0.5 :select t :quit nil)
-    ("^ \\*undo-tree\\*"
-     :slot 2 :side left :size 20 :select t :quit t)
-    ;; `help-mode', `helpful-mode'
-    ("^\\*\\([Hh]elp\\|Apropos\\)"
-     :slot 2 :vslot -8 :size 0.35 :select t)
-    ("^\\*eww\\*"  ; `eww' (and used by dash docsets)
-     :vslot -11 :size 0.35 :select t)
-    ("^\\*info\\*$"  ; `Info-mode'
-     :slot 2 :vslot 2 :size 0.45 :select t)
-
-    ; mine:
-    ("^\\*Async Shell Command\\*$" :ttl 0)))
+;;;; Popups
 (after! rustic
   (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
-
 (map! "M-`" '+popup/toggle ; aliases tmm-menubar
       "M-~" 'tmm-menubar) ; this aliases not-modified
 
@@ -104,38 +74,16 @@
         :map isearch-mode-map
         "C-o"     'swiper-from-isearch
         :map ivy-minibuffer-map
-        "C-k"    'ivy-alt-done ; C-j is used by tmux
-        "C-M-i"  'ivy-insert-current ; M-i used to change windows
+        "C-k"     'ivy-alt-done ; C-j is used by tmux
+        "C-M-i"   'ivy-insert-current ; M-i used to change windows
         :map counsel-find-file-map
-        "C-l"    'counsel-up-directory)
+        "C-l"     'counsel-up-directory
+        "C-x C-f" 'counsel-find-file-fallback-command)
   (setq ; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true")
-
-  ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
-  (define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
-  (defun counsel-find-file-fallback-command ()
-    "Fallback to non-counsel version of current command."
-    (interactive)
-    (when (bound-and-true-p ivy-mode)
-      (ivy-mode -1)
-      (add-hook 'minibuffer-setup-hook
-                'counsel-find-file-fallback-command--enable-ivy))
-    (ivy-set-action
-     (lambda (current-path)
-       (let ((old-default-directory default-directory))
-         (let ((i (length current-path)))
-           (while (> i 0)
-             (push (aref current-path (setq i (1- i))) unread-command-events)))
-         (let ((default-directory "")) (call-interactively 'find-file))
-         (setq default-directory old-default-directory))))
-    (ivy-done))
-  (defun counsel-find-file-fallback-command--enable-ivy ()
-    (remove-hook 'minibuffer-setup-hook
-                 'counsel-find-file-fallback-command--enable-ivy)
-    (ivy-mode t)))
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true"))
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
@@ -164,56 +112,11 @@
 (map! "C-c r" 'revert-buffer)
 (global-auto-revert-mode)
 
-(defun modi/revert-all-file-buffers ()
-  "Refresh all open file buffers without confirmation.
-Buffers in modified (not yet saved) state in emacs will not be
-reverted. They will be reverted though if they were modified
-outside emacs. Buffers visiting files which do not exist any more
-or are no longer readable will be killed."
-  (interactive)
-  (dolist (buf (buffer-list))
-    (let ((filename (buffer-file-name buf)))
-      ;; Revert only buffers containing files, which are not modified;
-      ;; do not try to revert non-file buffers like *Messages*.
-      (when (and filename
-                 (not (buffer-modified-p buf)))
-        (if (file-readable-p filename)
-            ;; If the file exists and is readable, revert the buffer.
-            (with-current-buffer buf
-              (revert-buffer :ignore-auto :noconfirm :preserve-modes))
-          ;; Otherwise, kill the buffer.
-          (let (kill-buffer-query-functions) ; No query done when killing buffer
-            (kill-buffer buf)
-            (message "Killed non-existing/unreadable file buffer: %s" filename))))))
-  (message "Finished reverting buffers containing unmodified files."))
 (map! "C-c R" 'modi/revert-all-file-buffers)
 
 ;;;; comment-or-uncomment-line-or-region
-(defun comment-or-uncomment-line-or-region ()
-  "Comments or uncomments the current line or region."
-  (interactive)
-  (if (region-active-p)
-      (comment-or-uncomment-region (region-beginning) (region-end))
-    (progn
-      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
-      (forward-line))))
 (map! "M-[ q" 'comment-or-uncomment-line-or-region
       "M-;"   'comment-or-uncomment-line-or-region)
-
-;;;; Better C/M-w
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defadvice kill-ring-save (before slick-cut activate compile)
-  "When called interactively with no active region, save a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
 
 ;; fix doom :/ backspace is really slow in notmuch reply buffers when writing
 ;; replies inline
@@ -221,7 +124,7 @@ or are no longer readable will be killed."
 
 ;; paste when it doesn't work™
 (map!
- "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste")))))
+ "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste"))) (yank)))
 
 ;;;; Dired
 (use-package dired-hide-dotfiles
@@ -243,8 +146,8 @@ or are no longer readable will be killed."
 (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
 (add-hook! 'c-mode-common-hook ; formatting
   (fset 'c-indent-region 'clang-format-region))
-(map! :map c-mode-base-map "TAB" nil) ; disable c-indent-line-or-region so completing
-                                      ; can work
+;; disable c-indent-line-or-region so completing can work
+(map! :map c-mode-base-map "TAB" nil)
 
 (after! tex (setq TeX-auto-untabify t))
 
@@ -253,6 +156,8 @@ or are no longer readable will be killed."
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'eglot)
   (add-hook! rustic-mode (run-mode-hooks 'prog-mode-hook)))
+
+(add-hook! after-save #'executable-make-buffer-file-executable-if-script-p)
 
 ;;;; tree-sitter
 (use-package! tree-sitter
@@ -283,17 +188,6 @@ or are no longer readable will be killed."
 (map! "C-x C-v" 'vc-prefix-map)
 
 ;;;; Compiling
-(defun close-compile-window-if-successful (buffer string)
-  " close a compilation window if succeeded without warnings "
-  (if (and
-       (string-match "compilation" (buffer-name buffer))
-       (string-match "finished" string)
-       (not
-        (with-current-buffer buffer
-          (search-forward "warning" nil t))))
-      (run-with-timer 1 nil
-                      (lambda (window) (quit-window nil window))
-                      (get-buffer-window buffer))))
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
 (map! "S-<f7>" (cmd! (switch-to-buffer (buffer-name (car (doom-matching-buffers
                                                           "*compilation*")))))
@@ -528,41 +422,6 @@ or are no longer readable will be killed."
 (map! :map vterm-mode-map
       "<C-backspace>" (cmd! (vterm-send-key (kbd "C-w"))))
 
-(defun run-in-vterm-kill (process event)
-  "A process sentinel. Kills PROCESS's buffer if it is live."
-  (let ((b (process-buffer process)))
-    (and (buffer-live-p b)
-         (kill-buffer b))))
-
-(defun run-in-vterm (command)
-  "Execute string COMMAND in a new vterm.
-
-Interactively, prompt for COMMAND with the current buffer's file
-name supplied. When called from Dired, supply the name of the
-file at point.
-
-Like `async-shell-command`, but run in a vterm for full terminal features.
-
-The new vterm buffer is named in the form `*foo bar.baz*`, the
-command and its arguments in earmuffs.
-
-When the command terminates, the shell remains open, but when the
-shell exits, the buffer is killed."
-  (interactive
-   (list
-    (let* ((f (cond (buffer-file-name)
-                    ((eq major-mode 'dired-mode)
-                     (dired-get-filename nil t))))
-           (filename (concat " " (shell-quote-argument (and f (file-relative-name f))))))
-      (read-shell-command "Terminal command: "
-                          (cons filename 0)
-                          (cons 'shell-command-history 1)
-                          (list filename)))))
-  (with-current-buffer (vterm (concat "*" command "*"))
-    (set-process-sentinel vterm--process #'run-in-vterm-kill)
-    (vterm-send-string command)
-    (vterm-send-return)))
-
 ;;;; Edit with Emacs: edit web browser text boxes
 (edit-server-start)
 
@@ -578,6 +437,8 @@ shell exits, the buffer is killed."
 (setq Man-width-max nil) ; as wide as it goes
 
 ;;; Epilogue
+(load (concat doom-private-dir "config-fns.el"))
+
 ;; Host-specific support
 (when IS-MAC (load (concat doom-private-dir "config-mac.el") 'noerror))
 (defconst IS-CROSTINI (string-match-p "penguin" (system-name)))
