@@ -22,18 +22,17 @@ input type:pointer {
     accel_profile flat
     pointer_accel 0.35
 }
-output HDMI-A-1 {
-    background "~/Pictures/mac/mojave/Mojave_Day.jpg" fill
-    position 0 0
-}
-output DVI-D-1 {
-    background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
-    transform 90
-}
-workspace 1 output HDMI-A-1
-workspace 3 output HDMI-A-1
-workspace 2 output DVI-D-1
-workspace 4 output DVI-D-1
+
+# manages outputs
+exec_always        sh -c 'pkill kanshi; kanshi -c ~/.config/kanshi/$HOSTNAME'
+set $monitor_27          "Acer Technologies Acer CB271HU T9TAA0014200"
+set $monitor_24_vert     "Unknown HP VH240a 6CM9310DM8"
+output $monitor_27       background "~/Pictures/mac/mojave/Mojave_Day.jpg"   fill
+output $monitor_24_vert  background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
+workspace 1 output $monitor_27
+workspace 3 output $monitor_27
+workspace 2 output $monitor_24_vert
+workspace 4 output $monitor_24_vert
 
 #
 # startup applications

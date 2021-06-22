@@ -1,6 +1,6 @@
 // -*- mode: json; -*-
 [{
-  "output": ["eDP-1"],
+  "output": ["Unknown 0x1400 0x00000000"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -140,7 +140,7 @@
     "interval": 30
   },
 }, {
-  "output": ["HDMI-A-1", "DP-2"],
+  "output": ["Unknown P2718EC C8110094", "Acer Technologies Acer CB271HU T9TAA0014200"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -280,7 +280,7 @@
     "interval": 30
   },
 }, {
-  "output": ["DVI-D-1", "DP-1"],
+  "output": ["Unknown HP VH240a 6CM9310DM8"],
   "position": "bottom",
   "modules-left": [
     "sway/workspaces",

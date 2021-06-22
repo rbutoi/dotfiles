@@ -127,6 +127,7 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
+google-chrome
 google-chrome-dev
 gparted
 grim
@@ -167,6 +168,7 @@ joycond-git
 jq
 jre11-openjdk
 jupyterlab
+kanshi-git
 keychain
 kitty-git
 kodi-gbm

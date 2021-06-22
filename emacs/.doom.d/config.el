@@ -136,9 +136,6 @@
 ;;;; Languages
 (after! perl-mode (map! "C-c C-d" :map perl-mode-map 'cperl-perldoc))
 
-(add-hook! (yaml-mode conf-unix-mode conf-space-mode)
-  (run-mode-hooks 'prog-mode-hook))
-
 (after! cc-mode
   (map! "C-c C-o" :map c-mode-base-map
         (cmd! (ff-find-other-file nil 'ignore-include))))
