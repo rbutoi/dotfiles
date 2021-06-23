@@ -93,10 +93,13 @@
 (map! "C-c C-w" 'toggle-truncate-lines)
 
 ;;;; Folding
-(setq folded-all nil)
-(map! "C-<tab>"   '+fold/toggle
-      "<backtab>" (cmd! (if folded-all (+fold/open-all) (+fold/close-all))
-                        (setq folded-all (not folded-all))))
+(setq +fold/ed-all nil)
+(map! "C-\\"      '+fold/toggle
+      "C-c C-\\"  (defun +fold/my-toggle-all ()
+                    "Toggle all the folds in the buffer."
+                    (interactive)
+                    (if +fold/ed-all (+fold/open-all) (+fold/close-all))
+                    (setq +fold/ed-all (not +fold/ed-all))))
 
 ;;; Editing
 
@@ -108,11 +111,9 @@
   (interactive)
   (let ((case-fold-search nil)) (call-interactively 'query-replace)))
 
-;;;; Revert file
-(map! "C-c r" 'revert-buffer)
-(global-auto-revert-mode)
-
-(map! "C-c R" 'modi/revert-all-file-buffers)
+;;;; Reverting
+(map! "C-c r" 'revert-buffer
+      "C-c R" 'modi/revert-all-file-buffers)
 
 ;;;; comment-or-uncomment-line-or-region
 (map! "M-[ q" 'comment-or-uncomment-line-or-region

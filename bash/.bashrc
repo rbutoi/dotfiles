@@ -33,7 +33,7 @@ STARSHIP=starship
 [ -x ~/bin/starship ] && STARSHIP=~/bin/starship
 eval "$($STARSHIP init bash)"
 set_win_title() {
-  bpwd="$(basename $PWD)"
+  bpwd="$(basename "$PWD")"
   printf "${1:-\033]0;%s\007}" "${bpwd/#$USER/\~}@${HOSTNAME/butoi-/}"
 }
 set_win_title_tmux() { set_win_title "\033k%s\033"; }
@@ -87,9 +87,19 @@ unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8'
 pip3_upgrade  () { pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"                            ; }
 wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));' ; }
 find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
-fix_swaysock  () { export SWAYSOCK=$(sway --get-socketpath)                                                     ; }
-git_grep_blame() { git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'                        ; }
+fix_swaysock  () { export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock                   ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# git
+git_grep_blame() {
+  git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'
+}
+git_dangling()   {
+  # show git dangling commits sorted by timestamp
+  git fsck --lost-found 2>/dev/null | grep "dangling commit" | choose 2 |
+    xargs git show --no-patch --pretty=format:"%ad %h by %an, %s" --date=iso |
+    sort -r | fzf --preview 'git show --color $(echo {} | choose 3)'
+}
 
 # editor
 ew() { emacsclient -a= -nw "$@"; }; e() { ew "$@"; }; en() { emacsclient -a= -n  "$@"; }; enc() { emacsclient -a= -nc "$@"; }
@@ -171,6 +181,7 @@ if command -v delta >/dev/null; then
   alias diff=delta
 fi
 
+[ -f ~/.fzf.bash ] && . ~/.fzf.bash
 [ -d /usr/share/fzf ] && . /usr/share/fzf/completion.bash && \
   . /usr/share/fzf/key-bindings.bash
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
@@ -189,7 +200,7 @@ alias fzfp="$FZF_DEFAULT_COMMAND -tf | fzf --preview 'bat --style=numbers --colo
 
 if command -v exa >/dev/null; then
   alias l='exa';              complete -F _complete_alias l
-  alias ll='exa -aagl --git'; complete -F _complete_alias ll
+  alias ll='exa --color always -aagl --git'; complete -F _complete_alias ll
 fi
 
 if [ -d ~/.config/broot ]; then

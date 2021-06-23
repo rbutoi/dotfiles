@@ -4,8 +4,7 @@
 # basics
 #
 set $term foot
-exec 'sh -c "while true; do foot --server; sleep 1; done"'
-set $web google-chrome-unstable
+set $web google-chrome
 set $menu wofi-wrap.sh
 set $editor emacsclient -c -a ""
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
@@ -253,6 +252,7 @@ bindsym XF86Calculator        exec rofi -show calc
 bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
 bindsym $mod+v                exec clipman pick --notify --tool wofi
 bindsym $mod+Mod1+h           exec $term --fullscreen htop
+bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(swayinfo)"
 
 # system configs
 include /etc/sway/config.d/*
