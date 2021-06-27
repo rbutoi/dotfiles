@@ -55,7 +55,7 @@ window#waybar {
 
 #workspaces button.focused {
   background: #080808;
-  border-bottom: 4px solid #d3869b;
+  border-bottom: 2px solid #d3869b;
 }
 
 #workspaces button.urgent {
@@ -75,7 +75,7 @@ window#waybar {
 }
 
 #taskbar button.active {
-  border-bottom: 4px solid #d3869b;
+  border-bottom: 2px solid #d3869b;
 }
 
 #window,

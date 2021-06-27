@@ -171,20 +171,15 @@ if command -v delta >/dev/null; then
   alias diff=delta
 fi
 
-if [ -z "$FZF_SOURCED" ]; then
-  [ -f ~/.fzf.bash ] && . ~/.fzf.bash
-  [ -d /usr/share/fzf ] && . /usr/share/fzf/completion.bash && \
-    . /usr/share/fzf/key-bindings.bash
-  export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
-    --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
-    --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
-  export FZF_DEFAULT_COMMAND='fd --hidden'
-  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  alias fzfp="$FZF_DEFAULT_COMMAND -tf | fzf --preview 'bat --style=numbers --color=always {}'"
-
-  export FZF_SOURCED=set
-fi
+[ -d /usr/share/fzf ] && . /usr/share/fzf/completion.bash && \
+  . /usr/share/fzf/key-bindings.bash
+export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
+  --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
+export FZF_DEFAULT_COMMAND='fd --hidden'
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+alias fzfp="$FZF_DEFAULT_COMMAND -tf | fzf --preview 'bat --style=numbers --color=always {}'"
 
 # enable programmable completion features
 # worth mentioning: https://github.com/cykerway/complete-alias

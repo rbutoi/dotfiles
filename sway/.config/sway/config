@@ -3,7 +3,7 @@
 #
 # basics
 #
-set $term footclient
+set $term foot
 exec 'sh -c "while true; do foot --server; sleep 1; done"'
 set $web google-chrome-unstable
 set $menu wofi-wrap.sh
@@ -48,44 +48,53 @@ exec systemd-cat wlsunset_here                 # sunset screen darken
 
 # initial desktop
 exec $term tmux new -ADs auto
-exec $web
 exec $editor
 exec sh -c 'sleep 2; ripcord'
 exec signal-desktop
+
+exec $web
+# Chrome notifications have empty id/title.
+for_window [app_id="^$" title="^$"] floating enable, move position 80 ppt 83 ppt
+no_focus   [app_id="^$" title="^$"]
+
 # persistent spotify
-exec dex ~/.local/share/applications/chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop
-for_window [title="^Spotify – Web Player$"] move window to scratchpad, resize set 2200 1100
+exec sh -c 'sleep 5; swaymsg -t get_tree | grep -q "^Spotify – " || dex ~/.local/share/applications/chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop'
+for_window [title="^Spotify – "] move window to scratchpad, resize set 2200 1100
 
 # per window config
-for_window [app_id="gsimplecal"]                 move position mouse, move up 30 px, move left 30 px
-for_window [class="Emacs"]                       opacity 0.9
-for_window [app_id="emacs"]                      opacity 0.9
+for_window [app_id="gsimplecal"]                             move position mouse, move up 40 px, move left 20 px
+for_window [class="Emacs"]                                   opacity 0.9
+for_window [app_id="emacs"]                                  opacity 0.9
 for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.8
-for_window [app_id="nemo"]                       opacity 0.95
-for_window [app_id="org.gnome.Nautilus"]         opacity 0.95
-for_window [app_id="blueman-manager"]            floating enable
-for_window [app_id="cinnamon-settings.py"]       floating enable
-for_window [app_id="exo-desktop-item-edit"]      floating enable
-for_window [app_id="gnome-control-center"]       floating enable
-for_window [app_id="goobuntu_indicator.py"]      floating enable
-for_window [app_id="gyrc"]                       floating enable
-for_window [app_id="org.gnome.Weather"]          floating enable
-for_window [app_id="pavucontrol"]                floating enable
-for_window [app_id="qalculate-gtk"]              floating enable
-for_window [app_id="wdisplays"]                  floating enable
-for_window [app_id="xfce4-appfinder"]            floating enable
-for_window [app_id="zenity"]                     floating enable
-for_window [class="1Password"]                   floating enable
-for_window [class="PCSX2"]                       floating enable
-for_window [class="steam_app_.*"]                floating enable
-for_window [class="steam_proton"]                floating enable
-for_window [title="Find Directory"]              floating enable
-for_window [title="Firefox - Sharing Indicator"] floating enable
-for_window [title="^(Open|Save) Files?$"]        floating enable
-for_window [title="^Close Firefox$"]             floating enable
-for_window [title="^Edit with Emacs FRAME$"]     floating enable
-for_window [app_id="^$" title="^$"]              floating enable
-assign [class="hl2_linux"]                       workspace 3
+for_window [app_id="nemo"]                                   opacity 0.95
+for_window [app_id="org.gnome.Nautilus"]                     opacity 0.95
+for_window [app_id="blueman-manager"]                        floating enable
+for_window [app_id="cinnamon-settings.py"]                   floating enable
+for_window [app_id="exo-desktop-item-edit"]                  floating enable
+for_window [app_id="gnome-control-center"]                   floating enable
+for_window [app_id="goobuntu_indicator.py"]                  floating enable
+for_window [app_id="gyrc"]                                   floating enable
+for_window [app_id="org.gnome.Weather"]                      floating enable
+for_window [app_id="pavucontrol"]                            floating enable
+for_window [app_id="qalculate-gtk"]                          floating enable
+for_window [app_id="wdisplays"]                              floating enable
+for_window [app_id="xfce4-appfinder"]                        floating enable
+for_window [app_id="zenity"]                                 floating enable
+for_window [class="1Password"]                               floating enable
+for_window [class="PCSX2"]                                   floating enable
+for_window [class="steam_app_.*"]                            floating enable
+for_window [class="steam_proton"]                            floating enable
+for_window [title="Find Directory"]                          floating enable
+for_window [title="Firefox - Sharing Indicator"]             floating enable
+for_window [title="^(Open|Save) Files?$"]                    floating enable
+for_window [title="^Close Firefox$"]                         floating enable
+for_window [title="^Edit with Emacs FRAME$"]                 floating enable
+for_window [title="^Picture in picture$"]                    floating enable
+assign [class="hl2_linux"]                                   workspace 3
+assign [class="Signal"]                                      workspace 5
+assign [class="discord"]                                     workspace 5
+assign [title="Chat - Google Chrome"]                        workspace 4
+assign [title="Google.* Calendar .*- Google Chrome"] workspace 4
 
 #
 # display
@@ -137,7 +146,7 @@ bindsym $mod+c               kill
 bindsym $mod+space           exec $menu
 bindsym $mod+Shift+space     exec $menu "-Sdmenu,drun,run" # also run, too much for default
 bindsym $mod+q               exec wlogout -p layer-shell
-bindsym $mod+Shift+q         reload
+bindsym $mod+Shift+q         exec sh -c 'pkill waybar; swaymsg reload'
 bindsym $mod+Shift+Backspace exit
 #
 # Moving around:

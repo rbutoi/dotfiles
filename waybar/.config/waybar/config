@@ -87,6 +87,7 @@
     "interval": 5
   },
   "pulseaudio": {
+    "format-bluetooth": "📶{icon}",
     "format": "{icon}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
@@ -136,7 +137,7 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "footclient --fullscreen htop",
+    "on-click": "foot --fullscreen htop",
     "interval": 30
   },
 }, {
@@ -157,7 +158,6 @@
     "custom/load",
     "tray",
     "pulseaudio",
-    "backlight",
     "battery",
     "custom/clock",
   ],
@@ -227,6 +227,7 @@
     "interval": 5
   },
   "pulseaudio": {
+    "format-bluetooth": "📶{icon}",
     "format": "{icon}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
@@ -276,7 +277,7 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "footclient --fullscreen htop",
+    "on-click": "foot --fullscreen htop",
     "interval": 30
   },
 }, {
@@ -286,11 +287,28 @@
     "sway/workspaces",
   ],
   "modules-center": ["wlr/taskbar"],
+  "modules-right": [
+    "custom/load",
+    "custom/clock",
+  ],
   "wlr/taskbar": {
     "format": " {icon}{title:.7} ",
     "max-length": 200,
     "icon-size": 32,
     "on-click": "activate",
     "on-click-middle": "close"
-  }
+  },
+  "custom/load": {
+    "exec": "cut -f1 -d' ' /proc/loadavg",
+    "format": "💻{}",
+    "tooltip": false,
+    "on-click": "foot --fullscreen htop",
+    "interval": 30
+  },
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
+    "exec": "date '+%a %d⏰%H:%M'",
+    "tooltip": false,
+    "on-click": "gsimplecal",
+    "interval": 5
+  },
 }]
