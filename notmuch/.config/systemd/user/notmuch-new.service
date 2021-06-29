@@ -1,4 +1,4 @@
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/notmuch new
-TimeoutSec="10min"
+TimeoutSec=600
