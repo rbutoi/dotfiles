@@ -439,7 +439,6 @@
 
 ;; Host-specific support
 (when IS-MAC (load (concat doom-private-dir "config-mac.el") 'noerror))
-(defconst IS-CROSTINI (string-match-p "penguin" (system-name)))
 (when IS-CROSTINI (load (concat doom-private-dir "config-crostini.el") 'noerror))
 (load (concat doom-private-dir "specific.el") 'noerror)
 

@@ -29,9 +29,7 @@ export HISTFILE=~/.bash_eternal_history
 set +H # disable history expansion
 
 # prompt + title
-STARSHIP=starship
-[ -x ~/bin/starship ] && STARSHIP=~/bin/starship
-eval "$($STARSHIP init bash)"
+eval "$(starship init bash)"
 set_win_title() {
   bpwd="$(basename "$PWD")"
   printf "${1:-\033]0;%s\007}" "${bpwd/#$USER/\~}@${HOSTNAME/butoi-/}"
@@ -108,6 +106,10 @@ export ALTERNATE_EDITOR=zile
 
 # man in browser/emacs
 man() {
+  if ! pidof -q emacs; then
+    command man "$@"
+    return
+  fi
   if [ $# -eq 0 ]; then
     cmd="(call-interactively 'man)"
   else
