@@ -29,8 +29,7 @@
  ;; occassionally useful (e.g. w3m)
  "C-c M-s"   'scroll-bar-mode)
 
-(setq frame-title-format "%b: Editor MACroS"
-      doom-modeline-project-detection 'project)
+(setq doom-modeline-project-detection 'project)
 
 ;; keep windows balanced
 (defadvice split-window-below (after restore-balanace-below activate)
@@ -67,9 +66,8 @@
         "C-o"     'counsel-semantic-or-imenu
         "C-M-s"   (cmd! (counsel-rg (thing-at-point 'symbol)))
         ;; doesn't show hidden files
-        "C-x f"   (defun counsel-file-jump-ask-dir () (interactive)
-                         (execute-extended-command t "counsel-file-jump"))
-        "C-x M-f" 'counsel-file-jump-ask-dir
+        "C-x f"   'counsel-file-jump
+        "C-x M-f" 'counsel-file-jump
         "C-M-o"   'swiper-isearch-thing-at-point
         :map isearch-mode-map
         "C-o"     'swiper-from-isearch

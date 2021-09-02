@@ -1,4 +1,4 @@
-set $term kitty
+set $term wezterm start --
 set $menu "rofi -show"
 set $editor emacsclient -c -a=
 set $locker xsecurelock
@@ -29,16 +29,29 @@ exec --no-startup-id $term ~/bin/continuetmux
 workspace_auto_back_and_forth yes
 mouse_warping output
 
+#
 # display
-font pango:Noto Sans 10
+#
+font pango:Noto Sans 11
 default_border pixel 3
 hide_edge_borders both
-# class                 border  backgr. text    indicator child_border
-client.focused          #4c7899 #285577 #ffffff #2e9ef4   #20B9A5
-#            only non-default, bright to indicate active -^
+
+set $base00 "#282828"
+set $base02 "#504945"
+set $base03 "#665c54"
+set $base04 "#bdae93"
+set $base08 "#fb4934"
+set $base0C "#8ec07c"
+set $base0D "#83a598"
+set $base10 "#231f20"
+
+client.focused          $base0D $base0D $base00 $base0C $base0D
+client.focused_inactive $base02 $base02 $base04 $base04 $base02
+client.unfocused        $base02 $base10 $base04 $base03 $base02
+client.urgent           $base08 $base08 $base00 $base08 $base08
 
 bar {
-    font pango:Noto Sans 9
+    font pango:Noto Sans 11
     status_command i3blocks
 
     position bottom
@@ -59,80 +72,134 @@ for_window [class="Pavucontrol"] floating enable
 #
 set $mod Mod1
 
-set $left h
-set $down j
-set $up k
-set $right l
+set $left   h
+set $down   j
+set $up     k
+set $right  l
 
-bindsym $mod+Ctrl+Return exec $term
-bindsym $mod+Shift+Return exec $term ~/bin/continuetmux
-bindsym $mod+c kill
-bindsym $mod+space exec $menu
-floating_modifier $mod
-bindsym $mod+Shift+q reload
-bindsym $mod+Shift+Ctrl+q exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Return          exec $term
+bindsym $mod+Shift+Return    exec i3-msg '[class="wezterm$" title=" \[auto\]$"] focus' || $term tmux new -ADs auto
+# bindsym $mod+w               exec swaymsg '[app_id="Google-chrome"] focus' || $web
+bindsym $mod+Shift+w         exec $web
+bindsym $mod+e               exec i3-msg '[class="Emacs"] focus' || swaymsg '[class="Emacs"] focus' || $editor
+bindsym $mod+Shift+e         exec $editor
+bindsym $mod+c               kill
+bindsym $mod+space           exec $menu
+bindsym $mod+Shift+space     exec $menu "-Sdmenu,drun,run" # also run, too much for default
+bindsym $mod+q               exec wlogout -p layer-shell
+# bindsym $mod+Shift+q         exec sh -c 'pkill waybar; swaymsg reload'
+bindsym $mod+Shift+q         reload
+# bindsym $mod+Shift+Backspace exit
 #
 # Moving around:
 #
-bindsym $mod+$left focus left
-bindsym $mod+$down focus down
-bindsym $mod+$up focus up
-bindsym $mod+$right focus right
+bindsym $mod+$left        focus left
+bindsym $mod+$down        focus down
+bindsym $mod+$up          focus up
+bindsym $mod+$right       focus right
 # _move_ the focused window with the same, but add Shift
-bindsym $mod+Shift+$left move left
-bindsym $mod+Shift+$down move down
-bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$left  move left
+bindsym $mod+Shift+$down  move down
+bindsym $mod+Shift+$up    move up
 bindsym $mod+Shift+$right move right
 #
 # Workspaces:
 #
-# switch to workspace (ctrl for emacs)
-bindsym $mod+Ctrl+1 workspace 1
-bindsym $mod+Ctrl+2 workspace 2
-bindsym $mod+Ctrl+3 workspace 3
-bindsym $mod+Ctrl+4 workspace 4
+workspace_auto_back_and_forth yes
+mouse_warping output
+# switch to workspace
+# bindsym $mod+1       workspace 1
+# bindsym $mod+2       workspace 2
+# bindsym $mod+3       workspace 3
+# bindsym $mod+4       workspace 4
+# bindsym $mod+5       workspace 5
+# bindsym $mod+6       workspace 6
+bindsym $mod+Ctrl+1  workspace 1
+bindsym $mod+Ctrl+2  workspace 2
+bindsym $mod+Ctrl+3  workspace 3
+bindsym $mod+Ctrl+4  workspace 4
+# bindsym $mod+Ctrl+5  workspace 5
+# bindsym $mod+Ctrl+6  workspace 6
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace 1
 bindsym $mod+Shift+2 move container to workspace 2
 bindsym $mod+Shift+3 move container to workspace 3
 bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+m move container to output right; focus output right
+# bindsym $mod+Shift+5 move container to workspace 5
+# bindsym $mod+Shift+6 move container to workspace 6
 # other monitor
-bindsym $mod+m focus output right
+bindsym $mod+Shift+n move container to output left ; focus output left
+bindsym $mod+Shift+m move container to output right; focus output right
 # next and previous workspace
-bindsym                $mod+Shift+n workspace next_on_output
-bindsym --whole-window $mod+button5 workspace next_on_output
-bindsym                $mod+Shift+p workspace prev_on_output
+bindsym $mod+n       focus output left
+# bindsym $mod+m       focus output right
+# !! --create rm
+# bindsym $mod+Ctrl+p  workspace prev_on_output
+# bindsym $mod+Ctrl+n  workspace next_on_output
 bindsym --whole-window $mod+button4 workspace prev_on_output
+bindsym --whole-window $mod+button5 workspace next_on_output
 #
 # Layout stuff:
 #
-bindsym $mod+Shift+b splith
-bindsym $mod+Shift+v splitv
-bindsym $mod+s layout stacking
-bindsym $mod+Shift+s layout tabbed
-bindsym $mod+e layout toggle split
-bindsym $mod+Shift+f fullscreen
-bindsym $mod+Shift+t floating toggle
-bindsym $mod+t focus mode_toggle
-bindsym $mod+a focus parent
-bindsym $mod+Shift+a focus child
+floating_modifier $mod
+bindsym $mod+Shift+b  splith
+bindsym $mod+Shift+v  splitv
+bindsym $mod+s        layout stacking
+bindsym $mod+Shift+s  layout tabbed
+# bindsym $mod+d        layout toggle split
+bindsym $mod+Shift+d  layout toggle split
+# bindsym $mod+f        fullscreen
+bindsym $mod+Shift+f  fullscreen
+# bindsym $mod+Shift+f  move container to output HDMI-A-1; focus output HDMI-A-1; fullscreen enable
+bindsym $mod+t        floating toggle
+bindsym $mod+Ctrl+t   focus mode_toggle
+bindsym $mod+Shift+t  sticky toggle
+bindsym $mod+a        focus parent
+bindsym $mod+Shift+a  focus child
 #
 # Scratchpad:
 #
 bindsym $mod+Shift+minus move scratchpad
-bindsym $mod+minus scratchpad show
+bindsym $mod+minus       scratchpad show
+bindsym $mod+z           scratchpad show
 #
 # Resizing containers:
 #
-bindsym $mod+Ctrl+$left  resize shrink width  100px
-bindsym $mod+Ctrl+$down  resize grow   height 100px
-bindsym $mod+Ctrl+$up    resize shrink height 100px
-bindsym $mod+Ctrl+$right resize grow   width  100px
+bindsym $mod+Ctrl+$left   resize shrink width 40px
+bindsym $mod+Ctrl+$down   resize grow height 40px
+bindsym $mod+Ctrl+$up     resize shrink height 40px
+bindsym $mod+Ctrl+$right  resize grow width 40px
 
 #
-# i3 keys:
+# App keys:
 #
-bindsym $mod+Shift+Ctrl+s exec $locker
-bindsym $mod+Shift+Ctrl+l exec $locker
-bindsym $mod+Shift+e exec $editor
+bindsym $mod+Shift+Ctrl+l     exec $locker
+bindsym Print                 exec screenshot.sh
+bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
+bindsym XF86AudioMute         exec pamixer --toggle-mute
+bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
+bindsym $mod+F2               exec yamaha_vol down
+bindsym $mod+F3               exec yamaha_vol up
+bindsym $mod+F4               exec yamaha_toggle_link.sh
+bindsym $mod+Shift+F4         exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
+bindsym $mod+F1               exec yamaha_or_playerctl.sh play_pause
+bindsym $mod+Shift+F2         exec yamaha_or_playerctl.sh previous
+bindsym $mod+Shift+F3         exec yamaha_or_playerctl.sh next
+bindsym XF86AudioPlay         exec yamaha_or_playerctl.sh play_pause
+bindsym XF86AudioPrev         exec yamaha_or_playerctl.sh previous
+bindsym XF86AudioNext         exec yamaha_or_playerctl.sh next
+bindsym XF86AudioStop         exec yamaha_or_playerctl.sh stop
+bindsym XF86Calculator        exec rofi -show calc
+# bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
+# bindsym $mod+v                exec clipman pick --notify --tool wofi
+# bindsym $mod+Mod1+h           exec $term --fullscreen htop
+# bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(swayinfo)"
+
+# Local Variables:
+# eval: (rainbow-mode)
+# End:
