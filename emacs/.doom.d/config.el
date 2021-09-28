@@ -433,6 +433,7 @@
 (setq Man-width-max nil) ; as wide as it goes
 
 ;;; Epilogue
+(server-start) ; doesn't start when run standalone
 (load (concat doom-private-dir "config-fns.el"))
 
 ;; Host-specific support
