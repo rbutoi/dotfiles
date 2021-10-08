@@ -288,7 +288,7 @@ if command -v exa >/dev/null; then
   alias ll='exa --color always -aagl --git'
 fi
 
-if [[ -d ~/.config/broot ]]; then
+if [[ -e ~/.config/broot/launcher/bash/br ]]; then
   . ~/.config/broot/launcher/bash/br
    cdb() { br --only-folders --cmd "$*:cd"; }
     lb() { br --sizes --dates --permissions; }
@@ -335,6 +335,10 @@ if [[ $(($(</tmp/last_topgrade) + 86400)) -lt $(date +%s) ]] 2>/dev/null &&
     tmux new -As topgrade -- 'echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'
   fi
 fi
+
+# z4h breaks ssh config by making contol master too long?: https://github.com/romkatv/zsh4humans/issues/106
+# zstyle ':z4h:ssh:*' ssh-command command ssh
+unset -f ssh
 
 [[ -e ~/.zshrc_specific ]] && source ~/.zshrc_specific
 source ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh

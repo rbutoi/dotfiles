@@ -14,12 +14,12 @@ workspace 3 output DP-2
 workspace 4 output DP-0
 
 # input
-exec --no-startup-id setxkbmap -option ctrl:nocaps,altwin:ctrl_win
+exec --no-startup-id setxkbmap -model pc86 -option ctrl:nocaps # pc86 needed for 65% keyboard
 exec --no-startup-id xset r rate 250 25
-
-exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
+exec --no-startup-id xinput set-prop 8 'libinput Accel Speed' -1
 
 # startup
+exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
 #exec --no-startup-id dex -ae i3
 #exec --no-startup-id $editor
 exec --no-startup-id $term ~/bin/continuetmux
@@ -70,26 +70,26 @@ for_window [class="Pavucontrol"] floating enable
 #
 # Keybindings - basics:
 #
-set $mod Mod1
+set $mod Mod4
 
 set $left   h
 set $down   j
 set $up     k
 set $right  l
 
-bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec i3-msg '[class="wezterm$" title=" \[auto\]$"] focus' || $term tmux new -ADs auto
-# bindsym $mod+w               exec swaymsg '[app_id="Google-chrome"] focus' || $web
-bindsym $mod+Shift+w         exec $web
-bindsym $mod+e               exec i3-msg '[class="Emacs"] focus' || swaymsg '[class="Emacs"] focus' || $editor
-bindsym $mod+Shift+e         exec $editor
+bindsym $mod+Return          exec --no-startup-id $term
+bindsym $mod+Shift+Return    exec --no-startup-id i3-msg '[class="wezterm$" title=" \[auto\]$"] focus' || $term tmux new -ADs auto
+bindsym $mod+w               exec --no-startup-id i3-msg '[class="Google-chrome"] focus' || $web
+bindsym $mod+Shift+w         exec --no-startup-id $web
+bindsym $mod+e               exec --no-startup-id i3-msg '[class="[eE]macs"] focus' || $editor
+bindsym $mod+Shift+e         exec --no-startup-id $editor
 bindsym $mod+c               kill
-bindsym $mod+space           exec $menu
-bindsym $mod+Shift+space     exec $menu "-Sdmenu,drun,run" # also run, too much for default
-bindsym $mod+q               exec wlogout -p layer-shell
-# bindsym $mod+Shift+q         exec sh -c 'pkill waybar; swaymsg reload'
+bindsym $mod+space           exec --no-startup-id $menu
+bindsym $mod+Shift+space     exec --no-startup-id $menu "-Sdmenu,drun,run" # also run, too much for default
+bindsym $mod+q               exec --no-startup-id wlogout -p layer-shell
+# bindsym $mod+Shift+q         exec --no-startup-id sh -c 'pkill waybar; swaymsg reload'
 bindsym $mod+Shift+q         reload
-# bindsym $mod+Shift+Backspace exit
+bindsym $mod+Shift+BackSpace exit
 #
 # Moving around:
 #
@@ -108,10 +108,10 @@ bindsym $mod+Shift+$right move right
 workspace_auto_back_and_forth yes
 mouse_warping output
 # switch to workspace
-# bindsym $mod+1       workspace 1
-# bindsym $mod+2       workspace 2
-# bindsym $mod+3       workspace 3
-# bindsym $mod+4       workspace 4
+bindsym $mod+1       workspace 1
+bindsym $mod+2       workspace 2
+bindsym $mod+3       workspace 3
+bindsym $mod+4       workspace 4
 # bindsym $mod+5       workspace 5
 # bindsym $mod+6       workspace 6
 bindsym $mod+Ctrl+1  workspace 1
@@ -132,10 +132,9 @@ bindsym $mod+Shift+n move container to output left ; focus output left
 bindsym $mod+Shift+m move container to output right; focus output right
 # next and previous workspace
 bindsym $mod+n       focus output left
-# bindsym $mod+m       focus output right
-# !! --create rm
-# bindsym $mod+Ctrl+p  workspace prev_on_output
-# bindsym $mod+Ctrl+n  workspace next_on_output
+bindsym $mod+m       focus output right
+bindsym $mod+Ctrl+p  workspace prev_on_output
+bindsym $mod+Ctrl+n  workspace next_on_output
 bindsym --whole-window $mod+button4 workspace prev_on_output
 bindsym --whole-window $mod+button5 workspace next_on_output
 #
@@ -146,11 +145,9 @@ bindsym $mod+Shift+b  splith
 bindsym $mod+Shift+v  splitv
 bindsym $mod+s        layout stacking
 bindsym $mod+Shift+s  layout tabbed
-# bindsym $mod+d        layout toggle split
-bindsym $mod+Shift+d  layout toggle split
-# bindsym $mod+f        fullscreen
-bindsym $mod+Shift+f  fullscreen
-# bindsym $mod+Shift+f  move container to output HDMI-A-1; focus output HDMI-A-1; fullscreen enable
+bindsym $mod+d        layout toggle split
+bindsym $mod+f        fullscreen
+bindsym $mod+Shift+f  move container to output HDMI-A-1; focus output HDMI-A-1; fullscreen enable
 bindsym $mod+t        floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
 bindsym $mod+Shift+t  sticky toggle
@@ -173,32 +170,18 @@ bindsym $mod+Ctrl+$right  resize grow width 40px
 #
 # App keys:
 #
-bindsym $mod+Shift+Ctrl+l     exec $locker
-bindsym Print                 exec screenshot.sh
-bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
-bindsym XF86AudioMute         exec pamixer --toggle-mute
-bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
-bindsym $mod+F2               exec yamaha_vol down
-bindsym $mod+F3               exec yamaha_vol up
-bindsym $mod+F4               exec yamaha_toggle_link.sh
-bindsym $mod+Shift+F4         exec notify-send -t 1500 yamaha_match_bedroom.py "$(yamaha_match_bedroom.py)"
-bindsym $mod+F1               exec yamaha_or_playerctl.sh play_pause
-bindsym $mod+Shift+F2         exec yamaha_or_playerctl.sh previous
-bindsym $mod+Shift+F3         exec yamaha_or_playerctl.sh next
-bindsym XF86AudioPlay         exec yamaha_or_playerctl.sh play_pause
-bindsym XF86AudioPrev         exec yamaha_or_playerctl.sh previous
-bindsym XF86AudioNext         exec yamaha_or_playerctl.sh next
-bindsym XF86AudioStop         exec yamaha_or_playerctl.sh stop
-bindsym XF86Calculator        exec rofi -show calc
-# bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
-# bindsym $mod+v                exec clipman pick --notify --tool wofi
-# bindsym $mod+Mod1+h           exec $term --fullscreen htop
-# bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(swayinfo)"
+bindsym $mod+Shift+Ctrl+l     exec --no-startup-id $locker
+bindsym Print                 exec --no-startup-id screenshot.sh
+bindsym XF86AudioMute         exec --no-startup-id pamixer --toggle-mute
+bindsym XF86AudioRaiseVolume  exec --no-startup-id pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioLowerVolume  exec --no-startup-id pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Pause                 exec --no-startup-id pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym Scroll_Lock           exec --no-startup-id pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym $mod+Scroll_Lock      exec --no-startup-id pamixer --toggle-mute
+bindsym XF86Calculator        exec --no-startup-id rofi -show calc
+# bindsym $mod+v                exec --no-startup-id clipman pick --notify --tool wofi
+# bindsym $mod+Mod1+h           exec --no-startup-id $term --fullscreen htop
+# bindsym $mod+Shift+Ctrl+i     exec --no-startup-id notify-send swayinfo "$(swayinfo)"
 
 # Local Variables:
 # eval: (rainbow-mode)
