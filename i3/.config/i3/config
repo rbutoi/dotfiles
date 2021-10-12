@@ -1,5 +1,7 @@
-set $term wezterm start --
-set $menu "rofi -show"
+# set $term wezterm start --
+set $term kitty
+set $web google-chrome
+set $menu "rofi -show combi"
 set $editor emacsclient -c -a=
 set $locker xsecurelock
 
@@ -14,17 +16,17 @@ workspace 3 output DP-2
 workspace 4 output DP-0
 
 # input
-exec --no-startup-id setxkbmap -model pc86 -option ctrl:nocaps # pc86 needed for 65% keyboard
-exec --no-startup-id xset r rate 250 25
-exec --no-startup-id xinput set-prop 8 'libinput Accel Speed' -1
+# pc86 needed for 65% keyboard. sleep needed because wtf?
+exec_always --no-startup-id "sleep 1; setxkbmap -model pc86 -option ctrl:nocaps"
+exec_always --no-startup-id xset r rate 250 30
+exec_always --no-startup-id xinput set-prop pointer:'Razer Razer DeathAdder Elite' 'libinput Accel Speed' -0.8
 
 # startup
+exec --no-startup-id dex -ae i3
 exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
-#exec --no-startup-id dex -ae i3
-#exec --no-startup-id $editor
+exec --no-startup-id $editor
 exec --no-startup-id $term ~/bin/continuetmux
-#exec --no-startup-id google-chrome
-#exec --no-startup-id ~/bin/firefox
+exec --no-startup-id $web
 
 workspace_auto_back_and_forth yes
 mouse_warping output
