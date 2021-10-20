@@ -240,6 +240,8 @@
    shr-use-colors nil
    notmuch-show-text/html-blocked-images nil ; enable images
    notmuch-message-headers-visible t ; CCs are important
+   ;; Use it by default since it's more readable for email and not code: https://notmuchmail.org/pipermail/notmuch/2013/016726.html.
+   notmuch-multipart/alternative-discouraged '("text/plain")
 
    notmuch-hello-sections '(notmuch-hello-insert-header
                             notmuch-hello-insert-saved-searches

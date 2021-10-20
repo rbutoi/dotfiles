@@ -344,3 +344,7 @@ unset -f ssh
 [[ -e ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh ]] && \
   .   ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh
 
+
+# BEGIN_KITTY_SHELL_INTEGRATION
+if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss/kitty/shell-integration/kitty.zsh"; fi
+# END_KITTY_SHELL_INTEGRATION
