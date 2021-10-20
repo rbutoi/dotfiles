@@ -1,0 +1,9 @@
+#!/bin/sh -x
+
+# neat trick - read gnome's environment
+# (https://unix.stackexchange.com/questions/28463/)
+
+export $(</proc/$(pgrep -f /usr/bin/gnome-shell)/environ tr \\0 \\n | grep -E '^DBUS_SESSION_BUS_ADDRESS=')
+
+gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell \
+  --method org.gnome.Shell.Eval "string:GLib.spawn_command_line_async('$*')"

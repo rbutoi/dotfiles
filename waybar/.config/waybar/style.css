@@ -173,9 +173,9 @@ window#waybar {
   color: #1db954;
 }
 
-#custom-mail, #custom-weather, #custom-load, #custom-clock {
+#custom-mail, #custom-weather, #custom-load, #custom-clock, #battery {
   font-family: JetBrains Mono;
-  font-size: 11.5pt;
+  font-size: 14px;
 }
 
 /* Local Variables: */

@@ -15,4 +15,4 @@ curl -s http://192.168.1.17/YamahaExtendedControl/v1/dist/startDistribution?num=
 vols="$(~/bin/yamaha_match_bedroom.py)"
 echo "$title"
 echo "$vols"
-notify-send -t 1500 "$title" "$vols"
+~/bin/notify-send.sh -R /tmp/notif_yamaha_link -t 1500 -- "$title" "$vols"

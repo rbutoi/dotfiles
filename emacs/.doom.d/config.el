@@ -341,8 +341,10 @@
         "w"          (cmd! (notmuch-search-filter-by-tag "work"))
         "W"          (cmd! (notmuch-search-filter-by-tag "personal"))
         "u"          (cmd! (notmuch-search-filter-by-tag "unread"))
-        "i"          (cmd! (notmuch-search-filter-by-tag "important"))
-        "I"          (cmd! (notmuch-search-filter-by-not-tag "important"))
+        "i"          (cmd! (notmuch-search-filter-by-tag "inbox"))
+        "I"          (cmd! (notmuch-search-filter-by-not-tag "inbox"))
+        "m"          (cmd! (notmuch-search-filter-by-tag "important"))
+        "M"          (cmd! (notmuch-search-filter-by-not-tag "important"))
         "d"          (cmd! (notmuch-search-add-tag
                             '("+trash" "-inbox" "-unread"))
                            (notmuch-search-next-thread))
@@ -355,8 +357,10 @@
         "w"          (cmd! (notmuch-tree-filter-by-tag "work"))
         "W"          (cmd! (notmuch-tree-filter-by-tag "personal"))
         "u"          (cmd! (notmuch-tree-filter-by-tag "unread"))
-        "i"          (cmd! (notmuch-tree-filter-by-tag "important"))
-        "I"          (cmd! (notmuch-tree-filter-by-not-tag "important"))
+        "i"          (cmd! (notmuch-tree-filter-by-tag "inbox"))
+        "I"          (cmd! (notmuch-tree-filter-by-not-tag "inbox"))
+        "m"          (cmd! (notmuch-tree-filter-by-tag "important"))
+        "M"          (cmd! (notmuch-tree-filter-by-not-tag "important"))
         "d"          (cmd! (notmuch-tree-add-tag
                             '("+trash" "-inbox" "-unread"))
                            (notmuch-tree-next-matching-message))
@@ -405,7 +409,8 @@
     (setq-local fill-column 100)
     (visual-fill-column-mode +1))
   ;; Update waybar unread count faster than the 5 min poll
-  (add-hook! notmuch-search (call-process-shell-command "pkill -RTMIN+9 waybar")))
+  (add-hook! notmuch-search (call-process-shell-command "pkill -RTMIN+9 waybar"))
+  (add-hook! (notmuch-search-mode notmuch-tree-mode notmuch-show-mode) #'hl-line-mode))
 
 ;; Include date in "on <date> <sender> wrote..." reply text
 (after! message
@@ -420,6 +425,7 @@
 
 ;;;; Edit with Emacs: edit web browser text boxes
 (edit-server-start)
+(add-hook! edit-server-start (auto-fill-mode -1) (visual-fill-column-mode))
 
 ;;;; Terminal support
 (setq xterm-set-window-title nil) ; seems to bug out

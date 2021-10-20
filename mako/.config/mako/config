@@ -1,4 +1,4 @@
-default-timeout=10000
+default-timeout=3000
 layer=overlay
 group-by=summary
 font=Noto Sans 13

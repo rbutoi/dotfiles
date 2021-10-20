@@ -27,8 +27,6 @@
  * A keybinding set implementing Emacs-like keybindings
  */
 
-/* C-w disabled to allow Firefox close tab shortcut to work */
-
 /*
  * Bindings for GtkTextView and GtkEntry
  */
@@ -36,7 +34,9 @@
 {
   bind "<ctrl>b" { "move-cursor" (logical-positions, -1, 0) };
   bind "<shift><ctrl>b" { "move-cursor" (logical-positions, -1, 1) };
-  bind "<ctrl>f" { "move-cursor" (logical-positions, 1, 0) };
+
+  /* ! change: allow ^f find-in-page to work in chrome ! */
+  /* bind "<ctrl>f" { "move-cursor" (logical-positions, 1, 0) }; */
   bind "<shift><ctrl>f" { "move-cursor" (logical-positions, 1, 1) };
 
   bind "<alt>b" { "move-cursor" (words, -1, 0) };
@@ -49,7 +49,7 @@
   bind "<ctrl>e" { "move-cursor" (paragraph-ends, 1, 0) };
   bind "<shift><ctrl>e" { "move-cursor" (paragraph-ends, 1, 1) };
 
-  /* !! -------------------------------------------------- !! */
+  /* ! change: allow ^w to close tab in chrome ! */
   /* bind "<ctrl>w" { "cut-clipboard" () }; */
   bind "<ctrl>y" { "paste-clipboard" () };
 
@@ -69,7 +69,7 @@
                    "delete-from-cursor" (paragraph-ends, 1) };
 
   bind "<ctrl>h" { "delete-from-cursor" (chars, -1) };
-  /* !! -------------------------------------------------- !! */
+  /* ! ^w close tab ! */
   /* bind "<ctrl>w" { "delete-from-cursor" (word-ends, -1) }; */
 }
 
@@ -93,7 +93,8 @@
 @binding-set gtk-emacs-tree-view
 {
   bind "<ctrl>s" { "start-interactive-search" () };
-  bind "<ctrl>f" { "move-cursor" (logical-positions, 1) };
+  /* ! ^f work in chrome ! */
+  /* bind "<ctrl>f" { "move-cursor" (logical-positions, 1) }; */
   bind "<ctrl>b" { "move-cursor" (logical-positions, -1) };
 }
 

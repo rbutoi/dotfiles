@@ -53,15 +53,14 @@
     "signal": 8
   },
   "custom/mail": {
-    "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
+    "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
     "tooltip": false,
-    "format": "✉{}",
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
   "custom/spotify-icon": {
-    "format": " ",
+    "format": "",
     "tooltip": false,
     "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
@@ -193,15 +192,14 @@
     "signal": 8
   },
   "custom/mail": {
-    "exec": "c=\"$(notmuch count 'is:unread and is:inbox')\"; [ $c -gt 0 ] && echo $c",
+    "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
     "tooltip": false,
-    "format": "✉{}",
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
   "custom/spotify-icon": {
-    "format": " ",
+    "format": "",
     "tooltip": false,
     "on-click": "swaymsg scratchpad show",
     "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",

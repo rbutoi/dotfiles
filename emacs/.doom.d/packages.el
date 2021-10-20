@@ -40,3 +40,4 @@
 (package! php-mode)
 (package! dired-hide-dotfiles)
 (package! ripgrep)
+(package! sql-indent)

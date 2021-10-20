@@ -7,6 +7,8 @@ if len(sys.argv) != 2:
     print(f'usage: {sys.argv[0]} {{up|down}}', file=sys.stderr)
     exit(1)
 
+# no home net
+
 api = 'http://192.168.1.17/YamahaExtendedControl/v1/main'
 requests.get(f'{api}/setVolume?volume={sys.argv[1]}')
 s = requests.get(f'{api}/getStatus').json()
@@ -14,7 +16,16 @@ s = requests.get(f'{api}/getStatus').json()
 # and notify dB
 vol=s['actual_volume']['value']
 unit=s['actual_volume']['unit']
-os.system(f'notify-send -c volume -- "{vol}{unit}"')
+vol_f = float(vol)
+vol_cat = ''
+if vol_f > -35:
+    vol_cat = 'high'
+elif vol_f > -45:
+    vol_cat = 'medium'
+else:
+    vol_cat = 'low'
+
+os.system(f'$HOME/bin/notify-send.sh -c volume -h int:transient:1 -R /tmp/notif_yamaha_vol -i audio-volume-{vol_cat} -- "{vol}{unit}" "Yamaha volume"')
 
 # also keep bedroom in sync, but use single.py/a lockfile to not slow this down
 os.system('single.py -c yamaha_match_bedroom.py &')

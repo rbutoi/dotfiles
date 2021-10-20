@@ -17,7 +17,7 @@ input type:keyboard {
     repeat_delay 250
     repeat_rate 30
 }
-input type:pointer {
+-input type:pointer {
     accel_profile flat
     pointer_accel 0.35
 }
@@ -93,7 +93,7 @@ assign [class="hl2_linux"]                                   workspace 3
 assign [class="Signal"]                                      workspace 5
 assign [class="discord"]                                     workspace 5
 assign [title="Chat - Google Chrome"]                        workspace 4
-assign [title="Google.* Calendar .*- Google Chrome"]         workspace 4
+assign [title="Google(.com)? - Calendar"]                    workspace 4
 
 #
 # display
@@ -253,6 +253,7 @@ bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 
 bindsym $mod+v                exec clipman pick --notify --tool wofi
 bindsym $mod+Mod1+h           exec $term --fullscreen htop
 bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(swayinfo)"
+bindsym $mod+Shift+Ctrl+k     exec sh -c 'notify-send "killing..."; kill "$(swayinfo | grep '^pid=' | choose -f = 1)"'
 
 # system configs
 include /etc/sway/config.d/*

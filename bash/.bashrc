@@ -99,9 +99,19 @@ git_dangling()   {
     sort -r | fzf --preview 'git show --color $(echo {} | choose 3)'
 }
 
-# editor
-ew() { emacsclient -a= -nw "$@"; }; e() { ew "$@"; }; en() { emacsclient -a= -n  "$@"; }; enc() { emacsclient -a= -nc "$@"; }
-export EDITOR="emacsclient -t"
+# need TERM hack outside tmux since emacs won't have truecolor otherwise.
+# setting that to be the default TERM results in no truecolor through mosh
+ec()  {
+  if [ -z "$TMUX" ]; then
+    TERM=foot-direct emacsclient "$@"
+  else
+    emacsclient "$@"
+  fi
+}
+ew()  { ec -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
+en()  { ec -a= -n  "$@";  }                   # open in existing editor
+ewc() { ec -a= -nc "$@";  }                   # new graphical editor
+export EDITOR="TERM=foot-direct emacsclient -t"
 export ALTERNATE_EDITOR=zile
 
 # man in browser/emacs
@@ -164,7 +174,7 @@ alias diff="diff --color=auto"
 
 if command -v rg >/dev/null; then
   export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
-  alias g="rg"
+  alias g=rg
 fi
 
 if command -v procs >/dev/null; then

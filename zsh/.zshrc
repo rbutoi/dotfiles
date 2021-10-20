@@ -142,7 +142,7 @@ pomo() {
 # !!!
 # mcd           () { mkdir -p "$@" && cd "$@"                                                                     ; }
 fork          () { (setsid "$@" &)                                                                              ; }
-all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -3)'      ; }
+all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'      ; }
 escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'                           ; }
 unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"    ; }
 pip3_upgrade  () { pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"                            ; }
@@ -341,5 +341,6 @@ fi
 unset -f ssh
 
 [[ -e ~/.zshrc_specific ]] && source ~/.zshrc_specific
-source ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh
+[[ -e ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh ]] && \
+  .   ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh
 
