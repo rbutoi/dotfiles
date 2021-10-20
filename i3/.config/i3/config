@@ -1,5 +1,4 @@
-# set $term wezterm start --
-set $term kitty
+set $term wezterm start --
 set $web google-chrome
 set $menu "rofi -show combi"
 set $editor emacsclient -c -a=
@@ -80,15 +79,15 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec --no-startup-id $term
-bindsym $mod+Shift+Return    exec --no-startup-id i3-msg '[class="wezterm$" title=" \[auto\]$"] focus' || $term tmux new -ADs auto
+bindsym $mod+Shift+Return    exec --no-startup-id i3-msg '[class="wezterm" title=" \[auto\]$"] focus' || $term tmux new -Ads auto
 bindsym $mod+w               exec --no-startup-id i3-msg '[class="Google-chrome"] focus' || $web
 bindsym $mod+Shift+w         exec --no-startup-id $web
 bindsym $mod+e               exec --no-startup-id i3-msg '[class="[eE]macs"] focus' || $editor
 bindsym $mod+Shift+e         exec --no-startup-id $editor
 bindsym $mod+c               kill
+bindsym $mod+x               exec --no-startup-id $menu
 bindsym $mod+space           exec --no-startup-id $menu
-bindsym $mod+Shift+space     exec --no-startup-id $menu "-Sdmenu,drun,run" # also run, too much for default
-bindsym $mod+q               exec --no-startup-id wlogout -p layer-shell
+# bindsym $mod+q               exec --no-startup-id wlogout -p layer-shell
 # bindsym $mod+Shift+q         exec --no-startup-id sh -c 'pkill waybar; swaymsg reload'
 bindsym $mod+Shift+q         reload
 bindsym $mod+Shift+BackSpace exit

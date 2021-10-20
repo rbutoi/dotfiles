@@ -29,7 +29,7 @@ for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
 return {
    -- text & colours
    font = wezterm.font("JetBrains Mono"),
-   font_size = 11.5,
+   font_size = 10.5,
    color_scheme = "Gruvbox Dark",
    -- window
    enable_wayland = true,
