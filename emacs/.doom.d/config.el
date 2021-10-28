@@ -412,7 +412,8 @@
     (visual-fill-column-mode +1))
   ;; Update waybar unread count faster than the 5 min poll
   (add-hook! notmuch-search (call-process-shell-command "pkill -RTMIN+9 waybar"))
-  (add-hook! (notmuch-search-mode notmuch-tree-mode notmuch-show-mode) #'hl-line-mode))
+  (add-hook! (notmuch-search-mode notmuch-tree-mode notmuch-show-mode)
+    (hl-line-mode 1) (smartparens-mode -1)))
 
 ;; Include date in "on <date> <sender> wrote..." reply text
 (after! message
@@ -445,9 +446,10 @@
 (load (concat doom-private-dir "config-fns.el"))
 
 ;; Host-specific support
-(when IS-MAC (load (concat doom-private-dir "config-mac.el") 'noerror))
+(when IS-MAC      (load (concat doom-private-dir "config-mac.el")      'noerror))
 (when IS-CROSTINI (load (concat doom-private-dir "config-crostini.el") 'noerror))
-(load (concat doom-private-dir "specific.el") 'noerror)
+(unless IS-CROSTINI ; specific.el doesn't apply to crostini, which is just used to view email
+  (load (concat doom-private-dir "specific.el") 'noerror))
 
 ;; Benchmark config
 (add-hook! 'window-setup-hook :append

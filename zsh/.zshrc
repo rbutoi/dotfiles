@@ -100,7 +100,7 @@ compdef _directories md
 # setopt glob_dots     # no special treatment for file names with a leading dot
 # setopt no_auto_menu  # require an extra TAB press to open the completion menu
 
-source ~/.config/path.sh
+[[ -e ~/.config/path.sh ]] && source ~/.config/path.sh
 
 # my bash stuff haphazardly
 
