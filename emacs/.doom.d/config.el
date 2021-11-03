@@ -267,6 +267,7 @@
           (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and is:personal"    )
           (:key "m" :name "work important"     :query "(is:inbox or is:sent) and date:1w.. and is:important and is:work"     )
           (:key "M" :name "personal important" :query "(is:inbox or is:sent) and date:2w.. and is:important and is:personal" )
+          (:key "S" :name "work snippets"      :query "is:inbox              and date:2w.. and subject:'\[snippets\]'")
           (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"  )
           (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and is:personal"              ))
       '((:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
@@ -339,6 +340,14 @@
               notmuch-search-result-format--wide
             notmuch-search-result-format--narrow))
     (notmuch-search-refresh-view))
+  (defun notmuch-show-browse-first-url ()
+    (interactive)
+    (setq urls-global-should-be-let-but-doesnt-work
+          (notmuch-show--gather-urls))
+    (if urls-global-should-be-let-but-doesnt-work
+        (browse-url
+         (nth 0 urls-global-should-be-let-but-doesnt-work))
+      (message "No URLs found.")))
   (map! :map notmuch-search-mode-map
         "w"          (cmd! (notmuch-search-filter-by-tag "work"))
         "W"          (cmd! (notmuch-search-filter-by-tag "personal"))
@@ -347,6 +356,7 @@
         "I"          (cmd! (notmuch-search-filter-by-not-tag "inbox"))
         "m"          (cmd! (notmuch-search-filter-by-tag "important"))
         "M"          (cmd! (notmuch-search-filter-by-not-tag "important"))
+        "M-m"        'notmuch-mua-new-mail
         "d"          (cmd! (notmuch-search-add-tag
                             '("+trash" "-inbox" "-unread"))
                            (notmuch-search-next-thread))
@@ -363,6 +373,7 @@
         "I"          (cmd! (notmuch-tree-filter-by-not-tag "inbox"))
         "m"          (cmd! (notmuch-tree-filter-by-tag "important"))
         "M"          (cmd! (notmuch-tree-filter-by-not-tag "important"))
+        "M-m"        'notmuch-mua-new-mail
         "d"          (cmd! (notmuch-tree-add-tag
                             '("+trash" "-inbox" "-unread"))
                            (notmuch-tree-next-matching-message))
@@ -370,10 +381,12 @@
                            (notmuch-tree-next-message))
         "C-M-u"      (cmd! (notmuch-tree-tag-thread '("-unread"))
                            (notmuch-tree-next-thread))
+        "b"          (cmd! (other-window 1) (notmuch-show-browse-first-url))
         :map notmuch-show-mode-map
         "<C-return>" 'browse-url-at-point
         "B"          'notmuch-show-resend-message
-        "b"          'notmuch-show-browse-urls
+        "b"          'notmuch-show-browse-first-url
+        "M-b"        'notmuch-show-browse-urls
         "F"          (cmd! (notmuch-show-add-tag '("+flagged")))
         "C-M-u"      (cmd! (notmuch-show-tag-all '("-unread")))
         :map (notmuch-hello-mode-map
