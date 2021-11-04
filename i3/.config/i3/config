@@ -67,6 +67,8 @@ bar {
 for_window [class="Blueman-manager"] floating enable
 for_window [class="gsimplecal"] move position mouse, move up 100 px, move left 120 px
 for_window [class="Pavucontrol"] floating enable
+# all Chrome pop-ups
+for_window [window_role="pop-up" title="- Google Chrome$"] floating enable
 
 #
 # Keybindings - basics:

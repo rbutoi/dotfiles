@@ -323,8 +323,8 @@ fi
 
 fpath=(~/.local/share/zsh/site-functions ~/.config/zsh $fpath)
 
-# ! topgrade every 24h
-if [[ $(($(</tmp/last_topgrade) + 86400)) -lt $(date +%s) ]] 2>/dev/null &&
+# ! topgrade every week
+if [[ $(($(</tmp/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below 200; then
   echo -e "\033[36mTopgrade...\033[0m"
   date +%s >/tmp/last_topgrade
