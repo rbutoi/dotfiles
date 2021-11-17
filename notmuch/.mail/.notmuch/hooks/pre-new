@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xeuo pipefail
 
-ping -q -c 1 imap.gmail.com 2>&1 >/dev/null # bail without internet
+ping -q -c 1 8.8.8.8 2>&1 >/dev/null # bail without internet
 
 # poll gmi and mbsync
 command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
