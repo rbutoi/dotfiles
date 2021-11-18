@@ -181,7 +181,7 @@ export ALTERNATE_EDITOR=zile
 
 # man in browser/emacs
 man() {
-  if ! pidof -q emacs; then
+  if ! pgrep emacs >/dev/null; then
     command man "$@"
     return
   fi

@@ -125,6 +125,8 @@
 (map!
  "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste"))) (yank)))
 
+(global-subword-mode 1) ;; nicer default
+
 ;;;; Dired
 (use-package dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
@@ -192,6 +194,7 @@
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
 (add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
+(defun doom-apply-ansi-color-to-compilation-buffer-h ()) ;; another instance of Doom breaking things
 
 ;;;; Magit
 (setq magit-repository-directories
@@ -409,6 +412,17 @@
                               "/mail/u/0/#label/broadcast" "")))))
   ;; ignore doom's rule, prefer fullscreen
   (set-popup-rule! "^\\*notmuch-hello" :ignore t)
+
+  (add-hook! (notmuch-search-mode notmuch-tree-mode)
+    (defun notmuch-poll-if-needed ()
+      "Poll for mail if the systemd timer hasn't fired yet (i.e.
+just woke from suspend)."
+      (unless (time-less-p ;; if mtime > 5 minutes ago
+               (time-subtract (current-time) (file-attribute-modification-time
+                                              (file-attributes
+                                               "~/.mail/personal")))
+               (seconds-to-time (* 5 60)))
+        (notmuch-poll-and-refresh-this-buffer))))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing

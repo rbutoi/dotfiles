@@ -18,11 +18,11 @@ workspace 4 output DP-0
 # pc86 needed for 65% keyboard. sleep needed because wtf?
 exec_always --no-startup-id "sleep 1; setxkbmap -model pc86 -option ctrl:nocaps"
 exec_always --no-startup-id xset r rate 250 30
-exec_always --no-startup-id xinput set-prop pointer:'Razer Razer DeathAdder Elite' 'libinput Accel Speed' -0.8
+exec_always --no-startup-id xinput set-prop pointer:'Razer Razer DeathAdder Elite' 'libinput Accel Speed' -0.4
 
 # startup
 exec --no-startup-id dex -ae i3
-exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 2 -locker $locker
+exec --no-startup-id env LOCKED_BY_SESSION_IDLE=true xautolock -time 15 -locker $locker
 exec --no-startup-id $editor
 exec --no-startup-id $term ~/bin/continuetmux
 exec --no-startup-id $web
