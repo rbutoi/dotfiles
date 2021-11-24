@@ -420,7 +420,7 @@ just woke from suspend)."
       (unless (time-less-p ;; if mtime > 10 minutes ago
                (time-subtract (current-time) (file-attribute-modification-time
                                               (file-attributes
-                                               "~/.mail/personal")))
+                                               "~/.mail/personal/.lock")))
                (seconds-to-time (* 10 60)))
         (notmuch-poll-and-refresh-this-buffer))))
 

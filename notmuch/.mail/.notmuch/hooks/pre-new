@@ -1,7 +1,10 @@
 #!/bin/bash
 set -xeuo pipefail
 
-ping -q -c 1 8.8.8.8 2>&1 >/dev/null # bail without internet
+# bail without internet, with a single 10s retry
+ping -q -c 1 8.8.8.8 2>&1 >/dev/null ||
+    (echo "ping check failed, retrying in 10s..." &&
+         sleep 10s && ping -q -c 1 8.8.8.8 2>&1 >/dev/null)
 
 # poll gmi and mbsync
 command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
