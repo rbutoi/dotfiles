@@ -417,11 +417,11 @@
     (defun notmuch-poll-if-needed ()
       "Poll for mail if the systemd timer hasn't fired yet (i.e.
 just woke from suspend)."
-      (unless (time-less-p ;; if mtime > 5 minutes ago
+      (unless (time-less-p ;; if mtime > 10 minutes ago
                (time-subtract (current-time) (file-attribute-modification-time
                                               (file-attributes
                                                "~/.mail/personal")))
-               (seconds-to-time (* 5 60)))
+               (seconds-to-time (* 10 60)))
         (notmuch-poll-and-refresh-this-buffer))))
 
   ;; > modeline doesn't have much use in these modes
