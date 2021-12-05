@@ -36,3 +36,8 @@ if pgrep '^sway$' >/dev/null; then
   # update waybar unread count
   pkill -RTMIN+9 waybar
 fi
+
+# cache unread count in /tmp
+[ -e ~/.mail/work ]     && notmuch count 'is:work     and is:inbox and is:unread' > /tmp/mail_unread_count_work     || true
+[ -e ~/.mail/personal ] && notmuch count 'is:personal and is:inbox and is:unread' > /tmp/mail_unread_count_personal || true
+[ -e ~/.mail/hotmail  ] && notmuch count 'is:hotmail  and is:inbox and is:unread' > /tmp/mail_unread_count_hotmail  || true
