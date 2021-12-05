@@ -1,0 +1,25 @@
+#!/bin/bash
+
+## This minimalist git pre-commit verifies that you did not add
+## the string "DO NOT SUBMIT" or "DO NOT COMMIT" or merge
+## conflict pmarkers. However, pre-existing occurrences of these
+## strings are ignored (since that would be annoying).
+
+## INSTRUCTIONS
+##
+## Save this file as ~/.git-hooks/pre-commit
+## Then run:
+##    $ chmod +x ~/.git-hooks/pre-commit
+##    $ git config --global core.hooksPath ~/.git-hooks/
+
+## See https://gist.github.com/h/f92e69195d264ff4a05ff72479be6a76
+
+cd "$(git rev-parse --show-toplevel)"
+DISALLOWED='DO NOT SUBMIT|DO NOT COMMIT|>>>>>>|<<<<<<<'
+
+# This unfortunately doesn't work for files containing spaces
+if git diff-index -G"$DISALLOWED" --cached HEAD --diff-filter=AM -U0 |
+       grep '^+' | grep -i --color -E "$DISALLOWED"
+then echo -e "\nTo commit anyway, use --no-verify\n"
+     exit 1
+fi
