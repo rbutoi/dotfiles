@@ -280,7 +280,7 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
 export FZF_DEFAULT_COMMAND='fd --hidden'
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-alias fzfp="$FZF_DEFAULT_COMMAND -tf | fzf --preview 'bat --style=numbers --color=always {}'"
+fzfp () { eval $FZF_DEFAULT_COMMAND -tf . "$@" | fzf --preview 'bat --style=numbers --color=always {}' } 
 
 # # enable programmable completion features
 # # worth mentioning: https://github.com/cykerway/complete-alias
