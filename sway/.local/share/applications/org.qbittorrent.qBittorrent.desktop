@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=Network;FileTransfer;P2P;Qt;
-Exec=vopono exec "env DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus QT_QPA_PLATFORMTHEME=qt5ct qbittorrent" -p Mullvad -s usa-us95 -o 26067 -f 8080
+Exec=vopono exec "env DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus QT_QPA_PLATFORMTHEME=qt5ct qbittorrent -platform wayland" -p Mullvad -s usa-us95 -o 26067 -f 8080
 GenericName=BitTorrent client
 Comment=Download and share files over BitTorrent
 Icon=qbittorrent
