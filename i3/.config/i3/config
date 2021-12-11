@@ -19,6 +19,8 @@ workspace 4 output DP-0
 exec_always --no-startup-id "sleep 1; setxkbmap -model pc86 -option ctrl:nocaps"
 exec_always --no-startup-id xset r rate 250 30
 exec_always --no-startup-id xinput set-prop pointer:'Razer Razer DeathAdder Elite' 'libinput Accel Speed' -0.4
+exec_always --no-startup-id xmodmap -e "keycode 49 = Escape" # swap esacpe and tilde (TODO: change keyboard firmware)
+exec_always --no-startup-id xmodmap -e "keycode 9 = grave asciitilde"
 
 # startup
 exec --no-startup-id dex -ae i3
@@ -64,9 +66,10 @@ bar {
 }
 
 # per window config
-for_window [class="Blueman-manager"] floating enable
-for_window [class="gsimplecal"] move position mouse, move up 100 px, move left 120 px
-for_window [class="Pavucontrol"] floating enable
+for_window [class="Blueman-manager"]                       floating enable
+for_window [class="gsimplecal"]                            move position mouse, move up 100 px, move left 120 px
+for_window [class="Pavucontrol"]                           floating enable
+for_window [title="^Edit with Emacs FRAME$"]               floating enable
 # all Chrome pop-ups
 for_window [window_role="pop-up" title="- Google Chrome$"] floating enable
 

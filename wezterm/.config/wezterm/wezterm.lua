@@ -10,7 +10,10 @@ keys = {
 }
 
 hyperlink_rules = {
-   { -- This is actually the default if you don't specify any hyperlink_rules
+   {
+      regex = "\\bhttps?://\\S*\\b",
+      format = "$0",
+   }, { -- This is actually the default if you don't specify any hyperlink_rules
       regex = "\\b\\w+://(?:[\\w.-]+)\\.[a-z]{2,15}\\S*\\b",
       format = "$0",
    }, { -- linkify email addresses
