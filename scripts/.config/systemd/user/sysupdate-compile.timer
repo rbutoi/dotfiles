@@ -1,8 +1,8 @@
 [Unit]
-Description=Compile & update AUR/Emacs when idle every 6 hours, starting at 2 AM
+Description=Compile & update AUR/Emacs when idle twice a day (4 AM/PM)
 
 [Timer]
-OnCalendar=2/6:0
+OnCalendar=4/12:0
 
 [Install]
 WantedBy=timers.target

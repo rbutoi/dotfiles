@@ -14,6 +14,6 @@ paru -Sua --devel --noconfirm
 
 doom -y upgrade
 # libvterm needs recompiling after Emacs (scraped from `vterm.el`)
-cd ~/.emacs.d/.local/straight/build-*/vterm/; mkdir -p build; cd build
+cd ~/oss/doom-emacs/.local/straight/build-*/vterm/; mkdir -p build; cd build
 cmake -G 'Unix Makefiles'  ..
 make

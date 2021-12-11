@@ -2,7 +2,7 @@
 # Return with non-zero status if system load (1, 5, and 15) are under a
 # threshold.
 
-THRESHOLD=${1:-100}
+THRESHOLD=${1:-300}
 
 file=$(cat /proc/loadavg)
 load_float1=$(echo -n $file | cut -d' ' -f1)

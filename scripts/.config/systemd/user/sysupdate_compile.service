@@ -1,3 +1,0 @@
-[Service]
-Type=oneshot
-ExecStart=/home/radu/bin/sysupdate_compile.sh
