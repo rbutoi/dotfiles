@@ -185,7 +185,7 @@
     diffFilter = delta --color-only
 
 [delta]
-    features = side-by-side line-numbers decorations
+    features = line-numbers decorations
     whitespace-error-style = 22 reverse
 
 [diff]
@@ -197,4 +197,4 @@
     file-decoration-style = none
 
 [core]
-	hooksPath = ~/.config/git-hooks/
+    hooksPath = ~/.config/git-hooks/

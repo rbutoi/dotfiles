@@ -185,6 +185,10 @@ man() {
     command man "$@"
     return
   fi
+  # check if manpage exists, let stderr output
+  if ! command man -w "$@" > /dev/null; then
+    return
+  fi
   if [ $# -eq 0 ]; then
     cmd="(call-interactively 'man)"
   else
@@ -213,6 +217,7 @@ alias cdg='cd "$(git rev-parse --show-toplevel)"'
 alias M='$(history -p \!\!) | less -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
+alias xc="xclip -selection clipboard"
 if ! command -v tree >/dev/null; then
   alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
   tree2() {
@@ -231,6 +236,7 @@ alias ssha='ssh -t a tmux new -ADs auto'
 alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias fd="fd --one-file-system"
+alias type='whence -f' # am too used to bash
 
 ########################
 # external shell tools #

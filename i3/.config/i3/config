@@ -92,9 +92,8 @@ bindsym $mod+Shift+e         exec --no-startup-id $editor
 bindsym $mod+c               kill
 bindsym $mod+x               exec --no-startup-id $menu
 bindsym $mod+space           exec --no-startup-id $menu
-# bindsym $mod+q               exec --no-startup-id wlogout -p layer-shell
-# bindsym $mod+Shift+q         exec --no-startup-id sh -c 'pkill waybar; swaymsg reload'
 bindsym $mod+Shift+q         reload
+bindsym $mod+Shift+Ctrl+q    restart
 bindsym $mod+Shift+BackSpace exit
 #
 # Moving around:
@@ -192,7 +191,7 @@ bindsym $mod+Scroll_Lock      exec --no-startup-id pamixer --toggle-mute
 bindsym XF86Calculator        exec --no-startup-id rofi -show calc
 # bindsym $mod+v                exec --no-startup-id clipman pick --notify --tool wofi
 # bindsym $mod+Mod1+h           exec --no-startup-id $term --fullscreen htop
-# bindsym $mod+Shift+Ctrl+i     exec --no-startup-id notify-send swayinfo "$(swayinfo)"
+bindsym $mod+b                exec --no-startup-id  mod_b.sh
 
 # Local Variables:
 # eval: (rainbow-mode)
