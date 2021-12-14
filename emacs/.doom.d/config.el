@@ -7,6 +7,8 @@
 ;;;; Theme
 (setq doom-theme 'doom-gruvbox
       doom-font  (font-spec :family "JetBrains Mono" :size 14))
+(set-frame-parameter (selected-frame) 'alpha  '(95 . 90))
+(add-to-list    'default-frame-alist '(alpha . (95 . 90)))
 
 ;;;; Startup
 (setq

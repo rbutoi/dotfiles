@@ -84,6 +84,7 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec --no-startup-id $term
+bindsym $mod+Mod1+Return     exec --no-startup-id $term # redundancy
 bindsym $mod+Shift+Return    exec --no-startup-id i3-msg '[class="wezterm" title=" \[auto\]$"] focus' || $term tmux new -Ads auto
 bindsym $mod+w               exec --no-startup-id i3-msg '[class="Google-chrome"] focus' || $web
 bindsym $mod+Shift+w         exec --no-startup-id $web
@@ -192,6 +193,7 @@ bindsym XF86Calculator        exec --no-startup-id rofi -show calc
 # bindsym $mod+v                exec --no-startup-id clipman pick --notify --tool wofi
 # bindsym $mod+Mod1+h           exec --no-startup-id $term --fullscreen htop
 bindsym $mod+b                exec --no-startup-id  mod_b.sh
+bindsym $mod+v                exec --no-startup-id  diodon
 
 # Local Variables:
 # eval: (rainbow-mode)

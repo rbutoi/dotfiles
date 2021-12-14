@@ -2,3 +2,4 @@
 Type=oneshot
 ExecStart=/usr/bin/notmuch new
 TimeoutSec=600
+Environment=IN_NOTMUCH_SYSTEMD=1
