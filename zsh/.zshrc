@@ -139,6 +139,22 @@ pomo() {
   done
 }
 
+which_countries_connected_today() {
+  set -x
+  journalctl -b _COMM=sshd |
+    rg --color never -o '\d+\.\d+\.\d+\.\d+' |
+    perl -ne 'chomp; my $geoip = qx(geoiplookup $_); print "$geoip" ' |
+    wc_occurrences
+  set +x
+}
+
+pause_torrents () {
+  hours="${1:-1}"
+  set -x
+  logger stopping rtorrent for $hours hour && systemctl --user stop rtorrent.service && (echo "systemctl --user start rtorrent.service" | at now + $hours hour)
+  set +x
+}
+
 # !!!
 # mcd           () { mkdir -p "$@" && cd "$@"                                                                     ; }
 fork          () { (setsid "$@" &)                                                                              ; }
@@ -179,8 +195,9 @@ ewc() { ec -a= -nc "$@";  }                   # new graphical editor
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 
-# man in browser/emacs
-man() {
+# man in browser/emacs. TODO: can be named `man` when it can use regular `man`
+# completion functions
+eman() {
   if ! pgrep emacs >/dev/null; then
     command man "$@"
     return
