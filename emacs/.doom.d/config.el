@@ -230,8 +230,11 @@
 
 ;;;; notmuch
 (map!
- "C-c m" (cmd! (notmuch-search (concat "(is:inbox or is:sent) and date:"
-                                       (if WORK "1w.. and is:work" "2w.."))))
+ "C-c m" (defun my-notmuch ()
+           "Go straight to notmuch inbox."
+           (interactive)
+           (notmuch-search (concat "(is:inbox or is:sent) and date:"
+                                   (if WORK "1w.. and is:work" "2w.."))))
  "C-c M" 'notmuch)
 (after! notmuch
   (setq
