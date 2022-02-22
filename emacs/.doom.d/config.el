@@ -55,8 +55,11 @@
 ;;;; Popups
 (after! rustic
   (set-popup-rule! "^\\*.*compilation.*\\*$" :ignore t))
-(map! "M-`" '+popup/toggle ; aliases tmm-menubar
-      "M-~" 'tmm-menubar) ; this aliases not-modified
+
+(map!
+ "<s-escape>" '+popup/toggle
+ "M-`"        '+popup/toggle ; aliases tmm-menubar
+ "M-~"        'tmm-menubar) ; this aliases not-modified
 
 ;;;; Ivy / counsel
 (after! counsel

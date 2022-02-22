@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+~/oss/doom-emacs/bin/doom --nocolor ci hook-pre-push "$@"
