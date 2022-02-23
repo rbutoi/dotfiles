@@ -471,7 +471,10 @@ just woke from suspend)."
 (add-hook! edit-server-start (auto-fill-mode -1) (visual-fill-column-mode))
 
 ;;;; Terminal support
-(setq xterm-set-window-title nil) ; seems to bug out
+;; (setq xterm-set-window-title nil)  ; seems to bug out
+
+;;;; URLs
+(url-handler-mode)  ; enable C-x C-f handler
 
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
