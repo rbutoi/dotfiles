@@ -13,7 +13,7 @@
 ;;;; Startup
 (setq
  confirm-kill-processes nil
- initial-major-mode 'lisp-interaction-mode) ; undo Doom
+ initial-major-mode 'lisp-interaction-mode)  ; undo Doom
 
 ;;;; Buffers and windows
 (map!
@@ -58,8 +58,8 @@
 
 (map!
  "<s-escape>" '+popup/toggle
- "M-`"        '+popup/toggle ; aliases tmm-menubar
- "M-~"        'tmm-menubar) ; this aliases not-modified
+ "M-`"        '+popup/toggle  ; aliases tmm-menubar
+ "M-~"        'tmm-menubar)  ; this aliases not-modified
 
 ;;;; Ivy / counsel
 (after! counsel
@@ -77,12 +77,12 @@
         :map isearch-mode-map
         "C-o"     'swiper-from-isearch
         :map ivy-minibuffer-map
-        "C-k"     'ivy-alt-done ; C-j is used by tmux
-        "C-M-i"   'ivy-insert-current ; M-i used to change windows
+        "C-k"     'ivy-alt-done  ; C-j is used by tmux
+        "C-M-i"   'ivy-insert-current  ; M-i used to change windows
         :map counsel-find-file-map
         "C-l"     'counsel-up-directory
         "C-x C-f" 'counsel-find-file-fallback-command)
-  (setq ; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
+  (setq  ; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
@@ -107,12 +107,14 @@
 ;;; Editing
 
 ;;;; Movement
-(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+(setq set-mark-command-repeat-pop t)  ; can keep C-u C-SPC C-SPC C-SPC...
 (toggle-text-mode-auto-fill)
 
+;;;; Replacement
 (defun case-sensitive-query-replace ()
   (interactive)
   (let ((case-fold-search nil)) (call-interactively 'query-replace)))
+(map! "C-M-]" 'query-replace-regexp)  ; terminal support
 
 ;;;; Reverting
 (map! "C-c r" 'revert-buffer
@@ -130,7 +132,7 @@
 (map!
  "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste"))) (yank)))
 
-(global-subword-mode 1) ;; nicer default
+(global-subword-mode 1)  ;; nicer default
 
 ;;;; Dired
 (use-package dired-hide-dotfiles
@@ -147,7 +149,7 @@
         (cmd! (ff-find-other-file nil 'ignore-include))))
 (add-hook! c++-mode (c-set-offset 'innamespace [0]))
 (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
-(add-hook! 'c-mode-common-hook ; formatting
+(add-hook! 'c-mode-common-hook  ; formatting
   (fset 'c-indent-region 'clang-format-region))
 ;; disable c-indent-line-or-region so completing can work
 (map! :map c-mode-base-map "TAB" nil)
@@ -176,7 +178,7 @@
     (setq company-dabbrev-downcase nil)
     (map! :map (global-map c-mode-base-map)
           "TAB"     'company-indent-or-complete-common
-          "C-<tab>" '+company/dabbrev ;; low-tech alternative
+          "C-<tab>" '+company/dabbrev  ;; low-tech alternative
           "M-/"     '+company/dabbrev)))
 
 ;;;; Fly{make,check}
@@ -199,7 +201,7 @@
       "<f8>" 'recompile)
 (setq compilation-message-face 'default)
 (add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
-(defun doom-apply-ansi-color-to-compilation-buffer-h ()) ;; another instance of Doom breaking things
+(defun doom-apply-ansi-color-to-compilation-buffer-h ())  ;; another instance of Doom breaking things
 
 ;;;; Magit
 (setq magit-repository-directories
@@ -249,8 +251,8 @@
    notmuch-wash-wrap-lines-length 100
    shr-width notmuch-wash-wrap-lines-length
    shr-use-colors nil
-   notmuch-show-text/html-blocked-images nil ; enable images
-   notmuch-message-headers-visible t ; CCs are important
+   notmuch-show-text/html-blocked-images nil  ; enable images
+   notmuch-message-headers-visible t  ; CCs are important
    ;; Use it by default since it's more readable for email and not code: https://notmuchmail.org/pipermail/notmuch/2013/016726.html.
    notmuch-multipart/alternative-discouraged '("text/plain")
 
@@ -282,7 +284,7 @@
           (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"  )
           (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and is:personal"              ))
       '((:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
-        (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  ) ; redundant
+        (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )  ; redundant
         (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"    )
         (:key "m" :name "important"  :query "(is:inbox or is:sent) and date:2w.. and is:important" )
         (:key "b" :name "broadcast"  :query "is:broadcast date:2w.."              ))))
@@ -428,7 +430,7 @@
     (defun notmuch-poll-if-needed ()
       "Poll for mail if the systemd timer hasn't fired yet (i.e.
 just woke from suspend)."
-      (unless (time-less-p ;; if mtime > 10 minutes ago
+      (unless (time-less-p  ;; if mtime > 10 minutes ago
                (time-subtract (current-time) (file-attribute-modification-time
                                               (file-attributes
                                                "~/.mail/personal/.lock")))
@@ -477,16 +479,16 @@ just woke from suspend)."
   (message "Opening %s in browser." url))
 
 ;;;; Man
-(setq Man-width-max nil) ; as wide as it goes
+(setq Man-width-max nil)  ; as wide as it goes
 
 ;;; Epilogue
-(server-start) ; doesn't start when run standalone
+(server-start)  ; doesn't start when run standalone
 (load (concat doom-private-dir "config-fns.el"))
 
 ;; Host-specific support
 (when IS-MAC      (load (concat doom-private-dir "config-mac.el")      'noerror))
 (when IS-CROSTINI (load (concat doom-private-dir "config-crostini.el") 'noerror))
-(unless IS-CROSTINI ; specific.el doesn't apply to crostini, which is just used to view email
+(unless IS-CROSTINI  ; specific.el doesn't apply to crostini, which is just used to view email
   (load (concat doom-private-dir "specific.el") 'noerror))
 
 ;; Benchmark config
@@ -494,7 +496,7 @@ just woke from suspend)."
   (message "User config loaded in %.03fs"
            (float-time (time-subtract (current-time)
                                       user-config-start-time)))
-  (message "")) ; empty out minibuffer
+  (message ""))  ; empty out minibuffer
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars interactive-only unresolved)
