@@ -29,7 +29,7 @@
  "C-S-M-k"   'doom/kill-all-buffers
  "C-x C-M-k" 'doom/kill-all-buffers
  ;; occassionally useful (e.g. w3m)
- "C-c M-s"   'scroll-bar-mode)
+ "C-c M-S"   'scroll-bar-mode)
 
 (setq doom-modeline-project-detection 'project)
 
@@ -132,7 +132,7 @@
 (map!
  "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste"))) (yank)))
 
-(global-subword-mode 1)  ;; nicer default
+(map! "C-c M-s" 'subword-mode)
 
 ;;;; Dired
 (use-package dired-hide-dotfiles

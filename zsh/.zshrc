@@ -280,7 +280,7 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
 export FZF_DEFAULT_COMMAND='fd --hidden'
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fzfp () { eval $FZF_DEFAULT_COMMAND -tf . "$@" | fzf --preview 'bat --style=numbers --color=always {}' } 
+fzfp () { eval $FZF_DEFAULT_COMMAND -tf -tl . "$@" | fzf --preview 'bat --style=numbers --color=always {}' }
 
 # # enable programmable completion features
 # # worth mentioning: https://github.com/cykerway/complete-alias
@@ -331,11 +331,11 @@ fpath=(~/.local/share/zsh/site-functions ~/.config/zsh $fpath)
 
 # ! topgrade every week
 if [[ $(($(</tmp/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
-     load_below 200; then
+     load_below; then
   echo -e "\033[36mTopgrade...\033[0m"
   date +%s >/tmp/last_topgrade
   if [[ -n "$TMUX" ]]; then
-    tmux new-window 'echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'
+    tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'
   else
     # the built-in topgrade --tmux doesn't dedup calls
     tmux new -As topgrade -- 'echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'

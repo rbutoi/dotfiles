@@ -10,7 +10,8 @@
  swiper
  with-editor)
 
-(package! solarized-theme)
+(package! eglot        :disable WORK)
+(package! project      :disable WORK)
 (package! buffer-move)
 (package! zoom-window)
 (package! string-inflection)
@@ -25,8 +26,6 @@
 (package! password-store)
 (package! outshine)
 (package! ivy-xref)
-(package! eglot   :disable WORK)
-(package! project :disable WORK)
 (package! logview)
 (package! journalctl-mode)
 (package! systemd)

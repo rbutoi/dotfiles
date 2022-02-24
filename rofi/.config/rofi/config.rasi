@@ -2,5 +2,5 @@ configuration {
 	modi: "combi";
 	font: "Noto Sans 13";
 	combi-modi: "window,drun";
-	theme: "glue_pro_blue";
 }
+@theme "glue_pro_blue"

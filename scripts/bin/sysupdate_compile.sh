@@ -1,7 +1,8 @@
 #!/bin/bash
-# Automatically update & install AUR/devel packages (and Emacs, requiring an
-# elisp compilation). Should™ be safe since it only updates non-core/system
-# packages.
+# Without any manual intervention, update & install development packages which
+# require a lengthy compile. Run as a systemd timer.
+#
+# Should™ be safe since it only updates non-core/system packages.
 
 . ~/.config/path.sh # need to set PATH for Doom
 
@@ -10,10 +11,10 @@ if ! load_below; then
   exit 0
 fi
 
-paru -Sua --devel --noconfirm
-
-doom -y upgrade
-# libvterm needs recompiling after Emacs (scraped from `vterm.el`)
-cd ~/oss/doom-emacs/.local/straight/build-*/vterm/; mkdir -p build; cd build
-cmake -G 'Unix Makefiles'  ..
-make
+os="$(lsb_release -si)"
+if [[ $os == Arch ]]; then
+  paru -Sua --devel --noconfirm
+  topgrade --only custom_commands
+elif [[ $os == Debian ]]; then
+  topgrade --disable remotes
+fi
