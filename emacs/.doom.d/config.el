@@ -109,6 +109,8 @@
 ;;;; Movement
 (setq set-mark-command-repeat-pop t)  ; can keep C-u C-SPC C-SPC C-SPC...
 (toggle-text-mode-auto-fill)
+(map! "M-g w" 'avy-goto-word-1  ; Avy binds, from its README.md
+      "M-g C" 'avy-goto-char)
 
 ;;;; Replacement
 (defun case-sensitive-query-replace ()
