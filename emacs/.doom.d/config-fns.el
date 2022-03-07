@@ -162,3 +162,20 @@ shell exits, the buffer is killed."
     (set-process-sentinel vterm--process #'run-in-vterm-kill)
     (vterm-send-string command)
     (vterm-send-return)))
+
+(defun disable-theme-slow-terminal ()
+  "For when the terminal is very slow.
+
+Like ChromeOS's hterm."
+  (interactive)
+  (disable-theme (car custom-enabled-themes))
+  (setq old-doom-theme            doom-theme
+        old-scroll-conservatively scroll-conservatively
+        doom-theme                nil
+        scroll-conservatively     0))
+
+(defun enable-theme-fast-terminal ()
+  (interactive)
+  (setq doom-theme            old-doom-theme
+        scroll-conservatively old-scroll-conservatively)
+  (doom/reload-theme))
