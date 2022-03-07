@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euox pipefail
+# set -euox pipefail
 
 mkdir -p /tmp/yt
 cd /tmp/yt
@@ -10,11 +10,11 @@ elif [ $# -eq 1 ]; then
   url="$1"
 fi
 
-SWAYSOCK=$(sway --get-socketpath)
-export SWAYSOCK
+# SWAYSOCK=$(sway --get-socketpath)
+# export SWAYSOCK
 
-vertical_res="$(swaymsg -t get_outputs | jq 'max_by(.current_mode.height).current_mode.height')"
-youtubedl_format="bestvideo[height<=${vertical_res}]+bestaudio/best[height<=${vertical_res}]"
+# vertical_res="$(swaymsg -t get_outputs | jq 'max_by(.current_mode.height).current_mode.height')"
+youtubedl_format="bestvideo[height<=${vertical_res:-2160}]+bestaudio/best[height<=${vertical_res:-2160}]"
 
 playerctl pause || :
 

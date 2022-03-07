@@ -140,7 +140,7 @@
     "interval": 30
   },
 }, {
-  "output": ["Unknown P2718EC C8110094", "Acer Technologies Acer CB271HU T9TAA0014200"],
+  "output": ["Unknown P2718EC C8110094", "Dell Inc. DELL S3221QS 2R8QTB3"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -279,7 +279,7 @@
     "interval": 30
   },
 }, {
-  "output": ["Unknown HP VH240a 6CM9310DM8"],
+  "output": ["Acer Technologies Acer CB271HU T9TAA0014200"],
   "position": "bottom",
   "modules-left": [
     "sway/workspaces",

@@ -5,7 +5,7 @@
 #
 set $term foot
 set $web google-chrome
-set $menu wofi-wrap.sh
+set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
 set $locker swaylock --daemonize --screenshots --indicator --indicator-radius 100 --indicator-thickness 7 --effect-blur 5x5 --grace 0.5 --fade-in 0.25
 
@@ -17,21 +17,21 @@ input type:keyboard {
     repeat_delay 250
     repeat_rate 30
 }
--input type:pointer {
+input type:pointer {
     accel_profile flat
     pointer_accel 0.35
 }
 
 # manages outputs
 exec_always        sh -c 'pkill kanshi; kanshi -c ~/.config/kanshi/$HOSTNAME'
-set $monitor_27          "Acer Technologies Acer CB271HU T9TAA0014200"
-set $monitor_24_vert     "Unknown HP VH240a 6CM9310DM8"
-output $monitor_27       background "~/Pictures/mac/mojave/Mojave_Day.jpg"   fill
-output $monitor_24_vert  background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
-workspace 1 output $monitor_27
-workspace 3 output $monitor_27
-workspace 2 output $monitor_24_vert
-workspace 4 output $monitor_24_vert
+set $monitor_32          "Dell Inc. DELL S3221QS 2R8QTB3"
+set $monitor_27_vert     "Acer Technologies Acer CB271HU T9TAA0014200"
+output $monitor_32       background "~/Pictures/mac/mojave/Mojave_Day.jpg"   fill
+output $monitor_27_vert  background "~/Pictures/mac/mojave/Mojave_Night.jpg" fill
+workspace 1 output $monitor_32
+workspace 3 output $monitor_32
+workspace 2 output $monitor_27_vert
+workspace 4 output $monitor_27_vert
 
 #
 # startup applications
@@ -56,9 +56,9 @@ exec $web
 for_window [app_id="^$" title="^$"] floating enable, move position 80 ppt 83 ppt
 no_focus   [app_id="^$" title="^$"]
 
-# persistent spotify
-exec sh -c 'sleep 5; swaymsg -t get_tree | grep -q "^Spotify – " || dex ~/.local/share/applications/chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop'
-for_window [title="^Spotify – "] move window to scratchpad, resize set 2200 1100
+# # persistent spotify
+# exec sh -c 'sleep 5; swaymsg -t get_tree | grep -q "^Spotify – " || dex ~/.local/share/applications/chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop'
+# for_window [title="^Spotify – "] move window to scratchpad, resize set 2200 1100
 
 # per window config
 for_window [app_id="gsimplecal"]                             move position mouse, move up 40 px, move left 20 px

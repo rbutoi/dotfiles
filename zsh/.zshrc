@@ -250,7 +250,7 @@ alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
 alias ssha='ssh -t a tmux new -ADs auto'
-alias mosha='mosh -p 22688 a /home/radu/bin/continuetmux'
+alias mosha='mosh -p 55880 a /home/radu/bin/continuetmux'
 alias stow='stow -v' # nice to see the actions taken by default
 alias fd="fd --one-file-system"
 alias type='whence -f' # am too used to bash
@@ -320,6 +320,8 @@ fi
 
 command -v duf  >/dev/null && alias df=duf
 command -v navi >/dev/null && eval "$(navi widget zsh)" ### !!!!!!
+
+alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
 ###
 
