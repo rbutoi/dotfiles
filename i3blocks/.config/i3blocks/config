@@ -3,7 +3,7 @@ separator_block_width=15
 markup=none
 
 [window_title]
-command=xprop -id $(xdotool getactivewindow) | grep _NET_WM_NAME | cut -d'"' -f2
+command=xprop -id $(xdotool getactivewindow) | grep WM_NAME | cut -d'"' -f2
 interval=1
 
 [load_average]

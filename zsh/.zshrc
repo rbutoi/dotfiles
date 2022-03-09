@@ -194,10 +194,10 @@ ewc() { ec -a= -nc "$@";  }                   # new graphical editor
 # export EDITOR="TERM=foot-direct emacsclient -t"
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
+export BROWSER=xdg-open
+export CLICOLOR=1
 
-# man in browser/emacs. TODO: can be named `man` when it can use regular `man`
-# completion functions
-eman() {
+man() {
   if ! pgrep emacs >/dev/null; then
     command man "$@"
     return
@@ -217,8 +217,6 @@ eman() {
     emacsclient -t --eval "(progn $cmd (other-window 1) (delete-other-windows))"
   fi
 }
-export BROWSER=xdg-open
-export CLICOLOR=1
 
 alias l='ls -F'
 alias ll='l -lA -h'
