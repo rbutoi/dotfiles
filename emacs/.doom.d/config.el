@@ -470,7 +470,7 @@ just woke from suspend)."
 
 ;;;; Edit with Emacs: edit web browser text boxes
 (edit-server-start)
-(add-hook! edit-server-start (auto-fill-mode -1) (visual-fill-column-mode))
+(add-hook! edit-server-start (auto-fill-mode -1))
 
 ;;;; Terminal support
 ;; (setq xterm-set-window-title nil)  ; seems to bug out
