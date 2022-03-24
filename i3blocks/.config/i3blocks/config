@@ -15,5 +15,5 @@ interval=1
 signal=10
 
 [time]
-command=date +'%a %b %d %H:%M'
-interval=5
+command=date +'%a %b %d %H:%M'; [[ -z "${BLOCK_BUTTON}" ]] || i3 exec gsimplecal
+interval=1
