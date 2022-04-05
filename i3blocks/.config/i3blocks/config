@@ -14,6 +14,12 @@ instance=Master
 interval=1
 signal=10
 
+[wifi]
+
+[ethernet]
+
+[battery]
+
 [time]
 command=date +'%a %b %d %H:%M'; [[ -z "${BLOCK_BUTTON}" ]] || i3 exec gsimplecal
 interval=1

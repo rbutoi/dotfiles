@@ -17,6 +17,20 @@ keys = {
    {key="7", mods="ALT", action="DisableDefaultAssignment"},
    {key="8", mods="ALT", action="DisableDefaultAssignment"},
    {key="9", mods="ALT", action="DisableDefaultAssignment"},
+   -- for emacs undo, prefer super w/ same keys
+   {key="-", mods="CTRL", action="DisableDefaultAssignment"},
+   {key="_", mods="CTRL|SHIFT", action="DisableDefaultAssignment"},
+   {key="=", mods="CTRL", action="DisableDefaultAssignment"},
+   {key="+", mods="CTRL|SHIFT", action="DisableDefaultAssignment"},
+}
+
+mouse_bindings = {
+   -- Ctrl-click will open the link under the mouse cursor
+   {
+      event={Up={streak=1, button="Left"}},
+      mods="CTRL",
+      action="OpenLinkAtMouseCursor",
+   }
 }
 
 hyperlink_rules = {
@@ -52,5 +66,6 @@ return {
    exit_behavior = "Close",
    -- keys and links
    keys = keys,
+   mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules
 }
