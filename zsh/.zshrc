@@ -191,11 +191,18 @@ ec()  {
 ew()  { ec -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
 en()  { ec -a= -n  "$@";  }                   # open in existing editor
 ewc() { ec -a= -nc "$@";  }                   # new graphical editor
-# export EDITOR="TERM=foot-direct emacsclient -t"
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 export BROWSER=xdg-open
 export CLICOLOR=1
+
+emacs_systemd_restart() {
+  set -x
+  systemctl --user restart emacs.service ||
+    (pkill -9 emacs && systemctl --user restart emacs.service) &&
+      i3-msg 'exec emacsclient -c'
+  set +x
+}
 
 man() {
   if ! pgrep emacs >/dev/null; then

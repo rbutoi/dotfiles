@@ -280,8 +280,6 @@
           (:key "I" :name "personal inbox"     :query "(is:inbox or is:sent) and date:2w.. and is:personal"                  )
           (:key "u" :name "work unread"        :query "(is:inbox or is:sent) and date:1w.. and is:unread and is:work"        )
           (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and is:personal"    )
-          (:key "m" :name "work important"     :query "(is:inbox or is:sent) and date:1w.. and is:important and is:work"     )
-          (:key "M" :name "personal important" :query "(is:inbox or is:sent) and date:2w.. and is:important and is:personal" )
           (:key "S" :name "work snippets"      :query "is:inbox              and date:2w.. and subject:'\[snippets\]'")
           (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"  )
           (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and is:personal"              ))
