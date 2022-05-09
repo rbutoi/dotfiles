@@ -11,8 +11,8 @@
  with-editor)
 
 (package! buffer-move)
+(package! default-text-scale)
 (package! defrepeater)
-(package! dired-hide-dotfiles)
 (package! dired-hide-dotfiles)
 (package! edit-server)
 (package! eglot        :disable WORK)
