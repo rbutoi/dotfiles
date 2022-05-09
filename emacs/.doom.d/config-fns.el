@@ -178,4 +178,5 @@ Like ChromeOS's hterm."
   (interactive)
   (setq doom-theme            old-doom-theme
         scroll-conservatively old-scroll-conservatively)
+  (load-theme doom-theme t nil)
   (doom/reload-theme))
