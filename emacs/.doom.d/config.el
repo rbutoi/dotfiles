@@ -434,14 +434,15 @@
 
   (add-hook! (notmuch-search-mode notmuch-tree-mode)
     (defun notmuch-poll-if-needed ()
-      "Poll for mail if the systemd timer hasn't fired yet (i.e.
-just woke from suspend)."
-      (unless (time-less-p  ;; if mtime > 10 minutes ago
-               (time-subtract (current-time) (file-attribute-modification-time
-                                              (file-attributes
-                                               "~/.mail/personal/.lock")))
-               (seconds-to-time (* 10 60)))
-        (notmuch-poll-and-refresh-this-buffer))))
+      "Take note of out-of-date pulled mail (by more than 10 minutes)"
+      (let ((mail-sync-age
+             (time-subtract (current-time) (file-attribute-modification-time
+                                            (file-attributes
+                                             "~/.mail/personal/.lock")))))
+        (unless (time-less-p mail-sync-age
+                 (seconds-to-time (* 10 60)))
+          (message (format-seconds "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync"
+                                   mail-sync-age))))))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing
