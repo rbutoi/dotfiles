@@ -7,8 +7,11 @@
 (defconst IS-CROSTINI (string-match-p "penguin" (system-name)))
 (defconst WORK ; has custom coding setup
   (or IS-GLAPTOP (not (not (string-match-p "google\\|penguin" (system-name))))))
-
 (when WORK (load (concat doom-private-dir "specific-init.el")))
+
+(when doom-debug-p
+  (require 'benchmark-init)
+  (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
 
 (doom! :input
 

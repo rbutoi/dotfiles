@@ -1,4 +1,6 @@
 ;; -*- lexical-binding: t; -*-
+;; config-el - Doom Emacs config
+
 ;;;; Prologue
 (setq user-config-start-time (current-time))
 
@@ -317,7 +319,9 @@
              ("security-alert" (propertize tag 'face '(:foreground "brown"))))
            (list (list "important" (if WORK "im" (propertize "im" 'face '(:foreground "green"))))))
 
-   notmuch-refresh-timer (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer)
+   notmuch-refresh-timer
+   (when (executable-find "notmuch")
+     (run-with-idle-timer (* 5 60) t 'notmuch-refresh-this-buffer))
 
    notmuch-unread-search-term (concat "is:unread and is:inbox" (if WORK " and is:work" "")))
   (notmuch-unread-mode)

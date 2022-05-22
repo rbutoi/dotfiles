@@ -1,22 +1,27 @@
 local wezterm = require 'wezterm';
-dofile(os.getenv("HOME").."/.config/wezterm/extkeys.lua");
-dofile(os.getenv("HOME").."/.config/wezterm/specific.lua");
+
+function do_if_file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) else return end
+
+   dofile(name)
+end
+
+local extkeys  = os.getenv("HOME").."/.config/wezterm/extkeys.lua"
+local specific = os.getenv("HOME").."/.config/wezterm/specific.lua"
+do_if_file_exists(extkeys)
+do_if_file_exists(specific)
+
+
+local font_size_by_host;
+local hostname = wezterm.hostname();
+if hostname == "Radus-Macbook-Pro.local" then
+   font_size_by_host = 13.0;
+else
+   font_size_by_host = 10.5;
+end
 
 keys = {
-   -- defaults to toggle fullscreen, which sway can do with <super> f. also need
-   -- this keycode:
-   -- https://github.com/Canop/broot/issues/86#issuecomment-801877468
-   {key="Enter", mods="ALT", action=wezterm.action{SendString="\x1b\x0d"}},
-   {key="0", mods="ALT", action="DisableDefaultAssignment"},
-   {key="1", mods="ALT", action="DisableDefaultAssignment"},
-   {key="2", mods="ALT", action="DisableDefaultAssignment"},
-   {key="3", mods="ALT", action="DisableDefaultAssignment"},
-   {key="4", mods="ALT", action="DisableDefaultAssignment"},
-   {key="5", mods="ALT", action="DisableDefaultAssignment"},
-   {key="6", mods="ALT", action="DisableDefaultAssignment"},
-   {key="7", mods="ALT", action="DisableDefaultAssignment"},
-   {key="8", mods="ALT", action="DisableDefaultAssignment"},
-   {key="9", mods="ALT", action="DisableDefaultAssignment"},
    -- for emacs undo, prefer super w/ same keys
    {key="-", mods="CTRL", action="DisableDefaultAssignment"},
    {key="_", mods="CTRL|SHIFT", action="DisableDefaultAssignment"},
@@ -51,21 +56,24 @@ hyperlink_rules = {
 
 -- https://stackoverflow.com/questions/1283388/lua-how-to-merge-two-tables-overwriting-the-elements-which-are-in-both
 for k,v in pairs(keys) do keys_extended_shortcuts[k] = v end
-for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
+-- for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
+
 
 return {
    -- text & colours
    font = wezterm.font("JetBrains Mono"),
-   font_size = 10.5,
+   font_size = font_size_by_host,
    color_scheme = "Gruvbox Dark",
+
+   -- keys and links
+   keys = keys,
+   mouse_bindings = mouse_bindings,
+   -- hyperlink_rules = hyperlink_rules
+
    -- window
    enable_wayland = true,
    window_background_opacity = 0.9,
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = "NeverPrompt",
    exit_behavior = "Close",
-   -- keys and links
-   keys = keys,
-   mouse_bindings = mouse_bindings,
-   hyperlink_rules = hyperlink_rules
 }

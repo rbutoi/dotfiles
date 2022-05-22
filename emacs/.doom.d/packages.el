@@ -10,6 +10,7 @@
  swiper
  with-editor)
 
+(package! benchmark-init)
 (package! buffer-move)
 (package! default-text-scale)
 (package! defrepeater)

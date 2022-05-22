@@ -1,6 +1,10 @@
-(menu-bar-mode -1) ; needed on macos?
+;; -*- lexical-binding: t; -*-
+
+;; retina display and all that: 14 -> 13
+(setq doom-font (font-spec :family "JetBrains Mono" :size 13))
+
+;; only in Mitsuharu fork: render ligarures (-> != >= et al)
 (when (fboundp 'mac-auto-operator-composition-mode)
   (mac-auto-operator-composition-mode))
-(mac-pseudo-daemon-mode)
-(setq dired-use-ls-dired nil)
-(map! "s-m" 'suspend-frame)
+
+(map! "s-m" 'suspend-frame)  ; mirror MacOS ⌘-m for minimize
