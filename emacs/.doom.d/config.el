@@ -8,9 +8,9 @@
 
 ;;;; Theme
 (setq doom-theme 'doom-gruvbox
-      doom-font  (font-spec :family "JetBrains Mono" :size 14))
-(set-frame-parameter (selected-frame) 'alpha  '(95 . 90))
-(add-to-list    'default-frame-alist '(alpha . (95 . 90)))
+      doom-font  (font-spec :family "JetBrains Mono" :size 15))
+(set-frame-parameter (selected-frame) 'alpha  '(90 . 85))
+(add-to-list    'default-frame-alist '(alpha . (90 . 85)))
 
 ;;;; Startup
 (setq
@@ -53,6 +53,8 @@
          ("<C-S-right>" . buf-move-right)))
 
 (remove-hook! text-mode #'display-line-numbers-mode)
+
+(use-package! default-text-scale :config (default-text-scale-mode 1))
 
 ;;;; Popups
 (after! rustic

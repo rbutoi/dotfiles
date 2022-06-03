@@ -312,8 +312,12 @@ fzfp () { eval $FZF_DEFAULT_COMMAND -tf -tl . "$@" | fzf --preview 'bat --style=
 # !!!!!!!! not zsh
 
 if command -v exa >/dev/null; then
-  alias l='exa';              complete -F _complete_alias l
-  alias ll='exa --color always -aagl --git'
+  alias l='exa --group-directories-first'
+  alias ll='l -l --git'
+  alias lla='ll -aa'
+  complete -F _complete_alias l
+  complete -F _complete_alias ll
+  complete -F _complete_alias lla
 fi
 
 if [[ -e ~/.config/broot/launcher/bash/br ]]; then
