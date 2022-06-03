@@ -44,9 +44,9 @@
 (defadvice delete-window (after restore-balance activate)
   (balance-windows))
 
-(use-package zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
+(use-package! zoom-window :bind (("C-x C-z" . zoom-window-zoom)))
 
-(use-package buffer-move
+(use-package! buffer-move
   :bind (("<C-S-up>" . buf-move-up)
          ("<C-S-down>" . buf-move-down)
          ("<C-S-left>" . buf-move-left)
@@ -139,7 +139,7 @@
 (map! "C-c M-s" 'subword-mode)
 
 ;;;; Dired
-(use-package dired-hide-dotfiles
+(use-package! dired-hide-dotfiles
   :hook (dired-mode . dired-hide-dotfiles-mode)
   :bind (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
@@ -160,7 +160,7 @@
 
 (after! tex (setq TeX-auto-untabify t))
 
-(use-package rustic
+(use-package! rustic
   :config
   (setq rustic-lsp-server 'rust-analyzer
         rustic-lsp-client 'eglot)
@@ -218,15 +218,15 @@
 (map! "C-x   g"   'magit-status
       "C-x C-g"   'magit-status
       "C-x C-M-g" 'magit-list-repositories)
-(use-package keychain-environment :config (keychain-refresh-environment))
+(use-package! keychain-environment :config (keychain-refresh-environment))
 
 ;;;; String-inflection
-(use-package string-inflection
+(use-package! string-inflection
   :config
   (map! :map (prog-mode-map c-mode-base-map) "C-c C-u" 'string-inflection-cycle))
 
 ;;;; highlight-thing, which-function
-(use-package highlight-thing
+(use-package! highlight-thing
   :config
   ;; useful across buffers
   (setq highlight-thing-all-visible-buffers-p t
