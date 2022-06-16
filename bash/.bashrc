@@ -7,6 +7,8 @@
 # set $PATH if not already
 [ -f ~/.config/path.sh ] && . ~/.config/path.sh
 
+. "$HOME/.cargo/env"
+
 #########################
 # Bash/terminal options #
 #########################

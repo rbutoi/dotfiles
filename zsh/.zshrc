@@ -354,15 +354,15 @@ fi
 fpath=(~/.local/share/zsh/site-functions ~/.config/zsh $fpath)
 
 # ! topgrade every week
-if [[ $(($(</tmp/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
+if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
   echo -e "\033[36mTopgrade...\033[0m"
-  date +%s >/tmp/last_topgrade
+  date +%s >~/.cache/last_topgrade
   if [[ -n "$TMUX" ]]; then
-    tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'
+    tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade; echo press enter to exit...; read'
   else
     # the built-in topgrade --tmux doesn't dedup calls
-    tmux new -As topgrade -- 'echo acquiring sudo timeout; sudo true; topgrade; echo waiting for input...; read'
+    tmux new -As topgrade -- 'topgrade; echo press enter to exit...; read'
   fi
 fi
 

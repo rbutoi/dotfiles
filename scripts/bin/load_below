@@ -4,15 +4,27 @@
 
 THRESHOLD=${1:-300}
 
-file=$(cat /proc/loadavg)
-load_float1=$(echo -n $file | cut -d' ' -f1)
-load_float5=$(echo -n $file | cut -d' ' -f2)
-load_float15=$(echo -n $file | cut -d' ' -f3)
+if [[ $(uname) == "Darwin" ]]; then
+  # $ sysctl -n vm.loadavg
+  # { 1.64 5.20 7.25 }
+  load=$(sysctl -n vm.loadavg)
+  load_float1=$( echo -n $load | cut -d' ' -f2)
+  load_float5=$( echo -n $load | cut -d' ' -f3)
+  load_float15=$(echo -n $load | cut -d' ' -f4)
+else
+  load=$(cat /proc/loadavg)
+  load_float1=$( echo -n $load | cut -d' ' -f1)
+  load_float5=$( echo -n $load | cut -d' ' -f2)
+  load_float15=$(echo -n $load | cut -d' ' -f3)
+fi
+
 load1=${load_float1/./}
 load5=${load_float5/./}
 load15=${load_float15/./}
-if [ "$load1" -gt $THRESHOLD ] || [ "$load5" -gt $THRESHOLD ] ||
-    [ "$load15" -gt $THRESHOLD ]; then
+
+if [[ "$load1"  -gt $THRESHOLD ]] ||
+   [[ "$load5"  -gt $THRESHOLD ]] ||
+   [[ "$load15" -gt $THRESHOLD ]]; then
    exit 1 # return with failure if above any load threshold
 fi
 :
