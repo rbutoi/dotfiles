@@ -1,12 +1,11 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-(defconst
-  IS-GLAPTOP
-  (not (not (and IS-LINUX (string-match-p
-                           "roam" (shell-command-to-string "hostname -f"))))))
-(defconst IS-CROSTINI (string-match-p "penguin" (system-name)))
-(defconst WORK ; has custom coding setup
-  (or IS-GLAPTOP (not (not (string-match-p "google\\|penguin" (system-name))))))
+(let ((host (shell-command-to-string "hostname -f")))
+  (defconst IS-GLAPTOP (and IS-LINUX (string-match-p "roam" host)))
+  (defconst IS-CROSTINI    (string-match-p "penguin" host))
+  (defconst IS-WORKSTATION (string-match-p "google.*\.com" host))
+  (defconst WORK (or IS-GLAPTOP IS-WORKSTATION)))
+
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 
 (when doom-debug-p
