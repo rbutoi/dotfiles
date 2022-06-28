@@ -18,13 +18,16 @@ else
   load_float15=$(echo -n $load | cut -d' ' -f3)
 fi
 
+# bash has bad float support https://stackoverflow.com/questions/8654051/how-can-i-compare-two-floating-point-numbers-in-bash
+
 load1=${load_float1/./}
 load5=${load_float5/./}
 load15=${load_float15/./}
 
-if [[ "$load1"  -gt $THRESHOLD ]] ||
-   [[ "$load5"  -gt $THRESHOLD ]] ||
-   [[ "$load15" -gt $THRESHOLD ]]; then
+# https://blog.famzah.net/tag/bash-force-decimal-representation/
+if [[ "10#$load1"  -gt $THRESHOLD ]] ||
+   [[ "10#$load5"  -gt $THRESHOLD ]] ||
+   [[ "10#$load15" -gt $THRESHOLD ]]; then
    exit 1 # return with failure if above any load threshold
 fi
 :

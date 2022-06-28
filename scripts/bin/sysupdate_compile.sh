@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Without any manual intervention, update & install development packages which
 # require a lengthy compile. Run as a systemd timer.
 #
@@ -14,8 +14,13 @@ fi
 os="$(lsb_release -si)"
 if [[ $os == Arch ]]; then
   paru -Sua --devel --noconfirm
+
+  # also from man paru(8)
+  pacman -Qmq | grep -Ee '-(cvs|svn|git|hg|bzr|darcs)$' | paru -Ta - | paru -S --noconfirm --needed -
+
   # isn't -git, needs to be updated nightly
   pacman -Qq | grep nightly | xargs paru -S --noconfirm
+
   topgrade --only custom_commands
 elif [[ $os == Debian ]]; then
   topgrade --disable remotes

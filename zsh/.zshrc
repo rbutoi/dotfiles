@@ -204,7 +204,7 @@ emacs_systemd_restart() {
   set +x
 }
 
-man() {
+eman() {
   if ! pgrep emacs >/dev/null; then
     command man "$@"
     return
