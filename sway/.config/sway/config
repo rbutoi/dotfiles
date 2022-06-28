@@ -3,7 +3,7 @@
 #
 # basics
 #
-set $term foot
+set $term wezterm start --
 set $web google-chrome
 set $menu ~/bin/wofi-wrap.sh
 set $editor emacsclient -c -a ""
@@ -19,7 +19,7 @@ input type:keyboard {
 }
 input type:pointer {
     accel_profile flat
-    pointer_accel 0.35
+    pointer_accel -0.2
 }
 
 # manages outputs
@@ -36,7 +36,8 @@ workspace 4 output $monitor_27_vert
 #
 # startup applications
 #
-bar swaybar_command waybar
+bar swaybar_command 'PATH=/home/radu/.cargo/bin:/home/radu/.local/bin:/home/radu/bin:/usr/bin:/usr/local/bin waybar'  # https://github.com/berbiche/dotfiles/commit/09bc61c3b3e9ad79570f054d07e577545b48174e :from https://github.com/Alexays/Waybar/issues/1205
+
 exec systemd-cat dex -a -e SWAY                # autostart
 exec systemd-cat udiskie --tray --appindicator # automount manager
                                                               # clipboard
