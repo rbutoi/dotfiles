@@ -8,7 +8,7 @@
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 
-(when doom-debug-p
+(when (bound-and-true-p doom-debug-p)
   (require 'benchmark-init)
   (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
 
