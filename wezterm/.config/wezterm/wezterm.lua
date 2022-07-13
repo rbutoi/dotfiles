@@ -56,7 +56,7 @@ hyperlink_rules = {
 
 -- https://stackoverflow.com/questions/1283388/lua-how-to-merge-two-tables-overwriting-the-elements-which-are-in-both
 for k,v in pairs(keys) do keys_extended_shortcuts[k] = v end
--- for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
+for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
 
 
 return {
@@ -68,7 +68,7 @@ return {
    -- keys and links
    keys = keys,
    mouse_bindings = mouse_bindings,
-   -- hyperlink_rules = hyperlink_rules
+   hyperlink_rules = hyperlink_rules,
 
    -- window
    enable_wayland = true,
