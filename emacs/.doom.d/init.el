@@ -8,16 +8,12 @@
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 
-(when (bound-and-true-p doom-debug-p)
-  (require 'benchmark-init)
-  (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
-
 (doom! :input
 
        :completion
        company             ; the ultimate code completion backend
-       (ivy                ; a search engine for love and life
-        (:if IS-MAC +icons))
+       (ivy +icons)       ; a search engine for love and life
+
 
        :ui
        doom                ; what makes DOOM look the way it does
