@@ -40,6 +40,8 @@ fpath=(~/.local/share/zsh/site-functions ~/.config/zsh $fpath)
 ## completion
 zstyle ':completion:*' menu yes select
 zstyle ':completion:*' use-cache on
+zstyle ':completion:*' format '[%d]'
+
 
 # TODO: doesn't work?
 # zstyle ':completion:*' cache-path "$HOME/.cache/zsh/.zcompcache"
@@ -63,6 +65,53 @@ zinit light romkatv/powerlevel10k
 ## fzf
 source_if /usr/share/doc/fzf/examples/key-bindings.zsh
 source_if /usr/share/doc/fzf/examples/completion.zsh
+zinit light Aloxaf/fzf-tab
+zstyle ':fzf-tab:*' prefix ''
+
+# disable sort when completing options of any command
+zstyle ':completion:complete:*:options' sort false
+
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'  # cd preview
+
+# give a preview of commandline arguments when completing `kill`
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+  '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+compdef pkill=kill
+compdef killall=kill
+
+# show systemd unit status
+zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+  fzf-preview 'echo ${(P)word}'  # env var
+
+# git
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+  'git diff $word | delta'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+  'git log --color=always $word'
+zstyle ':fzf-tab:complete:git-help:*' fzf-preview \
+  'git help $word | bat -plman --color=always'
+zstyle ':fzf-tab:complete:git-show:*' fzf-preview \
+  'case "$group" in
+  "commit tag") git show --color=always $word ;;
+  *) git show --color=always $word | delta ;;
+  esac'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+  'case "$group" in
+  "modified file") git diff $word | delta ;;
+  "recent commit object name") git show --color=always $word | delta ;;
+  *) git log --color=always $word ;;
+  esac'
+
+zstyle ':fzf-tab:complete:tldr:argument-1' fzf-preview 'tldr --color always $word'  # tldr
+
+# fzf-tab preview files, images
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+export LESSOPEN='|~/bin/lessfilter %s'
+
 
 ## syntax highlighting
 zinit light zdharma-continuum/fast-syntax-highlighting
