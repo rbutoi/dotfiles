@@ -1,4 +1,4 @@
-local wezterm = require 'wezterm';
+local wezterm = require 'wezterm'
 
 function do_if_file_exists(name)
    local f=io.open(name,"r")
@@ -23,19 +23,10 @@ end
 
 keys = {
    -- for emacs undo, prefer super w/ same keys
-   {key="-", mods="CTRL", action="DisableDefaultAssignment"},
-   {key="_", mods="CTRL|SHIFT", action="DisableDefaultAssignment"},
-   {key="=", mods="CTRL", action="DisableDefaultAssignment"},
-   {key="+", mods="CTRL|SHIFT", action="DisableDefaultAssignment"},
-}
-
-mouse_bindings = {
-   -- Ctrl-click will open the link under the mouse cursor
-   {
-      event={Up={streak=1, button="Left"}},
-      mods="CTRL",
-      action="OpenLinkAtMouseCursor",
-   }
+   {key = "-", mods = "CTRL", action = "DisableDefaultAssignment"},
+   {key = "_", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
+   {key = "=", mods = "CTRL", action = "DisableDefaultAssignment"},
+   {key = "+", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
 }
 
 hyperlink_rules = {
@@ -67,7 +58,6 @@ return {
 
    -- keys and links
    keys = keys,
-   mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules,
 
    -- window
