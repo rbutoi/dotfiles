@@ -225,7 +225,8 @@
 ;;;; String-inflection
 (use-package! string-inflection
   :config
-  (map! :map (prog-mode-map c-mode-base-map) "C-c C-u" 'string-inflection-cycle))
+  (map! :map (prog-mode-map c-mode-base-map sh-mode-map)
+        "C-c C-u" 'string-inflection-cycle))
 
 ;;;; highlight-thing, which-function
 (use-package! highlight-thing
@@ -476,9 +477,6 @@
 ;;;; Edit with Emacs: edit web browser text boxes
 (edit-server-start)
 (add-hook! edit-server-start (auto-fill-mode -1))
-
-;;;; Terminal support
-;; (setq xterm-set-window-title nil)  ; seems to bug out
 
 ;;;; URLs
 (url-handler-mode)  ; enable C-x C-f handler
