@@ -42,11 +42,9 @@ zstyle ':completion:*' menu yes select
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' format '[%d]'
 
-
 # TODO: doesn't work?
+# also: try wizard % autoload -Uz compinstall && compinstall
 # zstyle ':completion:*' cache-path "$HOME/.cache/zsh/.zcompcache"
-# TODO: use wizard.
-# % autoload -Uz compinstall && compinstall
 
 zstyle ':completion:*' users root $USER             #fix lag in google3
 autoload -Uz compinit && compinit
@@ -59,8 +57,7 @@ setopt append_history share_history hist_ignore_space hist_ignore_dups
 
 ## prompt
 zinit light romkatv/powerlevel10k
-## To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+source_if ~/.p10k.zsh  # `p10k configure` or edit this file
 
 ## fzf
 source_if /usr/share/doc/fzf/examples/key-bindings.zsh
@@ -112,16 +109,18 @@ zstyle ':fzf-tab:complete:tldr:argument-1' fzf-preview 'tldr --color always $wor
 zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
 export LESSOPEN='|~/bin/lessfilter %s'
 
-
-## syntax highlighting
-zinit light zdharma-continuum/fast-syntax-highlighting
-
 ## autosuggestions
 zinit light zsh-users/zsh-autosuggestions
+ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+bindkey '^[m' autosuggest-accept
 
 ## line editing: akin to subword-mode in emacs
 autoload -U select-word-style
 select-word-style bash
+
+## syntax highlighting
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 ## editing command line with emacs
 autoload -U edit-command-line
@@ -363,7 +362,7 @@ alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 # topgrade every week
 if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
-  echo -e "\033[36mTopgrade...\033[0m"
+  echo -e "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))", running now...\033[0m"
   date +%s >~/.cache/last_topgrade
   if [[ -n "$TMUX" ]]; then
     tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade; echo press enter to exit...; read'
