@@ -58,6 +58,7 @@ setopt append_history share_history hist_ignore_space hist_ignore_dups
 ## prompt
 zinit light romkatv/powerlevel10k
 source_if ~/.p10k.zsh  # `p10k configure` or edit this file
+zinit light romkatv/zsh-prompt-benchmark
 
 ## fzf
 source_if /usr/share/doc/fzf/examples/key-bindings.zsh
@@ -262,6 +263,10 @@ eman() {
   fi
 }
 
+###########
+# aliases #
+###########
+
 alias l='ls -F'
 ll() { l -lA -h "$@" }
 alias pg="pgrep"
@@ -277,7 +282,7 @@ alias M='$(history -p \!\!) | less -'
 export LESS=-RMiSeF
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
-if ! command -v tree >/dev/null; then
+if ! (( $+commands[tree] )); then
   alias tree="ls -R | grep \":$\" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
   tree2() {
     find . -type d "$@" | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"
@@ -285,7 +290,7 @@ if ! command -v tree >/dev/null; then
 fi
 alias dv="dirs -v"
 alias s='sudo'
-alias ss='s ss' # these silently degrade without sudo
+alias ss='s ss'         # these silently degrade without sudo
 alias lsof='s lsof'
 alias .~='exec zsh'
 alias tm='tmux new -A -s auto'
@@ -293,9 +298,9 @@ alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
 alias ssha='ssh -t a tmux new -ADs auto'
 alias mosha='mosh -p 55880 a /home/radu/bin/continuetmux'
-alias stow='stow -v' # nice to see the actions taken by default
+alias stow='stow -v'    # nice to see the actions taken by default
 alias fd="fd --one-file-system"
-alias type='whence -f' # am too used to bash
+alias type='whence -f'  # am too used to bash
 
 ########################
 # external shell tools #
@@ -305,17 +310,13 @@ alias type='whence -f' # am too used to bash
 if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss/kitty/shell-integration/kitty.zsh"; fi
 # END_KITTY_SHELL_INTEGRATION
 
-if command -v rg >/dev/null; then
+if (( $+commands[rg] )); then
   export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
   alias g=rg
 fi
 
-if command -v procs >/dev/null; then
-  alias psg=procs
-fi
-
 alias less="TERM=screen-256color less"
-if command -v bat >/dev/null; then
+if (( $+commands[bat] )); then
   # change TERM for proper italics support in bat and less
   alias bat="TERM=screen-256color bat --italic-text=always --wrap=never"
   alias xargs="TERM=screen-256color xargs" # if it calls bat/less
@@ -326,7 +327,7 @@ if command -v bat >/dev/null; then
   export BAT_STYLE=changes,header,rule,numbers,snip
 fi
 
-if command -v delta >/dev/null; then
+if (( $+commands[delta] )); then
   diff() { /usr/bin/diff -u "$@" | delta --side-by-side; }
 else
   alias diff="diff --color=auto"
@@ -340,7 +341,7 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fzfp () { fzf --preview 'bat --style=numbers --color=always {}' }
 
-if command -v exa >/dev/null; then
+if (( $+commands[exa] )); then
   alias l='exa --group-directories-first'
   ll() { l -l --git "$@"}
   alias la='l -aa'
@@ -354,12 +355,13 @@ if [[ -e ~/.config/broot/launcher/bash/br ]]; then
   treb() { br --height $((LINES - 2)) --cmd :pt "$@"; }
 fi
 
-command -v duf  >/dev/null && alias df=duf
-command -v navi >/dev/null && eval "$(navi widget zsh)" ### !!!!!!
+(( $+commands[duf] ))  && alias df=duf
+(( $+commands[navi] )) && eval "$(navi widget zsh)" ### !!!!!!
+(( $+commands[procs] )) && alias psg=procs
 
 alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
-# topgrade every week
+## topgrade every week
 if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
   echo -e "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))", running now...\033[0m"
@@ -372,5 +374,7 @@ if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
   fi
 fi
 
+#################
+# host-specific #
+#################
 source_if ~/.zshrc_specific
-source_if ~/oss/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh
