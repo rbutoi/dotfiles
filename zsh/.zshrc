@@ -47,7 +47,9 @@ zstyle ':completion:*' format '[%d]'
 # zstyle ':completion:*' cache-path "$HOME/.cache/zsh/.zcompcache"
 
 zstyle ':completion:*' users root $USER             #fix lag in google3
-autoload -Uz compinit && compinit
+autoload -Uz compinit bashcompinit
+compinit
+bashcompinit
 
 ## history
 HISTFILE=~/.zsh_history
