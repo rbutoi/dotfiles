@@ -12,7 +12,6 @@ local specific = os.getenv("HOME").."/.config/wezterm/specific.lua"
 do_if_file_exists(extkeys)
 do_if_file_exists(specific)
 
-
 local font_size_by_host;
 local hostname = wezterm.hostname();
 if hostname == "Radus-Macbook-Pro.local" then
@@ -27,6 +26,7 @@ keys = {
    {key = "_", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
    {key = "=", mods = "CTRL", action = "DisableDefaultAssignment"},
    {key = "+", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
+   {key = "Enter", mods = "ALT", action = "DisableDefaultAssignment"},
 }
 
 hyperlink_rules = {

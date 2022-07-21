@@ -25,7 +25,7 @@ elif vol_f > -45:
 else:
     vol_cat = 'low'
 
-os.system(f'$HOME/bin/notify-send.sh -c volume -h int:transient:1 -R /tmp/notif_yamaha_vol -i audio-volume-{vol_cat} -- "{vol}{unit}" "Yamaha volume"')
+os.system(f'notify-send.sh -c volume -h int:transient:1 -R /tmp/notif_yamaha_vol -i audio-volume-{vol_cat} -- "{vol}{unit}" "Yamaha volume"')
 
 # also keep bedroom in sync, but use single.py/a lockfile to not slow this down
 os.system('single.py -c yamaha_match_bedroom.py &')
