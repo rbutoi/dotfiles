@@ -31,7 +31,13 @@
  "C-S-M-k"   'doom/kill-all-buffers
  "C-x C-M-k" 'doom/kill-all-buffers
  ;; occassionally useful (e.g. w3m)
- "C-c M-S"   'scroll-bar-mode)
+ "C-c M-S"   'scroll-bar-mode
+ ;; map overrides
+ :map magit-mode-map  ;; using "1"-"3" shortcuts works the same as M-1 in magit
+ "M-1"       'delete-other-windows
+ "M-2"       'split-window-below
+ "M-3"       'split-window-right
+ )
 
 (setq doom-modeline-project-detection 'project)
 
@@ -221,6 +227,8 @@
       "C-x C-g"   'magit-status
       "C-x C-M-g" 'magit-list-repositories)
 (use-package! keychain-environment :config (keychain-refresh-environment))
+;; git-gutter
+(setq-default git-gutter:start-revision "HEAD~")
 
 ;;;; String-inflection
 (use-package! string-inflection

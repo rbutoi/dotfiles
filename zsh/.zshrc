@@ -219,18 +219,9 @@ git_dangling()   {
     sort -r | fzf --preview 'git show --color $(echo {} | choose 3)'
 }
 
-# need TERM hack outside tmux since emacs won't have truecolor otherwise.
-# setting that to be the default TERM results in no truecolor through mosh
-ec()  {
-  if [ -z "$TMUX" ]; then
-    TERM=foot-direct emacsclient "$@"
-  else
-    emacsclient "$@"
-  fi
-}
-ew()  { ec -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
-en()  { ec -a= -n  "$@";  }                   # open in existing editor
-ewc() { ec -a= -nc "$@";  }                   # new graphical editor
+ew()  { emacsclient -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
+en()  { emacsclient -a= -n  "$@";  }                   # open in existing editor
+ewc() { emacsclient -a= -nc "$@";  }                   # new graphical editor
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 export BROWSER=xdg-open
@@ -238,6 +229,7 @@ export CLICOLOR=1
 
 emacs_systemd_restart() {
   set -x
+  fix_i3sock
   systemctl --user restart emacs.service ||
     (pkill -9 emacs && systemctl --user restart emacs.service) &&
       i3-msg 'exec emacsclient -c'
@@ -345,7 +337,7 @@ fzfp () { fzf --preview 'bat --style=numbers --color=always {}' }
 
 if (( $+commands[exa] )); then
   alias l='exa --group-directories-first'
-  ll() { l -l --git "$@"}
+  ll()   { exa -l --git "$@"}
   alias la='l -aa'
   alias lla='ll -aa'
 fi
