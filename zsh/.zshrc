@@ -273,7 +273,7 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 alias cdg='cd "$(git rev-parse --show-toplevel)"'
 alias M='$(history -p \!\!) | less -'
-export LESS=-RMiSeF
+export LESS=-RMiF
 alias xo="xdg-open"
 alias xc="xclip -selection clipboard"
 if ! (( $+commands[tree] )); then
@@ -312,7 +312,7 @@ fi
 alias less="TERM=screen-256color less"
 if (( $+commands[bat] )); then
   # change TERM for proper italics support in bat and less
-  alias bat="TERM=screen-256color bat --italic-text=always --wrap=never"
+  alias bat="TERM=screen-256color bat --italic-text=always"
   alias xargs="TERM=screen-256color xargs" # if it calls bat/less
   alias c=bat
   alias m=bat # used to be `most` for a long time
