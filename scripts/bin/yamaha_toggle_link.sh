@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+
+. ~/.config/path.sh
 
 if `curl -s http://192.168.1.17/YamahaExtendedControl/v1/dist/getDistributionInfo | grep -q cafebabe`; then
   curl -s -X POST -H "Content-Type: application/json"  http://192.168.1.107/YamahaExtendedControl/v1/dist/setClientInfo -d '{"group_id":"", "zone":["main"]}' >/dev/null

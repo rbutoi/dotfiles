@@ -127,7 +127,7 @@
   },
   "custom/weather": {
     "interval": 3600,
-    "exec": "waybar-wttr.py",
+    "exec": "~/bin/waybar-wttr.py",
     "return-type": "json",
     "on-click": "gnome-weather",
     "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
@@ -266,7 +266,7 @@
   },
   "custom/weather": {
     "interval": 3600,
-    "exec": "waybar-wttr.py",
+    "exec": "~/bin/waybar-wttr.py",
     "return-type": "json",
     "on-click": "gnome-weather",
     "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",

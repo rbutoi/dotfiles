@@ -66,6 +66,17 @@ zinit light romkatv/zsh-prompt-benchmark
 ##
 ## fzf
 ##
+export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
+  --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
+export FZF_DEFAULT_COMMAND='fd --hidden'
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fzfp () {
+  eval "$FZF_DEFAULT_COMMAND $@" |
+    fzf --preview 'bat --style=numbers --color=always {}'
+}
+
 zinit light Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' prefix ''
 # completions and bindings are sourced in .zshrc_specific
@@ -173,20 +184,6 @@ _upto() {
 }
 compdef _upto upto
 
-pomo() {
-  arg1=$1
-  shift
-  args="$*"
-
-  min=${arg1:?Example: pomo 15 Take a break}
-  sec=$((min * 60))
-  msg="${args:?Example: pomo 15 Take a break}"
-
-  while true; do
-    sleep "${sec:?}" && echo "${msg:?}" && notify-send -u critical -t 0 "${msg:?}"
-  done
-}
-
 which_countries_connected_today() {
   set -x
   journalctl -b _COMM=sshd |
@@ -209,9 +206,19 @@ escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read
 unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"    ; }
 wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));' ; }
 find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
-fix_swaysock  () { export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock                   ; }
-fix_i3sock    () { export   I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)                              ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+fix_i3_or_swaysock() {
+  pgrep -x i3 >/dev/null && fix_i3sock || fix_swaysock
+}
+fix_swaysock () {
+  uid=$(id -u)
+  export SWAYSOCK=$(ls /run/user/${uid}/sway-ipc.${uid}.*.sock)
+  export I3SOCK=$SWAYSOCK  # allow i3 passthrough
+}
+fix_i3sock () {
+  export I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)
+}
 
 ##
 ## emacs
@@ -226,10 +233,10 @@ export CLICOLOR=1
 
 emacs_systemd_restart() {
   set -x
-  fix_i3sock
+  fix_i3_or_swaysock
   systemctl --user restart emacs.service ||
     (pkill -9 emacs && systemctl --user restart emacs.service) &&
-      i3-msg 'exec emacsclient -c'
+      i3-msg 'exec $editor' ||
   set +x
 }
 
@@ -327,14 +334,6 @@ if (( $+commands[delta] )); then
 else
   alias diff="diff --color=auto"
 fi
-
-export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
-  --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
-  --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
-export FZF_DEFAULT_COMMAND='fd --hidden'
-export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fzfp () { fzf --preview 'bat --style=numbers --color=always {}' }
 
 if (( $+commands[exa] )); then
   alias l='exa --group-directories-first'
