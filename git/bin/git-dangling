@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# show git dangling commits sorted by timestamp
+git fsck --lost-found 2>/dev/null                                              \
+    | grep "dangling commit"                                                   \
+    | choose 2                                                                 \
+    | xargs git show --no-patch --pretty=format:"%ad %h by %an, %s" --date=iso \
+    | sort -r                                                                  \
+    | fzf --preview 'git show --color $(echo {} | choose 3)'

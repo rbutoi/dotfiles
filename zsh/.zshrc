@@ -33,9 +33,10 @@ zinit light-mode for \
 source_if() { [[ -e "$@" ]] && source "$@" }
 fpath=(~/.local/share/zsh/site-functions ~/.config/zsh $fpath)
 
-##################
-# Shell features #
-##################
+################################################################
+#                        Shell features                        #
+# options: http://zsh.sourceforge.net/Doc/Release/Options.html #
+################################################################
 
 ## completion
 zstyle ':completion:*' menu yes select
@@ -62,11 +63,12 @@ zinit light romkatv/powerlevel10k
 source_if ~/.p10k.zsh  # `p10k configure` or edit this file
 zinit light romkatv/zsh-prompt-benchmark
 
+##
 ## fzf
-source_if /usr/share/doc/fzf/examples/key-bindings.zsh
-source_if /usr/share/doc/fzf/examples/completion.zsh
+##
 zinit light Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' prefix ''
+# completions and bindings are sourced in .zshrc_specific
 
 # disable sort when completing options of any command
 zstyle ':completion:complete:*:options' sort false
@@ -111,6 +113,9 @@ zstyle ':fzf-tab:complete:tldr:argument-1' fzf-preview 'tldr --color always $wor
 # fzf-tab preview files, images
 zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
 export LESSOPEN='|~/bin/lessfilter %s'
+##
+## end fzf
+##
 
 ## autosuggestions
 zinit light zsh-users/zsh-autosuggestions
@@ -131,7 +136,10 @@ zle -N edit-command-line  # Emacs style
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
-# Shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
+bindkey '^[k' backward-kill-line  # not emacs but useful on CLI
+
+## cd tweaks from zshoptions(1):
+setopt auto_pushd auto_cd
 
 #######################################
 # User specific aliases and functions #
@@ -195,30 +203,19 @@ pause_torrents () {
   set +x
 }
 
-# !!!
-# mcd           () { mkdir -p "$@" && cd "$@"                                                                     ; }
 fork          () { (setsid "$@" &)                                                                              ; }
 all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'      ; }
 escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'                           ; }
 unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"    ; }
-pip3_upgrade  () { pip3 install -U "$(pip3 list --outdated | awk 'NR>2 {print $1}')"                            ; }
 wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));' ; }
 find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
 fix_swaysock  () { export SWAYSOCK=/run/user/$(id -u)/sway-ipc.$(id -u).$(pgrep -x sway).sock                   ; }
 fix_i3sock    () { export   I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)                              ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-# git
-git_grep_blame() {
-  git grep -n "$@" | perl -F':' -anpe '$_=`git blame -L$F[1],+1 $F[0]`'
-}
-git_dangling()   {
-  # show git dangling commits sorted by timestamp
-  git fsck --lost-found 2>/dev/null | grep "dangling commit" | choose 2 |
-    xargs git show --no-patch --pretty=format:"%ad %h by %an, %s" --date=iso |
-    sort -r | fzf --preview 'git show --color $(echo {} | choose 3)'
-}
-
+##
+## emacs
+##
 ew()  { emacsclient -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
 en()  { emacsclient -a= -n  "$@";  }                   # open in existing editor
 ewc() { emacsclient -a= -nc "$@";  }                   # new graphical editor
@@ -236,26 +233,30 @@ emacs_systemd_restart() {
   set +x
 }
 
+# (e)macs man
 eman() {
-  if ! pgrep emacs >/dev/null; then
-    command man "$@"
-    return
-  fi
-  # check if manpage exists, let stderr output
-  if ! command man -w "$@" > /dev/null; then
-    return
-  fi
+  # no emacs, fallback to man
+  pgrep emacs >/dev/null || return command man "$@"
+
+  # no manpage, print standard man error
+  command man -w "$@" > /dev/null || return
+
   if [ $# -eq 0 ]; then
+    # `eman` sans arguments starts the client in completion mode
     cmd="(call-interactively 'man)"
   else
     cmd="(man \"$@\")"
   fi
+
+  set -x  #
   if [ -n "$INSIDE_EMACS" ]; then
     emacsclient -n --eval "$cmd"
   else
     emacsclient -t --eval "(progn $cmd (other-window 1) (delete-other-windows))"
   fi
+  set +x
 }
+compdef eman=man
 
 ###########
 # aliases #

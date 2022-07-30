@@ -228,8 +228,11 @@
       "C-x C-g"   'magit-status
       "C-x C-M-g" 'magit-list-repositories)
 (use-package! keychain-environment :config (keychain-refresh-environment))
-;; git-gutter
-(setq-default git-gutter:start-revision "HEAD~")
+
+(use-package! git-gutter ;; git-gutter too
+  :config
+  (setq-default git-gutter:start-revision "HEAD~")
+  (global-git-gutter-mode))
 
 ;;;; String-inflection
 (use-package! string-inflection
