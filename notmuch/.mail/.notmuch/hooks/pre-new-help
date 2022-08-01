@@ -6,13 +6,21 @@ ping -q -c 1 8.8.8.8 2>&1 >/dev/null ||
     (echo "ping check failed, retrying in 10s..." &&
          sleep 10s && ping -q -c 1 8.8.8.8 2>&1 >/dev/null)
 
-# poll gmi and mbsync
-command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
+# if we are the muchsync server, actually sync. otherwise run muchsync
+if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+  # poll gmi and mbsync
+  command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
 
-[ -e ~/.mail/work ]     && $GMI sync -C ~/.mail/work     &
-[ -e ~/.mail/personal ] && $GMI sync -C ~/.mail/personal &
-[ -e ~/.mail/hotmail  ] &&    mbsync            hotmail  &
-wait
+  [[ -e ~/.mail/work     ]] && $GMI sync -C ~/.mail/work     &
+  [[ -e ~/.mail/personal ]] && $GMI sync -C ~/.mail/personal &
+  [[ -e ~/.mail/hotmail  ]] &&    mbsync            hotmail  &
+  wait
+else
+  # needs gcert and preferrably a multiplexed connection to avoid constant gnubby touches
+  gcertstatus && ssh -O check box &&
+    # nonew very important, avoids infinite recursion
+    muchsync --nonew box
+fi
 
 # rm deleted mail
 notmuch search --output=files --format=text0 tag:deleted | xargs -0 rm -f

@@ -4,5 +4,5 @@
 if [[ -n "$IN_NOTMUCH_SYSTEMD" ]]; then
   ~/.mail/.notmuch/hooks/pre-new-help "$@"
 else
-  ~/.mail/.notmuch/hooks/pre-new-help "$@" | tee >(logger -t notmuch-new-adhoc)
+  ~/.mail/.notmuch/hooks/pre-new-help "$@" | tee >(logger -t notmuch-new-adhoc) 2>&1
 fi

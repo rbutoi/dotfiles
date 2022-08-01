@@ -9,6 +9,10 @@
  "C-c M" 'notmuch)
 (after! notmuch
   (setq
+   ;; needed an external script for proper ssh creds for muchsync and since
+   ;; notmuch's call-process wrapper doesn't pass any args
+   notmuch-poll-script "notmuch_new_systemd.sh"
+
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t
    message-sendmail-extra-arguments '("--read-envelope-from")

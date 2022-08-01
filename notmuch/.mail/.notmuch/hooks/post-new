@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# if we're using muchsync, do it one more time to push read messages
+if [[ $(muchsync --self) != 7633996751889129249 ]]; then
+  set -e
+  gcertstatus && ssh -O check box &&
+    # nonew very important, avoids infinite recursion
+    muchsync --nonew box
+  set +e
+  exit 0
+fi
+
 # sort emails into appropriate account tag
 notmuch tag +work     -- tag:new path:work/**
 notmuch tag +personal -- tag:new path:personal/**
