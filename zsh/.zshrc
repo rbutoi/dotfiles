@@ -56,7 +56,9 @@ bashcompinit
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000000     # unlimited
 SAVEHIST=$HISTSIZE
-setopt append_history share_history hist_ignore_space hist_ignore_dups
+# `fc -R` to read history (from other running shells) now. otherwise history is
+# preserved per-shell
+setopt inc_append_history hist_ignore_space hist_ignore_dups
 
 ## prompt
 zinit light romkatv/powerlevel10k
