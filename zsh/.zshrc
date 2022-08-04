@@ -303,6 +303,7 @@ alias xa='xargs'
 alias ssha='ssh -t a tmux new -ADs auto'
 alias mosha='mosh -p 55880 a /home/radu/bin/continuetmux'
 alias stow='stow -v'    # nice to see the actions taken by default
+alias stow_dots='pushd ~/dotfiles && stow * && pushd ~/dotfiles-* && stow * && popd && popd'
 alias fd="fd --one-file-system"
 alias type='whence -f'  # am too used to bash
 
