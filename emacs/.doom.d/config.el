@@ -74,30 +74,35 @@
 
 ;;;; Ivy / counsel
 (after! counsel
-  (map! "C-c C-r" 'ivy-resume
-        "C-x m"   'counsel-M-x
-        "C-x C-m" 'counsel-M-x
-        "C-x C-b" 'counsel-switch-buffer
-        "C-x b"   'counsel-buffer-or-recentf
-        "C-o"     'counsel-semantic-or-imenu
-        "C-M-s"   (cmd! (counsel-rg (thing-at-point 'symbol)))
-        ;; doesn't show hidden files
-        "C-x f"   'counsel-file-jump
-        "C-x M-f" 'counsel-file-jump
-        "C-M-o"   'swiper-isearch-thing-at-point
-        :map isearch-mode-map
-        "C-o"     'swiper-from-isearch
-        :map ivy-minibuffer-map
-        "C-k"     'ivy-alt-done  ; C-j is used by tmux
-        "C-M-i"   'ivy-insert-current  ; M-i used to change windows
-        :map counsel-find-file-map
-        "C-l"     'counsel-up-directory
-        "C-x C-f" 'counsel-find-file-fallback-command)
   (setq  ; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true"))
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true")
+
+  (fset 'my/counsel-file-jump-ask (cmd!! #'counsel-file-jump '(4)))
+  (fset 'my/counsel-rg-symbol-at-point (cmd! (counsel-rg (thing-at-point 'symbol))))
+  (map! "C-c C-r"   'ivy-resume
+        "C-x m"     'counsel-M-x
+        "C-x C-m"   'counsel-M-x
+        "C-x C-b"   'counsel-switch-buffer
+        "C-x b"     'counsel-buffer-or-recentf
+        "C-o"       'counsel-semantic-or-imenu
+        "C-M-s"     'my/counsel-rg-symbol-at-point
+        ;; doesn't show hidden files
+        "C-x f"     'my/counsel-file-jump-ask
+        "C-x M-f"   'my/counsel-file-jump-ask
+        "C-x S-M-f" 'counsel-file-jump
+        "C-M-o"     'swiper-isearch-thing-at-point
+        :map isearch-mode-map
+        "C-o"       'swiper-from-isearch
+        :map ivy-minibuffer-map
+        "C-k"       'ivy-alt-done       ; C-j is used by tmux
+        "C-M-i"     'ivy-insert-current ; M-i used to change windows
+        :map counsel-find-file-map
+        "C-l"       'counsel-up-directory
+        "C-x C-f"   'counsel-find-file-fallback-command))
+
 
 ;;;; Defrepeater
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
@@ -117,35 +122,28 @@
 
 ;;; Editing
 
-;;;; Movement
-(setq set-mark-command-repeat-pop t)  ; can keep C-u C-SPC C-SPC C-SPC...
+(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
 (toggle-text-mode-auto-fill)
-(map! "M-g w" 'avy-goto-word-1  ; Avy binds, from its README.md
-      "M-g C" 'avy-goto-char)
 
-;;;; Replacement
-(defun case-sensitive-query-replace ()
+(map! "M-g w"   'avy-goto-word-1      ; Avy binds, from its README.md
+      "M-g C"   'avy-goto-char
+      "C-M-]"   'query-replace-regexp ; terminal support for qrr
+      "C-c r"   'revert-buffer        ; reverting
+      "C-c R"   'modi/revert-all-file-buffers
+      "M-;"     'comment-or-uncomment-line-or-region
+      "M-[ q"   'comment-or-uncomment-line-or-region ; terminal support
+      "C-c M-s" 'subword-mode
+      "C-c a"   'align-regexp)
+(defun my/case-sensitive-query-replace ()
   (interactive)
   (let ((case-fold-search nil)) (call-interactively 'query-replace)))
-(map! "C-M-]" 'query-replace-regexp)  ; terminal support
-
-;;;; Reverting
-(map! "C-c r" 'revert-buffer
-      "C-c R" 'modi/revert-all-file-buffers)
-
-;;;; comment-or-uncomment-line-or-region
-(map! "M-[ q" 'comment-or-uncomment-line-or-region
-      "M-;"   'comment-or-uncomment-line-or-region)
+ (use-package! re-builder
+  :config ; https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+  (setq reb-re-syntax 'string))
 
 ;; fix doom :/ backspace is really slow in notmuch reply buffers when writing
 ;; replies inline
 (advice-remove 'delete-backward-char #'+default--delete-backward-char-a)
-
-;; paste when it doesn't work™
-(map!
- "C-M-y" (cmd! (kill-new (string-trim (shell-command-to-string "wl-paste"))) (yank)))
-
-(map! "C-c M-s" 'subword-mode)
 
 ;;;; Dired
 (use-package! dired-hide-dotfiles
@@ -207,11 +205,13 @@
 
 ;;;; Compiling
 (add-hook 'compilation-finish-functions 'close-compile-window-if-successful)
-(map! "S-<f7>" (cmd! (switch-to-buffer (buffer-name (car (doom-matching-buffers
-                                                          "*compilation*")))))
+(fset 'my/switch-to-compilation-buffer
+      (cmd! (switch-to-buffer (buffer-name (car (doom-matching-buffers
+                                                 "*compilation*"))))))
+(map! "<f8>" 'my/switch-to-compilation-buffer
       :map prog-mode-map
-      "<f7>" 'compile
-      "<f8>" 'recompile)
+      "<f7>"   'compile
+      "S-<f7>" 'recompile)
 (setq compilation-message-face 'default)
 (add-hook! compilation-mode (setq truncate-lines nil) (hl-line-mode t))
 (defun doom-apply-ansi-color-to-compilation-buffer-h ())  ;; another instance of Doom breaking things
@@ -274,7 +274,9 @@
   (message "Opening %s in browser." url))
 
 ;;;; Man
-(setq Man-width-max nil)  ; as wide as it goes
+(use-package! man
+  :config
+  (setq Man-width-max nil))  ; as wide as it goes
 
 ;;; Epilogue
 (load (concat doom-private-dir "config-fns.el"))     ; useful function defininitons

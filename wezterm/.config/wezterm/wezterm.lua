@@ -1,4 +1,7 @@
 local wezterm = require 'wezterm'
+local act = wezterm.action
+local extkeys  = os.getenv("HOME").."/.config/wezterm/extkeys.lua"
+local specific = os.getenv("HOME").."/.config/wezterm/specific.lua"
 
 function do_if_file_exists(name)
    local f=io.open(name,"r")
@@ -7,18 +10,16 @@ function do_if_file_exists(name)
    dofile(name)
 end
 
-local extkeys  = os.getenv("HOME").."/.config/wezterm/extkeys.lua"
-local specific = os.getenv("HOME").."/.config/wezterm/specific.lua"
-do_if_file_exists(extkeys)
-do_if_file_exists(specific)
-
-local font_size_by_host;
+-- set this first, so it may be overwritten in specific
 local hostname = wezterm.hostname();
 if hostname == "Radus-Macbook-Pro.local" then
    font_size_by_host = 13.0;
 else
    font_size_by_host = 10.5;
 end
+
+do_if_file_exists(extkeys)
+do_if_file_exists(specific)
 
 keys = {
    -- for emacs undo, prefer super w/ same keys
@@ -27,6 +28,34 @@ keys = {
    {key = "=", mods = "CTRL", action = "DisableDefaultAssignment"},
    {key = "+", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
    {key = "Enter", mods = "ALT", action = "DisableDefaultAssignment"},
+   {
+      key = 'P',
+      mods = 'CTRL',
+      action = wezterm.action.QuickSelectArgs {
+         label = 'open url',
+         patterns = {
+            'https?://\\S+',
+         },
+         action = wezterm.action_callback(function(window, pane)
+               local url = window:get_selection_text_for_pane(pane)
+               wezterm.log_info('opening: ' .. url)
+               wezterm.open_with(url)
+         end),
+      },
+   },
+}
+
+-- to click links, need both shift (bypass_mouse_reporting_modifiers = true) +
+-- ctrl (mouse_reporting = false). somehow both are needed in tmux (mouse mode)
+-- + emacs (xterm-mouse-mode)
+mouse_bindings = {
+   {
+      event = { Up = { streak = 1, button = 'Left' } },
+      mods = 'CTRL',
+      action = act.OpenLinkAtMouseCursor,
+      -- allowing wezterm clicks to bypass tmux/emacs mouse captures:
+      mouse_reporting = true,
+   },
 }
 
 hyperlink_rules = {
@@ -58,6 +87,8 @@ return {
 
    -- keys and links
    keys = keys,
+   bypass_mouse_reporting_modifiers = 'SHIFT',
+   mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules,
 
    -- window
