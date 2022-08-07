@@ -1,4 +1,5 @@
 --type-add=desktop:*.desktop
+--column
 --max-columns=300
 --max-columns-preview
 --hidden

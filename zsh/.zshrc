@@ -78,6 +78,11 @@ fzfp () {
   eval "$FZF_DEFAULT_COMMAND $@" |
     fzf --preview 'bat --style=numbers --color=always {}'
 }
+rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
+  rg "$@" 2>/dev/null |
+    fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' --preview \
+      'clp -h {2} {1}' --bind 'ctrl-o:execute(emacsclient -nw +{2} {1})'
+}
 
 zinit light Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' prefix ''

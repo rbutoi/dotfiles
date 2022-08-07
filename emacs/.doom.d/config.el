@@ -16,7 +16,7 @@
 (setq
  confirm-kill-processes nil
  initial-major-mode 'lisp-interaction-mode)  ; undo Doom
-(server-start)  ; doesn't start when run standalone
+(require 'server) (or (server-running-p) (server-start))  ; doesn't start when run standalone
 
 ;;;; Buffers and windows
 (map!
@@ -122,7 +122,10 @@
 
 ;;; Editing
 
-(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+(setq set-mark-command-repeat-pop t ; can keep C-u C-SPC C-SPC C-SPC...
+      ; the original is    "[ \t]*\\([-–!|#%;>*·•‣⁃◦]+[ \t]*\\)*"
+      adaptive-fill-regexp "[ \t]*\\([-–!|#%;>*·•‣⁃◦+]+[ \t]*\\)*"
+      )
 (toggle-text-mode-auto-fill)
 
 (map! "M-g w"   'avy-goto-word-1      ; Avy binds, from its README.md
@@ -240,7 +243,7 @@
   (map! :map (prog-mode-map c-mode-base-map sh-mode-map)
         "C-c C-u" 'string-inflection-cycle))
 
-;;;; highlight-thing, which-function
+;;;; highlight-thing, which-function, rainbow-mode: visual programming things
 (use-package! highlight-thing
   :config
   ;; useful across buffers
@@ -248,7 +251,7 @@
         highlight-thing-limit-to-region-in-large-buffers-p nil
         highlight-thing-narrow-region-lines 15
         highlight-thing-large-buffer-limit 5000))
-(add-hook! prog-mode 'highlight-thing-mode 'which-function-mode)
+(add-hook! prog-mode 'highlight-thing-mode 'which-function-mode 'rainbow-mode)
 
 ;;; External
 
@@ -271,7 +274,9 @@
 ;; Print URL when opening browser when working over SSH, and to keep a log in
 ;; the messages buffer.
 (define-advice browse-url (:before (url &rest args))
-  (message "Opening %s in browser." url))
+  (message "Opening %s in browser." url)
+  ;; name begins with *help to be a +popup
+  (with-help-window "*helpful URL*" (format "URL to click: %s" (princ url))))
 
 ;;;; Man
 (use-package! man
