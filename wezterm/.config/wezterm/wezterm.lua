@@ -29,16 +29,23 @@ keys = {
    {key = "+", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
    {key = "Enter", mods = "ALT", action = "DisableDefaultAssignment"},
    {
-      key = 'P',
-      mods = 'CTRL',
+      key = "P",
+      mods = "CTRL",
       action = wezterm.action.QuickSelectArgs {
-         label = 'open url',
+         label = "open url",
          patterns = {
             'https?://\\S+',
+            '\\bb/[0-9]+\\S*\\b',
+            '\\bcl/[0-9]+\\S*\\b',
+            '\\bgo/\\S+\\b',
+            '\\bgoogle3/[\\w./-]+',
          },
          action = wezterm.action_callback(function(window, pane)
                local url = window:get_selection_text_for_pane(pane)
-               wezterm.log_info('opening: ' .. url)
+               if not string.match(url, '^https?://') then
+                  url = 'http://' .. url
+               end
+               wezterm.log_info("opening: " .. url)
                wezterm.open_with(url)
          end),
       },

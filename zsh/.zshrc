@@ -83,6 +83,8 @@ rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
     fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' --preview \
       'clp -h {2} {1}' --bind 'ctrl-o:execute(emacsclient -nw +{2} {1})'
 }
+apt_search_fzf()  { aptitude search "$@" | grep -Ev '^v|:i386' | fzf | choose 1; }
+apt_install_fzf() { sudo apt install $(apt_search_fzf "$@"); }
 
 zinit light Aloxaf/fzf-tab
 zstyle ':fzf-tab:*' prefix ''
@@ -368,6 +370,7 @@ if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
   echo -e "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))", running now...\033[0m"
   date +%s >~/.cache/last_topgrade
+  date +%s >/tmp/topgrades_this_boot  # why not
   if [[ -n "$TMUX" ]]; then
     tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade; echo press enter to exit...; read'
   else
