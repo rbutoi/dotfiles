@@ -202,6 +202,7 @@
   (add-hook! (notmuch-search-mode notmuch-tree-mode)
     (defun notmuch-poll-if-needed ()
       "Take note of out-of-date pulled mail (by more than 10 minutes)"
+      (interactive)
       (let ((mail-sync-age (time-subtract (current-time) (file-attribute-modification-time
                                                           (file-attributes (s-concat (notmuch-config-get "database.path") "/.notmuch/xapian"))))))
         (unless (time-less-p mail-sync-age
