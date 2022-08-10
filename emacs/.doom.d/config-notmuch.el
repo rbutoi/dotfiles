@@ -9,9 +9,9 @@
  "C-c M" 'notmuch)
 (after! notmuch
   (setq
-   ;; needed an external script for proper ssh creds for muchsync and since
+   ;; laptop/muchsync needs an external script for proper ssh creds and since
    ;; notmuch's call-process wrapper doesn't pass any args
-   notmuch-poll-script "notmuch_new_systemd.sh"
+   notmuch-poll-script (when IS-GLAPTOP "notmuch_new_systemd.sh")
 
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t
@@ -204,7 +204,7 @@
       "Take note of out-of-date pulled mail (by more than 10 minutes)"
       (interactive)
       (let ((mail-sync-age (time-subtract (current-time) (file-attribute-modification-time
-                                                          (file-attributes (s-concat (notmuch-config-get "database.path") "/.notmuch/xapian"))))))
+                                                          (file-attributes "/tmp/mail_unread_count_personal")))))
         (unless (time-less-p mail-sync-age
                  (seconds-to-time (* 10 60)))
           (message (format-seconds "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync"

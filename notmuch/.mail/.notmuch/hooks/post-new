@@ -48,6 +48,7 @@ if pgrep '^sway$' >/dev/null; then
 fi
 
 # cache unread count in /tmp
-[ -e ~/.mail/work ]     && notmuch count 'is:work     and is:inbox and is:unread' > /tmp/mail_unread_count_work     || true
-[ -e ~/.mail/personal ] && notmuch count 'is:personal and is:inbox and is:unread' > /tmp/mail_unread_count_personal || true
-[ -e ~/.mail/hotmail  ] && notmuch count 'is:hotmail  and is:inbox and is:unread' > /tmp/mail_unread_count_hotmail  || true
+DB_PATH=$(notmuch config get database.path)
+[ -e $DB_PATH/work ]     && notmuch count 'is:work     and is:inbox and is:unread' > /tmp/mail_unread_count_work     || true
+[ -e $DB_PATH/personal ] && notmuch count 'is:personal and is:inbox and is:unread' > /tmp/mail_unread_count_personal || true
+[ -e $DB_PATH/hotmail  ] && notmuch count 'is:hotmail  and is:inbox and is:unread' > /tmp/mail_unread_count_hotmail  || true
