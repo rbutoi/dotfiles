@@ -1,41 +1,43 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
-# if we're using muchsync, do it one more time to push read messages
-if [[ $(muchsync --self) != 7633996751889129249 ]]; then
-  set -e
+if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+  # sort emails into appropriate account tag
+  notmuch tag +work     -- tag:new path:work/**
+  notmuch tag +personal -- tag:new path:personal/**
+  notmuch tag +hotmail  -- tag:new path:hotmail/**
+
+  # mbsync doesn't do any notmuch tagging, just maildir syncing
+  notmuch tag +inbox    -- tag:new path:hotmail/Inbox/**
+  notmuch tag +sent     -- tag:new path:hotmail/Sent/**
+  notmuch tag +draft    -- tag:new path:hotmail/Drafts/**
+
+  # since the "primary" is represented by a lack of a category tag, give it a tag
+  # to make it easier
+  notmuch tag +primary  -- tag:new and tag:personal and \
+    not tag:social                                  and \
+    not tag:promotions                              and \
+    not tag:updates                                 and \
+    not tag:forums
+
+  # remove new tag
+  notmuch tag -new      -- tag:new
+
+  # all of real filtering and tagging is done by Gmail, so they are accessible
+  # from the web, mobile, etc
+else
+  # if we're using muchsync, do it one more time to push read messages
   gcertstatus && ssh -O check box &&
     # nonew very important, avoids infinite recursion
-    muchsync --nonew box
-  set +e
-  exit 0
+    muchsync --nonew box ||
+      # fail out so we don't touch unread files, which are also used for mail
+      # freshness
+      exit 1
 fi
-
-# sort emails into appropriate account tag
-notmuch tag +work     -- tag:new path:work/**
-notmuch tag +personal -- tag:new path:personal/**
-notmuch tag +hotmail  -- tag:new path:hotmail/**
-
-# mbsync doesn't do any notmuch tagging, just maildir syncing
-notmuch tag +inbox    -- tag:new path:hotmail/Inbox/**
-notmuch tag +sent     -- tag:new path:hotmail/Sent/**
-notmuch tag +draft    -- tag:new path:hotmail/Drafts/**
-
-# since the "primary" is represented by a lack of a category tag, give it a tag
-# to make it easier
-notmuch tag +primary  -- tag:new and tag:personal and \
-  not tag:social                                  and \
-  not tag:promotions                              and \
-  not tag:updates                                 and \
-  not tag:forums
-
-# remove new tag
-notmuch tag -new      -- tag:new
-
-# all of real filtering and tagging is done by Gmail, so they are accessible
-# from the web, mobile, etc
 
 ################################################################################
 # notify new mail
+
 if pgrep '^sway$' >/dev/null; then
   # don't notify in emacs, not needed when looking
   export SWAYSOCK=$(sway --get-socketpath)

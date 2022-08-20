@@ -1,8 +1,10 @@
 #!/bin/bash
 
+DB_PATH=$(notmuch config get database.path)
+
 # log to systemd if not running from systemd service which is already logged
 if [[ -n "$IN_NOTMUCH_SYSTEMD" ]]; then
-  ~/.mail/.notmuch/hooks/pre-new-help "$@"
+  $DB_PATH/.notmuch/hooks/pre-new-help "$@"
 else
-  ~/.mail/.notmuch/hooks/pre-new-help "$@" | tee >(logger -t notmuch-new-adhoc) 2>&1
+  $DB_PATH/.notmuch/hooks/pre-new-help "$@" | tee >(logger -t notmuch-new-adhoc) 2>&1
 fi

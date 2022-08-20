@@ -1,10 +1,5 @@
 #!/bin/bash
-set -xeuo pipefail
-
-# bail without internet, with a single 10s retry
-ping -q -c 1 8.8.8.8 2>&1 >/dev/null ||
-    (echo "ping check failed, retrying in 10s..." &&
-         sleep 10s && ping -q -c 1 8.8.8.8 2>&1 >/dev/null)
+set -euo pipefail
 
 # if we are the muchsync server, actually sync. otherwise run muchsync
 if [[ $(muchsync --self) == 7633996751889129249 ]]; then
