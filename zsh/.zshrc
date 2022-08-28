@@ -370,12 +370,10 @@ if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
   echo -e "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))", running now...\033[0m"
   date +%s >~/.cache/last_topgrade
-  date +%s >/tmp/topgrades_this_boot  # why not
   if [[ -n "$TMUX" ]]; then
     tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade; echo press enter to exit...; read'
   else
-    # the built-in topgrade --tmux doesn't dedup calls
-    tmux new -As topgrade -- 'topgrade; echo press enter to exit...; read'
+    topgrade --tmux
   fi
 fi
 

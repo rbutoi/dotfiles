@@ -93,6 +93,8 @@
         "C-x f"     'my/counsel-file-jump-ask
         "C-x M-f"   'my/counsel-file-jump-ask
         "C-x S-M-f" 'counsel-file-jump
+        "C-c M-c"   (defun my/find-dot-config () (interactive)
+                      (counsel-file-jump "" "~/.config/"))
         "C-M-o"     'swiper-isearch-thing-at-point
         :map isearch-mode-map
         "C-o"       'swiper-from-isearch
@@ -108,17 +110,20 @@
 (map! [remap doom/toggle-line-numbers] (defrepeater #'doom/toggle-line-numbers)
       [remap string-inflection-cycle]  (defrepeater #'string-inflection-cycle))
 
+;;;; which-key
+(use-package! which-key :config (setq which-key-show-docstrings t))
+
 ;;;; Word wrap
 (map! "C-c C-w" 'toggle-truncate-lines)
 
 ;;;; Folding
-(setq +fold/ed-all nil)
+(setq my/+folded-all nil)
 (map! "C-\\"      '+fold/toggle
-      "C-c C-\\"  (defun +fold/my-toggle-all ()
+      "C-c C-\\"  (defun my/+fold-toggle-all ()
                     "Toggle all the folds in the buffer."
                     (interactive)
-                    (if +fold/ed-all (+fold/open-all) (+fold/close-all))
-                    (setq +fold/ed-all (not +fold/ed-all))))
+                    (if my/+folded-all (+fold/open-all) (+fold/close-all))
+                    (setq my/+folded-all (not my/+folded-all))))
 
 ;;; Editing
 

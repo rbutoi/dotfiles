@@ -1,15 +1,14 @@
 // -*- mode: json; -*-
 [{
-  "output": ["Unknown 0x1400 0x00000000"],
+  "output": ["Unknown 0x06AA 0x00000000"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
     "sway/workspaces",
     "sway/mode",
-    "custom/spotify-icon",
-    "custom/spotify",
+    "wlr/taskbar",
   ],
-  "modules-center": ["wlr/taskbar"],
+  "modules-center": [],
   "modules-right": [
     "custom/mail",
     "custom/updates",
@@ -36,9 +35,9 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.3} ",
+    "format": " {icon}{title:.10} ",
     "max-length": 200,
-    "icon-size": 32,
+    "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close",
   },
@@ -48,7 +47,7 @@
     "return-type": "json",
     "format": "🎁 {}",
     "interval": 3600,
-    "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
+    "on-click": "(tmux neww topgrade && swaymsg '[app_id=\"wezterm\"] focus') || wezterm start -- topgrade; pkill -RTMIN+8 waybar",
     "tooltip": false,
     "signal": 8
   },
@@ -58,26 +57,6 @@
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
-  },
-  "custom/spotify-icon": {
-    "format": "",
-    "tooltip": false,
-    "on-click": "swaymsg scratchpad show",
-    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
-    "on-click-middle": "gyrc",
-    "on-scroll-up":   "yamaha_vol up",
-    "on-scroll-down": "yamaha_vol down",
-  },
-  "custom/spotify": {
-    "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
-    "escape": true,
-    "on-click": "swaymsg scratchpad show",
-    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
-    "on-click-middle": "gyrc",
-    "on-scroll-up":   "yamaha_vol up",
-    "on-scroll-down": "yamaha_vol down",
-    "tooltip": true,
-    "max-length": 80
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
     "exec": "date '+%a %d⏰%H:%M'",
@@ -91,9 +70,9 @@
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
-    "on-click-right": "pamixer --toggle-mute || notify-send -c volume \"$(pamixer --get-volume)\"",
-    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
-    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@",
+    "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
     "tooltip": false,
   },
   "backlight": {
@@ -108,21 +87,21 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}",
+    "format": "{icon}{capacity}",
     "format-charging": "{icon}{capacity}+",
     "format-warning": "{icon}{capacity}",
     "format-critical": "{icon}{capacity}",
     "format-unknown": "{icon}(l)",
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
-    "on-click": "battery-toggle-full-or-limit-charge.sh",
+    "on-click": "gnome-power-statistics",
   },
   "tray": {
     "icon-size": 28
   },
   "custom/home": {
     "format": "🏠 ",
-    "on-click": "xdg-open ~",
+    "on-click": "nautilus",
     "tooltip": false
   },
   "custom/weather": {
@@ -136,18 +115,16 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "foot --fullscreen htop",
+    "on-click": "wezterm start -- btop",
     "interval": 30
   },
 }, {
-  "output": ["Unknown P2718EC C8110094", "Dell Inc. DELL S3221QS 2R8QTB3"],
+  "output": ["Dell Inc. DELL S3221QS 2R8QTB3"],
   "position": "bottom",
   "modules-left": [
     "custom/home",
     "sway/workspaces",
     "sway/mode",
-    "custom/spotify-icon",
-    "custom/spotify",
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
@@ -175,9 +152,9 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.8} ",
+    "format": " {icon}{title} ",
     "max-length": 200,
-    "icon-size": 32,
+    "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close",
   },
@@ -187,7 +164,7 @@
     "return-type": "json",
     "format": "🎁 {}",
     "interval": 3600,
-    "on-click": "(tmux neww 'topgrade' && swaymsg '[app_id=\"kitty\"] focus') || kitty 'topgrade'; pkill -RTMIN+8 waybar",
+    "on-click": "(tmux neww topgrade && swaymsg '[app_id=\"wezterm\"] focus') || wezterm start -- topgrade; pkill -RTMIN+8 waybar",
     "tooltip": false,
     "signal": 8
   },
@@ -197,26 +174,6 @@
     "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
-  },
-  "custom/spotify-icon": {
-    "format": "",
-    "tooltip": false,
-    "on-click": "swaymsg scratchpad show",
-    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
-    "on-click-middle": "gyrc",
-    "on-scroll-up":   "yamaha_vol up",
-    "on-scroll-down": "yamaha_vol down",
-  },
-  "custom/spotify": {
-    "exec": "playerctl metadata -f '{{xesam:artist}} - {{xesam:title}}' -F",
-    "escape": true,
-    "on-click": "swaymsg scratchpad show",
-    "on-click-right": "URL=192.168.1.17/YamahaExtendedControl/v1/netusb; if curl -s ${URL}/getPlayInfo | jq -r .playback | grep -q 'play\\|pause'; then set -x; curl -s ${URL}/setPlayback?playback=play_pause; else set -x; playerctl play-pause; fi",
-    "on-click-middle": "gyrc",
-    "on-scroll-up":   "yamaha_vol up",
-    "on-scroll-down": "yamaha_vol down",
-    "tooltip": true,
-    "max-length": 80
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
     "exec": "date '+%a %d⏰%H:%M'",
@@ -230,9 +187,9 @@
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
-    "on-click-right": "pamixer --toggle-mute || notify-send -c volume \"$(pamixer --get-volume)\"",
-    "on-scroll-up":   "pamixer --unmute --increase 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
-    "on-scroll-down": "pamixer --unmute --decrease 1 && notify-send -c volume \"$(pamixer --get-volume)\"",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@",
+    "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
     "tooltip": false,
   },
   "backlight": {
@@ -247,21 +204,21 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}",
+    "format": "{icon}{capacity}",
     "format-charging": "{icon}{capacity}+",
     "format-warning": "{icon}{capacity}",
     "format-critical": "{icon}{capacity}",
     "format-unknown": "{icon}(l)",
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
-    "on-click": "battery-toggle-full-or-limit-charge.sh",
+    "on-click": "gnome-power-statistics",
   },
   "tray": {
     "icon-size": 28
   },
   "custom/home": {
     "format": "🏠 ",
-    "on-click": "xdg-open ~",
+    "on-click": "nautilus",
     "tooltip": false
   },
   "custom/weather": {
@@ -275,13 +232,14 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "foot --fullscreen htop",
+    "on-click": "wezterm start -- btop",
     "interval": 30
   },
 }, {
   "output": ["Acer Technologies Acer CB271HU T9TAA0014200"],
   "position": "bottom",
   "modules-left": [
+    "custom/home",
     "sway/workspaces",
   ],
   "modules-center": ["wlr/taskbar"],
@@ -289,10 +247,15 @@
     "custom/load",
     "custom/clock",
   ],
+  "custom/home": {
+    "format": "🏠 ",
+    "on-click": "nautilus",
+    "tooltip": false
+  },
   "wlr/taskbar": {
-    "format": " {icon}{title:.7} ",
-    "max-length": 200,
-    "icon-size": 32,
+    "format": " {icon}{title:.20} ",
+    "max-length": 80,
+    "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close"
   },
@@ -300,7 +263,7 @@
     "exec": "cut -f1 -d' ' /proc/loadavg",
     "format": "💻{}",
     "tooltip": false,
-    "on-click": "foot --fullscreen htop",
+    "on-click": "wezterm start -- btop",
     "interval": 30
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668

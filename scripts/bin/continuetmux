@@ -1,5 +1,0 @@
-#!/bin/sh
-
-command -v tmx2 >/dev/null && TMUX=tmx2 || TMUX=tmux
-
-$TMUX new-session -ADs auto

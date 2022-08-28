@@ -38,7 +38,7 @@
   border-radius: 0;
   font-family: Noto Sans;
   font-size: 12pt;
-  min-height: 0;
+  min-height: 32px;
 }
 
 window#waybar {
@@ -173,11 +173,11 @@ window#waybar {
   color: #1db954;
 }
 
-#custom-mail, #custom-weather, #custom-load, #custom-clock, #battery {
+#custom-mail, #custom-weather, #custom-load, #battery {
   font-family: JetBrains Mono;
-  font-size: 14px;
+  font-size: 18px;
 }
 
-/* Local Variables: */
-/* eval: (rainbow-mode) */
-/* End: */
+#custom-clock {
+  font-size: 20px;
+}

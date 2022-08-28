@@ -7,7 +7,7 @@ set $term      wezterm start --
 set $term_tmux $term tmux new -ADs auto
 set $web       firefox-nightly
 set $menu      ~/bin/wofi-wrap.sh
-set $editor    $term emacsclient -nw -a ""
+set $editor    $term tmux new -ADs emacs emacsclient -nw -a ""
 set $locker    "swaylock --daemonize --screenshots            \
   --indicator --indicator-radius 100 --indicator-thickness 7  \
   --effect-blur 5x5 --grace 0.5 --fade-in 0.25"
@@ -25,16 +25,16 @@ input type:pointer {
     pointer_accel -0.4
 }
 # manages displays
-exec_always        sh -c 'pkill kanshi; kanshi -c ~/.config/kanshi/$HOSTNAME'
+exec_always   pkill kanshi; exec_always kanshi -c ~/.config/kanshi/$HOSTNAME
 
 #
 # startup applications
 #
-exec_always systemd-cat ~/oss/Waybar/build/waybar
+exec_always sh -c "pkill waybar; exec waybar"
 
 exec systemd-cat dex -a -e SWAY                # autostart
 exec systemd-cat udiskie --tray --appindicator # automount manager
-                                                              # clipboard
+                                               # clipboard
 exec systemd-cat wl-paste -t text --watch clipman --notify store --no-persist
 exec systemd-cat nm-applet --indicator         # network status
 exec systemd-cat poweralertd                   # power notifications
@@ -54,7 +54,7 @@ no_focus   [app_id="^$" title="^$"]
 for_window [app_id="gsimplecal"]                             move position mouse, move up 40 px, move left 20 px
 for_window [class="Emacs"]                                   opacity 0.93
 for_window [app_id="emacs"]                                  opacity 0.93
-for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.8
+for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.95
 for_window [app_id="nemo"]                                   opacity 0.95
 for_window [app_id="org.gnome.Nautilus"]                     opacity 0.95
 for_window [app_id="blueman-manager"]                        floating enable
@@ -82,10 +82,13 @@ for_window [title="^Close Firefox$"]                         floating enable
 for_window [title="^Edit with Emacs FRAME$"]                 floating enable
 for_window [title="^Picture in picture$"]                    floating enable
 assign [class="hl2_linux"]                                   workspace 3
-assign [class="Signal"]                                      workspace 4
+assign [class="Signal"]                                      workspace 5
 assign [class="discord"]                                     workspace 4
-assign [title="Chat - Google Chrome"]                        workspace 4
+# all chrome apps
+assign [app_id="^chrome-"]                                   workspace 4
 assign [title="Google(.com)? - Calendar"]                    workspace 4
+# chrome apps steal Mod4 for some reason
+for_window [app_id="chrome"]                               shortcuts_inhibitor disable
 
 #
 # display
@@ -129,22 +132,23 @@ set $up     k
 set $right  l
 
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec swaymsg                            \
-  '[app_id="^org\.wezfurlong\.wezterm" title=" \[auto\]$"] focus' || \
+bindsym $mod+Shift+Return    exec swaymsg                 \
+  '[app_id="wezterm" title="^[^[].* \[auto\]$"] focus' || \
   $term_tmux
-bindsym $mod+w               exec swaymsg '[app_id="Google-chrome"] focus' || $web
+bindsym $mod+w               exec swaymsg                 \
+ '[app_id="[Gg]oogle-chrome"] focus'                   || $web
 bindsym $mod+Shift+w         exec $web
-bindsym $mod+e               exec swaymsg                                \
-  '[app_id="^org\.wezfurlong\.wezterm" title=" – Doom Emacs$"] focus' || \
-  swaymsg '[app_id="emacs"] focus' || swaymsg '[class="Emacs"] focus' || $editor
+bindsym $mod+e               exec swaymsg                 \
+  '[app_id="wezterm" title=" – Doom Emacs$"] focus'    || \
+  swaymsg '[app_id="emacs"] focus'                     || \
+  swaymsg '[class="Emacs"] focus'                      || $editor
 bindsym $mod+Shift+e         exec $editor
 bindsym $mod+c               kill
 bindsym $mod+space           exec $menu
 bindsym $alt+F2              exec $menu "-Srun"
 bindsym $mod+Shift+space     exec $menu "-Sdmenu,drun,run" # also run, too much for default
 bindsym $mod+q               exec wlogout -p layer-shell
-bindsym $mod+Shift+q         exec sh -c 'pkill waybar; swaymsg reload'
-bindsym $mod+Ctrl+Shift+q    exec sh -c 'pkill waybar; swaymsg reload'
+bindsym $mod+Shift+q         reload
 bindsym $mod+Shift+Backspace exit
 #
 # Moving around:
@@ -164,35 +168,47 @@ bindsym $mod+Shift+$right move right
 workspace_auto_back_and_forth yes
 mouse_warping output
 # switch to workspace
-bindsym --no-repeat $mod+1       workspace 1
-bindsym --no-repeat $mod+2       workspace 2
-bindsym --no-repeat $mod+3       workspace 3
-bindsym --no-repeat $mod+4       workspace 4
-bindsym --no-repeat $mod+5       workspace 5
-bindsym --no-repeat $mod+6       workspace 6
-bindsym --no-repeat $mod+Ctrl+1  workspace 1
-bindsym --no-repeat $mod+Ctrl+2  workspace 2
-bindsym --no-repeat $mod+Ctrl+3  workspace 3
-bindsym --no-repeat $mod+Ctrl+4  workspace 4
-bindsym --no-repeat $mod+Ctrl+5  workspace 5
-bindsym --no-repeat $mod+Ctrl+6  workspace 6
+bindsym --no-repeat $mod+1                            workspace 1
+bindsym --no-repeat $mod+2                            workspace 2
+bindsym --no-repeat $mod+3                            workspace 3
+bindsym --no-repeat $mod+4                            workspace 4
+bindsym --no-repeat $mod+5                            workspace 5
+bindsym --no-repeat $mod+6                            workspace 6
+bindsym --no-repeat $mod+7                            workspace 7
+bindsym --no-repeat $mod+8                            workspace 8
+bindsym --no-repeat $mod+9                            workspace 9
+bindsym --no-repeat $mod+0                            workspace 0
+bindsym --no-repeat $mod+Ctrl+1                       workspace 1
+bindsym --no-repeat $mod+Ctrl+2                       workspace 2
+bindsym --no-repeat $mod+Ctrl+3                       workspace 3
+bindsym --no-repeat $mod+Ctrl+4                       workspace 4
+bindsym --no-repeat $mod+Ctrl+5                       workspace 5
+bindsym --no-repeat $mod+Ctrl+6                       workspace 6
+bindsym --no-repeat $mod+Ctrl+7                       workspace 7
+bindsym --no-repeat $mod+Ctrl+8                       workspace 8
+bindsym --no-repeat $mod+Ctrl+9                       workspace 9
+bindsym --no-repeat $mod+Ctrl+0                       workspace 0
 # move focused container to workspace
-bindsym --no-repeat $mod+Shift+1 move container to workspace 1
-bindsym --no-repeat $mod+Shift+2 move container to workspace 2
-bindsym --no-repeat $mod+Shift+3 move container to workspace 3
-bindsym --no-repeat $mod+Shift+4 move container to workspace 4
-bindsym --no-repeat $mod+Shift+5 move container to workspace 5
-bindsym --no-repeat $mod+Shift+6 move container to workspace 6
+bindsym --no-repeat $mod+Shift+1    move container to workspace 1
+bindsym --no-repeat $mod+Shift+2    move container to workspace 2
+bindsym --no-repeat $mod+Shift+3    move container to workspace 3
+bindsym --no-repeat $mod+Shift+4    move container to workspace 4
+bindsym --no-repeat $mod+Shift+5    move container to workspace 5
+bindsym --no-repeat $mod+Shift+6    move container to workspace 6
+bindsym --no-repeat $mod+Shift+7    move container to workspace 7
+bindsym --no-repeat $mod+Shift+8    move container to workspace 8
+bindsym --no-repeat $mod+Shift+9    move container to workspace 9
+bindsym --no-repeat $mod+Shift+0    move container to workspace 0
 # other monitor
-bindsym --no-repeat $mod+Shift+n move container to output left ; focus output left
-bindsym --no-repeat $mod+Shift+m move container to output right; focus output right
+bindsym --no-repeat $mod+Shift+n    move container to output left ; focus output left
+bindsym --no-repeat $mod+Shift+m    move container to output right; focus output right
 # next and previous workspace
-bindsym --no-repeat $mod+n       focus output left
-bindsym --no-repeat $mod+m       focus output right
-bindsym --no-repeat $mod+Ctrl+p  workspace prev_on_output --create
-bindsym --no-repeat $mod+Ctrl+n  workspace next_on_output --create
-bindsym --whole-window $mod+button4 workspace prev_on_output --create
-bindsym --whole-window $mod+button5 workspace next_on_output --create
+bindsym --no-repeat $mod+n          focus output left
+bindsym --no-repeat $mod+m          focus output right
+bindsym --no-repeat $mod+Ctrl+p     workspace prev_on_output
+bindsym --no-repeat $mod+Ctrl+n     workspace next_on_output
+bindsym --whole-window $mod+button4 workspace prev_on_output
+bindsym --whole-window $mod+button5 workspace next_on_output
 #
 # Layout stuff:
 #
@@ -203,7 +219,6 @@ bindsym $mod+s        layout stacking
 bindsym $mod+Shift+s  layout tabbed
 bindsym $mod+d        layout toggle split
 bindsym $mod+f        fullscreen
-bindsym $mod+Shift+f  move container to output HDMI-A-1; focus output HDMI-A-1; fullscreen enable
 bindsym $mod+t        floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
 bindsym $mod+Shift+t  sticky toggle
@@ -230,9 +245,9 @@ bindsym $mod+Shift+Ctrl+l     exec $locker
 bindsym Print                 exec sway-interactive-screenshot
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
-bindsym XF86AudioMute         exec pamixer --toggle-mute
-bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioMute         exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
+bindsym XF86AudioRaiseVolume  exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume  exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
