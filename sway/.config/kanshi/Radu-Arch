@@ -1,4 +1,4 @@
 profile desktop {
-  output "Dell Inc. DELL S3221QS 2R8QTB3" position 0,236 scale 1.4
-  output "Acer Technologies Acer CB271HU T9TAA0014200" position 2745,0 transform 270
+  output "Dell Inc. DELL S3221QS 2R8QTB3" position 0,117 scale 1.25
+  output "Acer Technologies Acer CB271HU T9TAA0014200" position 3072,0 transform 270
 }

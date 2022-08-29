@@ -83,6 +83,12 @@ return {
    font = wezterm.font("JetBrains Mono"),
    font_size = 12,              -- also the default
    color_scheme = "Gruvbox Dark",
+   -- cursor
+   default_cursor_style = 'BlinkingBar',
+   animation_fps = 1,
+   cursor_blink_ease_in = 'Constant',
+   cursor_blink_ease_out = 'Constant',
+   cursor_thickness = "1pt",
 
    -- keys and links
    keys = keys,

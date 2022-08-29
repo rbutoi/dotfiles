@@ -40,7 +40,6 @@ broot-git
 brother-hll2370dw
 btop-git
 bzip2
-caddy-git
 calibre-git
 cargo-bloat
 cargo-update-git
@@ -63,7 +62,7 @@ cryptsetup
 csfml
 cups
 darkstat
-darktable-git
+darktable
 dconf-editor
 deluge-git
 devhelp
@@ -75,7 +74,7 @@ dmidecode
 docker
 docker-compose
 downgrade
-duf-git
+duf
 dust
 e2fsprogs
 edk2-shell
@@ -116,12 +115,14 @@ gedit
 geoip
 ghex
 gimp
+gist
 git
 git-delta-git
 gitg
 glade
 glances
 glibc
+gmailieer
 gnome-backgrounds
 gnome-books
 gnome-boxes
@@ -269,7 +270,6 @@ man-pages
 mariadb
 matrix-synapse-git
 mautrix-facebook-git
-mautrix-whatsapp
 mdadm
 mediainfo
 meld-git
@@ -294,7 +294,6 @@ ncdu
 needrestart
 nerd-fonts-hack
 netctl
-netdata-git
 networkmanager
 network-manager-applet
 nextcloud
@@ -379,13 +378,17 @@ python-plotly
 python-pycryptodome
 python-pyfiglet
 python-pyinquirer
+python-pyqt6
+python-pyqt6-webengine
 python-tabulate
 python-tqdm
 python-zeroconf
 qalculate-gtk
 qbittorrent
+qbittorrent-nox
 qt5ct
 qt5-wayland
+qt6-imageformats
 qt6-wayland
 quadrapassel
 r8168
@@ -426,7 +429,6 @@ socat
 solaar
 sonarr
 speedtest-cli
-starship-git
 steam
 stig-git
 stow
@@ -439,6 +441,7 @@ swayidle-git
 swayimg-git
 sway-interactive-screenshot
 swaylock-effects-git
+swaync-git
 swayrbar
 swayr-git
 swell-foop

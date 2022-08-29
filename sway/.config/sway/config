@@ -25,7 +25,7 @@ input type:pointer {
     pointer_accel -0.4
 }
 # manages displays
-exec_always   pkill kanshi; exec_always kanshi -c ~/.config/kanshi/$HOSTNAME
+exec_always sh -c "pkill kanshi; exec kanshi -c ~/.config/kanshi/$HOSTNAME"
 
 #
 # startup applications

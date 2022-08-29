@@ -216,6 +216,21 @@ wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(co
 find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# camera
+alias find_by_date='find . -printf "%T@ %Tc %p\n" | sort -n'
+
+# FILES=(DSCFnnnn.JPG ...)
+# pushd /media/disk/DCIM/111_FUJI/ &&
+#     rsync --archive --partial --info=progress2 $FILES \
+#     /mnt/the_drive/Photos/BLAH/ &&
+#     popd
+
+check_missing_camera_files() {
+  comm -23                                               \
+    <(fd . /media/disk/DCIM      -tf -x basename | sort) \
+    <(fd . /mnt/the_drive/Photos -tf -x basename | sort | grep -Ev 'xmp$')
+}
+
 fix_i3_or_swaysock() {
   pgrep -x i3 >/dev/null && fix_i3sock || fix_swaysock
 }
