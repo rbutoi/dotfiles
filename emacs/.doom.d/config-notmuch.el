@@ -66,8 +66,8 @@
    notmuch-search-result-format--wide
    '(("date"    . "%12s "       )
      ("count"   . "%-7s "       )
-     ("authors" . "%-35s "      )
-     ("subject" . "%-96.96s "   )
+     ("authors" . "%-50s "      )
+     ("subject" . "%-150.150s " )
      ("tags"    . "%s"          ))
    notmuch-search-result-format notmuch-search-result-format--narrow
 

@@ -189,3 +189,9 @@ Like ChromeOS's hterm."
   (interactive)
   (my/enable-saved-theme)
   (setq scroll-conservatively my/old-scroll-conservatively))
+
+;; https://emacs.stackexchange.com/a/68048/26271
+(defun add-list-to-list (dst src)
+  "Similar to `add-to-list', but accepts a list as 2nd argument"
+  (set dst
+       (append (eval dst) src)))
