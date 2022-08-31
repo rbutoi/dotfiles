@@ -163,20 +163,29 @@ shell exits, the buffer is killed."
     (vterm-send-string command)
     (vterm-send-return)))
 
-(defun disable-theme-slow-terminal ()
+(defun my/disable-save-theme ()
+  "Disable the theme, and save it to re-enable."
+  (interactive)
+  (disable-theme (car custom-enabled-themes))
+  (setq my/old-doom-theme doom-theme
+        doom-theme        nil))
+
+(defun my/enable-saved-theme ()
+  (interactive)
+  (setq doom-theme my/old-doom-theme)
+  (load-theme doom-theme t nil)
+  (doom/reload-theme))
+
+(defun my/slow-terminal ()
   "For when the terminal is very slow.
 
 Like ChromeOS's hterm."
   (interactive)
-  (disable-theme (car custom-enabled-themes))
-  (setq old-doom-theme            doom-theme
-        old-scroll-conservatively scroll-conservatively
-        doom-theme                nil
-        scroll-conservatively     0))
+  (my/disable-save-theme)
+  (setq my/old-scroll-conservatively scroll-conservatively
+        scroll-conservatively        0))
 
-(defun enable-theme-fast-terminal ()
+(defun my/fast-terminal ()
   (interactive)
-  (setq doom-theme            old-doom-theme
-        scroll-conservatively old-scroll-conservatively)
-  (load-theme doom-theme t nil)
-  (doom/reload-theme))
+  (my/enable-saved-theme)
+  (setq scroll-conservatively my/old-scroll-conservatively))
