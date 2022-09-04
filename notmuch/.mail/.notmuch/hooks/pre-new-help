@@ -1,8 +1,6 @@
 #!/bin/bash
-set -euo pipefail
 
-# if we are the muchsync server, actually sync. otherwise run muchsync
-if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+sync_gmi() {
   # poll gmi and mbsync
   command -v gmi >/dev/null && GMI=gmi || GMI=~/bin/gmi
 
@@ -10,11 +8,30 @@ if [[ $(muchsync --self) == 7633996751889129249 ]]; then
   [[ -e ~/.mail/personal ]] && $GMI sync -C ~/.mail/personal &
   [[ -e ~/.mail/hotmail  ]] &&    mbsync            hotmail  &
   wait
-else
-  # needs gcert and preferrably a multiplexed connection to avoid constant gnubby touches
-  gcertstatus && ssh -O check box &&
+}
+
+sync_muchsync() {
+  if gcertstatus; then
     # nonew very important, avoids infinite recursion
+    if ! ssh -O check box; then
+      notify-send "need sk touch" "run \`ssh box true\` in a terminal" && return 1
+    fi
     muchsync --nonew box
+  else
+    # some scope-screep, but since this hook runs periodically, it's a good place
+    # to remind less frequently about invalid gcert
+    if [[ $(($(<~/.cache/last_gcert_invalid_notif) + 3600)) -lt $(date +%s) ]] 2>/dev/null; then
+      date +%s >~/.cache/last_gcert_invalid_notif
+      notify-send "invalid gcert" "$(gcertstatus 2>&1)"
+    fi
+  fi
+}
+
+# if we are the muchsync server, actually sync. otherwise run muchsync
+if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+  sync_gmi
+else
+  sync_muchsync
 fi
 
 # rm deleted mail

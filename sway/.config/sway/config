@@ -4,10 +4,10 @@
 # basics
 #
 set $term      wezterm start --
-set $term_tmux $term tmux new -ADs auto
+set $term_tmux $term tmux new -As auto
+set $editor    $term tmux new -As emacs emacsclient -nw -a ""
 set $web       firefox-nightly
 set $menu      ~/bin/wofi-wrap.sh
-set $editor    $term tmux new -ADs emacs emacsclient -nw -a ""
 set $locker    "swaylock --daemonize --screenshots            \
   --indicator --indicator-radius 100 --indicator-thickness 7  \
   --effect-blur 5x5 --grace 0.5 --fade-in 0.25"
@@ -82,7 +82,7 @@ for_window [title="^Close Firefox$"]                         floating enable
 for_window [title="^Edit with Emacs FRAME$"]                 floating enable
 for_window [title="^Picture in picture$"]                    floating enable
 assign [class="hl2_linux"]                                   workspace 3
-assign [class="Signal"]                                      workspace 5
+assign [class="Signal"]                                      workspace 7
 assign [class="discord"]                                     workspace 4
 # all chrome apps
 assign [app_id="^chrome-"]                                   workspace 4

@@ -64,11 +64,17 @@
      ("subject" . "%-60.60s " )
      ("tags"    . "%s"        ))
    notmuch-search-result-format--wide
-   '(("date"    . "%12s "       )
-     ("count"   . "%-7s "       )
-     ("authors" . "%-50s "      )
-     ("subject" . "%-150.150s " )
-     ("tags"    . "%s"          ))
+   (if IS-WORKSTATION
+       '(("date"    . "%12s "       )
+         ("count"   . "%-7s "       )
+         ("authors" . "%-50s "      )
+         ("subject" . "%-150.150s " )
+         ("tags"    . "%s"          ))
+     '(("date"    . "%12s "      )
+       ("count"   . "%-7s "      )
+       ("authors" . "%-35s "     )
+       ("subject" . "%-122.122s ")
+       ("tags"    . "%s"         )))
    notmuch-search-result-format notmuch-search-result-format--narrow
 
    notmuch-tag-formats

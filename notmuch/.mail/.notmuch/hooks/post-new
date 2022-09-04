@@ -1,7 +1,6 @@
 #!/bin/bash
-set -euo pipefail
 
-if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+tag_gmi() {
   # sort emails into appropriate account tag
   notmuch tag +work     -- tag:new path:work/**
   notmuch tag +personal -- tag:new path:personal/**
@@ -25,14 +24,20 @@ if [[ $(muchsync --self) == 7633996751889129249 ]]; then
 
   # all of real filtering and tagging is done by Gmail, so they are accessible
   # from the web, mobile, etc
-else
+}
+
+sync_muchsync() {
   # if we're using muchsync, do it one more time to push read messages
-  gcertstatus && ssh -O check box &&
-    # nonew very important, avoids infinite recursion
-    muchsync --nonew box ||
-      # fail out so we don't touch unread files, which are also used for mail
-      # freshness
-      exit 1
+  gcertstatus && ssh -O check box &&  # pre hook should have started multiplexing
+    muchsync --nonew box ||           # nonew very important, avoids infinite recursion
+      exit 1  # fail out so we don't touch unread files, which are also used for
+              # mail freshness
+}
+
+if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+  tag_gmi
+else
+  sync_muchsync
 fi
 
 ################################################################################

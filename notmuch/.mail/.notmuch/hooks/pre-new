@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# from ###
+export SSH_AUTH_SOCK=${XDG_RUNTIME_DIR}/ssh-agent.socket
+
 DB_PATH=$(notmuch config get database.path)
 
 # log to systemd if not running from systemd service which is already logged

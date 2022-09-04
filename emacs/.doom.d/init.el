@@ -1,10 +1,11 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (let ((host (shell-command-to-string "hostname -f")))
-  (defconst IS-GLAPTOP (and IS-LINUX (string-match-p "roam" host)))
-  (defconst IS-CROSTINI    (string-match-p "penguin" host))
-  (defconst IS-WORKSTATION (string-match-p "google.*\.com" host))
-  (defconst WORK (or IS-GLAPTOP IS-WORKSTATION)))
+  (defconst IS-WAYLAND     (not (not (getenv "WAYLAND_DISPLAY"))))
+  (defconst WORK           (not (not (string-match-p  "google.*\.com" host))))
+  (defconst IS-GLAPTOP     (not (not (string-match-p           "roam" host))))
+  (defconst IS-CROSTINI    (not (not (string-match-p        "penguin" host))))
+  (defconst IS-WORKSTATION (and WORK (not IS-GLAPTOP))))
 
 (when WORK (load (concat doom-private-dir "specific-init.el")))
 
