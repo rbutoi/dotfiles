@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
 (map!
- "C-c m" (defun my-notmuch ()
+ "C-c m" (defun my/notmuch ()
            "Go straight to notmuch inbox."
            (interactive)
            (notmuch-search (concat "(is:inbox or is:sent) and date:"
@@ -114,20 +114,20 @@
   (face-spec-set 'notmuch-search-unread-face
                  '((t :bold 't :underline t)))
 
-  (defun notmuch-search-filter-by-not-tag (tag)
+  (defun my/notmuch-search-filter-by-not-tag (tag)
     (notmuch-search (concat notmuch-search-query-string " and not is:" tag)))
-  (defun notmuch-tree-filter-by-tag (tag)
+  (defun my/notmuch-tree-filter-by-tag (tag)
     (notmuch-tree (concat notmuch-tree-basic-query " and is:" tag)))
-  (defun notmuch-tree-filter-by-not-tag (tag)
+  (defun my/notmuch-tree-filter-by-not-tag (tag)
     (notmuch-tree (concat notmuch-tree-basic-query " and not is:" tag)))
-  (defun notmuch-rm-deleted-tag ()
+  (defun my/notmuch-rm-deleted-tag ()
     "Delete emails tagged 'deleted' from the filesystem."
     (interactive)
     (shell-command (concat
                     "notmuch search --output=files --format=text0 tag:deleted"
                     " | xargs -0 rm && notmuch new"))
     (notmuch-refresh-all-buffers))
-  (defun toggle-notmuch-search-width ()
+  (defun my/toggle-notmuch-search-width ()
     "Toggle width of Notmuch search results."
     (interactive)
     (setq notmuch-search-result-format
@@ -135,7 +135,7 @@
               notmuch-search-result-format--wide
             notmuch-search-result-format--narrow))
     (notmuch-search-refresh-view))
-  (defun notmuch-show-browse-first-url ()
+  (defun my/notmuch-show-browse-first-url ()
     (interactive)
     (setq urls-global-should-be-let-but-doesnt-work
           (notmuch-show--gather-urls))
@@ -148,9 +148,9 @@
         "W"          (cmd! (notmuch-search-filter-by-tag "personal"))
         "u"          (cmd! (notmuch-search-filter-by-tag "unread"))
         "i"          (cmd! (notmuch-search-filter-by-tag "inbox"))
-        "I"          (cmd! (notmuch-search-filter-by-not-tag "inbox"))
+        "I"          (cmd! (my/notmuch-search-filter-by-not-tag "inbox"))
         "m"          (cmd! (notmuch-search-filter-by-tag "important"))
-        "M"          (cmd! (notmuch-search-filter-by-not-tag "important"))
+        "M"          (cmd! (my/notmuch-search-filter-by-not-tag "important"))
         "M-m"        'notmuch-mua-new-mail
         "d"          (cmd! (notmuch-search-add-tag
                             '("+trash" "-inbox" "-unread"))
@@ -159,15 +159,15 @@
                            (notmuch-search-next-thread))
         "C-M-u"      (cmd! (notmuch-search-tag-all '("-unread")))
         "f"          (cmd! (notmuch-search-add-tag '("+flagged")))
-        "C-w"        'toggle-notmuch-search-width
+        "C-w"        'my/toggle-notmuch-search-width
         :map notmuch-tree-mode-map
-        "w"          (cmd! (notmuch-tree-filter-by-tag "work"))
-        "W"          (cmd! (notmuch-tree-filter-by-tag "personal"))
-        "u"          (cmd! (notmuch-tree-filter-by-tag "unread"))
-        "i"          (cmd! (notmuch-tree-filter-by-tag "inbox"))
-        "I"          (cmd! (notmuch-tree-filter-by-not-tag "inbox"))
-        "m"          (cmd! (notmuch-tree-filter-by-tag "important"))
-        "M"          (cmd! (notmuch-tree-filter-by-not-tag "important"))
+        "w"          (cmd! (my/notmuch-tree-filter-by-tag "work"))
+        "W"          (cmd! (my/notmuch-tree-filter-by-tag "personal"))
+        "u"          (cmd! (my/notmuch-tree-filter-by-tag "unread"))
+        "i"          (cmd! (my/notmuch-tree-filter-by-tag "inbox"))
+        "I"          (cmd! (my/notmuch-tree-filter-by-not-tag "inbox"))
+        "m"          (cmd! (my/notmuch-tree-filter-by-tag "important"))
+        "M"          (cmd! (my/notmuch-tree-filter-by-not-tag "important"))
         "M-m"        'notmuch-mua-new-mail
         "d"          (cmd! (notmuch-tree-add-tag
                             '("+trash" "-inbox" "-unread"))
@@ -176,11 +176,11 @@
                            (notmuch-tree-next-message))
         "C-M-u"      (cmd! (notmuch-tree-tag-thread '("-unread"))
                            (notmuch-tree-next-thread))
-        "b"          (cmd! (other-window 1) (notmuch-show-browse-first-url))
+        "b"          (cmd! (other-window 1) (my/notmuch-show-browse-first-url))
         :map notmuch-show-mode-map
         "<C-return>" 'browse-url-at-point
         "B"          'notmuch-show-resend-message
-        "b"          'notmuch-show-browse-first-url
+        "b"          'my/notmuch-show-browse-first-url
         "M-b"        'notmuch-show-browse-urls
         "F"          (cmd! (notmuch-show-add-tag '("+flagged")))
         "C-M-u"      (cmd! (notmuch-show-tag-all '("-unread")))
@@ -196,25 +196,39 @@
                                     (derived-mode-p 'notmuch-tree-mode)
                                     (derived-mode-p 'notmuch-show-mode))
                             (kill-buffer)))))
-        "D"     'notmuch-rm-deleted-tag
+        "D"     'my/notmuch-rm-deleted-tag
         "<f7>"  (cmd!
                  (browse-url
                   (concat "https://mail.google.com"
                           (if (string-match-p "broadcast" (buffer-name))
-                              "/mail/u/0/#label/broadcast" "")))))
+                              "/mail/u/0/#label/broadcast" ""))))
+        "G"     'my/notmuch-poll-async)
   ;; ignore doom's rule, prefer fullscreen
   (set-popup-rule! "^\\*notmuch-hello" :ignore t)
 
+  (defun my/notmuch-poll-async-done ()
+    (message "Polling mail...done")
+    (notmuch-refresh-this-buffer))
+  (use-package! pfuture)
+  (defun my/notmuch-poll-async ()
+    "Don't block all of emacs while doing a mail fetch which could
+take up to a minute (if stale)."
+    (interactive)
+    (message "Polling mail...")
+    (pfuture-callback (or (list notmuch-poll-script) '("notmuch" "new"))
+      :on-success (my/notmuch-poll-async-done)
+      :on-error (my/notmuch-poll-async-done)))
   (add-hook! (notmuch-search-mode notmuch-tree-mode)
-    (defun notmuch-poll-if-needed ()
+    (defun my/notmuch-poll-if-needed ()
       "Take note of out-of-date pulled mail (by more than 10 minutes)"
       (interactive)
       (let ((mail-sync-age (time-subtract (current-time) (file-attribute-modification-time
                                                           (file-attributes "/tmp/mail_unread_count_personal")))))
         (unless (time-less-p mail-sync-age
-                 (seconds-to-time (* 10 60)))
+                             (seconds-to-time (* 10 60)))
           (message (format-seconds "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync"
-                                   mail-sync-age))))))
+                                   mail-sync-age))
+          (my/notmuch-poll-async)))))
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing

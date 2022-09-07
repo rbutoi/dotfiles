@@ -185,6 +185,8 @@
 
 (add-hook! after-save #'executable-make-buffer-file-executable-if-script-p)
 
+(add-hook! conf-mode (run-mode-hooks 'prog-mode-hook))
+
 ;;;; tree-sitter
 (use-package! tree-sitter
   :config

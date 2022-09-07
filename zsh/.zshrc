@@ -229,6 +229,9 @@ fix_i3sock () {
   export I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)
 }
 
+sshcd  () { ssh -t "$1" "cd \"$2\"; exec \$SHELL -l"; }
+sshcd. () { sshcd "$@" $(pwd) }
+
 ##
 ## emacs
 ##
@@ -340,7 +343,8 @@ if (( $+commands[bat] )); then
 fi
 
 if (( $+commands[delta] )); then
-  diff() { /usr/bin/diff -u "$@" | delta --side-by-side; }
+  diff()  { /usr/bin/diff -u "$@" | delta; }
+  diffs() { /usr/bin/diff -u "$@" | delta --side-by-side; }
 else
   alias diff="diff --color=auto"
 fi

@@ -29,6 +29,7 @@
 (package! notmuch-unread :recipe (:host github :repo "rbutoi/notmuch-unread"))
 (package! outshine)
 (package! password-store)
+(package! pfuture)
 (package! php-mode)
 (package! pkgbuild-mode)
 (package! project      :disable WORK)
