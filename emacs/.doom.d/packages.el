@@ -10,6 +10,15 @@
  swiper
  with-editor)
 
+;; since:
+;; $ doom up
+;; [...]
+;;   $ git clone --origin origin --no-checkout https\://git.notmuchmail.org/git/notmuch /home/radu/oss/doom-emacs/.local/straight/repos/notmuch/ --no-single-branch
+;;   Cloning into '/home/radu/oss/doom-emacs/.local/straight/repos/notmuch'...
+;;   fatal: unable to access 'https://git.notmuchmail.org/git/notmuch/': Failed to connect to git.notmuchmail.org port 443 after 86 ms: Connection refused
+;;   [Return code: 128]
+(package! notmuch :recipe (:host github :repo "notmuch/notmuch"))
+
 (package! benchmark-init)
 (package! buffer-move)
 (package! default-text-scale)
