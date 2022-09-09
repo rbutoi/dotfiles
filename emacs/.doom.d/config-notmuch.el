@@ -37,26 +37,16 @@
    notmuch-show-indent-messages-width 2
 
    notmuch-saved-searches
-   (append
-    '((:key "f" :name "flagged"   :query "is:flagged"        )
-      (:key "s" :name "sent"      :query "date:1M.. is:sent" )
-      (:key "d" :name "drafts"    :query "is:draft"          )
-      (:key "a" :name "all"       :query "*"                 ))
-    (if WORK
-        '((:key "j" :name "unified inbox"      :query "(is:inbox or is:sent) and date:1w.."                                  )
-          (:key "i" :name "work inbox"         :query "(is:inbox or is:sent) and date:1w.. and is:work"                      )
-          (:key "I" :name "personal inbox"     :query "(is:inbox or is:sent) and date:2w.. and is:personal"                  )
-          (:key "u" :name "work unread"        :query "(is:inbox or is:sent) and date:1w.. and is:unread and is:work"        )
-          (:key "U" :name "personal unread"    :query "(is:inbox or is:sent) and date:2w.. and is:unread and is:personal"    )
-          (:key "S" :name "work snippets"      :query "is:inbox              and date:2w.. and subject:'\[snippets\]'"       )
-          (:key "b" :name "work broadcast"     :query "is:broadcast and not is:list and date:2w.. and is:work"               )
-          (:key "B" :name "personal broadcast" :query "is:broadcast and date:2w.. and is:personal"                          ))
-      '((:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                                            )
-        ;; redundant
-        (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                                            )
-        (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"                              )
-        (:key "m" :name "important"  :query "(is:inbox or is:sent) and date:2w.. and is:important"                           )
-        (:key "b" :name "broadcast"  :query "is:broadcast date:2w.."              ))))
+   '((:key "f" :name "flagged"   :query "is:flagged"                                            )
+     (:key "s" :name "sent"      :query "date:1M.. is:sent"                                     )
+     (:key "d" :name "drafts"    :query "is:draft"                                              )
+     (:key "a" :name "all"       :query "*"                                                     )
+     (:key "i" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
+     ;; redundant
+     (:key "I" :name "inbox"      :query "(is:inbox or is:sent) and date:2w.."                  )
+     (:key "u" :name "unread"     :query "(is:inbox or is:sent) and date:2w.. and is:unread"    )
+     (:key "m" :name "important"  :query "(is:inbox or is:sent) and date:2w.. and is:important" )
+     (:key "b" :name "broadcast"  :query "is:broadcast date:2w.."                               ))
    notmuch-search-result-format--narrow
    '(("date"    . "%12s "     )
      ("count"   . "%-7s "     )
@@ -114,6 +104,7 @@
   (face-spec-set 'notmuch-search-unread-face
                  '((t :bold 't :underline t)))
 
+  ;; fns
   (defun my/notmuch-search-filter-by-not-tag (tag)
     (notmuch-search (concat notmuch-search-query-string " and not is:" tag)))
   (defun my/notmuch-tree-filter-by-tag (tag)
@@ -143,6 +134,34 @@
         (browse-url
          (nth 0 urls-global-should-be-let-but-doesnt-work))
       (message "No URLs found.")))
+  (use-package! pfuture)
+  (defun my/notmuch-poll-async-done ()
+    (message "Polling mail...done")
+    (notmuch-refresh-this-buffer))
+  (defun my/notmuch-poll-async ()
+    "Don't block all of emacs while doing a mail fetch which could
+take up to a minute (if stale)."
+    (interactive)
+    (message "Polling mail...")
+    (pfuture-callback (or (list notmuch-poll-script) '("notmuch" "new"))
+      :on-success (my/notmuch-poll-async-done)
+      :on-error (my/notmuch-poll-async-done)))
+  (defun my/notmuch-poll-if-needed ()
+      "Take note of out-of-date pulled mail (by more than 10 minutes)"
+      (interactive)
+      (let ((mail-sync-age (time-subtract (current-time) (file-attribute-modification-time
+                                                          (file-attributes "/tmp/mail_unread_count_personal")))))
+        (unless (time-less-p mail-sync-age
+                             (seconds-to-time (* 10 60)))
+          (message (format-seconds "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync"
+                                   mail-sync-age))
+          (my/notmuch-poll-async))))
+  (defun my/notmuch-kill-all-buffers ()
+    "Kill all notmuch buffers."
+    (interactive)
+    (dolist (buf (buffer-list))
+      (when (derived-mode-p 'notmuch-search-mode 'notmuch-tree-mode 'notmuch-show-mode)
+        (kill-buffer buf))))
   (map! :map notmuch-search-mode-map
         "w"          (cmd! (notmuch-search-filter-by-tag "work"))
         "W"          (cmd! (notmuch-search-filter-by-tag "personal"))
@@ -189,13 +208,7 @@
               notmuch-tree-mode-map
               notmuch-show-mode-map)
         "C-M-s" 'counsel-notmuch
-        "Q"     (cmd! (dolist (buf (buffer-list))
-                        (with-current-buffer buf
-                          ;; can't get the list working
-                          (when (or (derived-mode-p 'notmuch-search-mode)
-                                    (derived-mode-p 'notmuch-tree-mode)
-                                    (derived-mode-p 'notmuch-show-mode))
-                            (kill-buffer)))))
+        "Q"     'my/notmuch-kill-all-buffers
         "D"     'my/notmuch-rm-deleted-tag
         "<f7>"  (cmd!
                  (browse-url
@@ -206,29 +219,7 @@
   ;; ignore doom's rule, prefer fullscreen
   (set-popup-rule! "^\\*notmuch-hello" :ignore t)
 
-  (defun my/notmuch-poll-async-done ()
-    (message "Polling mail...done")
-    (notmuch-refresh-this-buffer))
-  (use-package! pfuture)
-  (defun my/notmuch-poll-async ()
-    "Don't block all of emacs while doing a mail fetch which could
-take up to a minute (if stale)."
-    (interactive)
-    (message "Polling mail...")
-    (pfuture-callback (or (list notmuch-poll-script) '("notmuch" "new"))
-      :on-success (my/notmuch-poll-async-done)
-      :on-error (my/notmuch-poll-async-done)))
-  (add-hook! (notmuch-search-mode notmuch-tree-mode)
-    (defun my/notmuch-poll-if-needed ()
-      "Take note of out-of-date pulled mail (by more than 10 minutes)"
-      (interactive)
-      (let ((mail-sync-age (time-subtract (current-time) (file-attribute-modification-time
-                                                          (file-attributes "/tmp/mail_unread_count_personal")))))
-        (unless (time-less-p mail-sync-age
-                             (seconds-to-time (* 10 60)))
-          (message (format-seconds "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync"
-                                   mail-sync-age))
-          (my/notmuch-poll-async)))))
+  (add-hook! (notmuch-search-mode notmuch-tree-mode) 'my/notmuch-poll-if-needed)
 
   ;; > modeline doesn't have much use in these modes
   ;; I beg to differ. Showing the current search term is useful, and removing

@@ -102,6 +102,7 @@
         "C-o"       'swiper-from-isearch
         :map ivy-minibuffer-map
         "C-k"       'ivy-alt-done       ; C-j is used by tmux
+        "C-M-k"     'ivy-kill-line
         "C-M-i"     'ivy-insert-current ; M-i used to change windows
         :map counsel-find-file-map
         "C-l"       'counsel-up-directory
@@ -243,7 +244,6 @@
 
 (use-package! git-gutter ;; git-gutter too
   :config
-  (setq-default git-gutter:start-revision "HEAD~")
   (global-git-gutter-mode))
 
 ;;;; String-inflection
