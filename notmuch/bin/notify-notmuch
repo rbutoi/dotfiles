@@ -11,43 +11,45 @@ HIDDEN_TAGS = ('inbox', 'unread', 'attachment', 'replied', 'sent', 'encrypted',
                'signed', 'work', 'personal', 'important')
 
 def truncate_from_middle_or_pad(s):
-    ls = (SUBJECT_WIDTH - 1) // 2
-    rs = SUBJECT_WIDTH - ls - 1
-    if len(s) > SUBJECT_WIDTH:
-        return s[0:ls] + '…' + s[-rs:]
-    else:
-        return s.ljust(SUBJECT_WIDTH)
+  ls = (SUBJECT_WIDTH - 1) // 2
+  rs = SUBJECT_WIDTH - ls - 1
+  if len(s) > SUBJECT_WIDTH:
+    return s[0:ls] + '…' + s[-rs:]
+  else:
+    return s.ljust(SUBJECT_WIDTH)
 
 def exclude_recently_seen_threads(mail):
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    recency_interval = 48 * 60 * 60
-    with shelve.open(LAST_SEEN_FILE) as last_seen:
-        now = time.time()
-        for k in last_seen.keys():
-            if now - last_seen[k] > recency_interval:
-                del last_seen[k]
-        for m in mail:
-            t_id = m['thread']
-            if t_id not in last_seen:
-                last_seen[t_id] = now
-                yield m
+  os.makedirs(CACHE_DIR, exist_ok=True)
+  recency_interval = 48 * 60 * 60
+  with shelve.open(LAST_SEEN_FILE) as last_seen:
+    now = time.time()
+    for k in last_seen.keys():
+      if now - last_seen[k] > recency_interval:
+        del last_seen[k]
+    for m in mail:
+      t_id = m['thread']
+      if t_id not in last_seen:
+        last_seen[t_id] = now
+        yield m
 
 out=''
 for m in exclude_recently_seen_threads(
     json.loads(subprocess.run(f'notmuch search --format=json "{QUERY}"',
                               shell=True, capture_output=True).stdout)):
-    out += '{:<12}{:>7.7} {:<40.40}{} {}\n'.format(
-        m['date_relative'],
-        '[{}/{}]'.format(m['matched'], m['total']),
-        m['authors'][0:38] + '…' if len(m['authors']) > 39 else m['authors'],
-        truncate_from_middle_or_pad(m['subject']),
-        ' '.join(set(m['tags']).difference(HIDDEN_TAGS)))
+  out += '{:<12}{:>7.7} {:<40.40}{} {}\n'.format(
+      m['date_relative'],
+      '[{}/{}]'.format(m['matched'], m['total']),
+      m['authors'][0:38] + '…' if len(m['authors']) > 39 else m['authors'],
+      truncate_from_middle_or_pad(m['subject']),
+      ' '.join(set(m['tags']).difference(HIDDEN_TAGS)))
 
 if out != '':
-    s = ''
-    count = int(subprocess.run(f'notmuch count "{QUERY}"', shell=True,
-                               capture_output=True).stdout)
-    if count > 1:
-        s = 's'
-    subprocess.run(f'notify-send -c my.email "{count} new message{s}" "{out}"',
-                   shell=True, capture_output=True)
+  s = ''
+  count = int(subprocess.run(f'notmuch count "{QUERY}"', shell=True,
+                             capture_output=True).stdout)
+  if count > 1:
+    s = 's'
+    subprocess.run(
+        f'notify-send -c email -t 8000 "{count} new message{s}" "{out}"',
+        shell=True,
+        capture_output=True)

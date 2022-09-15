@@ -243,12 +243,10 @@ export BROWSER=xdg-open
 export CLICOLOR=1
 
 emacs_systemd_restart() {
-  set -x
   fix_i3_or_swaysock
   systemctl --user restart emacs.service ||
     (pkill -9 emacs && systemctl --user restart emacs.service) &&
-      i3-msg -- 'exec emacsclient -c' ||
-  set +x
+      i3-msg -- exec emacsclient -c >/dev/null
 }
 
 # (e)macs man
