@@ -74,14 +74,13 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
 export FZF_DEFAULT_COMMAND='fd --hidden'
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fzfp () {
-  eval "$FZF_DEFAULT_COMMAND $@" |
-    fzf --preview 'bat --style=numbers --color=always {}'
-}
+MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind 'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'"
+fzfp()  { eval "fzf --preview 'if [[ -f {} ]] && [[ \$(stat -c%s {}) -lt 2000000 ]]; then clp {}; else exa -laa {}; fi' $MY_FZF_BIND_FLAGS $@" }
+enfz()  { en $(fzfp "$@")  }
+econf() { enfz . ~/.config }
 rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
-  rg "$@" 2>/dev/null |
-    fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' --preview \
-      'clp -h {2} {1}' --bind 'ctrl-o:execute(emacsclient -nw +{2} {1})'
+  rg "$@" 2>/dev/null | fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' \
+    --preview 'clp -h {2} {1}' $MY_FZF_BIND_FLAGS
 }
 apt_search_fzf()  { aptitude search "$@" | grep -Ev '^v|:i386' | fzf | choose 1; }
 apt_install_fzf() { sudo apt install $(apt_search_fzf "$@"); }
@@ -248,7 +247,7 @@ emacs_systemd_restart() {
   fix_i3_or_swaysock
   systemctl --user restart emacs.service ||
     (pkill -9 emacs && systemctl --user restart emacs.service) &&
-      i3-msg 'exec $editor' ||
+      i3-msg -- 'exec emacsclient -c' ||
   set +x
 }
 

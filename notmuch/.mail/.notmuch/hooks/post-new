@@ -43,19 +43,15 @@ fi
 ################################################################################
 # notify new mail
 
-if pgrep '^sway$' >/dev/null; then
-  # don't notify in emacs, not needed when looking
+if (pgrep -x sway || pgrep -x i3) >/dev/null; then
+  export I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)
   export SWAYSOCK=$(sway --get-socketpath)
-  [ "$(swaymsg -t get_tree | jq -r '.. | select(.type?) |
-  select(.focused==true).app_id')" == emacs ] ||
-    swaymsg exec notify-notmuch
+  i3-msg exec notify-notmuch
 
-  # update waybar unread count
-  pkill -RTMIN+9 waybar
+  pkill -x -RTMIN+9 waybar 2>/dev/null       # update waybar unread count
 fi
 
-# cache unread count in /tmp
-DB_PATH=$(notmuch config get database.path)
+DB_PATH=$(notmuch config get database.path)  # cache unread count in /tmp
 [ -e $DB_PATH/work ]     && notmuch count 'is:work     and is:inbox and is:unread' > /tmp/mail_unread_count_work     || true
 [ -e $DB_PATH/personal ] && notmuch count 'is:personal and is:inbox and is:unread' > /tmp/mail_unread_count_personal || true
 [ -e $DB_PATH/hotmail  ] && notmuch count 'is:hotmail  and is:inbox and is:unread' > /tmp/mail_unread_count_hotmail  || true

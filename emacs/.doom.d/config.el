@@ -42,8 +42,6 @@
  "M-3"       'split-window-right
  )
 
-(setq doom-modeline-project-detection 'project)
-
 ;; keep windows balanced
 (defadvice split-window-below (after restore-balanace-below activate)
   (unless (derived-mode-p 'notmuch-tree-mode)
@@ -82,7 +80,7 @@
    counsel-rg-base-command
    "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true")
 
-  (fset 'my/counsel-file-jump-ask (cmd!! #'counsel-file-jump '(4)))
+  (fset 'my/counsel-fd-file-jump-ask (cmd!! #'counsel-fd-file-jump '(4)))
   (fset 'my/counsel-rg-symbol-at-point (cmd! (counsel-rg (thing-at-point 'symbol))))
   (map! "C-c C-r"   'ivy-resume
         "C-x m"     'counsel-M-x
@@ -92,11 +90,11 @@
         "C-o"       'counsel-semantic-or-imenu
         "C-M-s"     'my/counsel-rg-symbol-at-point
         ;; doesn't show hidden files
-        "C-x f"     'my/counsel-file-jump-ask
-        "C-x M-f"   'my/counsel-file-jump-ask
-        "C-x S-M-f" 'counsel-file-jump
+        "C-x f"     'my/counsel-fd-file-jump-ask
+        "C-x M-f"   'my/counsel-fd-file-jump-ask
+        "C-x S-M-f" 'counsel-fd-file-jump
         "C-c M-c"   (defun my/find-dot-config () (interactive)
-                      (counsel-file-jump "" "~/.config/"))
+                      (counsel-fd-file-jump "" "~/.config/"))
         "C-M-o"     'swiper-isearch-thing-at-point
         :map isearch-mode-map
         "C-o"       'swiper-from-isearch
@@ -230,17 +228,18 @@
 (defun doom-apply-ansi-color-to-compilation-buffer-h ())  ;; another instance of Doom breaking things
 
 ;;;; Magit
-(setq magit-repository-directories
-      `(("~/dotfiles" . 0)
-        ("~/dotfiles-google" . 0)
-        ("~/oss" . 1)
-        ("~/.emacs.d" . 0))
-      magit-log-auto-more t
-      magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
-(map! "C-x   g"   'magit-status
-      "C-x C-g"   'magit-status
-      "C-x C-M-g" 'magit-list-repositories)
-(use-package! keychain-environment :config (keychain-refresh-environment))
+(after! magit
+  (setq magit-repository-directories
+        `(("~/dotfiles" . 0)
+          ("~/dotfiles-google" . 0)
+          ("~/oss" . 1)
+          ("~/.emacs.d" . 0))
+        magit-log-auto-more t
+        magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
+  (map! "C-x   g"   'magit-status
+        "C-x C-g"   'magit-status
+        "C-x C-M-g" 'magit-list-repositories))
+;; (use-package! keychain-environment :config (keychain-refresh-environment))
 
 (use-package! git-gutter ;; git-gutter too
   :config

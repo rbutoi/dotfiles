@@ -21,6 +21,7 @@
 
 (package! benchmark-init)
 (package! buffer-move)
+(package! counsel-fd)
 (package! default-text-scale)
 (package! defrepeater)
 (package! dired-hide-dotfiles)
