@@ -143,9 +143,11 @@
 take up to a minute (if stale)."
     (interactive)
     (message "Polling mail...")
-    (pfuture-callback (or (list notmuch-poll-script) '("notmuch" "new"))
-      :on-success (my/notmuch-poll-async-done)
-      :on-error (my/notmuch-poll-async-done)))
+    (let ((script (if notmuch-poll-script
+                      (list notmuch-poll-script) '("notmuch" "new"))))
+      (pfuture-callback script
+        :on-success (my/notmuch-poll-async-done)
+        :on-error (my/notmuch-poll-async-done))))
   (defun my/notmuch-poll-if-needed ()
       "Take note of out-of-date pulled mail (by more than 10 minutes)"
       (interactive)

@@ -78,7 +78,9 @@
    ivy-extra-directories '(".")
    ;; https://github.com/hlissner/doom-emacs/issues/3038#issuecomment-624165004
    counsel-rg-base-command
-   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true")
+   "rg --max-columns 300 --with-filename --no-heading --line-number --color never --hidden %s 2>/dev/null || true"
+   counsel-fd-command
+   "fd --hidden --color never --follow --type file --type symlink --type directory ")
 
   (fset 'my/counsel-fd-file-jump-ask (cmd!! #'counsel-fd-file-jump '(4)))
   (fset 'my/counsel-rg-symbol-at-point (cmd! (counsel-rg (thing-at-point 'symbol))))

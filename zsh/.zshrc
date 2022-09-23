@@ -362,7 +362,7 @@ fi
 
 (( $+commands[duf] ))  && alias df=duf
 (( $+commands[navi] )) && eval "$(navi widget zsh)" ### !!!!!!
-(( $+commands[procs] )) && alias psg=procs
+(( $+commands[procs] )) && alias psg="procs --pager disable"
 
 alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
