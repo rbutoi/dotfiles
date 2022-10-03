@@ -1,6 +1,7 @@
 # default
 mode=drun,run
 
+term='wezterm start --'
 display_generic=true
 insensitive=true
 allow_images=true

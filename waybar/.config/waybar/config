@@ -1,6 +1,6 @@
 // -*- mode: json; -*-
 [{
-  "output": ["Unknown 0x06AA 0x00000000"],
+  "output": "eDP-1",
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -119,7 +119,7 @@
     "interval": 30
   },
 }, {
-  "output": ["Dell Inc. DELL S3221QS 2R8QTB3"],
+  "output": "!eDP-1",
   "position": "bottom",
   "modules-left": [
     "custom/home",
@@ -234,42 +234,5 @@
     "tooltip": false,
     "on-click": "wezterm start -- btop",
     "interval": 30
-  },
-}, {
-  "output": ["Acer Technologies Acer CB271HU T9TAA0014200"],
-  "position": "bottom",
-  "modules-left": [
-    "custom/home",
-    "sway/workspaces",
-  ],
-  "modules-center": ["wlr/taskbar"],
-  "modules-right": [
-    "custom/load",
-    "custom/clock",
-  ],
-  "custom/home": {
-    "format": "🏠 ",
-    "on-click": "nautilus",
-    "tooltip": false
-  },
-  "wlr/taskbar": {
-    "format": " {icon}{title:.20} ",
-    "max-length": 80,
-    "icon-size": 26,
-    "on-click": "activate",
-    "on-click-middle": "close"
-  },
-  "custom/load": {
-    "exec": "cut -f1 -d' ' /proc/loadavg",
-    "format": "💻{}",
-    "tooltip": false,
-    "on-click": "wezterm start -- btop",
-    "interval": 30
-  },
-  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
-    "exec": "date '+%a %d⏰%H:%M'",
-    "tooltip": false,
-    "on-click": "gsimplecal",
-    "interval": 5
   },
 }]
