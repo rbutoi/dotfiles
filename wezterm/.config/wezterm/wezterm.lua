@@ -10,14 +10,6 @@ function do_if_file_exists(name)
    dofile(name)
 end
 
--- set this first, so it may be overwritten in specific
-local hostname = wezterm.hostname();
-if hostname == "Radus-Macbook-Pro.local" then
-   font_size_by_host = 13.0;
-else
-   font_size_by_host = 10.5;
-end
-
 do_if_file_exists(extkeys)
 do_if_file_exists(specific)
 
@@ -89,7 +81,7 @@ for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
 return {
    -- text & colours
    font = wezterm.font("JetBrains Mono"),
-   font_size = font_size_by_host,
+   font_size = 12,              -- also the default
    color_scheme = "Gruvbox Dark",
 
    -- keys and links

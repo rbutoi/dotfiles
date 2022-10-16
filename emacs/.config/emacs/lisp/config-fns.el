@@ -1,61 +1,37 @@
 ;; -*- lexical-binding: t; -*-
-;; config-fns.el - longer functions copied in externally for workarounds, or
-;; internally and tweaked.
+;; config-fns.el: longer functions copied in externally for
+;; workarounds, or internally and tweaked.
 
-;;;; Popups: have to copy and remove from doom's - Man removed
-(set-popup-rules!
-  '(("^\\*Completions" :ignore t)
-    ("^\\*Local variables\\*$"
-     :vslot -1 :slot 1 :size +popup-shrink-to-fit)
-    ("^\\*\\(?:[Cc]ompil\\(?:ation\\|e-Log\\)\\|Messages\\)"
-     :vslot -2 :size 0.3  :autosave t :quit t :ttl nil)
-    ("^\\*\\(?:doom \\|Pp E\\)"  ; transient buffers (no interaction required)
-     :vslot -3 :size +popup-shrink-to-fit :autosave t :select ignore :quit t :ttl 0)
-    ("^\\*doom:"  ; editing buffers (interaction required)
-     :vslot -4 :size 0.35 :autosave t :select t :modeline t :quit nil :ttl t)
-    ("^\\*doom:\\(?:v?term\\|e?shell\\)-popup"  ; editing buffers (interaction required)
-     :vslot -5 :size 0.35 :select t :modeline nil :quit nil :ttl nil)
-    ; man removed
-    ("^\\*Calc"
-     :vslot -7 :side bottom :size 0.4 :select t :quit nil :ttl 0)
-    ("^\\*Customize"
-     :slot 2 :side right :size 0.5 :select t :quit nil)
-    ("^ \\*undo-tree\\*"
-     :slot 2 :side left :size 20 :select t :quit t)
-    ;; `help-mode', `helpful-mode'
-    ("^\\*\\([Hh]elp\\|Apropos\\)"
-     :slot 2 :vslot -8 :size 0.35 :select t)
-    ("^\\*eww\\*"  ; `eww' (and used by dash docsets)
-     :vslot -11 :size 0.35 :select t)
-    ("^\\*info\\*$"  ; `Info-mode'
-     :slot 2 :vslot 2 :size 0.45 :select t)
+;;;; util
+(defun add-list-to-list (dst src) ; https://emacs.stackexchange.com/a/68048/26271
+  "Similar to `add-to-list', but accepts a list as 2nd argument"
+  (set dst
+       (append (eval dst) src)))
 
-    ; mine:
-    ("^\\*Async Shell Command\\*$" :ttl 0)))
+;; (with-eval-after-load 'counsel
+;;   ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
+;;   (defun counsel-find-file-fallback-command ()
+;;     "Fallback to non-counsel version of current command."
+;;     (interactive)
+;;     (when (bound-and-true-p ivy-mode)
+;;       (ivy-mode -1)
+;;       (add-hook 'minibuffer-setup-hook
+;;                 'counsel-find-file-fallback-command--enable-ivy))
+;;     (ivy-set-action
+;;      (lambda (current-path)
+;;        (let ((old-default-directory default-directory))
+;;          (let ((i (length current-path)))
+;;            (while (> i 0)
+;;              (push (aref current-path (setq i (1- i))) unread-command-events)))
+;;          (let ((default-directory "")) (call-interactively 'find-file))
+;;          (setq default-directory old-default-directory))))
+;;     (ivy-done))
+;;   (defun counsel-find-file-fallback-command--enable-ivy ()
+;;     (remove-hook 'minibuffer-setup-hook
+;;                  'counsel-find-file-fallback-command--enable-ivy)
+;;     (ivy-mode t)))
 
-(after! counsel
-  ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
-  (defun counsel-find-file-fallback-command ()
-    "Fallback to non-counsel version of current command."
-    (interactive)
-    (when (bound-and-true-p ivy-mode)
-      (ivy-mode -1)
-      (add-hook 'minibuffer-setup-hook
-                'counsel-find-file-fallback-command--enable-ivy))
-    (ivy-set-action
-     (lambda (current-path)
-       (let ((old-default-directory default-directory))
-         (let ((i (length current-path)))
-           (while (> i 0)
-             (push (aref current-path (setq i (1- i))) unread-command-events)))
-         (let ((default-directory "")) (call-interactively 'find-file))
-         (setq default-directory old-default-directory))))
-    (ivy-done))
-  (defun counsel-find-file-fallback-command--enable-ivy ()
-    (remove-hook 'minibuffer-setup-hook
-                 'counsel-find-file-fallback-command--enable-ivy)
-    (ivy-mode t)))
-
+;;;; file ops
 (defun modi/revert-all-file-buffers ()
   "Refresh all open file buffers without confirmation.
 Buffers in modified (not yet saved) state in emacs will not be
@@ -101,7 +77,7 @@ or are no longer readable will be killed."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
       (forward-line))))
 
-;;;; Better C/M-w
+;; editing: better C/M-w
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
@@ -128,6 +104,7 @@ or are no longer readable will be killed."
                       (lambda (window) (quit-window nil window))
                       (get-buffer-window buffer))))
 
+;; run in vterm
 (defun run-in-vterm-kill (process event)
   "A process sentinel. Kills PROCESS's buffer if it is live."
   (let ((b (process-buffer process)))
@@ -163,6 +140,7 @@ shell exits, the buffer is killed."
     (vterm-send-string command)
     (vterm-send-return)))
 
+;; theme toggling
 (defun my/disable-save-theme ()
   "Disable the theme, and save it to re-enable."
   (interactive)
@@ -176,6 +154,7 @@ shell exits, the buffer is killed."
   (load-theme doom-theme t nil)
   (doom/reload-theme))
 
+;; slow terminal toggling
 (defun my/slow-terminal ()
   "For when the terminal is very slow.
 
@@ -190,8 +169,3 @@ Like ChromeOS's hterm."
   (my/enable-saved-theme)
   (setq scroll-conservatively my/old-scroll-conservatively))
 
-;; https://emacs.stackexchange.com/a/68048/26271
-(defun add-list-to-list (dst src)
-  "Similar to `add-to-list', but accepts a list as 2nd argument"
-  (set dst
-       (append (eval dst) src)))
