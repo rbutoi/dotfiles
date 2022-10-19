@@ -28,10 +28,15 @@ sync_muchsync() {
 }
 
 # if we are the muchsync server, actually sync. otherwise run muchsync
-if [[ $(muchsync --self) == 7633996751889129249 ]]; then
+id=$(muchsync --self)
+if [[ $id -eq 7633996751889129249 ]] || [[ $id -eq 6172958386954966993 ]]; then
   sync_gmi
 else
-  sync_muchsync
+  if command -v gcertstatus; then
+    sync_muchsync
+  else
+    muchsync --nonew a
+  fi
 fi
 
 # rm deleted mail

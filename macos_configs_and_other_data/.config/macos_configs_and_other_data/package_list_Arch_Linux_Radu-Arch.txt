@@ -40,7 +40,7 @@ broot-git
 brother-hll2370dw
 btop-git
 bzip2
-calibre-git
+calibre
 cargo-bloat
 cargo-update-git
 celluloid
@@ -80,8 +80,7 @@ e2fsprogs
 edk2-shell
 efibootmgr
 electron-cash
-element-desktop-nightly-bin
-emacs-nativecomp
+emacs-nox
 eog
 epiphany
 etc-update
@@ -180,9 +179,10 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
-google-chrome-dev
+google-chrome
 go-tools
 gparted
+gping-git
 grilo-plugins
 grim
 gruvbox-dark-gtk
@@ -235,8 +235,9 @@ jupyterlab
 kanshi-git
 kate
 keychain
-kitty-git
+kitty
 kodi
+ktorrent
 lastpass-cli
 less
 lftp-git
@@ -261,6 +262,7 @@ lshw
 lsof
 ltunify-git
 lua
+lua-lpeg
 lutris
 lvm2
 lxappearance
@@ -268,7 +270,7 @@ mako-git
 man-db
 man-pages
 mariadb
-matrix-synapse-git
+matrix-synapse
 mautrix-facebook-git
 mdadm
 mediainfo
@@ -384,8 +386,8 @@ python-tabulate
 python-tqdm
 python-zeroconf
 qalculate-gtk
-qbittorrent
-qbittorrent-nox
+qbittorrent-git
+qbittorrent-nox-git
 qt5ct
 qt5-wayland
 qt6-imageformats
@@ -407,7 +409,7 @@ rsync
 rtorrent
 ruby
 ruby-yard
-rust-analyzer-git
+rust-analyzer
 rustup
 rygel
 samba
@@ -421,7 +423,6 @@ shadow
 shellcheck-bin
 signal-desktop
 simple-scan
-skypeforlinux-preview-bin
 slurp
 smartmontools
 s-nail
@@ -501,7 +502,6 @@ vnstat
 vopono-git
 vrms-arch-git
 wasm-pack
-waybar-git
 waypipe
 wdisplays-git
 wev-git
@@ -515,6 +515,8 @@ wlclock-git
 wlogout
 wlsunset-git
 wmctrl
+wofi-calc
+wofi-emoji-git
 wofi-hg
 xclip
 xdg-user-dirs
@@ -532,6 +534,7 @@ yelp
 youtube-dl
 yubico-pam
 yubikey-manager-qt
+zellij-git
 zenity
 zile
 zsh-git

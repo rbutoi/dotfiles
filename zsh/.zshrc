@@ -328,6 +328,7 @@ alias stow='stow -v'    # nice to see the actions taken by default
 alias stow_dots='pushd ~/dotfiles && stow * && pushd ~/dotfiles-* && stow * && popd && popd'
 alias fd="fd --one-file-system"
 alias type='whence -f'  # am too used to bash
+nms() { notmuch search "$@" | cut -c24-; }
 
 ########################
 # external shell tools #
