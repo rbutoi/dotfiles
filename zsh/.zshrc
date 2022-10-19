@@ -322,8 +322,8 @@ alias .~='exec zsh'
 alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
-alias ssha='ssh -t a         -- tmux new -ADs auto'
-alias mosha='mosh -p 55880 a -- tmux new -ADs auto'
+alias ssha='ssh -t a         -- tmux new -As auto'
+alias mosha='mosh -p 55880 a -- tmux new -As auto'
 alias stow='stow -v'    # nice to see the actions taken by default
 alias stow_dots='pushd ~/dotfiles && stow * && pushd ~/dotfiles-* && stow * && popd && popd'
 alias fd="fd --one-file-system"
@@ -376,8 +376,8 @@ if [[ -e ~/.config/broot/launcher/bash/br ]]; then
   treb() { br --height $((LINES - 2)) --cmd :pt "$@"; }
 fi
 
-(( $+commands[duf] ))  && alias df=duf
-(( $+commands[navi] )) && eval "$(navi widget zsh)" ### !!!!!!
+(( $+commands[duf] ))   && alias df=duf
+(( $+commands[navi] ))  && eval "$(navi widget zsh)" ### !!!!!!
 (( $+commands[procs] )) && alias psg="procs --pager disable"
 
 alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default

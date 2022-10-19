@@ -1,17 +1,16 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
-local extkeys  = os.getenv("HOME").."/.config/wezterm/extkeys.lua"
-local specific = os.getenv("HOME").."/.config/wezterm/specific.lua"
 
 function do_if_file_exists(name)
    local f=io.open(name,"r")
    if f~=nil then io.close(f) else return end
-
-   dofile(name)
+   -- require(name) results in "can't load C modules in safe
+   -- mode" error
+   wezterm.add_to_config_reload_watch_list(name); dofile(name)
 end
 
-do_if_file_exists(extkeys)
-do_if_file_exists(specific)
+do_if_file_exists(wezterm.config_dir.."/extkeys.lua")
+do_if_file_exists(wezterm.config_dir.."/specific.lua")
 
 keys = {
    -- for emacs undo, prefer super w/ same keys
@@ -57,6 +56,7 @@ mouse_bindings = {
    },
 }
 
+-- TODO: make these default
 hyperlink_rules = {
    {
       regex = "\\bhttps?://\\S*\\b",
@@ -77,11 +77,10 @@ hyperlink_rules = {
 for k,v in pairs(keys) do keys_extended_shortcuts[k] = v end
 for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
 
-
 return {
    -- text & colours
    font = wezterm.font("JetBrains Mono"),
-   font_size = 12,              -- also the default
+   font_size = font_size,
    color_scheme = "Gruvbox Dark",
    -- cursor
    default_cursor_style = 'BlinkingBar',

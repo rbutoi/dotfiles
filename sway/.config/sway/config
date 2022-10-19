@@ -274,7 +274,3 @@ include /etc/sway/config.d/*
 
 # host-specific config
 include ~/.config/sway/specific
-
-# Local Variables:
-# eval: (rainbow-mode)
-# End:
