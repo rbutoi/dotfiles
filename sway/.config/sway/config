@@ -5,7 +5,7 @@
 #
 set $term      wezterm start --
 set $term_tmux $term tmux new -As auto
-set $editor    $term tmux new -As emacs emacsclient -nw -a ""
+set $editor    $term tmux new -As emacs emacsclient -nw -aemacs
 set $web       firefox-nightly
 set $menu      ~/bin/wofi-wrap.sh
 set $locker    "swaylock --daemonize --screenshots            \
@@ -32,18 +32,19 @@ exec_always sh -c "pkill kanshi; exec kanshi -c ~/.config/kanshi/$HOSTNAME"
 #
 exec_always sh -c "pkill waybar; exec waybar"
 
-exec systemd-cat dex -a -e SWAY                # autostart
+# daemons
 exec systemd-cat udiskie --tray --appindicator # automount manager
-                                               # clipboard
-exec systemd-cat wl-paste -t text --watch clipman --notify store --no-persist
 exec systemd-cat nm-applet --indicator         # network status
 exec systemd-cat poweralertd                   # power notifications
 exec systemd-cat wlsunset_here                 # sunset screen darken
 
+# clipboard
+exec systemd-cat wl-paste -t text --watch clipman store --max-items 1024
+
 # initial desktop
-exec systemd-cat $web
+exec systemd-cat dex -a -e SWAY # autostart
+# exec systemd-cat $web ??
 exec systemd-cat $term_tmux
-exec systemd-cat $editor
 exec systemd-cat signal-desktop
 
 # Chrome notifications have empty id/title.
@@ -52,41 +53,43 @@ no_focus   [app_id="^$" title="^$"]
 
 # per window config
 for_window [app_id="gsimplecal"]                             move position mouse, move up 40 px, move left 20 px
-for_window [class="Emacs"]                                   opacity 0.93
-for_window [app_id="emacs"]                                  opacity 0.93
-for_window [app_id="gnome-terminal-server" title="Terminal"] opacity 0.95
-for_window [app_id="nemo"]                                   opacity 0.95
-for_window [app_id="org.gnome.Nautilus"]                     opacity 0.95
-for_window [app_id="blueman-manager"]                        floating enable
-for_window [app_id="cinnamon-settings.py"]                   floating enable
-for_window [app_id="eog"]                                    floating enable
-for_window [app_id="exo-desktop-item-edit"]                  floating enable
-for_window [app_id="gnome-control-center"]                   floating enable
-for_window [app_id="goobuntu_indicator.py"]                  floating enable
-for_window [app_id="gyrc"]                                   floating enable
-for_window [app_id="nwg-look"]                               floating enable
-for_window [app_id="org.gnome.Weather"]                      floating enable
-for_window [app_id="pavucontrol"]                            floating enable
-for_window [app_id="qalculate-gtk"]                          floating enable
-for_window [app_id="wdisplays"]                              floating enable
-for_window [app_id="xfce4-appfinder"]                        floating enable
-for_window [app_id="zenity"]                                 floating enable
-for_window [class="1Password"]                               floating enable
-for_window [class="PCSX2"]                                   floating enable
-for_window [class="steam_app_.*"]                            floating enable
-for_window [class="steam_proton"]                            floating enable
-for_window [title="Find Directory"]                          floating enable
-for_window [title="Firefox - Sharing Indicator"]             floating enable
-for_window [title="^(Open|Save) Files?$"]                    floating enable
-for_window [title="^Close Firefox$"]                         floating enable
-for_window [title="^Edit with Emacs FRAME$"]                 floating enable
-for_window [title="^Picture in picture$"]                    floating enable
-assign [class="hl2_linux"]                                   workspace 3
-assign [class="Signal"]                                      workspace 7
-assign [class="discord"]                                     workspace 4
+for_window [class="Emacs"]                                    opacity 0.93
+for_window [app_id="^emacs"]                                  opacity 0.93
+for_window [app_id="^gnome-terminal-server" title="Terminal"] opacity 0.95
+for_window [app_id="^nemo"]                                   opacity 0.95
+for_window [app_id="^org.gnome.Nautilus"]                     opacity 0.95
+for_window [app_id="^blueman-manager"]                        floating enable
+for_window [app_id="^cinnamon-settings.py"]                   floating enable
+for_window [app_id="^eog"]                                    floating enable
+for_window [app_id="^exo-desktop-item-edit"]                  floating enable
+for_window [app_id="^font-viewer$"]                           floating enable
+for_window [app_id="^gnome-control-center"]                   floating enable
+for_window [app_id="^goobuntu_indicator.py"]                  floating enable
+for_window [app_id="^gyrc"]                                   floating enable
+for_window [app_id="^nwg-look"]                               floating enable
+for_window [app_id="^org.gnome.Weather"]                      floating enable
+for_window [app_id="^org.gnome.font-viewer"]                  floating enable
+for_window [app_id="^pavucontrol"]                            floating enable
+for_window [app_id="^qalculate-gtk"]                          floating enable
+for_window [app_id="^wdisplays"]                              floating enable
+for_window [app_id="^xfce4-appfinder"]                        floating enable
+for_window [app_id="^zenity"]                                 floating enable
+for_window [class="1Password"]                                floating enable
+for_window [class="PCSX2"]                                    floating enable
+for_window [class="steam_app_.*"]                             floating enable
+for_window [class="steam_proton"]                             floating enable
+for_window [title="Find Directory"]                           floating enable
+for_window [title="Firefox - Sharing Indicator"]              floating enable
+for_window [title="^(Open|Save) Files?$"]                     floating enable
+for_window [title="^Close Firefox$"]                          floating enable
+for_window [title="^Edit with Emacs FRAME$"]                  floating enable
+for_window [title="^Picture in picture$"]                     floating enable
+assign [class="hl2_linux"]                                    workspace 3
+assign [class="Signal"]                                       workspace 7
+assign [class="discord"]                                      workspace 4
 # all chrome apps
-assign [app_id="^chrome-"]                                   workspace 4
-assign [title="Google(.com)? - Calendar"]                    workspace 4
+assign [app_id="^chrome-"]                                    workspace 4
+assign [title="Google(.com)? - Calendar"]                     workspace 4
 # chrome apps steal Mod4 for some reason
 for_window [app_id="chrome"]                               shortcuts_inhibitor disable
 
@@ -142,7 +145,7 @@ bindsym $mod+e               exec swaymsg                 \
   '[app_id="wezterm" title=" \[emacs\]$"] focus'       || \
   swaymsg '[app_id="emacs"] focus'                     || \
   swaymsg '[class="Emacs"] focus'                      || $editor
-bindsym $mod+Shift+e         exec $editor
+bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
 bindsym $mod+c               kill
 bindsym $mod+space           exec $menu
 bindsym $alt+F2              exec $menu "-Srun"
@@ -245,12 +248,9 @@ bindsym $mod+Shift+Ctrl+l     exec $locker
 bindsym Print                 exec sway-interactive-screenshot
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
-bindsym XF86AudioMute         exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
-bindsym XF86AudioRaiseVolume  exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym XF86AudioLowerVolume  exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym Pause                 exec pamixer --unmute --increase 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym Scroll_Lock           exec pamixer --unmute --decrease 1 && notify-send -c volume "$(pamixer --get-volume)"
-bindsym $mod+Scroll_Lock      exec pamixer --toggle-mute
+bindsym XF86AudioMute         exec pamixer --toggle-mute         && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 5 && notify-send -c volume "$(pamixer --get-volume)"
+bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 5 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+F2               exec ~/bin/yamaha_vol down
 bindsym $mod+F3               exec ~/bin/yamaha_vol up
 bindsym $mod+F4               exec ~/bin/yamaha_toggle_link.sh
@@ -263,9 +263,8 @@ bindsym XF86AudioPrev         exec ~/bin/yamaha_or_playerctl.sh previous
 bindsym XF86AudioNext         exec ~/bin/yamaha_or_playerctl.sh next
 bindsym XF86AudioStop         exec ~/bin/yamaha_or_playerctl.sh stop
 bindsym XF86Calculator        exec rofi -show calc
-bindsym $mod+y                exec $term yt &> ~/.cache/.sway_yt || notify-send 'yt failed'
-bindsym $mod+v                exec clipman pick --notify --tool wofi
-bindsym $mod+$alt+h           exec $term --fullscreen htop
+bindsym $mod+v                exec clipman pick --tool wofi --max-items 30
+bindsym $mod+$alt+h           exec $term --fullscreen btop
 bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(~/.local/bin/swayinfo)"
 bindsym $mod+Shift+Ctrl+k     exec sh -c 'notify-send killing...; kill "$(~/.local/bin/swayinfo | grep "^pid=" | choose -f = 1)"'
 

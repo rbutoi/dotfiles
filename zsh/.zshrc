@@ -334,6 +334,10 @@ nms() { notmuch search "$@" | cut -c24-; }
 # external shell tools #
 ########################
 
+[[ -d /home/linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+(( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
+
 # BEGIN_KITTY_SHELL_INTEGRATION
 if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss/kitty/shell-integration/kitty.zsh"; fi
 # END_KITTY_SHELL_INTEGRATION
@@ -398,3 +402,5 @@ fi
 # host-specific #
 #################
 source_if ~/.zshrc_specific
+
+#  LocalWords:  shellenv
