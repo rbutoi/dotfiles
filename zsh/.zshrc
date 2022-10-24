@@ -249,9 +249,11 @@ sshcd. () { sshcd "$@" $(pwd) }
 ##
 ## emacs
 ##
-ew()  { emacsclient -a= -nw "$@";  }; e() { ew "$@"; } # inline console editor
-en()  { emacsclient -a= -n  "$@";  }                   # open in existing editor
-ewc() { emacsclient -a= -nc "$@";  }                   # new graphical editor
+
+ew()  { emacsclient -a emacs -nw "$@";  } # inline console editor
+alias e=ew
+en()  { emacsclient -a emacs -n  "$@";  } # open in existing editor
+ewc() { emacsclient -a emacs -nc "$@";  } # new graphical editor
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 export BROWSER=xdg-open

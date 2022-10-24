@@ -42,6 +42,12 @@ keys = {
       },
    },
 }
+-- emacs copy-mode binds
+local search_mode = wezterm.gui.default_key_tables().search_mode
+table.insert(                   -- TODO: factor this `table.insert` out
+   search_mode, { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' })
+table.insert(
+   search_mode, { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'})
 
 -- to click links, need both shift (bypass_mouse_reporting_modifiers = true) +
 -- ctrl (mouse_reporting = false). somehow both are needed in tmux (mouse mode)
@@ -61,13 +67,16 @@ hyperlink_rules = {
    {
       regex = "\\bhttps?://\\S*\\b",
       format = "$0",
-   }, { -- This is actually the default if you don't specify any hyperlink_rules
+   },
+   { -- This is actually the default if you don't specify any hyperlink_rules
       regex = "\\b\\w+://(?:[\\w.-]+)\\.[a-z]{2,15}\\S*\\b",
       format = "$0",
-   }, { -- linkify email addresses
+   },
+   { -- linkify email addresses
       regex = "\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b",
       format = "mailto:$0",
-   }, { -- file:// URI
+   },
+   { -- file:// URI
       regex = "\\bfile://\\S*\\b",
       format = "$0",
    }
@@ -82,15 +91,17 @@ return {
    font = wezterm.font("JetBrains Mono"),
    font_size = font_size,
    color_scheme = "Gruvbox Dark",
+
    -- cursor
    default_cursor_style = 'BlinkingBar',
    animation_fps = 1,
    cursor_blink_ease_in = 'Constant',
    cursor_blink_ease_out = 'Constant',
-   cursor_thickness = "1pt",
+   cursor_thickness = "1.4pt",
 
    -- keys and links
    keys = keys,
+   key_tables = {search_mode = search_mode},
    bypass_mouse_reporting_modifiers = 'SHIFT',
    mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules,
@@ -101,4 +112,5 @@ return {
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = "NeverPrompt",
    exit_behavior = "Close",
+   enable_scroll_bar = true,
 }

@@ -26,49 +26,62 @@
   :hook (after-init . (lambda ()
                         (message "Emacs loaded in %s" (emacs-init-time))
                         (benchmark-init/deactivate))))
+
+(use-package gcmh :init (gcmh-mode)) ; GC magic hack: gitlab.com/koral/gcmh
+
 (use-package f)                         ; add local load path
 (add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
+(load "config-fns.el")                  ; useful function definitions
 
-(let ((host (shell-command-to-string "hostname -f"))) ; host identification
+(use-package s)         ; host identification. (system-name) is lacking the "-f"
+(let ((host (s-trim (shell-command-to-string "hostname -f"))))
+  (defconst my/crostini?    (not (not (string-match-p "penguin" host))))
+  (defconst my/laptop?      (not (not (string-match-p    "roam" host))))
   (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
-  (defconst my/work?        (not (not (string-match-p  "google.*\.com" host))))
-  (defconst my/glaptop?     (not (not (string-match-p           "roam" host))))
-  (defconst my/crostini?    (not (not (string-match-p        "penguin" host))))
+  (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
   (defconst my/workstation? (and my/work? (not my/glaptop?))))
 
 ;;;; UI / UX
-(tool-bar-mode -1) (menu-bar-mode -1) ; just use M-` / F10
+(tool-bar-mode -1) (menu-bar-mode -1) ; just use F10
 (context-menu-mode)                   ; this is good tho
 (global-hl-line-mode)                 ; always good to keep track
 
-(use-package general)                   ; keybinds
-
-(use-package doom-themes                ; theme
+(use-package emacs                      ; theme - modus is built in to 28
   :init
-  (load-theme 'doom-gruvbox t)
-  (add-hook 'window-setup-hook          ; show terminal's transparent background
-            (lambda ()
-              (unless (display-graphic-p)
-                (set-face-background 'default "unspecified-bg")))))
+  (add-hook 'modus-themes-after-load-theme-hook
+            (lambda ()       ; for terminal transparency in vivendi (dark) theme
+              (when (equal (modus-themes--current-theme) 'modus-vivendi)
+                (set-face-background 'default "unspecified-bg"))))
+  (load-theme 'modus-vivendi t)
+  (run-hooks 'modus-themes-after-load-theme-hook))
 
-(use-package which-key                  ; useful shortcut reminders
-  :init (which-key-setup-side-window-bottom) (which-key-mode)
-  :config (setq which-key-idle-secondary-delay 0.01))
-
-(general-def                            ; buffers and windows
-  "M-0"       'delete-window)
+(use-package general)                   ; keybinds
+(general-def
+  "C-x C-m"   'execute-extended-command ; more convenient than M-x
+  "C-x C-M-c" 'save-buffers-kill-emacs
+  "M-0"       'delete-window            ; buffers and windows
+  "C-x k"     'my/kill-this-buffer
+  "C-x M-k"   'my/kill-all-buffers
+  "C-x K"     'kill-buffer)
 (general-def :keymaps '(global magit-mode-map) ; just drop the M- in magit
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
   "M-3"       'split-window-right
   "M-o"       (lambda () (interactive) (other-window +1))
   "M-i"       (lambda () (interactive) (other-window -1)))
+
+(use-package which-key                  ; useful shortcut reminders
+  :init (which-key-setup-side-window-bottom) (which-key-mode)
+  :custom (which-key-idle-secondary-delay 0.01))
+
 (use-package ace-window
   :general ([remap other-window] 'ace-window)
-  :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 (use-package avy
   :init (avy-setup-default)
-  :general ("C-c C-j" 'avy-resume))
+  :general
+  ("C-c C-k" 'avy-resume)
+  ("M-j" 'avy-goto-char-timer))
 
 (use-package doom-modeline              ; modeline
   :init
@@ -80,155 +93,186 @@
   (doom-modeline-mode))
 
 (use-package helpful                    ; improved help windows
-  :config (setq counsel-describe-function-function #'helpful-callable
-                counsel-describe-variable-function #'helpful-variable))
-
-(setq tab-always-indent 'complete)      ; completion
-
-;; (use-package corfu
-;;   :init
-;;   (global-corfu-mode))
-
-;; (straight-use-package
-;;  '(corfu-terminal
-;;    :type git
-;;    :repo "https://codeberg.org/akib/emacs-corfu-terminal.git"))
-;; (use-package corfu-terminal
-;;   (unless (display-graphic-p)
-;;     (corfu-terminal-mode +1)))
-
-(use-package ivy                        ; minibuffer completion
-  :init (ivy-mode)
-  (use-package wgrep)
-  ;; .. can be replaced by DEL/C-l, but . is still useful for e.g. dired
-  (setq ivy-extra-directories '(".")
-        ivy-wrap t)
   :general
-  (:keymaps 'ivy-minibuffer-map
-            "C-k"     'ivy-alt-done     ; C-j is used by tmux
-            "C-M-k"   'ivy-kill-line
-            "C-M-i"   'ivy-insert-current)) ; M-i used to change windows
-(use-package counsel
-  :general
-  ("C-c C-r"   'ivy-resume
-   "C-x m"     'counsel-M-x
-   "C-x C-m"   'counsel-M-x
-   "C-x C-b"   'counsel-switch-buffer
-   "C-x b"     'counsel-buffer-or-recentf
-   "C-o"       'counsel-semantic-or-imenu
-   "C-M-s"     'my/counsel-rg-symbol-at-point
-   "C-x f"     'my/counsel-fd-file-jump-ask
-   "C-x M-f"   'counsel-fd-file-jump
-   "C-c M-c"   'my/counsel-fd-config)
-  (:keymaps 'counsel-find-file-map
-            "C-l" 'counsel-up-directory)
-  :config
-  (counsel-mode)
-  (defun my/counsel-rg-symbol-at-point ()
-    (interactive) (counsel-rg (thing-at-point 'symbol)))
-  (use-package counsel-fd
-    :config
-    (setq counsel-fd-command
-          "fd --hidden --color never --full-path --follow -tl -ts -td ")
-    (defun my/counsel-fd-config ()
-      "Jump to file in ~/.config"
-      (interactive) (counsel-fd-file-jump "" "~/.config/"))
-    (defun my/counsel-fd-file-jump-ask ()
-      "(counsel-file-jump) but ask by default"
-      (interactive)
-      (let ((current-prefix-arg 4))
-        (call-interactively 'counsel-fd-file-jump)))))
-(use-package ivy-rich
-  :after counsel
-  :init (ivy-rich-mode)
-  :config
-  (setq ivy-rich-project-root-cache-mode t)
-  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
+  ([remap describe-command]  'helpful-command)
+  ([remap describe-function] 'helpful-function)
+  ([remap describe-key]      'helpful-key)
+  ([remap describe-symbol]   'helpful-symbol)
+  ([remap describe-variable] 'helpful-variable))
 
-(use-package prescient                ; remembers
+(use-package popper                     ; popups
+  :general
+  ("M-`"   'popper-toggle-latest
+   ;; TODO: find terminal friendly binds
+   ;; "C-`"   'popper-cycle
+   ;; "C-M-`" 'popper-toggle-type
+   )
+  :custom (popper-reference-buffers
+           '("\\*Messages\\*"
+             "Output\\*$"
+             "\\*Async Shell Command\\*"
+             help-mode
+             helpful-mode))
+  :init (popper-mode) (popper-echo-mode)) ; For echo area hints
+
+;; completion
+(setq tab-always-indent 'complete
+      ;; TAB cycle if there are only few candidates
+      completion-cycle-threshold 3)
+(use-package corfu
+  :init (global-corfu-mode)
+  :custom (corfu-auto t)
+  :general (:keymaps 'corfu-map "M-m" 'corfu-move-to-minibuffer)
   :config
-  (setq completion-styles '(prescient basic))
-  (prescient-persist-mode))
-(use-package ivy-prescient :config (ivy-prescient-mode))
-;; (use-package marginalia :init (marginalia-mode)) ; rich annotations
+  (use-package corfu-doc
+    :hook corfu-mode
+    :general (:keymaps 'corfu-map
+                       "M-d" 'corfu-doc-toggle
+                       "M-p" 'corfu-doc-scroll-down
+                       "M-n" 'corfu-doc-scroll-up)))
+(use-package corfu-terminal :after corfu
+  :straight '(corfu-terminal
+              :type git
+              :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+  :config (unless (display-graphic-p) (corfu-terminal-mode)))
+(use-package corfu-doc-terminal :after corfu-doc
+  :straight '(corfu-doc-terminal
+              :type git
+              :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
+  :config (unless (display-graphic-p) (corfu-doc-terminal-mode)))
+
+(use-package vertico                    ; VERTical Interactive COmpletion
+  :custom
+  (vertico-count 17)
+  (vertico-cycle t)
+  :config (vertico-mode))
+
+(use-package consult
+  :init
+  (defun my/consult-fd-config ()
+    "consult-fd on ~/.config"
+    (interactive) (consult-fd "~/.config/" ""))
+  (defun my/consult-line-symbol-at-point ()
+    "consult-line the symbol at point."
+    (interactive) (consult-line (thing-at-point 'symbol)))
+  :general                              ; remap some standard commands
+  ("C-x M-:" 'consult-complex-command
+   "C-x C-b" 'consult-buffer
+   "C-x b"   'consult-recent-file
+   "C-x p b" 'consult-project-buffer
+   "C-M-o"   'my/consult-line-symbol-at-point
+   "C-o"     'consult-imenu
+   "C-h a"   'consult-apropos
+   "M-y"     'consult-yank-pop
+   "C-M-s"   'consult-ripgrep
+   "C-x M-f" 'consult-fd
+   "C-c M-c" 'my/consult-fd-config)
+  (:keymaps 'isearch-mode-map
+            "C-o" 'consult-line)
+  :custom
+  (xref-show-xrefs-function       #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+  :config (recentf-mode))
+
+(use-package savehist                   ; save minibuffer history
+  :straight (:type built-in)
+  :after no-littering
+  :custom
+  (savehist-file (no-littering-expand-var-file-name "savehist.el"))
+  (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  :config (savehist-mode))
+
+(use-package marginalia :config (marginalia-mode))
+
+(use-package orderless
+  :custom (completion-styles '(orderless basic)))
+
+(use-package embark
+  :general
+  ("C-." 'embark-act
+   "C-;" 'embark-dwim
+   "C-h B" 'embark-bindings)
+  :custom
+  ;; Optionally replace the key help with a completing-read interface
+  (prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+(use-package embark-consult
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;;; Editing
+(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+
 (delete-selection-mode)                 ; typing overwrites selection
 (use-package sudo-edit)
 (use-package so-long :init (global-so-long-mode)) ; long file handling
 
 (use-package mwim                       ; better C-a/C-e
   :general
-  ([remap move-beginning-of-line] 'mwim-beginning-of-code-or-line)
-  ([remap move-end-of-line]       'mwim-end-of-code-or-line))
+  ([remap move-beginning-of-line] 'mwim-beginning-of-code-or-line
+   [remap move-end-of-line]       'mwim-end-of-code-or-line))
 
 (use-package undo-tree                  ; visual undo
   :defer 2
   :general
-  ("C-z"   'undo-tree-undo)
-  ("C-x u" 'undo-tree-visualize)
-  :config
-  (setq
-   undo-tree-history-directory-alist backup-directory-alist
-   undo-tree-visualizer-diff t
-   undo-tree-visualizer-timestamps t)
-  (global-undo-tree-mode))
+  ("C-z"   'undo-tree-undo
+   "C-x u" 'undo-tree-visualize)
+  :custom
+  (undo-tree-history-directory-alist backup-directory-alist)
+  (undo-tree-visualizer-diff t)
+  (undo-tree-visualizer-timestamps t)
+  :config (global-undo-tree-mode))
 
 (use-package expand-region
   :general ("M-=" 'er/expand-region))   ; terminal-friendly bind
 
-(use-package swiper                     ; better search
-  :general
-  ("C-M-o" 'swiper-thing-at-point)
-  (:keymaps 'isearch-mode-map
-	    "C-o" 'swiper-from-isearch))
-(use-package ctrlf :init (ctrlf-mode))  ; another isearch replacement
-(use-package counsel-edit-mode          ; edit while searching
-  :config (counsel-edit-mode-setup-ivy))
 (use-package deadgrep)                  ; ripgrep UI
 
 (use-package ws-butler                  ; delete trailing whitespace
-  :config
-  (setq ws-butler-keep-whitespace-before-point nil)
-  (ws-butler-global-mode))
+  :custom (ws-butler-keep-whitespace-before-point nil)
+  :config (ws-butler-global-mode))
 (use-package column-enforce-mode        ; highlight text past fill column
   :init (global-column-enforce-mode))
 
 (use-package aggressive-indent          ; keep indented
   :hook ((emacs-lisp-mode . aggressive-indent-mode))
-  :config (setq aggressive-indent-sit-for-time 0.5))
+  :custom (aggressive-indent-sit-for-time 0.5)) ; slow it down
 
 (use-package flyspell                   ; spellcheck
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode)))
-(use-package flyspell-correct
-  :after flyspell
-  :general
-  (:keymaps 'flyspell-mode-map "C-;"
-            'flyspell-correct-wrapper))
-(use-package flyspell-correct-ivy :after flyspell-correct)
+;; (use-package flyspell-correct
+;;   :after flyspell
+;;   :general
+;;   (:keymaps 'flyspell-mode-map
+;;             "C-;" 'flyspell-correct-wrapper))
 
 ;;;; Programming
 (setq-default indent-tabs-mode nil)     ; never tabs to indent
-(setq vc-follow-symlinks t)             ; don't prompt
+(setq vc-follow-symlinks t              ; don't prompt
+      vc-make-backup-files t)
+
 (toggle-text-mode-auto-fill)
 (general-add-hook '(text-mode-hook prog-mode-hook) 'display-line-numbers-mode)
 (use-package editorconfig :init (editorconfig-mode))
 
 (use-package tree-sitter
-  :defer 6
+  :defer 3
   :config
-  (use-package tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package tree-sitter-langs :after tree-sitter)
 
-;; (use-package yasnippet
-;;   :general (yas-minor-mode-map
-;;             :states 'insert
-;;             "TAB" 'nil
-;;             "C-TAB" 'yas-expand)
-;;   :hook ((prog-mode) . yas-minor-mode)
-;;   :config (yas-reload-all))
+(use-package yasnippet
+  :defer 4
+  :hook ((prog-mode) . yas-minor-mode)
+  :config
+  (use-package yasnippet-snippets)
+  (yas-reload-all))
 
 (use-package smartparens                ; parentheses
   :defer 1
@@ -237,20 +281,12 @@
 (use-package rainbow-mode       :hook prog-mode)
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
-  :general
-  (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
-            "C-c C-u" 'string-inflection-cycle))
+  :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
+                     "C-c C-u" 'string-inflection-cycle))
 
 (use-package auto-highlight-symbol      ; highlight symbols
-  :init
-  (global-auto-highlight-symbol-mode)
-  :general
-  (:keymaps 'auto-highlight-symbol-mode-map
-            "M-p"   'ahs-backward
-            "M-n"   'ahs-forward
-            "M-S-p" 'ahs-backward-definition
-            "M-S-n" 'ahs-forward-definition))
-(use-package hl-todo                   ; highlight TODOs
+  :init (global-auto-highlight-symbol-mode))
+(use-package hl-todo                   ; highlight "TODO:"s
   :init
   (setq hl-todo-wrap-movement t)
   (global-hl-todo-mode))
@@ -262,15 +298,12 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   :general ("C-x v a" 'diff-hl-amend-mode))
 (use-package dired-git-log :straight (:host github :repo "amno1/dired-git-log")
-  ;; :commands (dired-git-log-auto-enable)
   :after dired
-  :hook ((dired-mode         . dired-git-log-mode)
-         ;; (dired-after-readin . dired-git-log-auto-enable)
-         )
-  :general
-  (:keymaps 'dired-mode-map ")" 'dired-git-log-mode))
+  :hook ((dired-mode . dired-git-log-mode))
+  :general (:keymaps 'dired-mode-map ")" 'dired-git-log-mode)
+  :custom (dired-git-log-auto-hide-details-p nil))
 ;; TODO: goto-chg.el
-(use-package git-link :general ("C-c g l" 'git-link)) ; github link at point
+(use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)
@@ -278,6 +311,7 @@
 ;; (use-package org :straight (:type built-in)
 ;;   :defer 4
 ;;   :config (use-package :defer 4 toc-org))
+(use-package i3wm-config-mode)
 (use-package rust-mode                  ; compiled
   :config
   (use-package cargo)
@@ -287,8 +321,9 @@
 (add-hook 'after-save 'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
 
-(general-add-hook '(conf-mode-hook emacs-lisp-mode-hook) ; this seems like an upstream bug?
-                  (lambda () (run-mode-hooks 'prog-mode-hook)))
+(general-add-hook                       ; this seems like an upstream bug?
+ '(conf-mode-hook emacs-lisp-mode-hook)
+ (lambda () (run-mode-hooks 'prog-mode-hook)))
 
 ;;;; Emacs-as-XYZ
 (load "config-notmuch.el" :noerror)     ; email client
@@ -298,13 +333,13 @@
   ("C-x   g"   'magit-status
    "C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
-  :config
-  (setq magit-repository-directories
-        `(("~/dotfiles" . 0)
-          ("~/dotfiles-google" . 0)
-          ("~/oss" . 1))
-        magit-log-auto-more t
-        magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
+  :custom
+  (magit-repository-directories
+   `(("~/dotfiles" . 0)
+     ("~/dotfiles-google" . 0)
+     ("~/oss" . 1)))
+  (magit-log-auto-more t)
+  (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
@@ -317,12 +352,16 @@
   :general
   ("<f2>" 'vterm-toggle)
   (:keymaps 'vterm-mode-map "<f2>" 'vterm-toggle))
+
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
 
 (use-package bluetooth)                 ; Bluetooth device manager?!
 
-;;;; epilogue
-(load "config-fns.el")                  ; useful function definitions
+;;;; Epilogue
+(use-package outshine)
+;; Local Variables:
+;; eval: (outshine-mode)
+;; End:
 
 (use-package no-littering               ; Emacs, stop littering!❗!
   :init
@@ -335,21 +374,14 @@
         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
 (use-package emacs                      ; emacs prefs
-  :general
-  ("C-x C-M-c" 'save-buffers-kill-emacs)
-  :config
-  (setq
-   confirm-kill-processes nil
-   use-short-answers t                  ; why you make me type "yes"
-   inhibit-startup-screen t
-   initial-scratch-message ""
-   uniquify-buffer-name-style 'forward
-   vc-make-backup-files t
-   savehist-file (no-littering-expand-var-file-name "savehist.el")
-   savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-   custom-file (f-join user-emacs-directory "lisp/custom.el"))
-  (load custom-file :noerror)           ; customize is still useful
-  (savehist-mode))                      ; save minibuffer history
+  :custom
+  (confirm-kill-processes nil)
+  (use-short-answers t)
+  (inhibit-startup-screen t)
+  (initial-scratch-message "")
+  (uniquify-buffer-name-style 'forward)
+  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
+  :config (load custom-file :noerror))  ; customize is still useful
 (use-package server :config (unless (server-running-p) (server-start)))
 (use-package restart-emacs :general ("C-x M-c" 'restart-emacs))
 

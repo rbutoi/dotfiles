@@ -58,10 +58,11 @@
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
-  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
-    "exec": "date '+%a %d⏰%H:%M'",
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668 - fix with https://superuser.com/questions/1496256/gnu-linux-date-command-ordinal-suffix
+    "exec": "date '+%a %dXX %H:%M' | sed -e 's/11XX/11th/' -e 's/12XX/12th/' -e 's/13XX/13th/' -e 's/1XX/1st/' -e 's/2XX/2nd/' -e 's/3XX/3rd/' -e 's/XX/th/' ",
     "tooltip": false,
     "on-click": "gsimplecal",
+    "on-click-right": "swaymsg '[title=\" – Calendar - \"] focus'",
     "interval": 5
   },
   "pulseaudio": {
@@ -87,7 +88,7 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}{capacity}",
+    "format": "{icon}",
     "format-charging": "{icon}{capacity}+",
     "format-warning": "{icon}{capacity}",
     "format-critical": "{icon}{capacity}",
@@ -175,10 +176,11 @@
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
-  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668
-    "exec": "date '+%a %d⏰%H:%M'",
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668 - fix with https://superuser.com/questions/1496256/gnu-linux-date-command-ordinal-suffix
+    "exec": "date '+%a %dXX %H:%M' | sed -e 's/11XX/11th/' -e 's/12XX/12th/' -e 's/13XX/13th/' -e 's/1XX/1st/' -e 's/2XX/2nd/' -e 's/3XX/3rd/' -e 's/XX/th/' ",
     "tooltip": false,
     "on-click": "gsimplecal",
+    "on-click-right": "swaymsg '[title=\" – Calendar - \"] focus'",
     "interval": 5
   },
   "pulseaudio": {
@@ -204,7 +206,7 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon}{capacity}",
+    "format": "{icon}",
     "format-charging": "{icon}{capacity}+",
     "format-warning": "{icon}{capacity}",
     "format-critical": "{icon}{capacity}",

@@ -1,35 +1,13 @@
 ;; -*- lexical-binding: t; -*-
-;; config-fns.el: longer functions copied in externally for
-;; workarounds, or internally and tweaked.
+;; config-fns.el: longer functions copied in externally for workarounds, or
+;; internally and tweaked. intentionally only definitions without any
+;; hook-adding or functionality-changing.
 
-;;;; util
+;;;; lisp util
 (defun add-list-to-list (dst src) ; https://emacs.stackexchange.com/a/68048/26271
   "Similar to `add-to-list', but accepts a list as 2nd argument"
   (set dst
        (append (eval dst) src)))
-
-;; (with-eval-after-load 'counsel
-;;   ;; https://github.com/abo-abo/swiper/issues/1333#issuecomment-436960474
-;;   (defun counsel-find-file-fallback-command ()
-;;     "Fallback to non-counsel version of current command."
-;;     (interactive)
-;;     (when (bound-and-true-p ivy-mode)
-;;       (ivy-mode -1)
-;;       (add-hook 'minibuffer-setup-hook
-;;                 'counsel-find-file-fallback-command--enable-ivy))
-;;     (ivy-set-action
-;;      (lambda (current-path)
-;;        (let ((old-default-directory default-directory))
-;;          (let ((i (length current-path)))
-;;            (while (> i 0)
-;;              (push (aref current-path (setq i (1- i))) unread-command-events)))
-;;          (let ((default-directory "")) (call-interactively 'find-file))
-;;          (setq default-directory old-default-directory))))
-;;     (ivy-done))
-;;   (defun counsel-find-file-fallback-command--enable-ivy ()
-;;     (remove-hook 'minibuffer-setup-hook
-;;                  'counsel-find-file-fallback-command--enable-ivy)
-;;     (ivy-mode t)))
 
 ;;;; file ops
 (defun modi/revert-all-file-buffers ()
@@ -68,6 +46,7 @@ or are no longer readable will be killed."
               (kill-buffer)))
       (message "Not a file visiting buffer!"))))
 
+;;;; editing: toggling commenting
 (defun comment-or-uncomment-line-or-region ()
   "Comments or uncomments the current line or region."
   (interactive)
@@ -77,7 +56,7 @@ or are no longer readable will be killed."
       (comment-or-uncomment-region (line-beginning-position) (line-end-position))
       (forward-line))))
 
-;; editing: better C/M-w
+;;;; better C/M-w
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
@@ -92,6 +71,7 @@ or are no longer readable will be killed."
      (list (line-beginning-position)
            (line-beginning-position 2)))))
 
+;;;; vterm / compile
 (defun close-compile-window-if-successful (buffer string)
   " close a compilation window if succeeded without warnings "
   (if (and
@@ -140,32 +120,91 @@ shell exits, the buffer is killed."
     (vterm-send-string command)
     (vterm-send-return)))
 
-;; theme toggling
-(defun my/disable-save-theme ()
-  "Disable the theme, and save it to re-enable."
+;;;; completion: corfu, consult
+;; https://github.com/minad/corfu#transfer-completion-to-the-minibuffer
+(defun corfu-move-to-minibuffer ()
   (interactive)
-  (disable-theme (car custom-enabled-themes))
-  (setq my/old-doom-theme doom-theme
-        doom-theme        nil))
+  (let ((completion-extra-properties corfu--extra)
+        completion-cycle-threshold completion-cycling)
+    (apply #'consult-completion-in-region completion-in-region--data)))
 
-(defun my/enable-saved-theme ()
+;; adapted from https://github.com/minad/consult/wiki#find-files-using-fd
+(defvar consult--fd-command nil)
+(defun consult--fd-builder (input)
+  (unless consult--fd-command
+    (setq consult--fd-command
+          (if (eq 0 (call-process-shell-command "fdfind"))
+              "fdfind"
+            "fd")))
+  (pcase-let* ((`(,arg . ,opts) (consult--command-split input))
+               (`(,re . ,hl) (funcall consult--regexp-compiler
+                                      arg 'extended t)))
+    (when re
+      (list :command (append
+                      (list consult--fd-command
+                            "--color=never" "--full-path"
+                            "--hidden" "--follow" ; get this as well
+                            (consult--join-regexps re 'extended))
+                      opts)
+            :highlight hl))))
+
+(defun consult-fd (&optional dir initial)
+  "Search for files in DIR using fd matching input regexp given INITIAL input."
+  (interactive "P")
+  (let* ((prompt-dir (consult--directory-prompt "fd" dir))
+         (default-directory (cdr prompt-dir)))
+    (find-file (consult--find (car prompt-dir) #'consult--fd-builder initial))))
+
+;;;; slow terminal toggling
+;; theme toggling, TODO: un-doom if needed
+;; (defun my/disable-save-theme ()
+;;   "Disable the theme, and save it to re-enable."
+;;   (interactive)
+;;   (disable-theme (car custom-enabled-themes))
+;;   (setq my/old-doom-theme doom-theme
+;;         doom-theme        nil))
+
+;; (defun my/enable-saved-theme ()
+;;   (interactive)
+;;   (setq doom-theme my/old-doom-theme)
+;;   (load-theme doom-theme t nil)
+;;   (doom/reload-theme))
+
+;; (defun my/slow-terminal ()
+;;   "For when the terminal is very slow.
+
+;; Like ChromeOS's hterm."
+;;   (interactive)
+;;   (my/disable-save-theme)
+;;   (setq my/old-scroll-conservatively scroll-conservatively
+;;         scroll-conservatively        0))
+
+;; (defun my/fast-terminal ()
+;;   (interactive)
+;;   (my/enable-saved-theme)
+;;   (setq scroll-conservatively my/old-scroll-conservatively))
+
+;;;; buffer killing
+(defun kill-other-buffers ()       ; https://stackoverflow.com/a/3417473/3919508
+  "Kill all other buffers."
   (interactive)
-  (setq doom-theme my/old-doom-theme)
-  (load-theme doom-theme t nil)
-  (doom/reload-theme))
+  (mapc 'kill-buffer
+        (delq (current-buffer)
+              (remove-if-not 'buffer-file-name (buffer-list)))))
 
-;; slow terminal toggling
-(defun my/slow-terminal ()
-  "For when the terminal is very slow.
-
-Like ChromeOS's hterm."
+(defun my/kill-this-buffer ()           ; usually what is desired
+  "Kill the current buffer."
+  (interactive) (kill-buffer nil))
+(defun my/kill-all-buffers ()
+  "Close all buffers."
   (interactive)
-  (my/disable-save-theme)
-  (setq my/old-scroll-conservatively scroll-conservatively
-        scroll-conservatively        0))
+  (delete-other-windows)
+  (save-some-buffers)
+  (let ((kill-buffer-query-functions '()))
+    (mapc 'kill-buffer (buffer-list)))
+  (message "All buffers closed."))
 
-(defun my/fast-terminal ()
-  (interactive)
-  (my/enable-saved-theme)
-  (setq scroll-conservatively my/old-scroll-conservatively))
-
+;;;; epilogue
+;; Local Variables:
+;; eval: (outshine-mode)
+;; End:

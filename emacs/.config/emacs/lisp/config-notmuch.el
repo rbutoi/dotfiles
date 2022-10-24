@@ -207,13 +207,14 @@ take up to a minute (if stale)."
      notmuch-search-mode-map
      notmuch-tree-mode-map
      notmuch-show-mode-map)
-   "C-M-s" 'counsel-notmuch
+   "C-M-s" 'consult-notmuch
    "Q"     'my/notmuch-kill-all-buffers
    "D"     'my/notmuch-rm-deleted-tag
    "<f7>"  'my/notmuch-open-in-gmail
    "G"     'my/notmuch-poll-async)
   :config
-  (setq
+  (use-package consult-notmuch)
+  (setq ; TODO: :custom
    notmuch-tag-formats
    (append
     notmuch-tag-formats
