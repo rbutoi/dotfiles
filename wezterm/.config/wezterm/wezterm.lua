@@ -42,12 +42,15 @@ keys = {
       },
    },
 }
+
 -- emacs copy-mode binds
 local search_mode = wezterm.gui.default_key_tables().search_mode
-table.insert(                   -- TODO: factor this `table.insert` out
-   search_mode, { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' })
-table.insert(
-   search_mode, { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'})
+for _, v in pairs({
+   { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' },
+   { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'},
+   { key = 'g', mods = 'CTRL', action = act.CopyMode 'Close' }}) do
+   table.insert(search_mode, v)
+end
 
 -- to click links, need both shift (bypass_mouse_reporting_modifiers = true) +
 -- ctrl (mouse_reporting = false). somehow both are needed in tmux (mouse mode)

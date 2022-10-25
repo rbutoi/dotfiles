@@ -9,6 +9,17 @@
   (set dst
        (append (eval dst) src)))
 
+;;;; UI
+;; https://tecosaur.github.io/emacs-config/#theme-modeline
+(defun doom-modeline-conditional-buffer-encoding ()
+  "We expect the encoding to be LF UTF-8, so only show the
+modeline when this is not the case"
+  (setq-local doom-modeline-buffer-encoding
+              (unless (and (memq (plist-get (coding-system-plist buffer-file-coding-system) :category)
+                                 '(coding-category-undecided coding-category-utf-8))
+                           (not (memq (coding-system-eol-type buffer-file-coding-system) '(1 2))))
+                t)))
+
 ;;;; file ops
 (defun modi/revert-all-file-buffers ()
   "Refresh all open file buffers without confirmation.

@@ -85,12 +85,14 @@
 
 (use-package doom-modeline              ; modeline
   :init
-  (use-package all-the-icons)
   (setq doom-modeline-support-imenu t
         doom-modeline-enable-word-count t
         doom-modeline-buffer-file-name-style 'truncate-upto-project)
   (column-number-mode)
-  (doom-modeline-mode))
+  (doom-modeline-mode)
+  :hook
+  ((after-change-major-mode . doom-modeline-conditional-buffer-encoding)))
+(use-package all-the-icons)
 
 (use-package helpful                    ; improved help windows
   :general
@@ -254,11 +256,12 @@
 ;;;; Programming
 (setq-default indent-tabs-mode nil)     ; never tabs to indent
 (setq vc-follow-symlinks t              ; don't prompt
-      vc-make-backup-files t)
-
+      vc-make-backup-files t
+      comment-auto-fill-only-comments t)
 (toggle-text-mode-auto-fill)
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+
 (general-add-hook '(text-mode-hook prog-mode-hook) 'display-line-numbers-mode)
-(use-package editorconfig :init (editorconfig-mode))
 
 (use-package tree-sitter
   :defer 3
