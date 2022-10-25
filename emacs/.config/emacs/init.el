@@ -4,8 +4,10 @@
 ;;;; Prologue
 ;; package management: straight.el / use-package
 (setq
- straight-base-dir (concat user-emacs-directory "var/") ; no f-join yet
- straight-use-package-by-default t)
+ straight-use-package-by-default t
+ straight-base-dir  (concat user-emacs-directory "var/") ; no f-join yet
+ straight-build-dir                ; allow multiple emacsen to coexist
+ (concat "build-" emacs-version))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -39,21 +41,20 @@
   (defconst my/laptop?      (not (not (string-match-p    "roam" host))))
   (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
   (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
-  (defconst my/workstation? (and my/work? (not my/glaptop?))))
+  (defconst my/workstation? (and my/work? (not my/laptop?))))
 
 ;;;; UI / UX
 (tool-bar-mode -1) (menu-bar-mode -1) ; just use F10
 (context-menu-mode)                   ; this is good tho
 (global-hl-line-mode)                 ; always good to keep track
 
-(use-package emacs                      ; theme - modus is built in to 28
-  :init
-  (add-hook 'modus-themes-after-load-theme-hook
-            (lambda ()       ; for terminal transparency in vivendi (dark) theme
-              (when (equal (modus-themes--current-theme) 'modus-vivendi)
-                (set-face-background 'default "unspecified-bg"))))
-  (load-theme 'modus-vivendi t)
-  (run-hooks 'modus-themes-after-load-theme-hook))
+(defun my/terminal-bg-transparency ()
+  "Disable background in terminal to show wallpaper."
+  (unless (display-graphic-p) (set-face-background 'default "unspecified-bg")))
+(use-package doom-themes
+  :init (load-theme 'doom-gruvbox t)
+  (my/terminal-bg-transparency)
+  :hook ((server-after-make-frame . my/terminal-bg-transparency)))
 
 (use-package general)                   ; keybinds
 (general-def
@@ -320,6 +321,16 @@
   (use-package cargo)
   (use-package cargo-mode))
 
+(use-package outshine
+  :general
+  (:keymaps 'outshine-mode-map
+            "M-p" 'outline-previous-visible-heading
+            "M-n" 'outline-next-visible-heading
+            [remap consult-imenu] 'consult-outline))
+;; Local Variables:
+;; eval: (outshine-mode)
+;; End:
+
                                         ; automatically make scripts executable
 (add-hook 'after-save 'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
@@ -361,11 +372,6 @@
 (use-package bluetooth)                 ; Bluetooth device manager?!
 
 ;;;; Epilogue
-(use-package outshine)
-;; Local Variables:
-;; eval: (outshine-mode)
-;; End:
-
 (use-package no-littering               ; Emacs, stop littering!❗!
   :init
   (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))

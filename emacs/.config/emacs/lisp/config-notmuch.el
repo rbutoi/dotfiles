@@ -87,7 +87,7 @@ take up to a minute (if stale)."
   (setq
    ;; laptop/muchsync needs an external script for proper ssh creds and since
    ;; notmuch's call-process wrapper doesn't pass any args
-   notmuch-poll-script (when my/glaptop? "notmuch_new_systemd.sh")
+   notmuch-poll-script (when my/laptop? "notmuch_new_systemd.sh")
 
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t
@@ -232,6 +232,7 @@ take up to a minute (if stale)."
       ("security-alert" (propertize tag  'face '(:foreground "brown"         )))
       ("important"      (propertize "im" 'face '(:foreground "brightgreen" ))))))
   (use-package notmuch-unread
+    :if my/workstation?
     :straight (:host github :repo "rbutoi/notmuch-unread")
     :init (notmuch-unread-mode))
 
