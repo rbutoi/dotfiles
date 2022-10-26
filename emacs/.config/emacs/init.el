@@ -57,6 +57,7 @@
   :hook ((server-after-make-frame . my/terminal-bg-transparency)))
 
 (use-package general)                   ; keybinds
+(use-package defrepeater)
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
   "C-x C-M-c" 'save-buffers-kill-emacs
@@ -115,7 +116,8 @@
              "Output\\*$"
              "\\*Async Shell Command\\*"
              help-mode
-             helpful-mode))
+             helpful-mode
+             "\\*Apropos\\*"))
   :init (popper-mode) (popper-echo-mode)) ; For echo area hints
 
 ;; completion
@@ -297,12 +299,25 @@
   (setq hl-todo-wrap-movement t)
   (global-hl-todo-mode))
 
-(use-package diff-hl
-  :init (global-diff-hl-mode) (diff-hl-margin-mode)
-  :config ;; https://github.com/dgutov/diff-hl/#magit
-  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  :general ("C-x v a" 'diff-hl-amend-mode))
+(use-package git-gutter
+  :init (global-git-gutter-mode)
+  (defrepeater 'git-gutter:previous-hunk)
+  (defrepeater 'git-gutter:next-hunk)
+  :custom
+  (git-gutter:handled-backends '(git hg bzr svn))
+  (git-gutter:hide-gutter t)
+  (git-gutter:update-interval 2)
+  :general
+  ("C-x v =" 'git-gutter:popup-hunk
+   "C-x p"   'git-gutter:previous-hunk-repeat
+   "C-x n"   'git-gutter:next-hunk-repeat
+   "C-x v s" 'git-gutter:stage-hunk
+   "C-x v r" 'git-gutter:revert-hunk
+   ;; TODO: start-revision toggling
+   )
+  :config (add-list-to-list 'git-gutter:update-commands
+                            '(switch-to-buffer consult-buffer)))
+
 (use-package dired-git-log :straight (:host github :repo "amno1/dired-git-log")
   :after dired
   :hook ((dired-mode . dired-git-log-mode))
@@ -322,6 +337,10 @@
   :config
   (use-package cargo)
   (use-package cargo-mode))
+(use-package cc-mode :straight (:type built-in)
+  :general (:keymaps 'c-mode-base-map "C-c C-o"
+                     (lambda () (interactive)
+                       (ff-find-other-file nil 'ignore-include))))
 
 (use-package outshine
   :general
