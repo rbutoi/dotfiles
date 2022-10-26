@@ -1,3 +1,4 @@
+# -*- mode: i3wm-config; -*-
 # sway config
 
 #
@@ -8,8 +9,9 @@ set $term_tmux $term tmux new -As auto
 set $editor    $term tmux new -As emacs emacsclient -nw -aemacs
 set $web       firefox-nightly
 set $menu      ~/bin/wofi-wrap.sh
-set $locker    "swaylock --daemonize --screenshots            \
-  --indicator --indicator-radius 100 --indicator-thickness 7  \
+set $locker    "swaylock --show-failed-attempts --ignore-empty-password \
+  --show-keyboard-layout --daemonize --screenshots                      \
+  --indicator --indicator-radius 100 --indicator-thickness 7            \
   --effect-blur 5x5 --grace 0.5 --fade-in 0.25"
 
 #
@@ -43,9 +45,9 @@ exec systemd-cat wl-paste -t text --watch clipman store --max-items 1024
 
 # initial desktop
 exec systemd-cat dex -a -e SWAY # autostart
-# exec systemd-cat $web ??
+exec systemd-cat sh -c 'sleep 1; $web'
 exec systemd-cat $term_tmux
-exec systemd-cat signal-desktop
+# exec systemd-cat signal-desktop
 
 #
 # per window config
@@ -70,6 +72,7 @@ for_window [app_id="^eog"]                         floating enable
 for_window [app_id="^exo-desktop-item-edit"]       floating enable
 for_window [app_id="^font-viewer$"]                floating enable
 for_window [app_id="^gnome-control-center"]        floating enable
+for_window [app_id="^gnome-power-statistics"]      floating enable
 for_window [app_id="^goobuntu_indicator.py"]       floating enable
 for_window [app_id="^gyrc"]                        floating enable
 for_window [app_id="^nwg-look"]                    floating enable
@@ -78,8 +81,8 @@ for_window [app_id="^org.gnome.font-viewer"]       floating enable
 for_window [app_id="^pavucontrol"]                 floating enable
 for_window [app_id="^qalculate-gtk"]               floating enable
 for_window [app_id="^wdisplays"]                   floating enable
-for_window [app_id="^xfce4-appfinder"]             floating enable
 for_window [app_id="^wev"]                         floating enable
+for_window [app_id="^xfce4-appfinder"]             floating enable
 for_window [app_id="^zenity"]                      floating enable
 # by X11 class
 for_window [class="1Password"]                     floating enable

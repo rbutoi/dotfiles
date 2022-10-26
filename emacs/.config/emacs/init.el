@@ -239,7 +239,9 @@
   :custom (ws-butler-keep-whitespace-before-point nil)
   :config (ws-butler-global-mode))
 (use-package column-enforce-mode        ; highlight text past fill column
-  :init (global-column-enforce-mode))
+  ;; TODO: find a shortcut. globally it's a little annoying
+  ;; :init (global-column-enforce-mode)
+  )
 
 (use-package aggressive-indent          ; keep indented
   :hook ((emacs-lisp-mode . aggressive-indent-mode))
@@ -341,6 +343,9 @@
 
 ;;;; Emacs-as-XYZ
 (load "config-notmuch.el" :noerror)     ; email client
+
+(use-package man :straight (:type built-in)
+  :custom (Man-width-max nil))
 
 (use-package magit                      ; version control
   :general

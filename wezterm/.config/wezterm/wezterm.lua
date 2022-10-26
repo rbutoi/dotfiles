@@ -114,6 +114,5 @@ return {
    window_background_opacity = 0.9,
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = "NeverPrompt",
-   exit_behavior = "Close",
    enable_scroll_bar = true,
 }

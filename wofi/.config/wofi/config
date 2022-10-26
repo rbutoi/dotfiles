@@ -1,7 +1,9 @@
-# default
+# default wofi mode
 mode=drun,run
 
-term='wezterm start --'
+# wraps "wezterm start -- "
+term=wezterm_start.sh
+
 display_generic=true
 insensitive=true
 allow_images=true
