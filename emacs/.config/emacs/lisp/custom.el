@@ -20,7 +20,7 @@
      (eval require 'ol-man nil t)
      (eval require 'magit-base nil t)
      (toc-org-max-depth . 4)))
- '(warning-suppress-log-types '(((editorconfig editorconfig-apply)))))
+ '(warning-suppress-log-types '((emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

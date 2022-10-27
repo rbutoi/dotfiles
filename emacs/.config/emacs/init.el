@@ -48,12 +48,14 @@
 (context-menu-mode)                   ; this is good tho
 (global-hl-line-mode)                 ; always good to keep track
 
-(defun my/terminal-bg-transparency ()
-  "Disable background in terminal to show wallpaper."
-  (unless (display-graphic-p) (set-face-background 'default "unspecified-bg")))
 (use-package doom-themes
   :init (load-theme 'doom-gruvbox t)
-  (my/terminal-bg-transparency)
+  (defun my/terminal-bg-transparency ()
+    "Disable background in terminal to show wallpaper."
+    (unless (display-graphic-p) (set-face-background 'default "unspecified-bg")))
+  ;; TODO: figure out where else to add this so that non-server, "emacs -nw"
+  ;; invocations also have transparent
+  ;; backgrounds. (my/terminal-bg-transparency) causes "undefined color" errors.
   :hook ((server-after-make-frame . my/terminal-bg-transparency)))
 
 (use-package general)                   ; keybinds
@@ -62,9 +64,12 @@
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
   "C-x C-M-c" 'save-buffers-kill-emacs
   "M-0"       'delete-window            ; buffers and windows
-  "C-x k"     'my/kill-this-buffer
-  "C-x M-k"   'my/kill-all-buffers
-  "C-x K"     'kill-buffer)
+  "C-x k"     'my/kill-this-buffer      ; formerly kill-buffer
+  "C-x K"     'kill-buffer
+  "C-x M-k"   'kill-other-buffers       ; formerly kmacro-keymap
+  "C-x C-M-k" 'kmacro-keymap
+  "C-x ="     'balance-windows          ; swap these two:
+  "C-x +"     'what-cursor-position)
 (general-def :keymaps '(global magit-mode-map) ; just drop the M- in magit
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
@@ -82,8 +87,9 @@
 (use-package avy
   :init (avy-setup-default)
   :general
-  ("C-c C-k" 'avy-resume)
-  ("M-j" 'avy-goto-char-timer))
+  ([remap goto-char] 'avy-goto-char-2
+   "C-c C-k" 'avy-resume
+   "M-j" 'avy-goto-char-timer))
 
 (use-package doom-modeline              ; modeline
   :init
@@ -99,7 +105,7 @@
 (use-package helpful                    ; improved help windows
   :general
   ([remap describe-command]  'helpful-command)
-  ([remap describe-function] 'helpful-function)
+  ([remap describe-function] 'helpful-callable)
   ([remap describe-key]      'helpful-key)
   ([remap describe-symbol]   'helpful-symbol)
   ([remap describe-variable] 'helpful-variable))
@@ -171,7 +177,8 @@
    "M-y"     'consult-yank-pop
    "C-M-s"   'consult-ripgrep
    "C-x M-f" 'consult-fd
-   "C-c M-c" 'my/consult-fd-config)
+   "C-c M-c" 'my/consult-fd-config
+   [remap goto-line] 'consult-goto-line)
   (:keymaps 'isearch-mode-map
             "C-o" 'consult-line)
   :custom
@@ -284,8 +291,6 @@
 (toggle-text-mode-auto-fill)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 
-(general-add-hook '(text-mode-hook prog-mode-hook) 'display-line-numbers-mode)
-
 (use-package tree-sitter
   :defer 3
   :config
@@ -326,8 +331,8 @@
   (git-gutter:update-interval 2)
   :general
   ("C-x v =" 'git-gutter:popup-hunk
-   "C-x p"   'git-gutter:previous-hunk-repeat
-   "C-x n"   'git-gutter:next-hunk-repeat
+   "C-c p"   'git-gutter:previous-hunk-repeat
+   "C-c n"   'git-gutter:next-hunk-repeat
    "C-x v s" 'git-gutter:stage-hunk
    "C-x v r" 'git-gutter:revert-hunk
    ;; TODO: start-revision toggling
@@ -366,7 +371,7 @@
 ;; eval: (outshine-mode)
 ;; End:
 
-              ; automatically make scripts executable
+;; automatically make scripts executable
 (add-hook 'after-save 'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
 
@@ -374,10 +379,21 @@
  '(conf-mode-hook emacs-lisp-mode-hook)
  (lambda () (run-mode-hooks 'prog-mode-hook)))
 
+;; imenu headers for this config and other config-local evals
+(use-package outshine
+  :general
+  (:keymaps 'outshine-mode-map
+            "M-p" 'outline-previous-visible-heading
+            "M-n" 'outline-next-visible-heading
+            [remap consult-imenu] 'consult-outline))
+;; Local Variables:
+;; eval: (progn (outshine-mode) (column-enforce-mode))
+;; End:
+
 ;;;; Emacs-as-XYZ
 (load "config-notmuch.el" :noerror)     ; email client
 
-(use-package man :straight (:type built-in)
+(use-package man :straight (:type built-in) ; man(1)
   :custom (Man-width-max nil))
 
 (use-package magit                      ; version control
@@ -386,17 +402,21 @@
    "C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
   :custom
-  (magit-repository-directories
-   `(("~/dotfiles" . 0)
-     ("~/dotfiles-google" . 0)
-     ("~/oss" . 1)))
+  (magit-repository-directories `(("~/" . 1)))
   (magit-log-auto-more t)
   (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
+(when (executable-find "delta")
+  (use-package magit-delta :after magit
+    :init (magit-delta-mode)
+    :custom (magit-delta-delta-args
+             '("--features" "magit-delta"
+               "--true-color" "always"
+               "--color-only"))))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
-(use-package vterm :defer 2)              ; terminal in Emacs
+(use-package vterm :defer 2)     ; terminal in Emacs
 ;; :config
 ;; (add-to-list 'vterm-keymap-exceptions "M-i")
 (use-package vterm-toggle
@@ -411,6 +431,10 @@
   :init (term-keys-mode))
 
 (use-package bluetooth)                 ; Bluetooth device manager?!
+
+(use-package edit-server          ; Edit with Emacs: edit web browser text boxes
+  :init (edit-server-start)
+  :hook ((edit-server-start . (lambda () (auto-fill-mode -1)))))
 
 ;;;; Epilogue
 (use-package no-littering               ; Emacs, stop littering!❗!

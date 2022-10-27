@@ -202,7 +202,7 @@ shell exits, the buffer is killed."
   (interactive)
   (mapc 'kill-buffer
         (delq (current-buffer)
-              (remove-if-not 'buffer-file-name (buffer-list)))))
+              (cl-remove-if-not 'buffer-file-name (buffer-list)))))
 
 (defun my/kill-this-buffer ()           ; usually what is desired
   "Kill the current buffer."

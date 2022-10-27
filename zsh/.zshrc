@@ -263,9 +263,10 @@ _e() {                          # emacs with stdin
     emacsclient -a= "$@"
   fi
 }
-ew()  { _e "$@" -nw;  } # inline console editor
-en()  { _e "$@" -n ;  } # open in existing editor
-ewc() { _e "$@" -nc;  } # new graphical editor
+ew()  { _e "$@" -nw;  }           # inline console editor
+en()  { _e "$@" -n ;  }           # open in existing editor
+ewc() { _e "$@" -nc;  }           # new graphical editor
+em() { e --eval "(my/notmuch)"; } # (e)macs mail
 alias e=ew
 
 export EDITOR="emacsclient -t"
@@ -280,8 +281,7 @@ emacs_systemd_restart() {
       i3-msg -- exec emacsclient -c >/dev/null
 }
 
-# (e)macs man
-eman() {
+eman() {                        # (e)macs man
   # no emacs, fallback to man
   pgrep emacs >/dev/null || return command man "$@"
 

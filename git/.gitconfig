@@ -1,9 +1,57 @@
-# personal config
-[include]
-    path                = ~/.gitconfig.local
+[include]                       # personal config
+    path = ~/.gitconfig.local
+
+[core]
+    hooksPath = ~/.config/git-hooks/
+## https://github.com/dandavison/delta
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+[add.interactive]
+    useBuiltin = false # required for git 2.37.0
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    hyperlinks = true
+    features = line-numbers decorations
+
+[delta "magit-delta"]
+    # magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
+    line-numbers = false
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+
 
 [icdiff]
     options             = --line-numbers
+
+
+[url "git@github.com:"]
+    insteadOf = @gh:
+[url "git@gitlab.com:"]
+    insteadOf = @gl:
+[url "git@bitbucket.org:"]
+    insteadOf = @bb:
+[url "aur@aur.archlinux.org"]
+    insteadOf = @aur:
+[url "https://github.com/"]
+    insteadOf = gh://
+[url "https://gitlab.com/"]
+    insteadOf = gl://
+[url "https://bitbucket.org/"]
+    insteadOf = bb://
+[url "https://aur.archlinux.org/"]
+    insteadOf = aur://
 
 [cola]
     spellcheck          = false
@@ -150,51 +198,3 @@
     rlo                 = tformat:%C(auto)%h%C(reset) %C(bold yellow)(%C(magenta)%gd%C(bold yellow))%C(reset)%C(auto)%d%C(reset) %gs %C(italic blue)%ad%C(reset) %C(241)%aN%C(reset)
     rlc                 =  format:%C(auto)%h%C(reset) %C(white)-%C(reset) %C(italic blue)%ad%C(reset) %C(italic cyan)(%ar)%C(reset)%C(auto)%d%C(reset)%n %C(white)⤷%C(reset) %s %C(241)- %aN <%aE>%C(reset)%n %C(white)⤷%C(reset) %C(bold yellow)(%C(magenta)%gd%C(bold yellow))%C(reset) %gs %C(241)- %gN <%gE>%C(reset)%n
     rlf                 =  format:%C(auto)%h%C(reset) %C(bold yellow)(%C(magenta)%gd%C(bold yellow))%C(reset)%C(auto)%d%C(reset)   %C(italic 239)[P: %p] [T: %t]%C(reset)%n%C(white)Author:%C(reset)   %aN %C(241)<%aE>%C(reset)%n          %C(italic blue)%ad%C(reset) %C(italic cyan)(%ar)%C(reset)%n%C(white)Commit:%C(reset)   %cN %C(241)<%cE>%C(reset)   %C(italic 239)[GPG: %G?% GK]%C(reset)%n          %C(italic blue)%cd%C(reset) %C(italic cyan)(%cr)%C(reset)%n%C(white)Reflog:%C(reset)   %gN %C(241)<%gE>%C(reset)%n          %C(italic)%gs%C(reset)%w(0,0,0)0%n%n%C(bold)%s%C(reset)%n%n%-b%n%n%-N%n
-
-[url "git@github.com:"]
-    insteadOf = @gh:
-
-[url "git@gitlab.com:"]
-    insteadOf = @gl:
-
-[url "git@bitbucket.org:"]
-    insteadOf = @bb:
-
-[url "aur@aur.archlinux.org"]
-    insteadOf = @aur:
-
-[url "https://github.com/"]
-    insteadOf = gh://
-
-[url "https://gitlab.com/"]
-    insteadOf = gl://
-
-[url "https://bitbucket.org/"]
-    insteadOf = bb://
-
-[url "https://aur.archlinux.org/"]
-    insteadOf = aur://
-
-[pager]
-    diff = delta
-    log = delta
-    reflog = delta
-    show = delta
-
-[interactive]
-    diffFilter = delta --color-only
-
-[delta]
-    features = line-numbers decorations
-    whitespace-error-style = 22 reverse
-
-[diff]
-    colorMoved = default
-
-[delta "decorations"]
-    commit-decoration-style = bold yellow box ul
-    file-style = bold yellow ul
-    file-decoration-style = none
-
-[core]
-    hooksPath = ~/.config/git-hooks/
