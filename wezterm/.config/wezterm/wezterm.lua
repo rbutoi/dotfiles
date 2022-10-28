@@ -13,14 +13,20 @@ do_if_file_exists(wezterm.config_dir.."/extkeys.lua")
 do_if_file_exists(wezterm.config_dir.."/specific.lua")
 
 keys = {
-   -- for emacs undo, prefer super w/ same keys
-   {key = "-", mods = "CTRL", action = "DisableDefaultAssignment"},
+   -- for emacs undo
    {key = "_", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
-   {key = "=", mods = "CTRL", action = "DisableDefaultAssignment"},
-   {key = "+", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
+   -- emacs M-SPC just-one-space
    {key = "Enter", mods = "ALT", action = "DisableDefaultAssignment"},
+
+   -- panes
+   {key = "o",  mods = "SUPER", action = act.ActivatePaneDirection 'Next',},
+   {key = "i",  mods = "SUPER", action = act.ActivatePaneDirection 'Prev',},
+   {key = "-",  mods = "CTRL|SUPER", action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
+   {key = "\\", mods = "CTRL|SUPER", action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
+
    {
-      key = "P",
+      -- key = "P", pane select -- TODO: B??
+      key = "B",
       mods = "CTRL",
       action = wezterm.action.QuickSelectArgs {
          label = "open url",
@@ -46,9 +52,9 @@ keys = {
 -- emacs copy-mode binds
 local search_mode = wezterm.gui.default_key_tables().search_mode
 for _, v in pairs({
-   { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' },
-   { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'},
-   { key = 'g', mods = 'CTRL', action = act.CopyMode 'Close' }}) do
+      { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' },
+      { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'},
+      { key = 'g', mods = 'CTRL', action = act.CopyMode 'Close' }}) do
    table.insert(search_mode, v)
 end
 
@@ -115,4 +121,11 @@ return {
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = "NeverPrompt",
    enable_scroll_bar = true,
+
+   -- ssh
+   ssh_domains = {
+      {name = 'box', remote_address = 'box',},
+      {name = 'a',   remote_address = 'a',},
+   },
+   -- default_domain = 'box',
 }
