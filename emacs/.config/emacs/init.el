@@ -29,7 +29,7 @@
                         (message "Emacs loaded in %s" (emacs-init-time))
                         (benchmark-init/deactivate))))
 
-(use-package gcmh :init (gcmh-mode)) ; GC magic hack: gitlab.com/koral/gcmh
+(use-package gcmh :init (gcmh-mode))    ; GC magic hack: gitlab.com/koral/gcmh
 
 (use-package f)                         ; add local load path
 (add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
@@ -44,32 +44,33 @@
   (defconst my/workstation? (and my/work? (not my/laptop?))))
 
 ;;;; UI / UX
-(tool-bar-mode -1) (menu-bar-mode -1) ; just use F10
-(context-menu-mode)                   ; this is good tho
-(global-hl-line-mode)                 ; always good to keep track
+(use-package general)                   ; keybinds
+(tool-bar-mode -1) (menu-bar-mode -1)   ; just use F10
+(context-menu-mode)                     ; this is good tho
+(global-hl-line-mode)                   ; always good to keep track
 
 (use-package doom-themes
   :init (load-theme 'doom-gruvbox t)
   (defun my/terminal-bg-transparency ()
     "Disable background in terminal to show wallpaper."
     (unless (display-graphic-p) (set-face-background 'default "unspecified-bg")))
-  ;; TODO: figure out where else to add this so that non-server, "emacs -nw"
-  ;; invocations also have transparent
-  ;; backgrounds. (my/terminal-bg-transparency) causes "undefined color" errors.
-  :hook ((server-after-make-frame . my/terminal-bg-transparency)))
+  (general-add-hook '(server-after-make-frame-hook window-setup-hook)
+                    'my/terminal-bg-transparency))
 
-(use-package general)                   ; keybinds
 (use-package defrepeater)
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
+  "C-x m"     'execute-extended-command
   "C-x C-M-c" 'save-buffers-kill-emacs
   "M-0"       'delete-window            ; buffers and windows
   "C-x k"     'my/kill-this-buffer      ; formerly kill-buffer
   "C-x K"     'kill-buffer
   "C-x M-k"   'kill-other-buffers       ; formerly kmacro-keymap
   "C-x C-M-k" 'kmacro-keymap
-  "C-x ="     'balance-windows          ; swap these two:
-  "C-x +"     'what-cursor-position)
+  "C-x ="     'balance-windows
+  "C-x C-="   'balance-windows          ; redundancy
+  "C-x +"     'what-cursor-position     ; former C-x =
+  "C-x M-="   'text-scale-adjust)       ; former C-x C-=
 (general-def :keymaps '(global magit-mode-map) ; just drop the M- in magit
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
@@ -88,8 +89,10 @@
   :init (avy-setup-default)
   :general
   ([remap goto-char] 'avy-goto-char-2
-   "C-c C-k" 'avy-resume
    "M-j" 'avy-goto-char-timer))
+
+(use-package windmove
+  :init (windmove-default-keybindings))
 
 (use-package doom-modeline              ; modeline
   :init
@@ -111,12 +114,7 @@
   ([remap describe-variable] 'helpful-variable))
 
 (use-package popper                     ; popups
-  :general
-  ("M-`"   'popper-toggle-latest
-   ;; TODO: find terminal friendly binds
-   ;; "C-`"   'popper-cycle
-   ;; "C-M-`" 'popper-toggle-type
-   )
+  :general ("M-`"   'popper-toggle-latest)
   :custom (popper-reference-buffers
            '("\\*Messages\\*"
              "Output\\*$"
@@ -202,10 +200,8 @@
   :custom (completion-styles '(orderless basic)))
 
 (use-package embark
-  :general
-  ("C-." 'embark-act
-   "C-;" 'embark-dwim
-   "C-h B" 'embark-bindings)
+  :general ("C-." 'embark-act
+            "C-h B" 'embark-bindings)
   :custom
   ;; Optionally replace the key help with a completing-read interface
   (prefix-help-command #'embark-prefix-help-command)
@@ -229,7 +225,9 @@
 (use-package move-text                  ; does what is says
   :init (move-text-default-bindings))
 
-;; (use-package whole-line-or-region) ; TODO: comment-dwim?
+(use-package easy-kill
+  :general ([remap kill-ring-save] 'easy-kill
+            [remap mark-sexp] 'easy-mark))
 
 (use-package hungry-delete              ; delete consecutive whitespace
   :init (global-hungry-delete-mode)
@@ -242,8 +240,8 @@
 
 (use-package iedit                      ; replace
   :general ("C-;" 'iedit-mode))
-(use-package visual-regexp)
-              ; TODO: bind
+(use-package visual-regexp
+  :general ([remap query-replace-regexp] 'vr/query-replace))
 
 (use-package ialign
   :general ("C-x l" 'ialign)) ; interactive align regexp
@@ -260,17 +258,14 @@
   :config (global-undo-tree-mode))
 
 (use-package expand-region
-  :general ("M-=" 'er/expand-region))   ; terminal-friendly bind
+  :general ("C-=" 'er/expand-region))
 
 (use-package deadgrep)                  ; ripgrep UI
 
 (use-package ws-butler                  ; delete trailing whitespace
   :custom (ws-butler-keep-whitespace-before-point nil)
   :config (ws-butler-global-mode))
-(use-package column-enforce-mode        ; highlight text past fill column
-  ;; TODO: find a shortcut. globally it's a little annoying
-  ;; :init (global-column-enforce-mode)
-  )
+(use-package column-enforce-mode)       ; highlight text past fill column
 
 (use-package aggressive-indent          ; keep indented
   :hook ((emacs-lisp-mode . aggressive-indent-mode))
@@ -278,7 +273,10 @@
 
 (use-package flyspell                   ; spellcheck
   :hook ((text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode)))
+         (prog-mode . flyspell-prog-mode))
+  :custom (ispell-dictionary "canadian")
+  :general (:keymaps                    ; default binds are a little overzealous
+            'flyspell-mode-map "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
 ;; (use-package flyspell-correct
 ;;   :after flyspell
 ;;   :general
@@ -320,7 +318,7 @@
 
 (use-package auto-highlight-symbol      ; highlight symbols
   :init (global-auto-highlight-symbol-mode))
-(use-package hl-todo                   ; highlight "TODO:"s
+(use-package hl-todo                    ; highlight "TODO:"s
   :custom (hl-todo-wrap-movement t)
   :hook prog-mode) ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
 
@@ -348,7 +346,9 @@
   :hook ((dired-mode . dired-git-log-mode))
   :general (:keymaps 'dired-mode-map ")" 'dired-git-log-mode)
   :custom (dired-git-log-auto-hide-details-p nil))
-(use-package goto-chg)                                ; TODO: binds
+(use-package goto-chg
+  :general ("C-." 'goto-last-change
+            "C-," 'goto-last-change-reverse))
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
@@ -374,8 +374,8 @@
 ;; eval: (outshine-mode)
 ;; End:
 
-;; automatically make scripts executable
-(add-hook 'after-save 'executable-make-buffer-file-executable-if-script-p)
+(add-hook 'after-save                   ; automatically make scripts executable
+          'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
 
 (general-add-hook                       ; this seems like an upstream bug?

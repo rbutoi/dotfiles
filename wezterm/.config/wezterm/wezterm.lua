@@ -13,10 +13,10 @@ do_if_file_exists(wezterm.config_dir.."/extkeys.lua")
 do_if_file_exists(wezterm.config_dir.."/specific.lua")
 
 keys = {
-   -- for emacs undo
-   {key = "_", mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
-   -- emacs M-SPC just-one-space
-   {key = "Enter", mods = "ALT", action = "DisableDefaultAssignment"},
+   -- emacs undo. C- don't need to be unbound, prefer s- prefix for WM
+   {key = "_",     mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
+   {key = "-",     mods = "CTRL",       action = "DisableDefaultAssignment"},
+   {key = "=",     mods = "CTRL",       action = "DisableDefaultAssignment"},
 
    -- panes
    {key = "o",  mods = "SUPER", action = act.ActivatePaneDirection 'Next',},
@@ -92,8 +92,12 @@ hyperlink_rules = {
 }
 
 -- https://stackoverflow.com/questions/1283388/lua-how-to-merge-two-tables-overwriting-the-elements-which-are-in-both
-for k,v in pairs(keys) do keys_extended_shortcuts[k] = v end
-for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
+if keys_extended_shortcuts then
+   for k,v in pairs(keys) do keys_extended_shortcuts[k] = v end
+end
+if hyperlink_rules_specific then
+   for k,v in pairs(hyperlink_rules_specific) do hyperlink_rules[k] = v end
+end
 
 return {
    -- text & colours

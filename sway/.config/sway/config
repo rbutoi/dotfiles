@@ -194,7 +194,6 @@ bindsym --no-repeat $mod+6                            workspace 6
 bindsym --no-repeat $mod+7                            workspace 7
 bindsym --no-repeat $mod+8                            workspace 8
 bindsym --no-repeat $mod+9                            workspace 9
-bindsym --no-repeat $mod+0                            workspace 0
 bindsym --no-repeat $mod+Ctrl+1                       workspace 1
 bindsym --no-repeat $mod+Ctrl+2                       workspace 2
 bindsym --no-repeat $mod+Ctrl+3                       workspace 3
@@ -204,7 +203,6 @@ bindsym --no-repeat $mod+Ctrl+6                       workspace 6
 bindsym --no-repeat $mod+Ctrl+7                       workspace 7
 bindsym --no-repeat $mod+Ctrl+8                       workspace 8
 bindsym --no-repeat $mod+Ctrl+9                       workspace 9
-bindsym --no-repeat $mod+Ctrl+0                       workspace 0
 # move focused container to workspace
 bindsym --no-repeat $mod+Shift+1    move container to workspace 1
 bindsym --no-repeat $mod+Shift+2    move container to workspace 2
