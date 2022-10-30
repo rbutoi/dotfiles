@@ -114,6 +114,7 @@ return {
    bypass_mouse_reporting_modifiers = 'SHIFT',
    mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules,
+   enable_kitty_keyboard = true,
 
    -- window
    enable_wayland = true,

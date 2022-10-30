@@ -392,6 +392,9 @@
   (:keymaps 'vterm-mode-map "<f2>" 'vterm-toggle))
 
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
+(use-package term-keys                            ; enable all keys!
+  :straight (:host github :repo "CyberShadow/term-keys")
+  :init (term-keys-mode))
 
 (use-package bluetooth)                 ; Bluetooth device manager?!
 
