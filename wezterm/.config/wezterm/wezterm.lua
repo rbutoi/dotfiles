@@ -123,10 +123,10 @@ return {
    window_close_confirmation = "NeverPrompt",
    enable_scroll_bar = true,
 
-   -- ssh
+   -- domains
    ssh_domains = {
       {name = 'box', remote_address = 'box',},
       {name = 'a',   remote_address = 'a',},
    },
-   -- default_domain = 'box',
+   unix_domains = {{name = 'auto',},}
 }

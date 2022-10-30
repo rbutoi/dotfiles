@@ -211,15 +211,33 @@
 
 ;;;; Editing
 (setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
-
 (delete-selection-mode)                 ; typing overwrites selection
+(save-place-mode)                       ; remember buffer location
+
 (use-package sudo-edit)
 (use-package so-long :init (global-so-long-mode)) ; long file handling
+
+(use-package move-text                  ; does what is says
+  :init (move-text-default-bindings))
+
+;; (use-package whole-line-or-region) ; TODO: comment-dwim?
+
+(use-package hungry-delete              ; delete consecutive whitespace
+  :init (global-hungry-delete-mode)
+  :custom (hungry-delete-join-reluctantly t)) ; leave a space between words
 
 (use-package mwim                       ; better C-a/C-e
   :general
   ([remap move-beginning-of-line] 'mwim-beginning-of-code-or-line
    [remap move-end-of-line]       'mwim-end-of-code-or-line))
+
+(use-package iedit                      ; replace
+  :general ("C-;" 'iedit-mode))
+(use-package visual-regexp)
+              ; TODO: bind
+
+(use-package ialign
+  :general ("C-x l" 'ialign)) ; interactive align regexp
 
 (use-package undo-tree                  ; visual undo
   :defer 2
@@ -295,9 +313,8 @@
 (use-package auto-highlight-symbol      ; highlight symbols
   :init (global-auto-highlight-symbol-mode))
 (use-package hl-todo                   ; highlight "TODO:"s
-  :init
-  (setq hl-todo-wrap-movement t)
-  (global-hl-todo-mode))
+  :custom (hl-todo-wrap-movement t)
+  :hook prog-mode) ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
 
 (use-package git-gutter
   :init (global-git-gutter-mode)
@@ -323,7 +340,7 @@
   :hook ((dired-mode . dired-git-log-mode))
   :general (:keymaps 'dired-mode-map ")" 'dired-git-log-mode)
   :custom (dired-git-log-auto-hide-details-p nil))
-;; TODO: goto-chg.el
+(use-package goto-chg)                                ; TODO: binds
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
@@ -343,16 +360,13 @@
                        (ff-find-other-file nil 'ignore-include))))
 
 (use-package outshine
-  :general
-  (:keymaps 'outshine-mode-map
-            "M-p" 'outline-previous-visible-heading
-            "M-n" 'outline-next-visible-heading
-            [remap consult-imenu] 'consult-outline))
+  :general (:keymaps 'outshine-mode-map
+                     [remap consult-imenu] 'consult-outline))
 ;; Local Variables:
 ;; eval: (outshine-mode)
 ;; End:
 
-                                        ; automatically make scripts executable
+              ; automatically make scripts executable
 (add-hook 'after-save 'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
 

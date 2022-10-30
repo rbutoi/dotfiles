@@ -68,6 +68,7 @@ or are no longer readable will be killed."
       (forward-line))))
 
 ;;;; better C/M-w
+;; TODO: replace with whole-line-or-region?
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive

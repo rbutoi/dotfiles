@@ -134,7 +134,7 @@ zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
 export LESSOPEN='|~/bin/lessfilter %s'
 ##
 ## end fzf
-##
+## TODO: try fzy for some things?
 
 ## autosuggestions
 zinit light zsh-users/zsh-autosuggestions
@@ -243,17 +243,31 @@ fix_i3sock () {
   export I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)
 }
 
-sshcd  () { ssh -t "$1" "cd \"$2\"; exec \$SHELL -l"; }
-sshcd. () { sshcd "$@" $(pwd) }
+sshcd  () { ssh -t $1 "cd \"$2\"; exec \$SHELL -l"; }
+sshcd. () { sshcd $1 $(pwd) }
 
 ##
 ## emacs
 ##
-
-ew()  { emacsclient -a emacs -nw "$@";  } # inline console editor
+_e() {                          # emacs with stdin
+  if [[ -p /dev/stdin ]]; then  # or [[ ! -t 0 ]]
+    # tempfile="$(mktemp emacs-stdin-$USER.XXXXXXX --tmpdir)"
+    tempfile=/tmp/emacs-stdin-$USER
+    cat - > "$tempfile"
+    # if stdin, definitely want a local terminal client
+    emacsclient -a= --tty                  \
+      --eval "(find-file \"$tempfile\")"   \
+      --eval '(set-visited-file-name nil)' \
+      --eval '(rename-buffer "*stdin*" t)'
+  else
+    emacsclient -a= "$@"
+  fi
+}
+ew()  { _e "$@" -nw;  } # inline console editor
+en()  { _e "$@" -n ;  } # open in existing editor
+ewc() { _e "$@" -nc;  } # new graphical editor
 alias e=ew
-en()  { emacsclient -a emacs -n  "$@";  } # open in existing editor
-ewc() { emacsclient -a emacs -nc "$@";  } # new graphical editor
+
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
 export BROWSER=xdg-open
@@ -339,6 +353,9 @@ nms() { notmuch search "$@" | cut -c24-; }
 [[ -d /home/linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 (( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
+
+zinit ice as"program" pick"bin/git-fuzzy"
+zinit light bigH/git-fuzzy      # or forgit?
 
 # BEGIN_KITTY_SHELL_INTEGRATION
 if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss/kitty/shell-integration/kitty.zsh"; fi
