@@ -179,10 +179,11 @@ gnu-efi
 gnu-free-fonts
 gnu-netcat
 go
-google-chrome
+google-chrome-dev
 go-tools
 gparted
 gping-git
+grex
 grilo-plugins
 grim
 gruvbox-dark-gtk
@@ -222,6 +223,7 @@ iotop-c
 iperf
 iproute2
 iputils
+ironbar-git
 isync
 j4-dmenu-desktop
 jackett-bin
@@ -231,7 +233,6 @@ jfsutils
 joycond-git
 jq
 jre11-openjdk
-jupyterlab
 kanshi-git
 kate
 keychain
@@ -294,7 +295,6 @@ nautilus
 navi
 ncdu
 needrestart
-nerd-fonts-hack
 netctl
 networkmanager
 network-manager-applet
@@ -313,6 +313,7 @@ nss-mdns
 ntfs-3g
 ntp
 numix-gtk-theme
+nwg-dock-bin
 nwg-launchers
 nwg-look
 ombi-develop
@@ -327,6 +328,7 @@ pacolog
 pamixer
 parallel
 paru-git
+pass
 pastel-git
 pavucontrol
 pbzip2
@@ -368,6 +370,7 @@ python-i3ipc
 python-keyrings-alt
 python-matplotlib
 python-mpv
+python-nautilus
 python-netifaces
 python-oauth2client
 python-pandas
@@ -418,6 +421,7 @@ sd
 seahorse
 selectdefaultapplication-git
 sfml
+sfwbar
 sgtk-menu
 shadow
 shellcheck-bin
@@ -463,7 +467,7 @@ terminus-font
 tesseract-data-eng
 thelounge
 tig
-tmux-git
+tmux
 topgrade
 totem
 traceroute
@@ -475,6 +479,7 @@ tree
 ttf-bitstream-vera
 ttf-croscore
 ttf-droid
+ttf-hack-nerd
 ttf-ibm-plex
 ttf-jetbrains-mono
 ttf-liberation
@@ -502,10 +507,11 @@ vnstat
 vopono-git
 vrms-arch-git
 wasm-pack
+waybar-git
 waypipe
 wdisplays-git
 wev-git
-wezterm-git
+wezterm-nightly-bin
 wget
 wine-gecko
 wine-mono

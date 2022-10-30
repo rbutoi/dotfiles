@@ -117,7 +117,6 @@ return {
    enable_kitty_keyboard = true,
 
    -- window
-   enable_wayland = true,
    window_background_opacity = 0.9,
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = "NeverPrompt",
@@ -128,5 +127,5 @@ return {
       {name = 'box', remote_address = 'box',},
       {name = 'a',   remote_address = 'a',},
    },
-   unix_domains = {{name = 'auto',},}
+   unix_domains = {{name = 'auto',},},
 }

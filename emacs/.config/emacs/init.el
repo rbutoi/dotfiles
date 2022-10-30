@@ -169,7 +169,6 @@
   :general                              ; remap some standard commands
   ("C-x M-:" 'consult-complex-command
    "C-x C-b" 'consult-buffer
-   "C-x b"   'consult-recent-file
    "C-x p b" 'consult-project-buffer
    "C-M-o"   'my/consult-line-symbol-at-point
    "C-o"     'consult-imenu
@@ -185,6 +184,9 @@
   (xref-show-xrefs-function       #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
   :config (recentf-mode))
+(use-package bufler
+  :general
+  ("C-x b" 'bufler-list))
 
 (use-package savehist                   ; save minibuffer history
   :straight (:type built-in)
@@ -307,7 +309,8 @@
 
 (use-package smartparens                ; parentheses
   :defer 1
-  :init (require 'smartparens-config) (smartparens-global-mode))
+  :init (require 'smartparens-config) (smartparens-global-mode)
+  :general ("M-D" 'sp-splice-sexp))
 (use-package rainbow-delimiters :hook prog-mode)
 (use-package rainbow-mode       :hook prog-mode)
 

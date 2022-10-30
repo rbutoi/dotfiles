@@ -1,4 +1,4 @@
-### .zshrc
+# -*- sh-basic-offset:2 -*-
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -47,22 +47,19 @@ zstyle ':completion:*' format '[%d]'
 # also: try wizard % autoload -Uz compinstall && compinstall
 # zstyle ':completion:*' cache-path "$HOME/.cache/zsh/.zcompcache"
 
-zstyle ':completion:*' users root $USER             #fix lag in google3
 autoload -Uz compinit bashcompinit
 compinit
 bashcompinit
 
-## history
-HISTFILE=~/.zsh_history
+HISTFILE=~/.zsh_history # history
 HISTSIZE=1000000000     # unlimited
 SAVEHIST=$HISTSIZE
 # `fc -R` to read history (from other running shells) now. otherwise history is
 # preserved per-shell
 setopt inc_append_history hist_ignore_space hist_ignore_dups
 
-## prompt
-zinit light romkatv/powerlevel10k
-source_if ~/.p10k.zsh  # `p10k configure` or edit this file
+zinit light romkatv/powerlevel10k # prompt
+source_if ~/.p10k.zsh             # `p10k configure` or edit this file
 zinit light romkatv/zsh-prompt-benchmark
 
 ##
@@ -74,15 +71,18 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
 export FZF_DEFAULT_COMMAND='fd --hidden'
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind 'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'"
-fzfp()  { eval "fzf --preview 'if [[ -f {} ]] && [[ \$(stat -c%s {}) -lt 2000000 ]]; then clp {}; else exa -laa {}; fi' $MY_FZF_BIND_FLAGS $@" }
+MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind
+  'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'"
+fzfp()  {
+    eval "fzf --preview 'if [[ -f {} ]] && [[ \$(stat -c%s {}) -lt 2000000 ]];
+            then clp {}; else exa -laa {}; fi' $MY_FZF_BIND_FLAGS $@" }
 enfz()  { en $(fzfp "$@")  }
 econf() { enfz . ~/.config }
 rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
   rg "$@" 2>/dev/null | fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' \
     --preview 'clp -h {2} {1}' $MY_FZF_BIND_FLAGS
 }
-apt_search_fzf()  { aptitude search "$@" | grep -Ev '^v|:i386' | fzf | choose 1; }
+apt_search_fzf()  { aptitude search "$@" | rg -v '^v|:i386' | fzf | choose 1; }
 apt_install_fzf() { sudo apt install $(apt_search_fzf "$@"); }
 
 zinit light Aloxaf/fzf-tab
@@ -92,7 +92,7 @@ zstyle ':fzf-tab:*' prefix ''
 # disable sort when completing options of any command
 zstyle ':completion:complete:*:options' sort false
 
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'  # cd preview
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # cd preview
 
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
@@ -134,43 +134,35 @@ zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
 export LESSOPEN='|~/bin/lessfilter %s'
 ##
 ## end fzf
-## TODO: try fzy for some things?
+## TODO: try fzy for some things? or replace with skim?
 
-## autosuggestions
-zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-autosuggestions # autosuggestions
 ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 bindkey '^[m' autosuggest-accept
 
-## line editing: akin to subword-mode in emacs
-autoload -U select-word-style
+autoload -U select-word-style # line editing: akin to subword-mode in emacs
 select-word-style bash
 
-## syntax highlighting
-zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zdharma-continuum/fast-syntax-highlighting # syntax highlighting
 
-## editing command line with emacs
-autoload -U edit-command-line
-zle -N edit-command-line  # Emacs style
+autoload -U edit-command-line   # editing command line with emacs
+zle -N edit-command-line        # emacs style
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
-bindkey '^[k' backward-kill-line  # not emacs but useful on CLI
+bindkey '^[k' backward-kill-line # not emacs but useful on CLI
 
-## cd tweaks from zshoptions(1):
-setopt auto_pushd auto_cd
+setopt auto_pushd auto_cd       # cd tweaks from zshoptions(1)
 
 #######################################
 # User specific aliases and functions #
 #######################################
 
-## path!
 source_if ~/.config/path.sh
 
-# Autoload functions.
 autoload -Uz zmv
 
-# Define functions and completions.
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 compdef _directories md
 
@@ -216,8 +208,7 @@ wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(co
 find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-# camera
-alias find_by_date='find . -printf "%T@ %Tc %p\n" | sort -n'
+alias find_by_date='find . -printf "%T@ %Tc %p\n" | sort -n' # camera
 
 # FILES=(DSCFnnnn.JPG ...)
 # pushd /media/disk/DCIM/111_FUJI/ &&
@@ -309,7 +300,7 @@ compdef eman=man
 # aliases #
 ###########
 
-alias l='ls -F'
+l() { ls -F }
 ll() { l -lA -h "$@" }
 alias pg="pgrep"
 alias chmox="chmod +x"
@@ -386,8 +377,8 @@ else
 fi
 
 if (( $+commands[exa] )); then
-  alias l='exa --group-directories-first'
-  ll()   { exa -l --git "$@"}
+  l()  { exa --group-directories-first }
+  ll() { exa -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
 fi
@@ -405,13 +396,15 @@ fi
 
 alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
-## topgrade every week
+# topgrade every week
 if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
-     load_below; then
-  echo -e "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))", running now...\033[0m"
+       load_below; then
+  echo -ne "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))
+  echo  -e ", running now...\033[0m"
   date +%s >~/.cache/last_topgrade
   if [[ -n "$TMUX" ]]; then
-    tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade; echo press enter to exit...; read'
+      tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade;
+                       echo press enter to exit...; read'
   else
     topgrade --tmux
   fi
@@ -423,3 +416,7 @@ fi
 source_if ~/.zshrc_specific
 
 #  LocalWords:  shellenv
+
+# Local Variables:
+# eval: (column-enforce-mode)
+# End:

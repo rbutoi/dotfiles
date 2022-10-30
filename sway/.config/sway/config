@@ -8,8 +8,8 @@
 # TODO: remove usage of tmux?
 set $term       wezterm start --
 set $term_tmux  wezterm start --class wezterm_auto  -- tmux new -As auto
-set $term_emacs wezterm start --class wezterm_emacs -- tmux new -As emacs emacsclient -nw -aemacs
-set $web        firefox-nightly
+set $term_emacs wezterm start --class wezterm_emacs -- emacsclient -nw -a=
+set $web        google-chrome-unstable
 set $menu       ~/bin/wofi-wrap.sh
 set $locker     "swaylock --show-failed-attempts --ignore-empty-password \
   --show-keyboard-layout --daemonize --screenshots                       \
@@ -65,7 +65,7 @@ for_window [app_id="gsimplecal"] move position mouse, move up 40 px, move left 2
 for_window [app_id="^emacs"]              opacity 0.93
 for_window [app_id="^gnome-terminal-server" title="Terminal"] opacity 0.95
 for_window [app_id="^nemo"]               opacity 0.95
-for_window [app_id="^org.gnome.Nautilus"] opacity 0.95
+for_window [app_id="^org.gnome.Nautilus"] opacity 0.925
 for_window [class="^Emacs"]               opacity 0.93
 # floating - by native Wayland `app_id`
 for_window [app_id="^blueman-manager"]             floating enable
@@ -152,7 +152,8 @@ bindsym $mod+Return          exec $term
 bindsym $mod+Shift+Return    exec swaymsg \
   '[app_id="wezterm_auto"] focus'     || $term_tmux
 bindsym $mod+w               exec swaymsg \
-  '[app_id="[Gg]oogle-chrome"] focus' || $web
+  '[app_id="[Gg]oogle-chrome"] focus' ||  \
+  swaymsg '[app_id="firefox"] focus'  || $web
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+e               exec swaymsg \
   '[app_id="wezterm_emacs"] focus'    ||  \

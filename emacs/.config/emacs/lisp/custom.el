@@ -9,7 +9,10 @@
  '(custom-safe-themes
    '("467dc6fdebcf92f4d3e2a2016145ba15841987c71fbe675dcfe34ac47ffb9195" "e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2"))
  '(safe-local-variable-values
-   '((eval font-lock-add-keywords nil
+   '((eval progn
+           (outshine-mode)
+           (column-enforce-mode))
+     (eval font-lock-add-keywords nil
            `((,(concat "("
                        (regexp-opt
                         '("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")
