@@ -53,7 +53,9 @@
   :init (load-theme 'doom-gruvbox t)
   (defun my/terminal-bg-transparency ()
     "Disable background in terminal to show wallpaper."
-    (unless (display-graphic-p) (set-face-background 'default "unspecified-bg")))
+    (let ((frame (selected-frame)))
+      (unless (display-graphic-p frame)
+        (set-face-background 'default "unspecified-bg" frame))))
   (general-add-hook '(server-after-make-frame-hook window-setup-hook)
                     'my/terminal-bg-transparency))
 
@@ -80,7 +82,9 @@
 
 (use-package which-key                  ; useful shortcut reminders
   :init (which-key-setup-side-window-bottom) (which-key-mode)
-  :custom (which-key-idle-secondary-delay 0.01))
+  :custom
+  (which-key-idle-secondary-delay 0.01)
+  (which-key-show-docstrings t))
 
 (use-package ace-window
   :general ([remap other-window] 'ace-window)
@@ -166,7 +170,7 @@
     (interactive) (consult-line (thing-at-point 'symbol)))
   :general                              ; remap some standard commands
   ("C-x M-:" 'consult-complex-command
-   "C-x C-b" 'consult-buffer
+   "C-c r"   'consult-recent-file
    "C-x p b" 'consult-project-buffer
    "C-M-o"   'my/consult-line-symbol-at-point
    "C-o"     'consult-imenu
@@ -184,7 +188,8 @@
   :config (recentf-mode))
 (use-package bufler
   :general
-  ("C-x b" 'bufler-list))
+  ("C-x C-b" 'bufler-switch-buffer
+   "C-x b"   'bufler-list))
 
 (use-package savehist                   ; save minibuffer history
   :straight (:type built-in)
@@ -215,7 +220,7 @@
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;;; Editing
-(setq set-mark-command-repeat-pop t) ; can keep C-u C-SPC C-SPC C-SPC...
+(setq set-mark-command-repeat-pop t)    ; can keep C-u C-SPC C-SPC C-SPC...
 (delete-selection-mode)                 ; typing overwrites selection
 (save-place-mode)                       ; remember buffer location
 
@@ -224,10 +229,6 @@
 
 (use-package move-text                  ; does what is says
   :init (move-text-default-bindings))
-
-(use-package easy-kill
-  :general ([remap kill-ring-save] 'easy-kill
-            [remap mark-sexp] 'easy-mark))
 
 (use-package hungry-delete              ; delete consecutive whitespace
   :init (global-hungry-delete-mode)
@@ -346,10 +347,18 @@
   :hook ((dired-mode . dired-git-log-mode))
   :general (:keymaps 'dired-mode-map ")" 'dired-git-log-mode)
   :custom (dired-git-log-auto-hide-details-p nil))
-(use-package goto-chg
-  :general ("C-." 'goto-last-change
-            "C-," 'goto-last-change-reverse))
+;; TODO: conflict with embark
+;; (use-package goto-chg
+;;   :general ("C-." 'goto-last-change
+;;             "C-," 'goto-last-change-reverse))
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
+
+(general-def "<f8>"                     ; compilation
+  (defun my/switch-to-compilation-buffer ()
+    "Switch to compilation buffer."
+    (interactive) (switch-to-buffer "*compilation*")))
+(general-def :keymaps 'flymake-mode-map
+  "C-c C-e" #'flymake-show-project-diagnostics)
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)
@@ -362,10 +371,15 @@
   :config
   (use-package cargo)
   (use-package cargo-mode))
-(use-package cc-mode :straight (:type built-in)
+(use-package cc-mode :straight (:type built-in) ; C++
+  :after smartparens
   :general (:keymaps 'c-mode-base-map "C-c C-o"
                      (lambda () (interactive)
-                       (ff-find-other-file nil 'ignore-include))))
+                       (ff-find-other-file nil 'ignore-include)))
+  :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0])))
+         (c-mode-common . (lambda ()    ; formatting
+                            (fset 'c-indent-region 'clang-format-region))))
+  :config (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p)))
 
 (use-package outshine
   :general (:keymaps 'outshine-mode-map
@@ -389,9 +403,6 @@
             "M-p" 'outline-previous-visible-heading
             "M-n" 'outline-next-visible-heading
             [remap consult-imenu] 'consult-outline))
-;; Local Variables:
-;; eval: (progn (outshine-mode) (column-enforce-mode))
-;; End:
 
 ;;;; Emacs-as-XYZ
 (load "config-notmuch.el" :noerror)     ; email client
@@ -408,13 +419,6 @@
   (magit-repository-directories `(("~/" . 1)))
   (magit-log-auto-more t)
   (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
-(when (executable-find "delta")
-  (use-package magit-delta :after magit
-    :init (magit-delta-mode)
-    :custom (magit-delta-delta-args
-             '("--features" "magit-delta"
-               "--true-color" "always"
-               "--color-only"))))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
@@ -440,6 +444,9 @@
   :hook ((edit-server-start . (lambda () (auto-fill-mode -1)))))
 
 ;;;; Epilogue
+;; Local Variables:
+;; eval: (progn (outshine-mode) (column-enforce-mode))
+;; End:
 (use-package no-littering               ; Emacs, stop littering!❗!
   :init
   (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))

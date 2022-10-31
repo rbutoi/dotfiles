@@ -68,49 +68,18 @@ or are no longer readable will be killed."
       (forward-line))))
 
 ;;;; better C/M-w
+(defadvice kill-ring-save (before slick-cut activate compile)
+  "When called interactively with no active region, save a single line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
 (defadvice kill-region (before slick-cut activate compile)
   "When called interactively with no active region, kill a single line instead."
   (interactive
    (if mark-active (list (region-beginning) (region-end))
      (list (line-beginning-position)
            (line-beginning-position 2)))))
-
-;; https://github.com/leoliu/easy-kill/issues/37#issuecomment-1131090505
-(defvar my-easy-kill-map nil)
-(when (functionp 'which-key--show-keymap)
-  ;; 简化which-key提示
-  (with-eval-after-load 'which-key
-    ;; 去掉easy-kill-前辍
-    ;; (push '((nil . "easy-kill-digit-argument") . (nil . "")) which-key-replacement-alist)
-    (push '((nil . "easy-kill-") . (nil . "")) which-key-replacement-alist)
-
-    ;; 额外居然都显示easy-kill-thing，这里替换它们的显示
-    ;; easy-kill-help 可以显示所有功能
-    ;; (push '(("s" . "easy-kill-thing") . (nil . "symbol")) which-key-replacement-alist)
-    (cl-dolist (one easy-kill-alist)
-      (push `((,(regexp-quote (char-to-string (car one))) . "easy-kill-thing") . (nil . ,(symbol-name (nth 1 one)))) which-key-replacement-alist)
-      )
-    )
-
-  (defadvice easy-kill-activate-keymap (before my-easy-kill-activate-keymap activate)
-    (unless my-easy-kill-map
-      (let ((easy-kill-base-map easy-kill-base-map))
-        ;; remove number keys
-        (cl-loop for i from 0 to 9
-                 do (define-key easy-kill-base-map (number-to-string i) nil))
-        (setq my-easy-kill-map (easy-kill-map))
-        ))
-    (which-key--show-keymap "keymap" my-easy-kill-map nil nil 'no-paging)
-    )
-  (defun my-set-transient-map-exit()
-    (which-key--hide-popup))
-  (defadvice set-transient-map (before my-set-transient-map activate)
-    (let ((map (ad-get-arg 0)))
-      ;; 判断是否是easy-kill的keymap
-      (when (eq (lookup-key map "?") 'easy-kill-help)
-        (ad-set-arg 2 'my-set-transient-map-exit)
-        )))
-  )
 
 ;;;; vterm / compile
 (defun close-compile-window-if-successful (buffer string)

@@ -341,9 +341,10 @@ nms() { notmuch search "$@" | cut -c24-; }
 # external shell tools #
 ########################
 
-[[ -d /home/linuxbrew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-(( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
+if [[ -d /home/linuxbrew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  (( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
+fi
 
 zinit ice as"program" pick"bin/git-fuzzy"
 zinit light bigH/git-fuzzy      # or forgit?

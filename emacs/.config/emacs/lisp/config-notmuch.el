@@ -251,6 +251,7 @@ take up to a minute (if stale)."
   (general-add-hook '(notmuch-search-mode-hook notmuch-tree-mode-hook)
                     'my/notmuch-poll-if-needed)
 
+  (use-package visual-fill-column)
   ;; Send plaintext email as long lines, let receivers soft-wrap.
   (add-hook 'notmuch-message-mode-hook
             (lambda ()

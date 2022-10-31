@@ -17,7 +17,8 @@ keys = {
    {key = "_",     mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
    {key = "-",     mods = "CTRL",       action = "DisableDefaultAssignment"},
    {key = "=",     mods = "CTRL",       action = "DisableDefaultAssignment"},
-
+   -- emacs just-one-space
+   {key = "Enter", mods = "ALT",        action = "DisableDefaultAssignment"},
    -- panes
    {key = "o",  mods = "SUPER", action = act.ActivatePaneDirection 'Next',},
    {key = "i",  mods = "SUPER", action = act.ActivatePaneDirection 'Prev',},
