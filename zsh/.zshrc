@@ -71,7 +71,7 @@ export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
 export FZF_DEFAULT_COMMAND='fd --hidden'
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind
+MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind \
   'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'"
 fzfp()  {
     eval "fzf --preview 'if [[ -f {} ]] && [[ \$(stat -c%s {}) -lt 2000000 ]];
@@ -377,7 +377,7 @@ else
 fi
 
 if (( $+commands[exa] )); then
-  l()  { exa --group-directories-first }
+  l()  { exa --group-directories-first "$@" }
   ll() { exa -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
