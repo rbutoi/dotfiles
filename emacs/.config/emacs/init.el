@@ -131,7 +131,8 @@
 ;; completion
 (setq tab-always-indent 'complete
       ;; TAB cycle if there are only few candidates
-      completion-cycle-threshold 3)
+      completion-cycle-threshold 3
+      enable-recursive-minibuffers t)
 (use-package corfu
   :init (global-corfu-mode)
   :custom (corfu-auto t)
@@ -159,6 +160,26 @@
   (vertico-count 17)
   (vertico-cycle t)
   :config (vertico-mode))
+(use-package vertico-directory :after vertico
+  :straight (:type built-in)
+  :load-path "var/straight/repos/vertico/extensions/"
+  :general (:keymaps 'vertico-map
+                     "RET"    'vertico-directory-enter
+                     "C-k"    'vertico-directory-enter
+                     "DEL"    'vertico-directory-delete-char
+                     "C-l"    'vertico-directory-delete-char
+                     "M-DEL"  'vertico-directory-delete-word)
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+(use-package vertico-repeat :after vertico
+  :straight (:type built-in)
+  :load-path "var/straight/repos/vertico/extensions/"
+  :hook ((minibuffer-setup . vertico-repeat-save))
+  :general ("M-R" 'vertico-repeat))
+(use-package vertico-mouse :after vertico
+  :straight (:type built-in)
+  :load-path "var/straight/repos/vertico/extensions/"
+  :config (vertico-mouse-mode))
 
 (use-package consult
   :init
@@ -207,9 +228,6 @@
 (use-package embark
   :general ("C-." 'embark-act
             "C-h B" 'embark-bindings)
-  :custom
-  ;; Optionally replace the key help with a completing-read interface
-  (prefix-help-command #'embark-prefix-help-command)
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
@@ -217,7 +235,10 @@
                  nil
                  (window-parameters (mode-line-format . none)))))
 (use-package embark-consult
-  :hook (embark-collect-mode . consult-preview-at-point-mode))
+  :hook (embark-collect-mode . consult-preview-at-point-mode)
+  :general (:keymaps 'vertico-map "C-c C-e" 'embark-export))
+(use-package link-hint
+  :general ("C-c l o" 'link-hint-open-link))
 
 ;;;; Editing
 (setq set-mark-command-repeat-pop t)    ; can keep C-u C-SPC C-SPC C-SPC...
