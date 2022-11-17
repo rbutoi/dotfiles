@@ -4,6 +4,8 @@
 .config/Signal/**
 .config/chrome-remote-desktop**
 .config/chromium**
+.config/emacs/var/eln-cache/**
+.config/emacs/var/straight/**
 .config/google-chrome**
 .git/**
 .glide/**

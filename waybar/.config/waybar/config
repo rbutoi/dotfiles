@@ -3,7 +3,6 @@
   "output": "eDP-1",
   "position": "bottom",
   "modules-left": [
-    "custom/home",
     "sway/workspaces",
     "sway/mode",
     "wlr/taskbar",
@@ -92,11 +91,6 @@
   "tray": {
     "icon-size": 28
   },
-  "custom/home": {
-    "format": "🏠 ",
-    "on-click": "nautilus",
-    "tooltip": false
-  },
   "custom/weather": {
     "interval": 3600,
     "exec": "~/bin/waybar-wttr.py",
@@ -105,10 +99,9 @@
     "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
   },
 }, {
-  "output": "!eDP-1",
+  "output": "HDMI-A-1",
   "position": "bottom",
   "modules-left": [
-    "custom/home",
     "sway/workspaces",
     "sway/mode",
   ],
@@ -196,10 +189,95 @@
   "tray": {
     "icon-size": 28
   },
-  "custom/home": {
-    "format": "🏠 ",
-    "on-click": "nautilus",
+  "custom/weather": {
+    "interval": 3600,
+    "exec": "~/bin/waybar-wttr.py",
+    "return-type": "json",
+    "on-click": "gnome-weather",
+    "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
+  },
+}, {
+  "output": "DP-2",
+  "position": "bottom",
+  "modules-left": [
+    "sway/workspaces",
+    "sway/mode",
+  ],
+  "modules-center": ["wlr/taskbar"],
+  "modules-right": [],
+  "sway/window": {
+    "max-length": 200,
     "tooltip": false
+  },
+  "sway/workspaces": {
+    "persistent_workspaces": {
+      "1": ["DP-2", "eDP-1"],
+      "2": ["DP-1", "eDP-1"],
+      "3": ["DP-2", "eDP-1"],
+      "4": ["DP-1", "eDP-1"],
+      "5": ["eDP-1"],
+      "6": ["eDP-1"],
+    }
+  },
+  "wlr/taskbar": {
+    "format": " {icon}{title:.10} ",
+    "max-length": 200,
+    "icon-size": 26,
+    "on-click": "activate",
+    "on-click-middle": "close",
+  },
+  "custom/updates": {
+    "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
+    "exec": "python -c \"import json, subprocess; d={}; d['text'] = subprocess.run('checkupdates | wc -l | perl -pe chomp', shell=True, capture_output=True, encoding='utf-8').stdout; d['tooltip'] = subprocess.run('checkupdates', shell=True, capture_output=True, encoding='utf-8').stdout; print(json.dumps(d))\"",
+    "return-type": "json",
+    "format": "🎁 {}",
+    "interval": 3600,
+    "on-click": "(tmux neww topgrade && swaymsg '[app_id=\"wezterm\"] focus') || wezterm start -- topgrade; pkill -RTMIN+8 waybar",
+    "tooltip": false,
+    "signal": 8
+  },
+  "custom/mail": {
+    "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
+    "tooltip": false,
+    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "interval": 3600, // 1 hour poll, 5 minute push
+    "signal": 9
+  },
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668 - fix with https://superuser.com/questions/1496256/gnu-linux-date-command-ordinal-suffix
+    "exec": "date '+%a %dXX %H:%M' | sed -e 's/11XX/11th/' -e 's/12XX/12th/' -e 's/13XX/13th/' -e 's/1XX/1st/' -e 's/2XX/2nd/' -e 's/3XX/3rd/' -e 's/XX/th/' ",
+    "tooltip": false,
+    "on-click": "gsimplecal",
+    "on-click-right": "swaymsg '[title=\" – Calendar - \"] focus'",
+    "interval": 5
+  },
+  "pulseaudio": {
+    "format-bluetooth": "📶{icon}",
+    "format": "{icon}",
+    "format-icons": {"default": ["🔈", "🔉", "🔊"]},
+    "format-muted": "🔇",
+    "on-click": "pavucontrol",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@",
+    "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
+    "tooltip": false,
+  },
+  "battery": {
+    "bat": "BAT0",
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon}",
+    "format-charging": "{icon}{capacity}+",
+    "format-warning": "{icon}{capacity}",
+    "format-critical": "{icon}{capacity}",
+    "format-unknown": "{icon}(l)",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip-format": "{capacity}%: {timeTo}",
+    "on-click": "gnome-power-statistics",
+  },
+  "tray": {
+    "icon-size": 28
   },
   "custom/weather": {
     "interval": 3600,

@@ -24,6 +24,8 @@ keys = {
    {key = "i",  mods = "SUPER", action = act.ActivatePaneDirection 'Prev',},
    {key = "-",  mods = "CTRL|SUPER", action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
    {key = "\\", mods = "CTRL|SUPER", action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
+   -- copy mode, a la C-Space from tmux
+   {key = "Space", mods = "CTRL|SUPER", action = act.ActivateCopyMode },
 
    {
       -- key = "P", pane select -- TODO: B??
@@ -51,11 +53,30 @@ keys = {
 }
 
 -- emacs copy-mode binds
+local copy_mode = wezterm.gui.default_key_tables().copy_mode
+for _, v in pairs({
+      { key = 'n', mods = 'CTRL', action = act.CopyMode 'MoveDown' },
+      { key = 'p', mods = 'CTRL', action = act.CopyMode 'MoveUp' },
+      { key = 'f', mods = 'CTRL', action = act.CopyMode 'MoveRight' },
+      { key = 'b', mods = 'CTRL', action = act.CopyMode 'MoveLeft' },
+      { key = 'a', mods = 'CTRL', action = act.CopyMode 'MoveToStartOfLineContent' },
+      { key = 'e', mods = 'CTRL', action = act.CopyMode 'MoveToEndOfLineContent' },
+      { key = 'v', mods = 'CTRL', action = act.CopyMode 'PageDown' },
+      { key = 'v', mods = 'ALT',  action = act.CopyMode 'PageUp' },
+      { key = 'Space', mods = 'CTRL', action = act.CopyMode{ SetSelectionMode =  'Cell' } },
+      { key = 'w', mods = 'ALT', action = act.Multiple{
+           { CopyTo =  'ClipboardAndPrimarySelection' },
+           { CopyMode =  'Close' } } },
+}) do
+   table.insert(copy_mode, v)
+end
 local search_mode = wezterm.gui.default_key_tables().search_mode
 for _, v in pairs({
       { key = 's', mods = 'CTRL', action = act.CopyMode 'NextMatch' },
       { key = 'r', mods = 'CTRL', action = act.CopyMode 'PriorMatch'},
-      { key = 'g', mods = 'CTRL', action = act.CopyMode 'Close' }}) do
+      { key = 'g', mods = 'CTRL', action = act.CopyMode 'Close' },
+      { key = "k", mods = "CTRL", action = act.CopyMode 'ClearPattern' },
+}) do
    table.insert(search_mode, v)
 end
 
@@ -107,15 +128,13 @@ return {
    color_scheme = "Gruvbox Dark",
 
    -- cursor
-   default_cursor_style = 'BlinkingBar',
-   animation_fps = 1,
-   cursor_blink_ease_in = 'Constant',
-   cursor_blink_ease_out = 'Constant',
+   default_cursor_style = 'BlinkingBlock',
    cursor_thickness = "1.4pt",
 
    -- keys and links
    keys = keys,
-   key_tables = {search_mode = search_mode},
+   key_tables = {copy_mode = copy_mode,
+                 search_mode = search_mode},
    bypass_mouse_reporting_modifiers = 'SHIFT',
    mouse_bindings = mouse_bindings,
    hyperlink_rules = hyperlink_rules,

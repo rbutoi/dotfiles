@@ -341,7 +341,7 @@ nms() { notmuch search "$@" | cut -c24-; }
 # external shell tools #
 ########################
 
-if [[ -d /home/linuxbrew ]]; then
+if [[ -d /home/linuxbrew && -z "$HOMEBREW_PREFIX" ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   (( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
 fi

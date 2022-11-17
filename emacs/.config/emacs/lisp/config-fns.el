@@ -143,9 +143,9 @@ shell exits, the buffer is killed."
 (defun consult--fd-builder (input)
   (unless consult--fd-command
     (setq consult--fd-command
-          (if (eq 0 (call-process-shell-command "fdfind"))
-              "fdfind"
-            "fd")))
+          (if (eq 0 (call-process-shell-command "fd"))
+              "fd"
+            "fdfind")))
   (pcase-let* ((`(,arg . ,opts) (consult--command-split input))
                (`(,re . ,hl) (funcall consult--regexp-compiler
                                       arg 'extended t)))

@@ -46,10 +46,13 @@
 ;;;; UI / UX
 (use-package general)                   ; keybinds
 (tool-bar-mode -1) (menu-bar-mode -1)   ; just use F10
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
 (context-menu-mode)                     ; this is good tho
 (global-hl-line-mode)                   ; always good to keep track
 
 (use-package doom-themes
+  :custom (doom-gruvbox-padded-modeline 2) ; hard to see borders without
   :init (load-theme 'doom-gruvbox t)
   (defun my/terminal-bg-transparency ()
     "Disable background in terminal to show wallpaper."
@@ -72,7 +75,8 @@
   "C-x ="     'balance-windows
   "C-x C-="   'balance-windows          ; redundancy
   "C-x +"     'what-cursor-position     ; former C-x =
-  "C-x M-="   'text-scale-adjust)       ; former C-x C-=
+  "C-x M-="   'text-scale-adjust        ; former C-x C-=
+  "C-c M-S"   'scroll-bar-mode)         ; occasionally useful (e.g. w3m)
 (general-def :keymaps '(global magit-mode-map) ; just drop the M- in magit
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
@@ -102,7 +106,7 @@
   :init
   (setq doom-modeline-support-imenu t
         doom-modeline-enable-word-count t
-        doom-modeline-buffer-file-name-style 'truncate-upto-project)
+        doom-modeline-buffer-file-name-style 'truncate-with-project)
   (column-number-mode)
   (doom-modeline-mode)
   :hook
@@ -182,18 +186,10 @@
   :config (vertico-mouse-mode))
 
 (use-package consult
-  :init
-  (defun my/consult-fd-config ()
-    "consult-fd on ~/.config"
-    (interactive) (consult-fd "~/.config/" ""))
-  (defun my/consult-line-symbol-at-point ()
-    "consult-line the symbol at point."
-    (interactive) (consult-line (thing-at-point 'symbol)))
   :general                              ; remap some standard commands
   ("C-x M-:" 'consult-complex-command
    "C-c r"   'consult-recent-file
    "C-x p b" 'consult-project-buffer
-   "C-M-o"   'my/consult-line-symbol-at-point
    "C-o"     'consult-imenu
    "C-h a"   'consult-apropos
    "M-y"     'consult-yank-pop
@@ -203,10 +199,28 @@
    [remap goto-line] 'consult-goto-line)
   (:keymaps 'isearch-mode-map
             "C-o" 'consult-line)
+  :init
+  (defun my/consult-fd-config ()
+    "consult-fd on ~/.config"
+    (interactive) (consult-fd "~/.config/" ""))
+  :hook (completion-list-mode . consult-preview-at-point-mode)
   :custom
   (xref-show-xrefs-function       #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
-  :config (recentf-mode))
+  (consult-narrow-key "<")
+  :config
+  (recentf-mode)
+
+  (consult-customize
+   consult-line
+   :add-history (seq-some #'thing-at-point '(region symbol)))
+  (defalias 'consult-line-thing-at-point 'consult-line)
+  (consult-customize
+   consult-line-thing-at-point
+   :initial (thing-at-point 'symbol))
+  (general-def "C-M-o" 'consult-line-thing-at-point)
+
+  (consult-customize consult-theme :preview-key '(:debounce 0.5 any)))
 (use-package bufler
   :general
   ("C-x C-b" 'bufler-switch-buffer
@@ -248,6 +262,7 @@
 (use-package sudo-edit)
 (use-package so-long :init (global-so-long-mode)) ; long file handling
 
+;; TODO; binds conflict with outshine
 (use-package move-text                  ; does what is says
   :init (move-text-default-bindings))
 
@@ -310,6 +325,8 @@
 (setq vc-follow-symlinks t              ; don't prompt
       vc-make-backup-files t
       comment-auto-fill-only-comments t)
+(general-def
+  "C-x ;" 'comment-line)
 (toggle-text-mode-auto-fill)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 
@@ -340,9 +357,9 @@
 
 (use-package auto-highlight-symbol      ; highlight symbols
   :init (global-auto-highlight-symbol-mode))
-(use-package hl-todo                    ; highlight "TODO:"s
+(use-package hl-todo
   :custom (hl-todo-wrap-movement t)
-  :hook prog-mode) ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
+  :hook prog-mode)     ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
 
 (use-package git-gutter
   :init (global-git-gutter-mode)
@@ -398,9 +415,12 @@
                      (lambda () (interactive)
                        (ff-find-other-file nil 'ignore-include)))
   :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0])))
-         (c-mode-common . (lambda ()    ; formatting
-                            (fset 'c-indent-region 'clang-format-region))))
-  :config (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p)))
+         ;; (c-mode-common . (lambda ()))
+         )
+  :config
+  (fset 'c-indent-region 'clang-format-region)
+  (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
+  (general-unbind :keymaps 'c-mode-base-map "TAB")) ; really an upstream issue
 
 (use-package outshine
   :general (:keymaps 'outshine-mode-map
@@ -409,7 +429,7 @@
 ;; eval: (outshine-mode)
 ;; End:
 
-(add-hook 'after-save                   ; automatically make scripts executable
+(add-hook 'after-save-hook              ; automatically make scripts executable
           'executable-make-buffer-file-executable-if-script-p)
 (setq executable-prefix-env t)
 
@@ -488,6 +508,8 @@
   (custom-file (f-join user-emacs-directory "lisp/custom.el"))
   :config (load custom-file :noerror))  ; customize is still useful
 (use-package server :config (unless (server-running-p) (server-start)))
-(use-package restart-emacs :general ("C-x M-c" 'restart-emacs))
+(use-package restart-emacs
+  :general ("C-x M-c" 'restart-emacs)
+  :custom (restart-emacs-daemon-with-tty-frames-p t))
 
 (load "specific.el" :noerror)         ; host-specific config
