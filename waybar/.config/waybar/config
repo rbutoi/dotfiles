@@ -32,11 +32,12 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.10} ",
+    "format": " {icon}{title:.5} ",
     "max-length": 200,
     "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close",
+    "on-click-right": "fullscreen",
   },
   "custom/updates": {
     "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
@@ -130,11 +131,12 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.10} ",
+    "format": " {icon}{title:.15} ",
     "max-length": 200,
     "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close",
+    "on-click-right": "fullscreen",
   },
   "custom/updates": {
     "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
@@ -204,7 +206,7 @@
     "sway/mode",
   ],
   "modules-center": ["wlr/taskbar"],
-  "modules-right": [],
+  "modules-right": ["custom/clock"],
   "sway/window": {
     "max-length": 200,
     "tooltip": false
@@ -225,6 +227,7 @@
     "icon-size": 26,
     "on-click": "activate",
     "on-click-middle": "close",
+    "on-click-right": "fullscreen",
   },
   "custom/updates": {
     "exec-if": "command -V checkupdates >/dev/null && [ $(checkupdates | wc -l) -gt 0 ]",
@@ -285,5 +288,12 @@
     "return-type": "json",
     "on-click": "gnome-weather",
     "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
+  },
+  "custom/clock": { // https://github.com/Alexays/Waybar/issues/668 - fix with https://superuser.com/questions/1496256/gnu-linux-date-command-ordinal-suffix
+    "exec": "date '+%a %dXX %H:%M' | sed -e 's/11XX/11th/' -e 's/12XX/12th/' -e 's/13XX/13th/' -e 's/1XX/1st/' -e 's/2XX/2nd/' -e 's/3XX/3rd/' -e 's/XX/th/' ",
+    "tooltip": false,
+    "on-click": "gsimplecal",
+    "on-click-right": "swaymsg '[title=\" – Calendar - \"] focus'",
+    "interval": 5
   },
 }]

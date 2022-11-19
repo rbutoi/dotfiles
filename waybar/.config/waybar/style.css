@@ -37,7 +37,6 @@
   border: none;
   border-radius: 0;
   font-family: Noto Sans;
-  font-size: 12pt;
   min-height: 32px;
 }
 
@@ -69,7 +68,7 @@ window#waybar {
 #taskbar button {
   margin:  0 4px;
   padding: 0 2px;
-  background-color: transparent;
+  background: transparent;
   color: #fbf1c7;
   border-bottom: 2px solid #83a598;
 }
@@ -104,7 +103,7 @@ window#waybar {
 }
 
 #clock {
-  background-color: #282828;
+  background: #282828;
 }
 
 #network {
@@ -116,7 +115,7 @@ window#waybar {
 }
 
 #idle_inhibitor.activated {
-  background-color: #fb4934;
+  background: #fb4934;
   color: white;
 }
 
@@ -133,7 +132,7 @@ window#waybar {
 
 @keyframes blink {
   to {
-    background-color: #26a65b;
+    background: #26a65b;
     color: #fb4934;
   }
 }
@@ -169,15 +168,10 @@ window#waybar {
   padding: 0 5px 0 5px;
 } /* https://usbrandcolors.com/spotify-colors/ */
 #custom-spotify-icon, #custom-spotify {
-  background-color: #191414;
+  background: #191414;
   color: #1db954;
 }
 
-#custom-mail, #custom-weather, #custom-load, #battery {
-  font-family: JetBrains Mono;
-  font-size: 18px;
-}
-
-#custom-clock {
-  font-size: 20px;
+#custom-weather, #battery, #custom-clock {
+  font-size: 15pt;
 }

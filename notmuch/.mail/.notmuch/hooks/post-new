@@ -51,7 +51,8 @@ fi
 if (pgrep -x sway || pgrep -x i3) >/dev/null; then
   export I3SOCK=/run/user/$(id -u)/i3/ipc-socket.$(pgrep -x i3)
   export SWAYSOCK=$(sway --get-socketpath)
-  i3-msg exec notify-notmuch
+  i3-msg    exec notify-notmuch 2>/dev/null ||
+    swaymsg exec notify-notmuch 2>/dev/null
 
   pkill -x -RTMIN+9 waybar 2>/dev/null       # update waybar unread count
 fi
