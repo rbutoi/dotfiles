@@ -10,6 +10,7 @@ set $term       wezterm start --
 set $term_tmux  wezterm start --class wezterm_auto  -- tmux new -As auto
 set $term_emacs wezterm start --class wezterm_emacs -- emacsclient -nw -a=
 set $web        google-chrome-unstable
+set $files      xdg-open ~
 set $menu       ~/bin/wofi-wrap.sh
 set $locker     "swaylock --show-failed-attempts --ignore-empty-password \
   --show-keyboard-layout --daemonize --screenshots                       \
@@ -73,6 +74,7 @@ for_window [app_id="^cinnamon-settings.py"]        floating enable
 for_window [app_id="^eog"]                         floating enable
 for_window [app_id="^exo-desktop-item-edit"]       floating enable
 for_window [app_id="^font-viewer$"]                floating enable
+for_window [app_id="^fsearch$"]                    floating enable; opacity 0.95
 for_window [app_id="^gnome-control-center"]        floating enable
 for_window [app_id="^gnome-power-statistics"]      floating enable
 for_window [app_id="^goobuntu_indicator.py"]       floating enable
@@ -97,7 +99,7 @@ for_window [title="Firefox - Sharing Indicator"]   floating enable
 for_window [title="^(Open|Save) Files?$"]          floating enable
 for_window [title="^Close Firefox$"]               floating enable
 for_window [title="^Edit with Emacs FRAME$"]       floating enable
-for_window [title="^Picture in picture$"]          floating enable
+for_window [title="^Picture in picture$"]          floating enable; sticky enable
 for_window [app_id="chrome" title="^Compose Mail"] floating enable
 # workspace assignments
 assign [class="hl2_linux"]                workspace 3
@@ -155,15 +157,18 @@ bindsym $mod+w               exec swaymsg \
   '[app_id="[Gg]oogle-chrome"] focus' ||  \
   swaymsg '[app_id="firefox"] focus'  || $web
 bindsym $mod+Shift+w         exec $web
+bindsym $mod+Shift+f         exec $files
 bindsym $mod+e               exec swaymsg \
   '[app_id="wezterm_emacs"] focus'    ||  \
   swaymsg '[app_id="emacs"] focus'    ||  \
   swaymsg '[class="Emacs"] focus'     || $term_emacs
 bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
 bindsym $mod+c               kill
-bindsym $mod+space           exec $menu
+bindsym $alt+F4              kill
 bindsym $alt+F2              exec $menu "-Srun"
-bindsym $mod+Shift+space     exec $menu "-Sdmenu,drun,run" # also run, too much for default
+bindsym $mod+space           exec $menu
+bindsym $mod+Slash           exec fsearch
+bindsym $mod+Shift+space     exec fsearch
 bindsym $mod+q               exec wlogout -p layer-shell
 bindsym $mod+Shift+q         reload
 bindsym $mod+Shift+Backspace exit
@@ -236,7 +241,7 @@ bindsym $mod+d        layout toggle split
 bindsym $mod+f        fullscreen
 bindsym $mod+t        floating toggle
 bindsym $mod+Ctrl+t   focus mode_toggle
-bindsym $mod+Shift+t  sticky toggle
+bindsym $mod+Shift+t  sticky toggle; exec ~/.config/sway/bin/notify_sticky_status.sh
 bindsym $mod+a        focus parent
 bindsym $mod+Shift+a  focus child
 #

@@ -68,13 +68,13 @@ window#waybar {
 #taskbar button {
   margin:  0 4px;
   padding: 0 2px;
-  background: transparent;
   color: #fbf1c7;
   border-bottom: 2px solid #83a598;
 }
 
 #taskbar button.active {
   border-bottom: 2px solid #d3869b;
+  /* background: #ff0000; */
 }
 
 #window,
@@ -93,7 +93,11 @@ window#waybar {
 #custom-arch,
 #custom-disturb_on,
 #custom-disturb_off,
-#mpd {
+#mpd,
+#custom-mail,
+#custom-weather,
+#custom-load
+{
   padding: 0 8px;
   margin: 0;
 }
@@ -159,11 +163,6 @@ window#waybar {
   animation-direction: alternate;
 }
 
-#custom-mail, #custom-weather, #custom-load {
-  padding: 0 4px;
-  margin: 0 2px;
-}
-
 #custom-spotify-icon {
   padding: 0 5px 0 5px;
 } /* https://usbrandcolors.com/spotify-colors/ */
@@ -172,6 +171,6 @@ window#waybar {
   color: #1db954;
 }
 
-#custom-weather, #battery, #custom-clock {
+#custom-weather, #pulseaudio, #battery, #custom-clock {
   font-size: 15pt;
 }

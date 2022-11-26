@@ -65,7 +65,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}",
+    "format": "{icon}{volume}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -88,6 +88,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
+    "full-at": 99,
   },
   "tray": {
     "icon-size": 28
@@ -164,7 +165,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}",
+    "format": "{icon}{volume}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -187,6 +188,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
+    "full-at": 99,
   },
   "tray": {
     "icon-size": 28
@@ -206,7 +208,11 @@
     "sway/mode",
   ],
   "modules-center": ["wlr/taskbar"],
-  "modules-right": ["custom/clock"],
+  "modules-right": [
+    "pulseaudio",
+    "battery",
+    "custom/clock",
+  ],
   "sway/window": {
     "max-length": 200,
     "tooltip": false
@@ -255,7 +261,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}",
+    "format": "{icon}{volume}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -278,6 +284,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
+    "full-at": 99,
   },
   "tray": {
     "icon-size": 28
