@@ -11,9 +11,10 @@
   "modules-right": [
     // "custom/mail",
     "custom/updates",
-    "custom/weather",
     "tray",
+    "custom/weather",
     "pulseaudio",
+    "backlight",
     "battery",
     "custom/clock",
   ],
@@ -65,7 +66,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}{volume}",
+    "format": "{icon}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -73,6 +74,12 @@
     "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +5%",
     "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
     "tooltip": false,
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["🌑", "🌚", "🌘", "🌗", "🌖", "🌕", "🌝"],
+    "on-scroll-up":   "                                   brightnessctl set 2%+ && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
+    "on-scroll-down": "[ $(brightnessctl g) -lt 1200 ] || brightnessctl set 2%- && notify-send -c volume \"$((100 * $(brightnessctl g) / $(brightnessctl m)))\"",
   },
   "battery": {
     "bat": "BAT0",
@@ -88,7 +95,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
-    "full-at": 99,
+    "full-at": 98,
   },
   "tray": {
     "icon-size": 28
@@ -165,7 +172,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}{volume}",
+    "format": "{icon}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -188,7 +195,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
-    "full-at": 99,
+    "full-at": 98,
   },
   "tray": {
     "icon-size": 28
@@ -261,7 +268,7 @@
   },
   "pulseaudio": {
     "format-bluetooth": "📶{icon}",
-    "format": "{icon}{volume}",
+    "format": "{icon}",
     "format-icons": {"default": ["🔈", "🔉", "🔊"]},
     "format-muted": "🔇",
     "on-click": "pavucontrol",
@@ -284,7 +291,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
-    "full-at": 99,
+    "full-at": 98,
   },
   "tray": {
     "icon-size": 28

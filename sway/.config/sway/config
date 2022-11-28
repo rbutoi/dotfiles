@@ -98,9 +98,10 @@ for_window [title="Find Directory"]                floating enable
 for_window [title="Firefox - Sharing Indicator"]   floating enable
 for_window [title="^(Open|Save) Files?$"]          floating enable
 for_window [title="^Close Firefox$"]               floating enable
+for_window [title="^Compose Mail"]                 floating enable
 for_window [title="^Edit with Emacs FRAME$"]       floating enable
 for_window [title="^Picture in picture$"]          floating enable; sticky enable
-for_window [app_id="chrome" title="^Compose Mail"] floating enable
+for_window [title="^Preferences$"]                 floating enable
 # workspace assignments
 assign [class="hl2_linux"]                workspace 3
 assign [class="Signal"]                   workspace 7
@@ -150,26 +151,8 @@ set $down   j
 set $up     k
 set $right  l
 
-bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec swaymsg \
-  '[app_id="wezterm_auto"] focus'     || $term_tmux
-bindsym $mod+w               exec swaymsg \
-  '[app_id="[Gg]oogle-chrome"] focus' ||  \
-  swaymsg '[app_id="firefox"] focus'  || $web
-bindsym $mod+Shift+w         exec $web
-bindsym $mod+Shift+f         exec $files
-bindsym $mod+e               exec swaymsg \
-  '[app_id="wezterm_emacs"] focus'    ||  \
-  swaymsg '[app_id="emacs"] focus'    ||  \
-  swaymsg '[class="Emacs"] focus'     || $term_emacs
-bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
 bindsym $mod+c               kill
 bindsym $alt+F4              kill
-bindsym $alt+F2              exec $menu "-Srun"
-bindsym $mod+space           exec $menu
-bindsym $mod+Slash           exec fsearch
-bindsym $mod+Shift+space     exec fsearch
-bindsym $mod+q               exec wlogout -p layer-shell
 bindsym $mod+Shift+q         reload
 bindsym $mod+Shift+Backspace exit
 #
@@ -226,8 +209,10 @@ bindsym --no-repeat $mod+Shift+m    move container to output right; focus output
 bindsym --no-repeat $mod+n          focus output left
 bindsym --no-repeat $mod+m          focus output right
 bindsym --no-repeat $mod+Ctrl+p     workspace prev_on_output
-bindsym --no-repeat $mod+Ctrl+n     workspace next_on_output
+bindsym --no-repeat $mod+Prior      workspace prev_on_output
 bindsym --whole-window $mod+button4 workspace prev_on_output
+bindsym --no-repeat $mod+Ctrl+n     workspace next_on_output
+bindsym --no-repeat $mod+Next       workspace next_on_output
 bindsym --whole-window $mod+button5 workspace next_on_output
 #
 # Layout stuff:
@@ -260,6 +245,33 @@ bindsym $mod+Ctrl+$right  resize grow   width  100px
 #
 # App keys:
 #
+bindsym $mod+Return          exec $term
+bindsym $mod+Shift+Return    exec swaymsg \
+  '[app_id="wezterm_auto"] focus'     || $term_tmux
+bindsym $mod+w               exec swaymsg \
+  '[app_id="[Gg]oogle-chrome"] focus' ||  \
+  swaymsg '[app_id="firefox"] focus'  || $web
+bindsym $mod+Shift+w         exec $web
+bindsym $mod+Shift+f         exec $files
+bindsym $mod+e               exec swaymsg \
+  '[app_id="wezterm_emacs"] focus'    ||  \
+  swaymsg '[app_id="emacs"] focus'    ||  \
+  swaymsg '[class="Emacs"] focus'     || $term_emacs
+bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
+# super+ctrl = chat
+bindsym $mod+Ctrl+c swaymsg                                               \
+  '[app_id="chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1"] focus' || \
+  dex ~/Desktop/chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1.desktop
+# super+shift = calendar
+bindsym $mod+Shift+c swaymsg                                              \
+  '[app_id="chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1"] focus' || \
+  dex ~/Desktop/chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1.desktop
+bindsym $alt+F2              exec $menu "-Srun"
+bindsym $mod+space           exec $menu
+bindsym $mod+Slash           exec fsearch
+bindsym $mod+Shift+space     exec fsearch
+bindsym $mod+q               exec wlogout -p layer-shell
+
 bindsym $mod+Shift+Ctrl+l     exec $locker
 bindsym Print                 exec sway-interactive-screenshot
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
@@ -283,6 +295,8 @@ bindsym $mod+v                exec clipman pick --tool wofi --max-items 30
 bindsym $mod+$alt+h           exec $term --fullscreen btop
 bindsym $mod+Shift+Ctrl+i     exec notify-send swayinfo "$(~/.local/bin/swayinfo)"
 bindsym $mod+Shift+Ctrl+k     exec sh -c 'notify-send killing...; kill "$(~/.local/bin/swayinfo | grep "^pid=" | choose -f = 1)"'
+bindsym $mod+Alt+k            exec sh -c 'pkill wshowkeys; notify-send \"wshowkeys started; Super+Shift+Alt+k to kill\" && exec wshowkeys -a bottom -a right'
+bindsym $mod+Shift+Alt+k      exec sh -c 'pkill wshowkeys; notify-send \"pkill wshowkeys: $?\"'
 
 # system configs
 include /etc/sway/config.d/*

@@ -53,6 +53,7 @@
     dir                       # current directory
     goog_fig                  # Google fig status
     vcs                       # git status
+    time                      # current time - not right! too much terminal resizing
     command_execution_time    # previous command duration
     # =========================[ Line #2 ]=========================
     newline                   # \n
@@ -66,7 +67,6 @@
     # command_execution_time  # previous command duration
     # virtualenv              # python virtual environment
     # context                 # user@host
-    time                      # current time
     # =========================[ Line #2 ]=========================
     newline                   # \n
   )

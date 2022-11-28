@@ -221,7 +221,21 @@
   (general-def "C-M-o" 'consult-line-thing-at-point)
 
   (consult-customize consult-theme :preview-key '(:debounce 0.5 any)))
-(use-package bufler
+
+(general-def     ; not consult related, but an extension of my/consult-fd-config
+  ;; TODO: kill existing non-dotfiles buffer to allow magit
+  "C-c C-M-c s"
+  (defun my/config-open-sway () (interactive)
+         (find-file "~/dotfiles/sway/.config/sway/config"))
+  "C-c C-M-c z"
+  (defun my/config-open-zshrc () (interactive)
+         (find-file "~/dotfiles/zsh/.zshrc"))
+  "C-c C-M-c w"
+  (defun my/config-open-wezterm () (interactive)
+         (find-file "~/dotfiles/wezterm/.config/wezterm/wezterm.lua"))
+  )
+
+(use-package bufler                     ; very nice buffer overview
   :general
   ("C-x C-b" 'bufler-switch-buffer
    "C-x b"   'bufler-list))
@@ -464,9 +478,9 @@
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
-(use-package vterm :defer 2)     ; terminal in Emacs
-;; :config
-;; (add-to-list 'vterm-keymap-exceptions "M-i")
+(use-package vterm :defer 2     ; terminal in Emacs
+  :custom
+  (vterm-always-compile-module t))      ; why not?
 (use-package vterm-toggle
   :defer 2
   :general

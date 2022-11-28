@@ -163,14 +163,6 @@ window#waybar {
   animation-direction: alternate;
 }
 
-#custom-spotify-icon {
-  padding: 0 5px 0 5px;
-} /* https://usbrandcolors.com/spotify-colors/ */
-#custom-spotify-icon, #custom-spotify {
-  background: #191414;
-  color: #1db954;
-}
-
-#custom-weather, #pulseaudio, #battery, #custom-clock {
+#custom-weather, #pulseaudio, #backlight, #battery, #custom-clock {
   font-size: 15pt;
 }
