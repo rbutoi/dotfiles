@@ -140,14 +140,12 @@
 (use-package corfu
   :init (global-corfu-mode)
   :custom (corfu-auto t)
-  :general (:keymaps 'corfu-map "M-m" 'corfu-move-to-minibuffer)
-  :config
-  (use-package corfu-doc
-    :hook corfu-mode
-    :general (:keymaps 'corfu-map
-                       "M-d" 'corfu-doc-toggle
-                       "M-p" 'corfu-doc-scroll-down
-                       "M-n" 'corfu-doc-scroll-up)))
+  :general
+  (:keymaps 'corfu-map
+            "M-m" 'corfu-move-to-minibuffer
+            "M-d" 'corfu-doc-toggle
+            "M-p" 'corfu-doc-scroll-down
+            "M-n" 'corfu-doc-scroll-up))
 (use-package corfu-terminal :after corfu
   :straight '(corfu-terminal
               :type git

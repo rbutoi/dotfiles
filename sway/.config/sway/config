@@ -5,7 +5,6 @@
 # basics
 #
 
-# TODO: remove usage of tmux?
 set $term       wezterm start --
 set $term_tmux  wezterm start --class wezterm_auto  -- tmux new -As auto
 set $term_emacs wezterm start --class wezterm_emacs -- emacsclient -nw -a=
