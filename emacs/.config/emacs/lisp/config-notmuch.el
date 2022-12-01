@@ -68,7 +68,9 @@ take up to a minute (if stale)."
       (unless (time-less-p mail-sync-age (seconds-to-time (* 10 60)))
         (message
          (format-seconds
-          "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! G to sync" mail-sync-age))
+          (concat
+           "notmuch mail is %d days, %h hours, %m minutes, %s seconds old! "
+           "G to sync") mail-sync-age))
         (my/notmuch-poll-async))))
 
   (defun my/notmuch-kill-all-buffers ()

@@ -90,6 +90,8 @@
   (which-key-idle-secondary-delay 0.01)
   (which-key-show-docstrings t))
 
+(use-package zoom-window)               ; TODO: bind
+
 (use-package ace-window
   :general ([remap other-window] 'ace-window)
   :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
@@ -426,11 +428,11 @@
   :general (:keymaps 'c-mode-base-map "C-c C-o"
                      (lambda () (interactive)
                        (ff-find-other-file nil 'ignore-include)))
-  :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0])))
-         ;; (c-mode-common . (lambda ()))
-         )
+  :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0]))))
   :config
-  (fset 'c-indent-region 'clang-format-region)
+  (general-add-hook '(c-mode-hook c++-mode-hook)
+                    (lambda () (add-hook 'before-save-hook
+                                         'clang-format-buffer nil :local)))
   (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
   (general-unbind :keymaps 'c-mode-base-map "TAB")) ; really an upstream issue
 
