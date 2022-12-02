@@ -90,7 +90,7 @@
   (which-key-idle-secondary-delay 0.01)
   (which-key-show-docstrings t))
 
-(use-package zoom-window)               ; TODO: bind
+(use-package zoom-window :general ("C-x C-z" 'zoom-window-zoom))
 
 (use-package ace-window
   :general ([remap other-window] 'ace-window)
@@ -187,22 +187,23 @@
 
 (use-package consult
   :general                              ; remap some standard commands
-  ("C-x M-:" 'consult-complex-command
-   "C-c r"   'consult-recent-file
-   "C-x p b" 'consult-project-buffer
-   "C-o"     'consult-imenu
-   "C-h a"   'consult-apropos
-   "M-y"     'consult-yank-pop
-   "C-M-s"   'consult-ripgrep
-   "C-x M-f" 'consult-fd
-   "C-c M-c" 'my/consult-fd-config
+  ("C-x M-:"   'consult-complex-command
+   "C-c r"     'consult-recent-file
+   "C-x p b"   'consult-project-buffer
+   "C-o"       'consult-imenu
+   "C-h a"     'consult-apropos
+   "M-y"       'consult-yank-pop
+   "C-M-s"     'consult-ripgrep
+   "C-x M-f"   'consult-fd
+   "C-x C-M-f" 'consult-fd              ; redundant
+   "C-c C-M-d" 'my/consult-fd-dotfiles
    [remap goto-line] 'consult-goto-line)
   (:keymaps 'isearch-mode-map
             "C-o" 'consult-line)
   :init
-  (defun my/consult-fd-config ()
-    "consult-fd on ~/.config"
-    (interactive) (consult-fd "~/.config/" ""))
+  (defun my/consult-fd-dotfiles ()
+    "consult-fd on ~/dotfiles and other dotfiles repos"
+    (interactive) (consult-fd "~/.cache/both_dotfiles_dirs_linked" ""))
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :custom
   (xref-show-xrefs-function       #'consult-xref)
@@ -388,9 +389,7 @@
    "C-c p"   'git-gutter:previous-hunk-repeat
    "C-c n"   'git-gutter:next-hunk-repeat
    "C-x v s" 'git-gutter:stage-hunk
-   "C-x v r" 'git-gutter:revert-hunk
-   ;; TODO: start-revision toggling
-   )
+   "C-x v r" 'git-gutter:revert-hunk)
   :config (add-list-to-list 'git-gutter:update-commands
                             '(switch-to-buffer consult-buffer)))
 
@@ -409,8 +408,10 @@
   (defun my/switch-to-compilation-buffer ()
     "Switch to compilation buffer."
     (interactive) (switch-to-buffer "*compilation*")))
-(general-def :keymaps 'flymake-mode-map
-  "C-c C-e" #'flymake-show-project-diagnostics)
+(general-def :keymaps '(flymake-mode-map c++-mode-map)
+  "C-c C-e" #'flymake-show-project-diagnostics
+  "C-c C-n" #'flymake-goto-next-error
+  "C-c C-p" #'flymake-goto-prev-error)
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)
@@ -526,4 +527,4 @@
   :general ("C-x M-c" 'restart-emacs)
   :custom (restart-emacs-daemon-with-tty-frames-p t))
 
-(load "specific.el" :noerror)         ; host-specific config
+(load "specific.el" :noerror)           ; host-specific config

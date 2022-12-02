@@ -24,15 +24,6 @@
                     "notmuch search --output=files --format=text0 tag:deleted"
                     " | xargs -0 rm && notmuch new"))
     (notmuch-refresh-all-buffers))
-  (defun my/toggle-notmuch-search-width ()
-    "Toggle width of Notmuch search results."
-    (interactive)
-    (setq notmuch-search-result-format
-          (if (eq notmuch-search-result-format
-                  notmuch-search-result-format--narrow)
-              notmuch-search-result-format--wide
-            notmuch-search-result-format--narrow))
-    (notmuch-search-refresh-view))
 
   (defun my/notmuch-show-browse-first-url ()
     (interactive)
@@ -176,8 +167,7 @@ take up to a minute (if stale)."
    "M-u"        (lambda () (interactive) (notmuch-search-add-tag '("-unread"))
                   (notmuch-search-next-thread))
    "C-M-u"      (lambda () (interactive) (notmuch-search-tag-all '("-unread")))
-   "f"          (lambda () (interactive) (notmuch-search-add-tag '("+flagged")))
-   "C-w"        'my/toggle-notmuch-search-width)
+   "f"          (lambda () (interactive) (notmuch-search-add-tag '("+flagged"))))
   (:keymaps
    'notmuch-tree-mode-map
    "w"          (lambda () (interactive) (my/notmuch-tree-filter-by-tag "work"))
@@ -261,13 +251,19 @@ take up to a minute (if stale)."
               (setq-local fill-column 100)
               (visual-fill-column-mode +1)))
 
-  (general-add-hook
-   '(notmuch-search-mode-hook notmuch-tree-mode-hook notmuch-show-mode-hook)
-   (lambda ()
-     ;; (hl-line-mode 1)
-     ;; (smartparens-mode -1) ??
-     ;; Update waybar unread count faster than the 5 min poll
-     (when my/wayland? (call-process-shell-command "pkill -RTMIN+9 waybar")))))
+  (when my/wayland?
+    (general-add-hook
+     '(notmuch-search-mode-hook notmuch-tree-mode-hook notmuch-show-mode-hook)
+     (lambda ()
+       ;; Update waybar unread count faster than the 5 min poll
+       (call-process-shell-command "pkill -RTMIN+9 waybar"))))
+
+  (add-hook 'notmuch-search-mode-hook
+            (lambda ()
+              (setq notmuch-search-result-format
+                    (if (> (window-width) 256)
+                        notmuch-search-result-format--wide
+                      notmuch-search-result-format--narrow)))))
 
 ;; Include date in "on <date> <sender> wrote..." reply text
 (with-eval-after-load 'message

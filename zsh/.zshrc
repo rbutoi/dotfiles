@@ -254,11 +254,11 @@ _e() {                          # emacs with stdin
     emacsclient -a= "$@"
   fi
 }
-ew()  { _e "$@" -nw;  }           # inline console editor
-en()  { _e "$@" -n ;  }           # open in existing editor
-ewc() { _e "$@" -nc;  }           # new graphical editor
-em() { e --eval "(my/notmuch)"; } # (e)macs mail
+ew()  { _e "$@" -nw;  }             # inline console editor
+en()  { _e "$@" -n ;  }             # open in existing editor
+ewc() { _e "$@" -nc;  }             # new graphical editor
 alias e=ew
+alias em='ew --eval "(my/notmuch)"' # (e)macs mail
 
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
