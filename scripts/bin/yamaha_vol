@@ -3,21 +3,27 @@
 
 import os, requests, sys
 
-if len(sys.argv) != 2:
-    print(f'usage: {sys.argv[0]} {{up|down}}', file=sys.stderr)
+api = 'http://192.168.1.17/YamahaExtendedControl/v1/main'
+
+def usage():
+    print(f'usage: {sys.argv[0]} {{up|down|mute}}', file=sys.stderr)
     exit(1)
 
-# no home net
+if len(sys.argv) != 2 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
+    usage()
 
-api = 'http://192.168.1.17/YamahaExtendedControl/v1/main'
-requests.get(f'{api}/setVolume?volume={sys.argv[1]}')
-s = requests.get(f'{api}/getStatus').json()
+if sys.argv[1] == 'mute':       # toggle
+    currently_muted = requests.get(f'{api}/getStatus').json()['mute']
+    requests.get(f'{api}/setMute?enable={str(not currently_muted).lower()}')
+elif sys.argv[1] == 'up' or sys.argv[1] == 'down':
+    requests.get(f'{api}/setVolume?volume={sys.argv[1]}')
+else:
+    usage()
 
 # and notify dB
-vol=s['actual_volume']['value']
-unit=s['actual_volume']['unit']
-vol_f = float(vol)
-vol_cat = ''
+s = requests.get(f'{api}/getStatus').json()
+vol  = s['actual_volume']['value']; vol_f = float(vol); vol_cat = ''
+unit = s['actual_volume']['unit']
 if vol_f > -35:
     vol_cat = 'high'
 elif vol_f > -45:

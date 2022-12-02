@@ -204,6 +204,8 @@ bindsym --no-repeat $mod+Shift+0    move container to workspace 0
 # other monitor
 bindsym --no-repeat $mod+Shift+n    move container to output left ; focus output left
 bindsym --no-repeat $mod+Shift+m    move container to output right; focus output right
+# MRU workspace
+bindsym --no-repeat $mod+p          workspace back_and_forth
 # next and previous workspace
 bindsym --no-repeat $mod+n          focus output left
 bindsym --no-repeat $mod+m          focus output right
@@ -245,24 +247,24 @@ bindsym $mod+Ctrl+$right  resize grow   width  100px
 # App keys:
 #
 bindsym $mod+Return          exec $term
-bindsym $mod+Shift+Return    exec swaymsg \
-  '[app_id="wezterm_auto"] focus'     || $term_tmux
-bindsym $mod+w               exec swaymsg \
-  '[app_id="[Gg]oogle-chrome"] focus' ||  \
-  swaymsg '[app_id="firefox"] focus'  || $web
+bindsym $mod+Shift+Return    exec                \
+  swaymsg '[app_id="wezterm_auto"] focus'     || $term_tmux
+bindsym $mod+w               exec                \
+  swaymsg '[app_id="[Gg]oogle-chrome"] focus' || \
+  swaymsg '[app_id="firefox"] focus'          || $web
+bindsym $mod+e               exec                \
+  swaymsg '[app_id="wezterm_emacs"] focus'    || \
+  swaymsg '[app_id="emacs"] focus'            || \
+  swaymsg '[class="Emacs"] focus'             || $term_emacs
+bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
 bindsym $mod+Shift+w         exec $web
 bindsym $mod+Shift+f         exec $files
-bindsym $mod+e               exec swaymsg \
-  '[app_id="wezterm_emacs"] focus'    ||  \
-  swaymsg '[app_id="emacs"] focus'    ||  \
-  swaymsg '[class="Emacs"] focus'     || $term_emacs
-bindsym $mod+Shift+e         exec $term emacsclient -nw -aemacs
-# super+ctrl = chat
-bindsym $mod+Ctrl+c swaymsg                                               \
+# super+[ = chat
+bindsym $mod+bracketleft exec swaymsg                                     \
   '[app_id="chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1"] focus' || \
   dex ~/Desktop/chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1.desktop
-# super+shift = calendar
-bindsym $mod+Shift+c swaymsg                                              \
+# super+] = calendar
+bindsym $mod+bracketright exec swaymsg                                    \
   '[app_id="chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1"] focus' || \
   dex ~/Desktop/chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1.desktop
 bindsym $alt+F2              exec $menu "-Srun"
@@ -276,6 +278,7 @@ bindsym Print                 exec sway-interactive-screenshot
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5%+ && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && notify-send -c volume "$((100 * $(brightnessctl g) / $(brightnessctl m)))"
 bindsym XF86AudioMute         exec pamixer --toggle-mute         && notify-send -c volume "$(pamixer --get-volume)"
+bindsym $mod+XF86AudioMute    exec ~/bin/yamaha_vol mute
 bindsym XF86AudioRaiseVolume  exec pamixer --unmute --increase 5 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym XF86AudioLowerVolume  exec pamixer --unmute --decrease 5 && notify-send -c volume "$(pamixer --get-volume)"
 bindsym $mod+F2               exec ~/bin/yamaha_vol down

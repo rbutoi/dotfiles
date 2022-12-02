@@ -20,10 +20,11 @@ keys = {
    -- emacs just-one-space
    {key = "Enter", mods = "ALT",        action = "DisableDefaultAssignment"},
    -- panes
-   {key = "o",  mods = "SUPER", action = act.ActivatePaneDirection 'Next',},
-   {key = "i",  mods = "SUPER", action = act.ActivatePaneDirection 'Prev',},
-   {key = "-",  mods = "CTRL|SUPER", action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
-   {key = "\\", mods = "CTRL|SUPER", action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
+   {key = "o",  mods = "SUPER",         action = act.ActivatePaneDirection 'Next',},
+   {key = "i",  mods = "SUPER",         action = act.ActivatePaneDirection 'Prev',},
+   {key = "-",  mods = "CTRL|SUPER",    action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
+   {key = "\\", mods = "CTRL|SUPER",    action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
+   {key = 'z',  mods = 'CTRL|SUPER',    action = wezterm.action.TogglePaneZoomState,},
    -- copy mode, a la C-Space from tmux
    {key = "Space", mods = "CTRL|SUPER", action = act.ActivateCopyMode },
 
