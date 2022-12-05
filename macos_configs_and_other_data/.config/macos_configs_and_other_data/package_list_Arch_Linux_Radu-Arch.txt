@@ -44,11 +44,11 @@ calibre
 cargo-bloat
 cargo-update-git
 celluloid
+cemu-git
 cheese
 chezmoi
 chiaki
 choose-rust-git
-chrome-gnome-shell
 chromium-widevine
 clamav
 clang
@@ -70,10 +70,12 @@ device-mapper
 devtools
 dex
 diffutils
+discord-rpc-git
 dmidecode
 docker
 docker-compose
 downgrade
+drawing
 duf
 dust
 e2fsprogs
@@ -81,6 +83,7 @@ edk2-shell
 efibootmgr
 electron-cash
 emacs-nox
+endeavour
 eog
 epiphany
 etc-update
@@ -113,7 +116,7 @@ geary
 gedit
 geoip
 ghex
-gimp
+gimp-git
 gist
 git
 git-delta-git
@@ -123,7 +126,6 @@ glances
 glibc
 gmailieer
 gnome-backgrounds
-gnome-books
 gnome-boxes
 gnome-builder
 gnome-calculator
@@ -169,7 +171,6 @@ gnome-taquin
 gnome-terminal
 gnome-tetravex
 gnome-themes-extra
-gnome-todo
 gnome-tweaks
 gnome-usage
 gnome-user-docs
@@ -196,7 +197,6 @@ gvfs-gphoto2
 gvfs-mtp
 gvfs-nfs
 gvfs-smb
-handlr-bin
 hddtemp
 hdparm
 hexyl
@@ -341,6 +341,7 @@ phonon-qt5-git
 php-cgi
 php-fpm
 pigz
+pinta
 pipewire-alsa
 pipewire-pulse
 pkgfile
@@ -359,7 +360,6 @@ procs-git
 protobuf
 protontricks
 psmisc
-pulseaudio-alsa
 pv
 python-argparse
 python-arrow
@@ -471,8 +471,6 @@ tmux
 topgrade
 totem
 traceroute
-tracker
-tracker-miners
 transgui-gtk
 transmission-cli
 tree
@@ -500,18 +498,17 @@ util-linux
 valgrind
 vbetool
 vdpauinfo
-vino
 vivid
 vlc
 vnstat
 vopono-git
 vrms-arch-git
 wasm-pack
-waybar-git
+waybar
 waypipe
 wdisplays-git
 wev-git
-wezterm-nightly-bin
+wezterm
 wget
 wine-gecko
 wine-mono

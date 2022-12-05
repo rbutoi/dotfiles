@@ -94,6 +94,7 @@ for_window [app_id="^org.gnome.Weather"]           floating enable
 for_window [app_id="^org.gnome.font-viewer"]       floating enable
 for_window [app_id="^pavucontrol"]                 floating enable
 for_window [app_id="^qalculate-gtk"]               floating enable
+for_window [app_id="^solaar"]                      floating enable
 for_window [app_id="^wdisplays"]                   floating enable
 for_window [app_id="^wev"]                         floating enable
 for_window [app_id="^xfce4-appfinder"]             floating enable
