@@ -9,10 +9,10 @@ if   echo "$acpi" | grep -q Discharging; then
   echo "@ $dead_at"
   state=dead
 elif echo "$acpi" | grep -q Charging; then
+  echo "@ $dead_at"
   state=full
-else
-  exit 0                        # fully charged or other: don't say anything
 fi
+# fully charged or other: don't say anything
 
 # less often than every minute - 10
 if [[ $(($(date +%M) % 10)) -eq 0 ]]; then

@@ -36,7 +36,7 @@ keys = {
       action = wezterm.action.QuickSelectArgs {
          label = "open url",
          patterns = {
-            'https?://\\S+',
+            '\\b\\w+://[\\w.-]+\\.[a-z]{2,15}\\S*\\b',
             '\\bb/[0-9]+\\S*\\b',
             '\\bcl/[0-9]+\\S*\\b',
             '\\bgo/\\S+\\b',
@@ -132,6 +132,7 @@ return {
    -- cursor
    default_cursor_style = 'BlinkingBlock',
    cursor_thickness = "1.4pt",
+   hide_mouse_cursor_when_typing = true, -- so disorienting!
 
    -- keys and links
    keys = keys,

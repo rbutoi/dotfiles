@@ -50,6 +50,6 @@ if out != '':
   if count > 1:
     s = 's'
     subprocess.run(
-        f'notify-send -c email -t 8000 "{count} new message{s}" "{out}"',
+        f'notify-send -c my.email -t 8000 "{count} new message{s}" "{out}"',
         shell=True,
         capture_output=True)

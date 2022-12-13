@@ -330,8 +330,15 @@ alias .~='exec zsh'
 alias tm='tmux new -A -s auto'
 alias tenv='eval $(tmux showenv -s)'
 alias xa='xargs'
-alias ssha='ssh -t a         -- tmux new -As auto'
-alias mosha='mosh -p 55880 a -- tmux new -As auto'
+alias ssha='ssh -t a -- tmux new -As auto'
+mosh () {
+  if [[ "$@" =~ '^a$' ]]; then
+    command mosh -p 61736 "$@"
+  else
+    command mosh "$@"
+  fi
+}
+alias mosha='mosh -p 61736 a -- tmux new -As auto'
 alias stow='stow -v'    # nice to see the actions taken by default
 alias stow_dots='pushd ~/dotfiles && stow * && pushd ~/dotfiles-* && stow * && popd && popd'
 alias fd="fd --one-file-system"
@@ -400,7 +407,7 @@ alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
 # topgrade every week
 if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
-       load_below; then
+     load_below; then
   echo -ne "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))
   echo  -e ", running now...\033[0m"
   date +%s >~/.cache/last_topgrade

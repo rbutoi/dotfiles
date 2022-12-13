@@ -5,9 +5,9 @@
   "modules-left": [
     "sway/workspaces",
     "sway/mode",
-    "wlr/taskbar",
+    "sway/window",
   ],
-  "modules-center": [],
+  "modules-center": ["wlr/taskbar"],
   "modules-right": [
     "custom/mail",
     "custom/updates",
@@ -20,10 +20,13 @@
     "custom/clock",
   ],
   "sway/window": {
+    "format": "{title} [{app_id}]",
     "max-length": 200,
-    "tooltip": false
+    "tooltip": false,
+    "icon": true
   },
   "sway/workspaces": {
+    "disable-scroll-wraparound": true,
     "persistent_workspaces": {
       "1": ["DP-2", "eDP-1"],
       "2": ["DP-1", "eDP-1"],
@@ -54,7 +57,7 @@
   "custom/mail": {
     "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
     "tooltip": false,
-    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "on-click": "emacsclient -c -e '(my/notmuch)'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
@@ -119,6 +122,7 @@
   "modules-left": [
     "sway/workspaces",
     "sway/mode",
+    "sway/window",
   ],
   "modules-center": ["wlr/taskbar"],
   "modules-right": [
@@ -132,10 +136,13 @@
     "custom/clock",
   ],
   "sway/window": {
+    "format": "{title} [{app_id}]",
     "max-length": 200,
-    "tooltip": false
+    "tooltip": false,
+    "icon": true
   },
   "sway/workspaces": {
+    "disable-scroll-wraparound": true,
     "persistent_workspaces": {
       "1": ["DP-2", "eDP-1"],
       "2": ["DP-1", "eDP-1"],
@@ -166,7 +173,7 @@
   "custom/mail": {
     "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
     "tooltip": false,
-    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "on-click": "emacsclient -c -e '(my/notmuch)'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
@@ -225,19 +232,22 @@
   "modules-left": [
     "sway/workspaces",
     "sway/mode",
+    "sway/window",
   ],
-  "modules-center": ["wlr/taskbar"],
+  "modules-center": [],
   "modules-right": [
-    "pulseaudio",
-    "custom/deadat",
+    "wlr/taskbar",
     "battery",
     "custom/clock",
   ],
   "sway/window": {
+    "format": "{title} [{app_id}]",
     "max-length": 200,
-    "tooltip": false
+    "tooltip": false,
+    "icon": true
   },
   "sway/workspaces": {
+    "disable-scroll-wraparound": true,
     "persistent_workspaces": {
       "1": ["DP-2", "eDP-1"],
       "2": ["DP-1", "eDP-1"],
@@ -248,7 +258,7 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.10} ",
+    "format": " {icon}{title:.7} ",
     "max-length": 200,
     "icon-size": 26,
     "on-click": "activate",
@@ -268,7 +278,7 @@
   "custom/mail": {
     "exec": "w=\"$(notmuch count 'is:unread and is:inbox and is:work')\"; p=\"$(notmuch count 'is:unread and is:inbox and is:personal')\"; [[ $w -gt 0 ]] && echo -n $w; echo -n \" ✉ \"; [[ $p -gt 0 ]] && echo -n $p; true",
     "tooltip": false,
-    "on-click": "emacsclient -c -e '(notmuch-search \"is:unread and is:inbox\")'",
+    "on-click": "emacsclient -c -e '(my/notmuch)'",
     "interval": 3600, // 1 hour poll, 5 minute push
     "signal": 9
   },
@@ -289,12 +299,6 @@
     "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +5%",
     "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
     "tooltip": false,
-  },
-  "custom/deadat": {
-    "interval": 60,
-    "exec": "~/.config/sway/bin/dead_at.sh",
-    "on-click": "true",         // just to trigger exec-on-event
-    "on-click-right": "true",
   },
   "battery": {
     "bat": "BAT0",
