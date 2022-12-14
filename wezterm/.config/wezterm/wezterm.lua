@@ -14,19 +14,20 @@ do_if_file_exists(wezterm.config_dir.."/specific.lua")
 
 keys = {
    -- emacs undo. C- don't need to be unbound, prefer s- prefix for WM
-   {key = "_",     mods = "CTRL|SHIFT", action = "DisableDefaultAssignment"},
-   {key = "-",     mods = "CTRL",       action = "DisableDefaultAssignment"},
-   {key = "=",     mods = "CTRL",       action = "DisableDefaultAssignment"},
+   {key = "_",     mods = "CTRL|SHIFT",  action = "DisableDefaultAssignment"},
+   {key = "-",     mods = "CTRL",        action = "DisableDefaultAssignment"},
+   {key = "=",     mods = "CTRL",        action = "DisableDefaultAssignment"},
    -- emacs just-one-space
-   {key = "Enter", mods = "ALT",        action = "DisableDefaultAssignment"},
+   {key = "Enter", mods = "ALT",         action = "DisableDefaultAssignment"},
    -- panes
-   {key = "o",  mods = "SUPER",         action = act.ActivatePaneDirection 'Next',},
-   {key = "i",  mods = "SUPER",         action = act.ActivatePaneDirection 'Prev',},
-   {key = "-",  mods = "CTRL|SUPER",    action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
-   {key = "\\", mods = "CTRL|SUPER",    action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
-   {key = 'z',  mods = 'CTRL|SUPER',    action = wezterm.action.TogglePaneZoomState,},
+   {key = "o",  mods = "SUPER",          action = act.ActivatePaneDirection 'Next',},
+   {key = "i",  mods = "SUPER",          action = act.ActivatePaneDirection 'Prev',},
+   {key = "%",  mods = "SHIFT|ALT|CTRL", action = "DisableDefaultAssignment"},
+   {key = "-",  mods = "CTRL|SUPER",     action = act.SplitVertical{   domain =  'CurrentPaneDomain' },},
+   {key = "\\", mods = "CTRL|SUPER",     action = act.SplitHorizontal{ domain =  'CurrentPaneDomain' },},
+   {key = 'z',  mods = 'CTRL|SUPER',     action = wezterm.action.TogglePaneZoomState,},
    -- copy mode, a la C-Space from tmux
-   {key = "Space", mods = "CTRL|SUPER", action = act.ActivateCopyMode },
+   {key = "Space", mods = "CTRL|SUPER",  action = act.ActivateCopyMode },
 
    {
       -- key = "P", pane select -- TODO: B??

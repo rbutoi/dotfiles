@@ -79,8 +79,9 @@ fzfp()  {
 enfz()  { en $(fzfp "$@")  }
 econf() { enfz . ~/.config }
 rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
-  rg "$@" 2>/dev/null | fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' \
-    --preview 'clp -h {2} {1}' $MY_FZF_BIND_FLAGS
+  rg --column "$@" 2>/dev/null | fzf --delimiter=':' -n 2.. --preview-window '+{2}-/2' \
+    --preview 'clp -h {2} {1}' --header 'C-o: e {}, C-M-o: en {}' --bind \
+    'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'
 }
 apt_search_fzf()  { aptitude search "$@" | rg -v '^v|:i386' | fzf | choose 1; }
 apt_install_fzf() { sudo apt install $(apt_search_fzf "$@"); }
@@ -200,12 +201,12 @@ pause_torrents () {
   set +x
 }
 
-fork          () { (setsid "$@" &)                                                                              ; }
-all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -2 | head -1)'      ; }
-escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'                           ; }
-unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"    ; }
-wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));' ; }
-find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                     ; }
+fork          () { (setsid "$@" &)                                                                                        ; }
+all_atq       () { atq | perl -ne 'print "\n"; /^([\d]+).*/ && print $_, qx(at -c $1 | tail -6 | grep -Ev "echo|exit|}")' ; }
+escape        () { python3 -c 'import json, sys; print(json.dumps(sys.stdin.read()))'                                     ; }
+unescape      () { python3 -c "import sys; print(sys.stdin.read().encode('utf-8').decode('unicode_escape'))"              ; }
+wc_occurrences() { python3 -c 'import collections, sys, pprint; pprint.pprint(collections.Counter(sys.stdin));'           ; }
+find_pi       () { sudo nmap -sn 192.168.0.0/24 | awk '/^Nmap/{ip=$NF}/B8:27:EB/{print ip}'                               ; }
 alias alert='tput bel; notify-send -u normal -t 60000 -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 alias find_by_date='find . -printf "%T@ %Tc %p\n" | sort -n' # camera
