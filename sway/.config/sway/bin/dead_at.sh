@@ -1,5 +1,7 @@
 #!/bin/bash
 
+$(hostname | grep -q laptop) || exit 1
+
 acpi="$(acpi | grep -E 'until|remaining')"
 dead_at=$(date +%H:%M \
   -d "$(echo \"$acpi\" | grep -Po '\d\d:\d\d:\d\d' |
