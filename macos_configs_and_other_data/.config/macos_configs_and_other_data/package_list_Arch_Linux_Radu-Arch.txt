@@ -234,7 +234,6 @@ isync
 j4-dmenu-desktop
 jaq
 jdk-openjdk
-jellyfin-git
 jfsutils
 joycond-git
 jq
@@ -286,14 +285,14 @@ mdadm
 mediainfo
 meld-git
 memtest86-efi
+mesa
 mesa-demos
-mesa-git
 meson
 miniupnpc
 mlocate
 moreutils
 mosh-git
-mpv-git
+mpv
 msmtp
 msmtp-mta
 muchsync
@@ -355,7 +354,6 @@ phonon-qt5-git
 php-cgi
 php-fpm
 pigz
-pinta
 pipewire-alsa
 pipewire-pulse
 pkgfile
@@ -406,7 +404,6 @@ python-tabulate
 python-tqdm
 python-zeroconf
 qalculate-gtk
-qbittorrent-cli
 qbittorrent-git
 qbittorrent-nox-git
 qbittorrent-vuetorrent-bin
