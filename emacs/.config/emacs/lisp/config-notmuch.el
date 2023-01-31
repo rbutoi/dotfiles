@@ -126,6 +126,12 @@ take up to a minute (if stale)."
      ("authors" . "%-20s "    )
      ("subject" . "%-60.60s " )
      ("tags"    . "%s"        ))
+   notmuch-search-result-format--kinda-wide
+   '(("date"    . "%12s "       )
+     ("count"   . "%-7s "       )
+     ("authors" . "%-35s "      )
+     ("subject" . "%-100.100s " )
+     ("tags"    . "%s"          ))
    notmuch-search-result-format--wide
    (if my/workstation?
        '(("date"    . "%12s "       )
@@ -139,8 +145,6 @@ take up to a minute (if stale)."
        ("subject" . "%-122.122s ")
        ("tags"    . "%s"         )))
    notmuch-search-result-format notmuch-search-result-format--narrow
-
-
 
    notmuch-refresh-timer
    (when (executable-find "notmuch")
@@ -261,9 +265,9 @@ take up to a minute (if stale)."
   (add-hook 'notmuch-search-mode-hook
             (lambda ()
               (setq notmuch-search-result-format
-                    (if (> (window-width) 256)
-                        notmuch-search-result-format--wide
-                      notmuch-search-result-format--narrow)))))
+                    (cond ((> (window-width) 256) notmuch-search-result-format--wide)
+                          ((> (window-width) 180) notmuch-search-result-format--kinda-wide)
+                          (t notmuch-search-result-format--narrow))))))
 
 ;; Include date in "on <date> <sender> wrote..." reply text
 (with-eval-after-load 'message

@@ -77,12 +77,16 @@
   "C-x +"     'what-cursor-position     ; former C-x =
   "C-x M-="   'text-scale-adjust        ; former C-x C-=
   "C-c M-S"   'scroll-bar-mode)         ; occasionally useful (e.g. w3m)
-(general-def :keymaps '(global magit-mode-map) ; just drop the M- in magit
-  "M-1"       'delete-other-windows
-  "M-2"       'split-window-below
-  "M-3"       'split-window-right
-  "M-o"       (lambda () (interactive) (other-window +1))
-  "M-i"       (lambda () (interactive) (other-window -1)))
+(with-eval-after-load 'vterm
+  (with-eval-after-load 'magit
+    (general-def :keymaps '(global
+                            magit-mode-map  ; just drop the M- in magit
+                            vterm-mode-map)
+      "M-1"       'delete-other-windows
+      "M-2"       'split-window-below
+      "M-3"       'split-window-right
+      "M-o"       (lambda () (interactive) (other-window +1))
+      "M-i"       (lambda () (interactive) (other-window -1)))))
 
 (use-package which-key                  ; useful shortcut reminders
   :init (which-key-setup-side-window-bottom) (which-key-mode)
@@ -179,7 +183,7 @@
   :straight (:type built-in)
   :load-path "var/straight/repos/vertico/extensions/"
   :hook ((minibuffer-setup . vertico-repeat-save))
-  :general ("M-R" 'vertico-repeat))
+  :general ("C-x C-r" 'vertico-repeat))
 (use-package vertico-mouse :after vertico
   :straight (:type built-in)
   :load-path "var/straight/repos/vertico/extensions/"
@@ -188,7 +192,8 @@
 (use-package consult
   :general                              ; remap some standard commands
   ("C-x M-:"   'consult-complex-command
-   "C-c r"     'consult-recent-file
+   "C-x C-b"   'consult-buffer
+   "C-x b"     'consult-recent-file
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
    "C-h a"     'consult-apropos
@@ -225,16 +230,18 @@
 
 (general-def     ; not consult related, but an extension of my/consult-fd-config
   ;; TODO: kill existing non-dotfiles buffer to allow magit
-  "C-c C-M-c s"
+  "C-c M-d i"
+  (defun my/config-open-init-el () (interactive)
+         (find-file "~/dotfiles/emacs/.config/emacs/init.el"))
+  "C-c M-d s"
   (defun my/config-open-sway () (interactive)
          (find-file "~/dotfiles/sway/.config/sway/config"))
-  "C-c C-M-c z"
+  "C-c M-d z"
   (defun my/config-open-zshrc () (interactive)
          (find-file "~/dotfiles/zsh/.zshrc"))
-  "C-c C-M-c w"
+  "C-c M-d w"
   (defun my/config-open-wezterm () (interactive)
-         (find-file "~/dotfiles/wezterm/.config/wezterm/wezterm.lua"))
-  )
+         (find-file "~/dotfiles/wezterm/.config/wezterm/wezterm.lua")))
 
 (use-package bufler                     ; very nice buffer overview
   :general
@@ -273,6 +280,10 @@
 (setq set-mark-command-repeat-pop t)    ; can keep C-u C-SPC C-SPC C-SPC...
 (delete-selection-mode)                 ; typing overwrites selection
 (save-place-mode)                       ; remember buffer location
+
+(general-def
+  "M-z"   'toggle-truncate-lines        ; far more useful than C-x x t
+  "C-M-z" 'zap-to-char)
 
 (use-package sudo-edit)
 (use-package so-long :init (global-so-long-mode)) ; long file handling
@@ -440,9 +451,6 @@
 (use-package outshine
   :general (:keymaps 'outshine-mode-map
                      [remap consult-imenu] 'consult-outline))
-;; Local Variables:
-;; eval: (outshine-mode)
-;; End:
 
 (add-hook 'after-save-hook              ; automatically make scripts executable
           'executable-make-buffer-file-executable-if-script-p)
@@ -487,6 +495,9 @@
   :general
   ("<f2>" 'vterm-toggle)
   (:keymaps 'vterm-mode-map "<f2>" 'vterm-toggle))
+
+(general-def                            ; terminal binds
+  "C-M-]" 'query-replace-regexp)
 
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
 (use-package term-keys                            ; enable all keys!
