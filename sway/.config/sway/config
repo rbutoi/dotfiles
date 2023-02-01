@@ -10,7 +10,7 @@ set $term_tmux  $term tmux new -As auto
 set $term_emacs $term emacsclient -nw -a=
 set $web        google-chrome-unstable
 set $files      xdg-open ~
-set $menu       wofi
+set $menu       fuzzel
 set $locker     "swaylock --show-failed-attempts --ignore-empty-password \
   --show-keyboard-layout --daemonize --screenshots                       \
   --indicator --indicator-radius 100 --indicator-thickness 7             \

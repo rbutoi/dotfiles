@@ -258,7 +258,7 @@
     }
   },
   "wlr/taskbar": {
-    "format": " {icon}{title:.7} ",
+    "format": " {icon}{title:.3} ",
     "max-length": 200,
     "icon-size": 26,
     "on-click": "activate",

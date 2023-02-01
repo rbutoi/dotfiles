@@ -363,7 +363,8 @@ if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss
 
 if (( $+commands[rg] )); then
   export RIPGREP_CONFIG_PATH=~/.config/ripgreprc
-  alias g=rg
+  alias g='rg 2>/dev/null'
+  alias gw='g -w'
 fi
 
 alias less="TERM=screen-256color less"
