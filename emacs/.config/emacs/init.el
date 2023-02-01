@@ -192,7 +192,6 @@
 (use-package consult
   :general                              ; remap some standard commands
   ("C-x M-:"   'consult-complex-command
-   "C-x C-b"   'consult-buffer
    "C-x b"     'consult-recent-file
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
@@ -246,7 +245,7 @@
 (use-package bufler                     ; very nice buffer overview
   :general
   ("C-x C-b" 'bufler-switch-buffer
-   "C-x b"   'bufler-list))
+   "C-x M-b" 'bufler))
 
 (use-package savehist                   ; save minibuffer history
   :straight (:type built-in)
@@ -387,6 +386,7 @@
   :custom (hl-todo-wrap-movement t)
   :hook prog-mode)     ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
 
+;; VC
 (use-package git-gutter
   :init (global-git-gutter-mode)
   (defrepeater 'git-gutter:previous-hunk)
@@ -415,14 +415,17 @@
 ;;             "C-," 'goto-last-change-reverse))
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
 (general-def "<f8>"                     ; compilation
   (defun my/switch-to-compilation-buffer ()
     "Switch to compilation buffer."
     (interactive) (switch-to-buffer "*compilation*")))
 (general-def :keymaps '(flymake-mode-map c++-mode-map)
-  "C-c C-e" #'flymake-show-project-diagnostics
-  "C-c C-n" #'flymake-goto-next-error
-  "C-c C-p" #'flymake-goto-prev-error)
+  "C-c C-e"   #'flymake-show-buffer-diagnostics
+  "C-c C-M-e" #'flymake-show-project-diagnostics
+  "C-c C-n"   #'flymake-goto-next-error
+  "C-c C-p"   #'flymake-goto-prev-error)
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)
@@ -431,6 +434,7 @@
 ;;   :defer 4
 ;;   :config (use-package :defer 4 toc-org))
 (use-package i3wm-config-mode)
+(use-package sql-indent)
 (use-package rust-mode                  ; compiled
   :config
   (use-package cargo)
