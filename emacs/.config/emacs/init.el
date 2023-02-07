@@ -68,8 +68,7 @@
   "C-x m"     'execute-extended-command
   "C-x C-M-c" 'save-buffers-kill-emacs
   "M-0"       'delete-window            ; buffers and windows
-  "C-x k"     'my/kill-this-buffer      ; formerly kill-buffer
-  "C-x K"     'kill-buffer
+  "M-k"       (lambda () (interactive) (kill-buffer nil))
   "C-x M-k"   'kill-other-buffers       ; formerly kmacro-keymap
   "C-x C-M-k" 'kmacro-keymap
   "C-x ="     'balance-windows
@@ -426,6 +425,7 @@
   "C-c C-M-e" #'flymake-show-project-diagnostics
   "C-c C-n"   #'flymake-goto-next-error
   "C-c C-p"   #'flymake-goto-prev-error)
+(add-hook 'compilation-mode-hook (lambda () (toggle-truncate-lines nil)))
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)

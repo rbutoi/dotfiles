@@ -127,7 +127,7 @@ return {
    -- text & colours
    font = wezterm.font("JetBrains Mono"),
    font_size = font_size,
-   color_scheme = "Gruvbox Dark",
+   color_scheme = "GruvboxDark",
 
    -- cursor
    default_cursor_style = 'BlinkingBlock',

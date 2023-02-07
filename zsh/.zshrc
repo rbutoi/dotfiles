@@ -424,6 +424,7 @@ fi
 # host-specific #
 #################
 source_if ~/.zshrc_specific
+source_if ~/.config/zsh/.zshrc_specific
 
 #  LocalWords:  shellenv
 

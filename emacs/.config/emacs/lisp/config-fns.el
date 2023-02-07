@@ -202,18 +202,6 @@ shell exits, the buffer is killed."
         (delq (current-buffer)
               (cl-remove-if-not 'buffer-file-name (buffer-list)))))
 
-(defun my/kill-this-buffer ()           ; usually what is desired
-  "Kill the current buffer."
-  (interactive) (kill-buffer nil))
-(defun my/kill-all-buffers ()
-  "Close all buffers."
-  (interactive)
-  (delete-other-windows)
-  (save-some-buffers)
-  (let ((kill-buffer-query-functions '()))
-    (mapc 'kill-buffer (buffer-list)))
-  (message "All buffers closed."))
-
 ;;;; epilogue
 ;; Local Variables:
 ;; eval: (outshine-mode)
