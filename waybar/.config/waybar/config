@@ -117,7 +117,7 @@
     "on-click-right": "xdg-open 'https://www.google.com/search?q=weather'",
   },
 }, {
-  "output": "Dell Inc. DELL S3221QS 2R8QTB3",
+  "output": "HDMI-A-1",
   "position": "bottom",
   "modules-left": [
     "sway/workspaces",
