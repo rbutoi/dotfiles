@@ -5,14 +5,13 @@ dead_at=$(date +%H:%M \
   -d "$(echo \"$acpi\" | grep -Po '\d\d:\d\d:\d\d' |
         sd '(\d\d):(\d\d):(\d\d)' '+ $1 hours $2 minutes $3 seconds')")
 
-if   echo "$acpi" | grep -q Discharging; then
-  echo "@ $dead_at"
-  state=dead
+if echo "$acpi" | grep -q Discharging; then
+  s="🪫️@$dead_at"
 elif echo "$acpi" | grep -q Charging; then
-  echo "@ $dead_at"
-  state=full
+  s="🔋@$dead_at"
 fi
-# fully charged or other: don't say anything
+
+[ ! -z "$s" ] && echo $s          # fully charged or other: don't say anything
 
 # less often than every minute - 10
 if [[ $(($(date +%M) % 10)) -eq 0 ]]; then

@@ -163,6 +163,11 @@ bindsym $S+c               kill
 bindsym $M+F4              kill
 bindsym $S+Shift+q         reload
 bindsym $S+Shift+Backspace exit
+
+# notifications - mako
+bindsym $S+p               exec makoctl dismiss
+bindsym $S+Shift+p         exec makoctl restore
+
 #
 # Moving around:
 #
