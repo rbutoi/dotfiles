@@ -1,6 +1,6 @@
 #!/bin/bash
 
-acpi="$(acpi)"
+acpi="$(acpi | grep 'Battery 0')"
 dead_at=$(date +%H:%M \
   -d "$(echo \"$acpi\" | grep -Po '\d\d:\d\d:\d\d' |
         sd '(\d\d):(\d\d):(\d\d)' '+ $1 hours $2 minutes $3 seconds')")

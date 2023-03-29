@@ -110,7 +110,7 @@ for_window [title="^Picture in picture$"]          floating enable; sticky enabl
 for_window [title="^Preferences$"]                 floating enable
 # workspace assignments
 assign [class="hl2_linux"]                workspace 3
-assign [class="Signal"]                   workspace 7
+assign [class="Signal"]                   workspace 6
 assign [class="discord"]                  workspace 4
 assign [app_id="chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1"] workspace 4
 assign [app_id="chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1"] workspace 4
@@ -183,7 +183,7 @@ bindsym $S+Shift+$right move right
 #
 # Workspaces:
 #
-workspace_auto_back_and_forth yes
+workspace_auto_back_and_forth no
 mouse_warping output
 # switch to workspace
 bindsym --no-repeat $S+1                            workspace 1
@@ -286,8 +286,10 @@ bindsym $S+v                    exec clipman pick --tool wofi --max-items 30
 bindsym $S+$M+b                 exec footclient --fullscreen btop
 
 # media - wob examples from https://github.com/francma/wob#sway-wm-example
-bindsym XF86MonBrightnessUp     exec brightnessctl set +5% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym XF86MonBrightnessDown   exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym XF86MonBrightnessUp         exec brightnessctl set 5%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym XF86MonBrightnessDown       exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym $M+XF86MonBrightnessUp      exec brightnessctl set 1%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym $M+XF86MonBrightnessDown    exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessUp   exec brightnessctl set 100% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessDown exec brightnessctl set 5%   | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym XF86AudioRaiseVolume    exec pamixer -ui 5 && pamixer --get-volume > $WOBSOCK
@@ -310,6 +312,7 @@ bindsym XF86AudioPrev           exec ~/bin/yamaha_or_playerctl.sh previous
 bindsym XF86AudioNext           exec ~/bin/yamaha_or_playerctl.sh next
 bindsym XF86AudioStop           exec ~/bin/yamaha_or_playerctl.sh stop
 bindsym XF86Calculator          exec gnome-calculator
+bindsym $C+$M+Space             exec BEMOJI_PICKER_CMD="fuzzel --dmenu" bemoji
 
 # debug window management
 bindsym $S+Shift+$C+i           exec notify-send swayinfo "$(~/.local/bin/swayinfo)"

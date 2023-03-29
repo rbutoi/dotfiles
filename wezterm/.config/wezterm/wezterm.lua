@@ -132,7 +132,7 @@ return {
    -- cursor
    default_cursor_style = 'BlinkingBlock',
    cursor_thickness = "1.4pt",
-   hide_mouse_cursor_when_typing = true, -- so disorienting!
+   hide_mouse_cursor_when_typing = false,
 
    -- keys and links
    keys = keys,
