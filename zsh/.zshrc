@@ -301,7 +301,7 @@ compdef eman=man
 # aliases #
 ###########
 
-l() { ls -F }
+l() { ls -F "$@" }
 ll() { l -lA -h "$@" }
 alias pg="pgrep"
 alias chmox="chmod +x"
