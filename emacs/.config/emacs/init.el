@@ -278,6 +278,7 @@
 (setq set-mark-command-repeat-pop t)    ; can keep C-u C-SPC C-SPC C-SPC...
 (delete-selection-mode)                 ; typing overwrites selection
 (save-place-mode)                       ; remember buffer location
+(global-auto-revert-mode)
 
 (general-def
   "M-z"   'toggle-truncate-lines        ; far more useful than C-x x t
@@ -300,7 +301,7 @@
    [remap move-end-of-line]       'mwim-end-of-code-or-line))
 
 (use-package iedit                      ; replace
-  :general ("C-;" 'iedit-mode))
+  :general ("C-x C-;" 'iedit-mode))
 (use-package visual-regexp
   :general ([remap query-replace-regexp] 'vr/query-replace))
 
@@ -346,11 +347,13 @@
 
 ;;;; Programming
 (setq-default indent-tabs-mode nil)     ; never tabs to indent
+(global-display-line-numbers-mode)
 (setq vc-follow-symlinks t              ; don't prompt
       vc-make-backup-files t
       comment-auto-fill-only-comments t)
 (general-def
-  "C-x ;" 'comment-line)
+  "C-;"   'comment-line
+  "C-x ;" (defrepeater 'comment-line))
 (toggle-text-mode-auto-fill)
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 
@@ -433,6 +436,7 @@
 ;; (use-package org :straight (:type built-in)
 ;;   :defer 4
 ;;   :config (use-package :defer 4 toc-org))
+(use-package yaml-mode)
 (use-package i3wm-config-mode)
 (use-package sql-indent)
 (use-package rust-mode                  ; compiled
@@ -442,8 +446,9 @@
 (use-package cc-mode :straight (:type built-in) ; C++
   :after smartparens
   :general (:keymaps 'c-mode-base-map "C-c C-o"
-                     (lambda () (interactive)
-                       (ff-find-other-file nil 'ignore-include)))
+                     (defrepeater
+                       (lambda () (interactive)
+                         (ff-find-other-file nil 'ignore-include))))
   :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0]))))
   :config
   (general-add-hook '(c-mode-hook c++-mode-hook)
