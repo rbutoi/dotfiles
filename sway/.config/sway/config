@@ -26,9 +26,9 @@ input type:keyboard {
 }
 input type:pointer {
     accel_profile flat
-    pointer_accel -0.4
+    pointer_accel 0.5
 }
-input 1203:12557:HID_04b3:310d pointer_accel 0.5
+input 1133:45091:Logitech_Wireless_Mouse_MX_Master_3  pointer_accel 0.2
 
 # manages displays
 exec_always sh -c "pkill kanshi; exec kanshi -c ~/.config/kanshi/$HOSTNAME"
@@ -36,7 +36,7 @@ exec_always sh -c "pkill kanshi; exec kanshi -c ~/.config/kanshi/$HOSTNAME"
 #
 # startup applications
 #
-exec_always sh -c "pkill waybar; exec waybar"
+exec_always "pkill waybar; exec waybar"
 
 # daemons
 exec systemd-cat udiskie --tray --appindicator # automount manager
@@ -149,179 +149,172 @@ gaps right  -12
 # Keybindings - basics:
 #
 
-# super
-set $S Mod4
-set $C Ctrl
-set $M Alt
-
 set $left   h
 set $down   j
 set $up     k
 set $right  l
 
-bindsym $S+c               kill
-bindsym $M+F4              kill
-bindsym $S+Shift+q         reload
-bindsym $S+Shift+Backspace exit
+bindsym Mod4+c               kill
+bindsym Alt+F4               kill
+bindsym Mod4+Shift+q         reload
+bindsym Mod4+Shift+Ctrl+q    exec "pkill waybar; exec waybar"
+bindsym Mod4+Shift+Backspace exit
 
 # notifications - mako
-bindsym $S+p               exec makoctl dismiss
-bindsym $S+Shift+p         exec makoctl restore
+bindsym Mod4+p               exec makoctl dismiss
+bindsym Mod4+Shift+p         exec makoctl restore
 
 #
 # Moving around:
 #
-bindsym $S+$left        focus left
-bindsym $S+$down        focus down
-bindsym $S+$up          focus up
-bindsym $S+$right       focus right
+bindsym Mod4+$left        focus left
+bindsym Mod4+$down        focus down
+bindsym Mod4+$up          focus up
+bindsym Mod4+$right       focus right
 # _move_ the focused window with the same, but add Shift
-bindsym $S+Shift+$left  move left
-bindsym $S+Shift+$down  move down
-bindsym $S+Shift+$up    move up
-bindsym $S+Shift+$right move right
+bindsym Mod4+Shift+$left  move left
+bindsym Mod4+Shift+$down  move down
+bindsym Mod4+Shift+$up    move up
+bindsym Mod4+Shift+$right move right
 #
 # Workspaces:
 #
 workspace_auto_back_and_forth no
 mouse_warping output
 # switch to workspace
-bindsym --no-repeat $S+1                            workspace 1
-bindsym --no-repeat $S+2                            workspace 2
-bindsym --no-repeat $S+3                            workspace 3
-bindsym --no-repeat $S+4                            workspace 4
-bindsym --no-repeat $S+5                            workspace 5
-bindsym --no-repeat $S+6                            workspace 6
-bindsym --no-repeat $S+7                            workspace 7
-bindsym --no-repeat $S+8                            workspace 8
-bindsym --no-repeat $S+9                            workspace 9
-bindsym --no-repeat $S+$C+1                         workspace 1
-bindsym --no-repeat $S+$C+2                         workspace 2
-bindsym --no-repeat $S+$C+3                         workspace 3
-bindsym --no-repeat $S+$C+4                         workspace 4
-bindsym --no-repeat $S+$C+5                         workspace 5
-bindsym --no-repeat $S+$C+6                         workspace 6
-bindsym --no-repeat $S+$C+7                         workspace 7
-bindsym --no-repeat $S+$C+8                         workspace 8
-bindsym --no-repeat $S+$C+9                         workspace 9
-# move focused                         container to workspace
-bindsym --no-repeat $S+Shift+1    move container to workspace 1
-bindsym --no-repeat $S+Shift+2    move container to workspace 2
-bindsym --no-repeat $S+Shift+3    move container to workspace 3
-bindsym --no-repeat $S+Shift+4    move container to workspace 4
-bindsym --no-repeat $S+Shift+5    move container to workspace 5
-bindsym --no-repeat $S+Shift+6    move container to workspace 6
-bindsym --no-repeat $S+Shift+7    move container to workspace 7
-bindsym --no-repeat $S+Shift+8    move container to workspace 8
-bindsym --no-repeat $S+Shift+9    move container to workspace 9
-bindsym --no-repeat $S+Shift+0    move container to workspace 0
+bindsym --no-repeat Mod4+1          workspace 1
+bindsym --no-repeat Mod4+2          workspace 2
+bindsym --no-repeat Mod4+3          workspace 3
+bindsym --no-repeat Mod4+4          workspace 4
+bindsym --no-repeat Mod4+5          workspace 5
+bindsym --no-repeat Mod4+6          workspace 6
+bindsym --no-repeat Mod4+7          workspace 7
+bindsym --no-repeat Mod4+8          workspace 8
+bindsym --no-repeat Mod4+9          workspace 9
+# move focused                           container to workspace
+bindsym --no-repeat Mod4+Shift+1    move container to workspace 1
+bindsym --no-repeat Mod4+Shift+2    move container to workspace 2
+bindsym --no-repeat Mod4+Shift+3    move container to workspace 3
+bindsym --no-repeat Mod4+Shift+4    move container to workspace 4
+bindsym --no-repeat Mod4+Shift+5    move container to workspace 5
+bindsym --no-repeat Mod4+Shift+6    move container to workspace 6
+bindsym --no-repeat Mod4+Shift+7    move container to workspace 7
+bindsym --no-repeat Mod4+Shift+8    move container to workspace 8
+bindsym --no-repeat Mod4+Shift+9    move container to workspace 9
+bindsym --no-repeat Mod4+Shift+0    move container to workspace 0
 # other monitor
-bindsym --no-repeat $S+Shift+n    move container to output left ; focus output left
-bindsym --no-repeat $S+Shift+m    move container to output right; focus output right
+bindsym --no-repeat Mod4+Shift+n    move container to output left ; focus output left
+bindsym --no-repeat Mod4+Shift+m    move container to output right; focus output right
 # MRU workspace
-bindsym --no-repeat $S+Tab          workspace back_and_forth
+bindsym --no-repeat Mod4+Tab          workspace back_and_forth
 # next and previous workspace
-bindsym --no-repeat $S+n          focus output left
-bindsym --no-repeat $S+m          focus output right
-bindsym --no-repeat $S+$C+p     workspace prev_on_output
-bindsym --no-repeat $S+Prior      workspace prev_on_output
-bindsym --whole-window $S+button4 workspace prev_on_output
-bindsym --no-repeat $S+$C+n     workspace next_on_output
-bindsym --no-repeat $S+Next       workspace next_on_output
-bindsym --whole-window $S+button5 workspace next_on_output
+bindsym --no-repeat Mod4+n          focus output left
+bindsym --no-repeat Mod4+m          focus output right
+bindsym --no-repeat Mod4+Ctrl+p     workspace prev_on_output
+bindsym --no-repeat Mod4+Prior      workspace prev_on_output
+bindsym --whole-window Mod4+button4 workspace prev_on_output
+bindsym --no-repeat Mod4+Ctrl+n     workspace next_on_output
+bindsym --no-repeat Mod4+Next       workspace next_on_output
+bindsym --whole-window Mod4+button5 workspace next_on_output
 #
 # Layout stuff:
 #
-floating_modifier $S
-bindsym $S+Shift+b  splith
-bindsym $S+Shift+v  splitv
-bindsym $S+s        layout stacking
-bindsym $S+Shift+s  layout tabbed
-bindsym $S+d        layout toggle split
-bindsym $S+f        fullscreen
-bindsym $S+t        floating toggle
-bindsym $S+$C+t   focus mode_toggle
-bindsym $S+Shift+t  sticky toggle; exec ~/.config/sway/bin/notify_sticky_status.sh
-bindsym $S+a        focus parent
-bindsym $S+Shift+a  focus child
+floating_modifier Mod4
+bindsym Mod4+Shift+b  splith
+bindsym Mod4+Shift+v  splitv
+bindsym Mod4+s        layout stacking
+bindsym Mod4+Shift+s  layout tabbed
+bindsym Mod4+d        layout toggle split
+bindsym Mod4+f        fullscreen
+bindsym Mod4+t        floating toggle
+bindsym Mod4+Ctrl+t   focus mode_toggle
+bindsym Mod4+Shift+t  sticky toggle; exec ~/.config/sway/bin/notify_sticky_status.sh
+bindsym Mod4+a        focus parent
+bindsym Mod4+Shift+a  focus child
 
 #
 # Scratchpad:
 #
-bindsym $S+Shift+z     move scratchpad
-bindsym $S+z           scratchpad show
+bindsym Mod4+Shift+z     move scratchpad
+bindsym Mod4+z           scratchpad show
 #
 # Resizing containers:
 #
-bindsym $S+$C+$left   resize shrink width  100px
-bindsym $S+$C+$down   resize grow   height 100px
-bindsym $S+$C+$up     resize shrink height 100px
-bindsym $S+$C+$right  resize grow   width  100px
+bindsym Mod4+Ctrl+$left   resize shrink width  100px
+bindsym Mod4+Ctrl+$down   resize grow   height 100px
+bindsym Mod4+Ctrl+$up     resize shrink height 100px
+bindsym Mod4+Ctrl+$right  resize grow   width  100px
 
 #
 # App keys:
 #
-bindsym $S+Return               exec $term
-bindsym $S+Shift+Return         exec                           \
+bindsym Mod4+Return                 exec $term
+bindsym Mod4+Shift+Return           exec                           \
   swaymsg '[app_id="wezterm" title="\\[auto\\]"] focus'     || $term_tmux
-bindsym $S+w                    exec                           \
+bindsym Mod4+w                      exec                           \
   swaymsg '[app_id="[Gg]oogle-chrome"] focus'               || \
   swaymsg '[app_id="firefox"] focus'                        || $web
-bindsym $S+e                    exec                           \
+bindsym Mod4+e                      exec                           \
   swaymsg '[app_id="wezterm" title="emacsclient\\."] focus' || \
   swaymsg '[app_id="emacs"] focus'                          || \
   swaymsg '[class="Emacs"] focus'                           || $term_emacs
-bindsym $S+Shift+e              exec $term emacsclient -nw -aemacs
-bindsym $S+Shift+w              exec $web
-bindsym $S+Shift+f              exec $files
-bindsym $M+F2                   exec $menu "-Srun"
-bindsym $S+space                exec $menu
-bindsym $S+Slash                exec fsearch
-bindsym $S+Shift+space          exec fsearch
-bindsym $S+q                    exec wlogout -p layer-shell
+bindsym Mod4+Shift+e       exec $term emacsclient -nw -aemacs
+bindsym Mod4+Shift+w       exec $web
+bindsym Mod4+Shift+f       exec $files
+bindsym Alt+F2             exec $menu "-Srun"
+bindsym Mod4+space         exec $menu
+bindsym Mod4+Slash         exec fsearch
+bindsym Mod4+Shift+space   exec fsearch
+bindsym Mod4+q             exec wlogout -p layer-shell
 
-bindsym $S+Shift+$C+l           exec $locker
-bindsym Print                   exec ~/.config/sway/bin/sway-interactive-screenshot
-bindsym $S+v                    exec clipman pick --tool wofi --max-items 30
-bindsym $S+$M+b                 exec footclient --fullscreen btop
+bindsym Mod4+Shift+Ctrl+l  exec $locker
+bindsym Print              exec ~/.config/sway/bin/sway-interactive-screenshot
+bindsym Mod4+v             exec clipman pick --tool wofi --max-items 30
+bindsym Mod4+Alt+b         exec footclient --fullscreen btop
 
 # media - wob examples from https://github.com/francma/wob#sway-wm-example
 bindsym XF86MonBrightnessUp         exec brightnessctl set 5%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym XF86MonBrightnessDown       exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym $M+XF86MonBrightnessUp      exec brightnessctl set 1%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym $M+XF86MonBrightnessDown    exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym Alt+XF86MonBrightnessUp     exec brightnessctl set 1%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym Alt+XF86MonBrightnessDown   exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessUp   exec brightnessctl set 100% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessDown exec brightnessctl set 5%   | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym XF86AudioRaiseVolume    exec pamixer -ui 5 && pamixer --get-volume > $WOBSOCK
-bindsym XF86AudioLowerVolume    exec pamixer -ud 5 && pamixer --get-volume > $WOBSOCK
-bindsym Shift+XF86AudioRaiseVolume exec pamixer --set-volume 100 && pamixer --get-volume > $WOBSOCK
-bindsym Shift+XF86AudioLowerVolume exec pamixer --set-volume 5 && pamixer --get-volume > $WOBSOCK
-bindsym $M+XF86AudioRaiseVolume exec pamixer -ui 1 && pamixer --get-volume > $WOBSOCK
-bindsym $M+XF86AudioLowerVolume exec pamixer -ud 1 && pamixer --get-volume > $WOBSOCK
-bindsym XF86AudioMute           exec pamixer --toggle-mute && ( [ "$(pamixer --get-mute)" = "true" ] && echo 0 > $WOBSOCK ) || pamixer --get-volume > $WOBSOCK
-bindsym $S+XF86AudioMute        exec ~/bin/yamaha_vol mute
-bindsym $S+F2                   exec ~/bin/yamaha_vol down
-bindsym $S+F3                   exec ~/bin/yamaha_vol up
-bindsym $S+F4                   exec ~/bin/yamaha_toggle_link.sh
-bindsym $S+Shift+F4             exec notify-send -t 1500 ~/bin/yamaha_match_bedroom.py "$(~/bin/yamaha_match_bedroom.py)"
-bindsym $S+F1                   exec ~/bin/yamaha_or_playerctl.sh play_pause
-bindsym $S+Shift+F2             exec ~/bin/yamaha_or_playerctl.sh previous
-bindsym $S+Shift+F3             exec ~/bin/yamaha_or_playerctl.sh next
-bindsym XF86AudioPlay           exec ~/bin/yamaha_or_playerctl.sh play_pause
-bindsym XF86AudioPrev           exec ~/bin/yamaha_or_playerctl.sh previous
-bindsym XF86AudioNext           exec ~/bin/yamaha_or_playerctl.sh next
-bindsym XF86AudioStop           exec ~/bin/yamaha_or_playerctl.sh stop
-bindsym XF86Calculator          exec gnome-calculator
-bindsym $C+$M+Space             exec BEMOJI_PICKER_CMD="fuzzel --dmenu" bemoji
+bindsym XF86AudioRaiseVolume        exec pamixer -ui 5 && pamixer --get-volume > $WOBSOCK
+bindsym XF86AudioLowerVolume        exec pamixer -ud 5 && pamixer --get-volume > $WOBSOCK
+bindsym Shift+XF86AudioRaiseVolume  exec pamixer --set-volume 100 && pamixer --get-volume > $WOBSOCK
+bindsym Shift+XF86AudioLowerVolume  exec pamixer --set-volume 5 && pamixer --get-volume > $WOBSOCK
+bindsym Alt+XF86AudioRaiseVolume    exec pamixer -ui 1 && pamixer --get-volume > $WOBSOCK
+bindsym Alt+XF86AudioLowerVolume    exec pamixer -ud 1 && pamixer --get-volume > $WOBSOCK
+bindsym Mod4+Mod1+F1                exec pamixer --toggle-mute && ( [ "$(pamixer --get-mute)" = "true" ] && echo 0 > $WOBSOCK ) || pamixer --get-volume > $WOBSOCK
+bindsym Mod4+Mod1+F2                exec pamixer -ud 5 && pamixer --get-volume > $WOBSOCK
+bindsym Mod4+Mod1+F3                exec pamixer -ui 5 && pamixer --get-volume > $WOBSOCK
+bindsym XF86AudioMute               exec pamixer --toggle-mute && ( [ "$(pamixer --get-mute)" = "true" ] && echo 0 > $WOBSOCK ) || pamixer --get-volume > $WOBSOCK
+bindsym Mod4+XF86AudioMute          exec ~/bin/yamaha_vol mute
+bindsym Mod4+F2                     exec ~/bin/yamaha_vol down
+bindsym Mod4+F3                     exec ~/bin/yamaha_vol up
+bindsym Mod4+F4                     exec ~/bin/yamaha_toggle_link.sh
+bindsym Mod4+Shift+F4               exec notify-send -t 1500 ~/bin/yamaha_match_bedroom.py "$(~/bin/yamaha_match_bedroom.py)"
+bindsym Mod4+F1                     exec ~/bin/yamaha_or_playerctl.sh play_pause
+bindsym Mod4+Shift+F2               exec ~/bin/yamaha_or_playerctl.sh previous
+bindsym Mod4+Shift+F3               exec ~/bin/yamaha_or_playerctl.sh next
+bindsym XF86AudioPlay               exec ~/bin/yamaha_or_playerctl.sh play_pause
+bindsym XF86AudioPrev               exec ~/bin/yamaha_or_playerctl.sh previous
+bindsym XF86AudioNext               exec ~/bin/yamaha_or_playerctl.sh next
+bindsym XF86AudioStop               exec ~/bin/yamaha_or_playerctl.sh stop
+bindsym XF86Calculator              exec gnome-calculator
+bindsym Mod4+Alt+Space              exec BEMOJI_PICKER_CMD="fuzzel --dmenu" bemoji
 
 # debug window management
-bindsym $S+Shift+$C+i           exec notify-send swayinfo "$(~/.local/bin/swayinfo)"
-bindsym $S+Shift+$C+k           exec sh -c 'notify-send killing...; kill "$(~/.local/bin/swayinfo | grep "^pid=" | choose -f = 1)"'
-bindsym $S+$M+k                 exec sh -c 'pkill wshowkeys; notify-send \"wshowkeys started; Super+Shift+Alt+k to kill\" && exec wshowkeys -a bottom -a right'
-bindsym $S+Shift+$M+k           exec sh -c 'pkill wshowkeys; notify-send \"pkill wshowkeys: $?\"'
+bindsym Mod4+Shift+Ctrl+i           exec notify-send swayinfo "$(~/.local/bin/swayinfo)"
+bindsym Mod4+Shift+Ctrl+k           exec sh -c 'notify-send killing...; kill "$(~/.local/bin/swayinfo | grep "^pid=" | choose -f = 1)"'
+bindsym Mod4+Alt+k                  exec sh -c 'pkill wshowkeys; notify-send \"wshowkeys started; Super+Shift+Alt+k to kill\" && exec wshowkeys -a bottom -a right'
+bindsym Mod4+Shift+Alt+k            exec sh -c 'pkill wshowkeys; notify-send \"pkill wshowkeys: $?\"'
 
-# system configs
+bindsym Mod4+Alt+p                  exec wdisplays
+
+
+#
+# system & host-specific configurations
+#
 include /etc/sway/config.d/*
-
-# host-specific config
 include ~/.config/sway/specific

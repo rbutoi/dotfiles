@@ -164,5 +164,5 @@ window#waybar {
 }
 
 #custom-weather, #pulseaudio, #backlight, #battery, #custom-clock {
-  font-size: 15pt;
+  font-size: 12pt;
 }

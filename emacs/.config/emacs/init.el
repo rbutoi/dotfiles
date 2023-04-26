@@ -281,6 +281,7 @@
 (global-auto-revert-mode)
 
 (general-def
+  "C-c r" 'revert-buffer
   "M-z"   'toggle-truncate-lines        ; far more useful than C-x x t
   "C-M-z" 'zap-to-char)
 
@@ -347,7 +348,7 @@
 
 ;;;; Programming
 (setq-default indent-tabs-mode nil)     ; never tabs to indent
-(global-display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setq vc-follow-symlinks t              ; don't prompt
       vc-make-backup-files t
       comment-auto-fill-only-comments t)
