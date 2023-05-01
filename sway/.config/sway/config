@@ -28,7 +28,12 @@ input type:pointer {
     accel_profile flat
     pointer_accel 0.5
 }
-input 1133:45091:Logitech_Wireless_Mouse_MX_Master_3  pointer_accel 0.2
+input 1133:45091:Logitech_Wireless_Mouse_MX_Master_3 pointer_accel -0.2
+# TODO: needed?
+input 1133:45091:MX_Master_3                         pointer_accel -0.2
+# since it's already on it's hardware 2/4 speed setting (for other OS
+# compatibility)
+input 1133:49278:Logitech_Gaming_Mouse_G402          pointer_accel 0.5
 
 # manages displays
 exec_always sh -c "pkill kanshi; exec kanshi -c ~/.config/kanshi/$HOSTNAME"
@@ -118,7 +123,7 @@ assign [app_id="chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1"] workspace 4
 #
 # display
 #
-font Noto Sans 12
+font Noto Sans 11.5
 default_border pixel 6
 smart_borders on
 smart_gaps on
@@ -161,8 +166,9 @@ bindsym Mod4+Shift+Ctrl+q    exec "pkill waybar; exec waybar"
 bindsym Mod4+Shift+Backspace exit
 
 # notifications - mako
-bindsym Mod4+p               exec makoctl dismiss
-bindsym Mod4+Shift+p         exec makoctl restore
+bindsym Mod4+p               exec makoctl invoke
+bindsym Mod4+Shift+p         exec makoctl dismiss
+bindsym Mod4+Mod1+Shift+p    exec makoctl restore
 
 #
 # Moving around:
@@ -255,7 +261,7 @@ bindsym Mod4+w                      exec                           \
   swaymsg '[app_id="[Gg]oogle-chrome"] focus'               || \
   swaymsg '[app_id="firefox"] focus'                        || $web
 bindsym Mod4+e                      exec                           \
-  swaymsg '[app_id="wezterm" title="emacsclient\\."] focus' || \
+  swaymsg '[app_id="wezterm" title="^emacsclient"] focus'   || \
   swaymsg '[app_id="emacs"] focus'                          || \
   swaymsg '[class="Emacs"] focus'                           || $term_emacs
 bindsym Mod4+Shift+e       exec $term emacsclient -nw -aemacs

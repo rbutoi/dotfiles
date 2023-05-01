@@ -61,7 +61,7 @@
     "signal": 9
   },
   "custom/clock": { // https://github.com/Alexays/Waybar/issues/668 - fix with https://superuser.com/questions/1496256/gnu-linux-date-command-ordinal-suffix
-    "exec": "date '+%b %d %H:%M'",
+    "exec": "date '+%a %b %d %H:%M'",
     "tooltip": false,
     "on-click": "gsimplecal",
     "on-click-right": "swaymsg '[title=\" – Calendar - \"] focus'",
