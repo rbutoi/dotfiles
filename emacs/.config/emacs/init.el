@@ -54,13 +54,19 @@
 (use-package doom-themes
   :custom (doom-gruvbox-padded-modeline 2) ; hard to see borders without
   :init (load-theme 'doom-gruvbox t)
+
   (defun my/terminal-bg-transparency ()
     "Disable background in terminal to show wallpaper."
+    (interactive)
     (let ((frame (selected-frame)))
       (unless (display-graphic-p frame)
-        (set-face-background 'default "unspecified-bg" frame))))
-  (general-add-hook '(server-after-make-frame-hook window-setup-hook)
-                    'my/terminal-bg-transparency))
+        (set-face-background 'default "unspecified-bg" frame)))
+    (message (concat
+              "Terminal background transparency enabled. `(enable-theme)' "
+              "to revert.")))
+  ;; (general-add-hook '(server-after-make-frame-hook window-setup-hook)
+  ;;                   'my/terminal-bg-transparency)
+  )
 
 (use-package defrepeater)
 (general-def

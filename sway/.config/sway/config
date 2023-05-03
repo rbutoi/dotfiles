@@ -26,7 +26,7 @@ input type:keyboard {
 }
 input type:pointer {
     accel_profile flat
-    pointer_accel 0.5
+    pointer_accel 0
 }
 input 1133:45091:Logitech_Wireless_Mouse_MX_Master_3 pointer_accel -0.2
 # TODO: needed?
@@ -166,8 +166,8 @@ bindsym Mod4+Shift+Ctrl+q    exec "pkill waybar; exec waybar"
 bindsym Mod4+Shift+Backspace exit
 
 # notifications - mako
-bindsym Mod4+p               exec makoctl invoke
-bindsym Mod4+Shift+p         exec makoctl dismiss
+bindsym Mod4+p               exec sh -c "makoctl invoke && makoctl dismiss"
+bindsym Mod4+Shift+p         exec makoctl dismiss --all
 bindsym Mod4+Mod1+Shift+p    exec makoctl restore
 
 #

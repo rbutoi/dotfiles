@@ -410,6 +410,19 @@ fi
 
 alias dig="dig +nostats +nocomments +nocmd"  # make dig quiet by default
 
+# https://codeberg.org/dnkl/foot/
+# set cwd with C-S-n: https://codeberg.org/dnkl/foot/wiki#user-content-spawning-new-terminal-instances-in-the-current-working-directory
+function osc7 {
+    local LC_ALL=C
+    export LC_ALL
+
+    setopt localoptions extendedglob
+    input=( ${(s::)PWD} )
+    uri=${(j::)input/(#b)([^A-Za-z0-9_.\!~*\'\(\)-\/])/%${(l:2::0:)$(([##16]#match))}}
+    print -n "\e]7;file://${HOSTNAME}${uri}\e\\"
+}
+add-zsh-hook -Uz chpwd osc7
+
 # topgrade every week
 if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
      load_below; then
