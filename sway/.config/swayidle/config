@@ -1,0 +1,4 @@
+timeout 300  "brightnessctl -s; brightnessctl set 10%"
+resume       "brightnessctl -r"
+timeout 600  "acpi | grep -q 'Battery 0: Discharging' && $locker; systemctl suspend"
+timeout 1800 "$locker; systemctl suspend"

@@ -5,16 +5,16 @@
 # basics
 #
 
-set $term       wezterm start --
+# TODO: newest wezterm breaks emacs binds
+set $wezterm WezTerm-20230408-112425-69ae8472-Ubuntu20.04.AppImage
+
+set $term       $wezterm start --
 set $term_tmux  $term tmux new -As auto
-set $term_emacs $term emacsclient -nw -a=
-set $web        google-chrome-unstable
+set $term_emacs $term -- emacsclient -nw -a=
+set $web        google-chrome
 set $files      xdg-open ~
 set $menu       fuzzel
-set $locker     "swaylock --show-failed-attempts --ignore-empty-password \
-  --show-keyboard-layout --daemonize --screenshots                       \
-  --indicator --indicator-radius 100 --indicator-thickness 7             \
-  --effect-blur 5x5 --grace 0.5 --fade-in 0.25"
+set $locker     swaylock
 
 #
 # input/output
@@ -117,8 +117,6 @@ for_window [title="^Preferences$"]                 floating enable
 assign [class="hl2_linux"]                workspace 3
 assign [class="Signal"]                   workspace 6
 assign [class="discord"]                  workspace 4
-assign [app_id="chrome-kjbdgfilnfhdoflbpgamdcdgpehopbep-Profile_1"] workspace 4
-assign [app_id="chrome-mdpkiolbdkhdjpekfbkbmhigcaggjagi-Profile_1"] workspace 4
 
 #
 # display
@@ -255,16 +253,12 @@ bindsym Mod4+Ctrl+$right  resize grow   width  100px
 # App keys:
 #
 bindsym Mod4+Return                 exec $term
-bindsym Mod4+Shift+Return           exec                           \
-  swaymsg '[app_id="wezterm" title="\\[auto\\]"] focus'     || $term_tmux
+bindsym Mod4+Shift+Return           exec swaymsg '[con_mark=tmux_auto] focus' || $term_tmux
 bindsym Mod4+w                      exec                           \
-  swaymsg '[app_id="[Gg]oogle-chrome"] focus'               || \
+  swaymsg '[app_id="google-chrome" workspace=1] focus'      || \
   swaymsg '[app_id="firefox"] focus'                        || $web
-bindsym Mod4+e                      exec                           \
-  swaymsg '[app_id="wezterm" title="^emacsclient"] focus'   || \
-  swaymsg '[app_id="emacs"] focus'                          || \
-  swaymsg '[class="Emacs"] focus'                           || $term_emacs
-bindsym Mod4+Shift+e       exec $term emacsclient -nw -aemacs
+bindsym Mod4+e             exec swaymsg '[con_mark=edit] focus' || $term_emacs
+bindsym Mod4+Shift+e       exec $term -- emacsclient -nw -aemacs
 bindsym Mod4+Shift+w       exec $web
 bindsym Mod4+Shift+f       exec $files
 bindsym Alt+F2             exec $menu "-Srun"
@@ -273,16 +267,17 @@ bindsym Mod4+Slash         exec fsearch
 bindsym Mod4+Shift+space   exec fsearch
 bindsym Mod4+q             exec wlogout -p layer-shell
 
+bindsym Mod4+Escape        exec $locker
 bindsym Mod4+Shift+Ctrl+l  exec $locker
 bindsym Print              exec ~/.config/sway/bin/sway-interactive-screenshot
 bindsym Mod4+v             exec clipman pick --tool wofi --max-items 30
 bindsym Mod4+Alt+b         exec footclient --fullscreen btop
 
 # media - wob examples from https://github.com/francma/wob#sway-wm-example
-bindsym XF86MonBrightnessUp         exec brightnessctl set 5%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym XF86MonBrightnessDown       exec brightnessctl set 5%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym Alt+XF86MonBrightnessUp     exec brightnessctl set 1%+ | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym Alt+XF86MonBrightnessDown   exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym XF86MonBrightnessUp         exec brightnessctl set 5%+  | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym XF86MonBrightnessDown       exec brightnessctl set 5%-  | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym Alt+XF86MonBrightnessUp     exec brightnessctl set 1%+  | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym Alt+XF86MonBrightnessDown   exec brightnessctl set 1%-  | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessUp   exec brightnessctl set 100% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym Shift+XF86MonBrightnessDown exec brightnessctl set 5%   | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
 bindsym XF86AudioRaiseVolume        exec pamixer -ui 5 && pamixer --get-volume > $WOBSOCK
@@ -323,4 +318,4 @@ bindsym Mod4+Alt+p                  exec wdisplays
 # system & host-specific configurations
 #
 include /etc/sway/config.d/*
-include ~/.config/sway/specific
+include ~/.config/sway/config.d/*

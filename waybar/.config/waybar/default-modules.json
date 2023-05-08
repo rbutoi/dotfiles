@@ -13,7 +13,6 @@
     "custom/weather",
     "pulseaudio",
     "backlight",
-    "custom/deadat",
     "battery",
     "custom/clock",
   ],
@@ -104,7 +103,7 @@
     "format-icons": ["", "", "", "", ""],
     "tooltip-format": "{capacity}%: {timeTo}",
     "on-click": "gnome-power-statistics",
-    "full-at": 98,
+    "full-at": 97,
   },
   "tray": {
     "icon-size": 28

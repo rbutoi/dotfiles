@@ -19,8 +19,6 @@
     "custom/mail",
     "tray",
     "pulseaudio",
-    // "backlight",
-    // "custom/deadat",
     "battery",
     "custom/clock",
   ],
