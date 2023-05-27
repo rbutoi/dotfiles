@@ -64,12 +64,6 @@ take up to a minute (if stale)."
            "G to sync") mail-sync-age))
         (my/notmuch-poll-async))))
 
-  (defun my/notmuch-kill-all-buffers ()
-    "Kill all notmuch buffers."
-    (interactive)
-    (dolist (buf (buffer-list))
-      (when (derived-mode-p 'notmuch-search-mode 'notmuch-tree-mode 'notmuch-show-mode)
-        (kill-buffer buf))))
   (defun my/notmuch-open-in-gmail ()
     "Open in Gmail web view."
     (interactive)
@@ -85,6 +79,7 @@ take up to a minute (if stale)."
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t
    message-sendmail-extra-arguments '("--read-envelope-from")
+   notmuch-fcc-dirs nil
 
    ;; Wrap to 100 cols and disable colours for readable HTML mail.
    notmuch-wash-wrap-lines-length 100

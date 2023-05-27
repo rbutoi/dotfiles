@@ -82,16 +82,13 @@
   "C-x +"     'what-cursor-position     ; former C-x =
   "C-x M-="   'text-scale-adjust        ; former C-x C-=
   "C-c M-S"   'scroll-bar-mode)         ; occasionally useful (e.g. w3m)
-(with-eval-after-load 'vterm
-  (with-eval-after-load 'magit
-    (general-def :keymaps '(global
-                            magit-mode-map  ; just drop the M- in magit
-                            vterm-mode-map)
-      "M-1"       'delete-other-windows
-      "M-2"       'split-window-below
-      "M-3"       'split-window-right
-      "M-o"       (lambda () (interactive) (other-window +1))
-      "M-i"       (lambda () (interactive) (other-window -1)))))
+
+(general-def
+  "M-1"       'delete-other-windows
+  "M-2"       'split-window-below
+  "M-3"       'split-window-right
+  "M-o"       (lambda () (interactive) (other-window +1))
+  "M-i"       (lambda () (interactive) (other-window -1)))
 
 (use-package which-key                  ; useful shortcut reminders
   :init (which-key-setup-side-window-bottom) (which-key-mode)
@@ -310,7 +307,9 @@
 (use-package iedit                      ; replace
   :general ("C-x C-;" 'iedit-mode))
 (use-package visual-regexp
-  :general ([remap query-replace-regexp] 'vr/query-replace))
+  :general
+  ([remap query-replace-regexp] 'vr/query-replace)
+  ([remap query-replace] 'vr/query-replace))
 
 (use-package ialign
   :general ("C-x l" 'ialign)) ; interactive align regexp
@@ -346,11 +345,6 @@
   :custom (ispell-dictionary "canadian")
   :general (:keymaps                    ; default binds are a little overzealous
             'flyspell-mode-map "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
-;; (use-package flyspell-correct
-;;   :after flyspell
-;;   :general
-;;   (:keymaps 'flyspell-mode-map
-;;             "C-;" 'flyspell-correct-wrapper))
 
 ;;;; Programming
 (setq-default indent-tabs-mode nil)     ; never tabs to indent
@@ -382,7 +376,6 @@
   :defer 1
   :init (require 'smartparens-config) (smartparens-global-mode)
   :general ("M-D" 'sp-splice-sexp))
-(use-package rainbow-delimiters :hook prog-mode)
 (use-package rainbow-mode       :hook prog-mode)
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
@@ -391,9 +384,6 @@
 
 (use-package auto-highlight-symbol      ; highlight symbols
   :init (global-auto-highlight-symbol-mode))
-(use-package hl-todo
-  :custom (hl-todo-wrap-movement t)
-  :hook prog-mode)     ; not global-hl-todo-mode: doesn't w/ run-mode-hooks prog
 
 ;; VC
 (use-package git-gutter
@@ -435,7 +425,6 @@
   "C-c C-M-e" #'flymake-show-project-diagnostics
   "C-c C-n"   #'flymake-goto-next-error
   "C-c C-p"   #'flymake-goto-prev-error)
-(add-hook 'compilation-mode-hook (lambda () (toggle-truncate-lines nil)))
 
 (use-package lua-mode :defer 3)         ; langs: scripting / config
 (use-package markdown-mode)
@@ -505,15 +494,19 @@
 
 (use-package vterm :defer 2     ; terminal in Emacs
   :custom
-  (vterm-always-compile-module t))      ; why not?
-(use-package vterm-toggle
-  :defer 2
+  (vterm-always-compile-module t)
   :general
-  ("<f2>" 'vterm-toggle)
-  (:keymaps 'vterm-mode-map "<f2>" 'vterm-toggle))
-
-(general-def                            ; terminal binds
-  "C-M-]" 'query-replace-regexp)
+  (:keymaps 'vterm-mode-map
+            "M-1"  'delete-other-windows ; re-bind these
+            "M-2"  'split-window-below
+            "M-3"  'split-window-right
+            "M-o"  (lambda () (interactive) (other-window +1))
+            "M-i"  (lambda () (interactive) (other-window -1))
+            ;; terminal binds
+            "C-M-]" 'query-replace-regexp))
+(use-package vterm-toggle
+  :after vterm
+  :general ("<f2>" 'vterm-toggle))
 
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
 (use-package term-keys                            ; enable all keys!
@@ -528,7 +521,7 @@
 
 ;;;; Epilogue
 ;; Local Variables:
-;; eval: (progn (outshine-mode) (column-enforce-mode))
+;; eval: (progn (column-enforce-mode))
 ;; End:
 (use-package no-littering               ; Emacs, stop littering!❗!
   :init
