@@ -24,16 +24,16 @@
 
 (straight-use-package 'use-package)
 
+(use-package f)                         ; add local load path
+(add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
+(load "config-fns.el")                  ; useful function definitions
+
 (use-package benchmark-init             ; start benchmark
   :hook (after-init . (lambda ()
                         (message "Emacs loaded in %s" (emacs-init-time))
                         (benchmark-init/deactivate))))
 
 (use-package gcmh :init (gcmh-mode))    ; GC magic hack: gitlab.com/koral/gcmh
-
-(use-package f)                         ; add local load path
-(add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
-(load "config-fns.el")                  ; useful function definitions
 
 (use-package s)         ; host identification. (system-name) is lacking the "-f"
 (let ((host (s-trim (shell-command-to-string "hostname -f"))))
@@ -43,30 +43,51 @@
   (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
   (defconst my/workstation? (and my/work? (not my/laptop?))))
 
+(use-package emacs                      ; emacs prefs
+  :custom
+  (confirm-kill-processes nil)
+  (use-short-answers t)
+  (inhibit-startup-screen t)
+  (initial-scratch-message "")
+  (uniquify-buffer-name-style 'forward)
+  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
+  :config (load custom-file :noerror))  ; customize is still useful
+
+
 ;;;; UI / UX
 (use-package general)                   ; keybinds
+(use-package doom-themes                ; theme collection
+  :config (load-theme 'doom-1337 t))
+(use-package emacs                      ; emacs prefs
+  :custom
+  (confirm-kill-processes nil)
+  (use-short-answers t)
+  (inhibit-startup-screen t)
+  (initial-scratch-message "")
+  (uniquify-buffer-name-style 'forward)
+  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
+  :config (load custom-file :noerror))  ; customize is still useful
+(use-package server :config (unless (server-running-p) (server-start)))
+(use-package restart-emacs
+  :general ("C-x M-c" 'restart-emacs)
+  :custom (restart-emacs-daemon-with-tty-frames-p t))
+
+(use-package no-littering               ; stop littering❗
+  :init
+  (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
+  :config
+  (require 'recentf)
+  (add-list-to-list 'recentf-exclude '(no-littering-etc-directory
+                                       no-littering-var-directory))
+  (setq auto-save-file-name-transforms
+        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+
+;;;; Interface
 (tool-bar-mode -1) (menu-bar-mode -1)   ; just use F10
 (when (fboundp 'scroll-bar-mode)
   (scroll-bar-mode -1))
 (context-menu-mode)                     ; this is good tho
 (global-hl-line-mode)                   ; always good to keep track
-
-(use-package doom-themes
-  :custom (doom-gruvbox-padded-modeline 2) ; hard to see borders without
-  :init (load-theme 'doom-gruvbox t)
-
-  (defun my/terminal-bg-transparency ()
-    "Disable background in terminal to show wallpaper."
-    (interactive)
-    (let ((frame (selected-frame)))
-      (unless (display-graphic-p frame)
-        (set-face-background 'default "unspecified-bg" frame)))
-    (message (concat
-              "Terminal background transparency enabled. `(enable-theme)' "
-              "to revert.")))
-  ;; (general-add-hook '(server-after-make-frame-hook window-setup-hook)
-  ;;                   'my/terminal-bg-transparency)
-  )
 
 (use-package defrepeater)
 (general-def
@@ -194,7 +215,7 @@
 (use-package consult
   :general                              ; remap some standard commands
   ("C-x M-:"   'consult-complex-command
-   "C-x b"     'consult-recent-file
+   "C-x b"     'consult-buffer
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
    "C-h a"     'consult-apropos
@@ -244,7 +265,7 @@
   (defun my/config-open-wezterm () (interactive)
          (find-file "~/dotfiles/wezterm/.config/wezterm/wezterm.lua")))
 
-(use-package bufler                     ; very nice buffer overview
+(use-package bufler                     ; very nice buffer management overview
   :general
   ("C-x C-b" 'bufler-switch-buffer
    "C-x M-b" 'bufler))
@@ -509,9 +530,6 @@
   :general ("<f2>" 'vterm-toggle))
 
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
-(use-package term-keys                            ; enable all keys!
-  :straight (:host github :repo "CyberShadow/term-keys")
-  :init (term-keys-mode))
 
 (use-package bluetooth)                 ; Bluetooth device manager?!
 
@@ -533,15 +551,6 @@
   (setq auto-save-file-name-transforms
         `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 
-(use-package emacs                      ; emacs prefs
-  :custom
-  (confirm-kill-processes nil)
-  (use-short-answers t)
-  (inhibit-startup-screen t)
-  (initial-scratch-message "")
-  (uniquify-buffer-name-style 'forward)
-  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
-  :config (load custom-file :noerror))  ; customize is still useful
 (use-package server :config (unless (server-running-p) (server-start)))
 (use-package restart-emacs
   :general ("C-x M-c" 'restart-emacs)

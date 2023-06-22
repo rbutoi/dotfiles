@@ -164,4 +164,7 @@ return {
       {name = 'a',   remote_address = 'a',},
    },
    unix_domains = {{name = 'auto',},},
+
+   -- etc
+   warn_about_missing_glyphs = false,
 }

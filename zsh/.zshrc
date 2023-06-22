@@ -355,7 +355,7 @@ if [[ -d /home/linuxbrew && -z "$HOMEBREW_PREFIX" ]]; then
 fi
 
 zinit ice as"program" pick"bin/git-fuzzy"
-zinit light bigH/git-fuzzy      # or forgit?
+zinit light bigH/git-fuzzy      # or github.com/wfxr/forgit ?
 
 # BEGIN_KITTY_SHELL_INTEGRATION
 if test -e "$HOME/oss/kitty/shell-integration/kitty.zsh"; then source "$HOME/oss/kitty/shell-integration/kitty.zsh"; fi
