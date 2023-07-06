@@ -57,7 +57,7 @@
 ;;;; UI / UX
 (use-package general)                   ; keybinds
 (use-package doom-themes                ; theme collection
-  :config (load-theme 'doom-1337 t))
+  :config (load-theme 'doom-dark+ t))
 (use-package emacs                      ; emacs prefs
   :custom
   (confirm-kill-processes nil)
