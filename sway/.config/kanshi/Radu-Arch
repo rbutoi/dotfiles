@@ -1,7 +1,17 @@
 profile desktop {
-  output "Dell Inc. DELL S3221QS 2R8QTB3" position 0,117 scale 1.25
-  output "Acer Technologies Acer CB271HU T9TAA0014200" position 3072,0 transform 270
+  output "Dell Inc. DELL S3221QS 2R8QTB3"                position 1253,409             scale 1.45
+  output "Acer Technologies Acer CB271HU T9TAA0014200"   position 0,0 transform 90     scale 1.15
 }
 profile desktop_just32 {
-  output "Dell Inc. DELL S3221QS 2R8QTB3" scale 1.25
+  output "Dell Inc. DELL S3221QS 2R8QTB3" scale 1.45
+}
+profile desktop_with_projector {
+  output "Dell Inc. DELL S3221QS 2R8QTB3"                position 3173,409             scale 1.45
+  output "Acer Technologies Acer CB271HU T9TAA0014200"   position 1920,0 transform 90  scale 1.15
+  output "Optoma Corporation Optoma 1080P 72J6081111111" position 0,650                scale 1
+}
+profile desktop_with_projectoroff {
+  output "Dell Inc. DELL S3221QS 2R8QTB3"                position 3173,409             scale 1.45
+  output "Acer Technologies Acer CB271HU T9TAA0014200"   position 1920,0 transform 90  scale 1.15
+  output 'Yamaha Corporation RX-V485 Unknown'            disable
 }

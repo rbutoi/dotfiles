@@ -498,7 +498,10 @@
 (load "config-notmuch.el" :noerror)     ; email client
 
 (use-package man :straight (:type built-in) ; man(1)
-  :custom (Man-width-max nil))
+  :custom (Man-width-max nil)
+  ;; since man is used as a substitute for less(1), having vi-like
+  ;; search is a useful mnemonic (and -word seems useful for man)
+  :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
 
 (use-package magit                      ; version control
   :general

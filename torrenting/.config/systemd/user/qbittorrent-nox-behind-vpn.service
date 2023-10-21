@@ -1,0 +1,14 @@
+[Unit]
+Description=qBittorrent-nox service behind VPN
+Documentation=man:qbittorrent-nox(1)
+Wants=network-online.target
+After=local-fs.target network-online.target nss-lookup.target
+
+[Service]
+Type=simple
+PrivateTmp=false
+ExecStart=vopono exec "qbittorrent-nox --webui-port=9002" -p Mullvad -s usa-usnyc201 -o 26067 -f 9002
+TimeoutStopSec=1800
+
+[Install]
+WantedBy=multi-user.target

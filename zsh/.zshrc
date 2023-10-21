@@ -287,13 +287,11 @@ eman() {                        # (e)macs man
     cmd="(man \"$@\")"
   fi
 
-  set -x  #
   if [ -n "$INSIDE_EMACS" ]; then
     emacsclient -n --eval "$cmd"
   else
     emacsclient -t --eval "(progn $cmd (other-window 1) (delete-other-windows))"
   fi
-  set +x
 }
 compdef eman=man
 
@@ -340,7 +338,13 @@ mosh () {
 }
 alias mosha='mosh -p 61736 a -- tmux new -As auto'
 alias stow='stow -v'    # nice to see the actions taken by default
-alias stow_dots='pushd ~/dotfiles && stow * && pushd ~/dotfiles-* && stow * && popd && popd'
+stow_dots() {
+  pushd ~/dotfiles && stow * && popd
+  if [[ -d ~/dotfiles-google ]]; then
+    pushd ~/dotfiles-google && stow * && popd
+  fi
+}
+alias stow_dots=
 alias fd="fd --one-file-system"
 alias type='whence -f'  # am too used to bash
 nms() { notmuch search "$@" | cut -c24-; }
@@ -392,7 +396,7 @@ fi
 
 if (( $+commands[exa] )); then
   l()  { exa --group-directories-first "$@" }
-  ll() { exa -l --git "$@" }
+  ll() { exa -g -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
 fi

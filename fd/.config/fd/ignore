@@ -12,6 +12,7 @@
 .git/**
 .glide/**
 .local/lib/**
+.local/share/qBittorrent/BT_backup/**
 .mail/**
 .mozilla/firefox/**
 .node-gyp/**

@@ -78,6 +78,7 @@ for_window [app_id="^nemo"]               opacity 0.95
 for_window [app_id="^org.gnome.Nautilus"] opacity 0.925
 for_window [class="^Emacs"]               opacity 0.93
 # floating - by native Wayland `app_id`
+for_window [app_id="^Popsicle"]                    floating enable
 for_window [app_id="^blueman-manager"]             floating enable
 for_window [app_id="^cinnamon-settings.py"]        floating enable
 for_window [app_id="^eog"]                         floating enable

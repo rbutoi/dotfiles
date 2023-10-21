@@ -6,10 +6,10 @@
   "keybind" : "l"
 }
 {
-  "label" : "hibernate",
-  "action" : "systemctl hibernate",
-  "text" : "(H)ibernate",
-  "keybind" : "h"
+  "label" : "windows",
+  "action" : "systemctl reboot --boot-loader-entry=auto-windows",
+  "text" : "Reboot to (W)indows",
+  "keybind" : "w"
 }
 {
   "label" : "logout",

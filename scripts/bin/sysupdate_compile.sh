@@ -6,19 +6,17 @@
 
 . ~/.config/path.sh # need to set PATH for Doom
 
-if ! load_below; then
-  echo system load over threshold, not updating
+LOAD_THRESHOLD=${1:-1300}
+
+if ! load_below $LOAD_THRESHOLD && [[ $(date +%H) -gt 15 ]]; then
+  echo "system load over threshold && it's 3pm-midnight, not updating. loadavg:"
+  choose 0..3 </proc/loadavg
   exit 0
 fi
 
 os="$(lsb_release -si)"
 if [[ $os == Arch ]]; then
-  paru -Sua --devel --noconfirm
-
-  # isn't -git, needs to be updated nightly
-  pacman -Qq | grep nightly | xargs paru -S --noconfirm
-
-  topgrade --only custom_commands
+  pgrep paru || paru -Syu --aur --devel --noconfirm --skipreview
 elif [[ $os == Debian ]]; then
   topgrade --disable remotes
 fi

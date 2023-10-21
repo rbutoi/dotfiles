@@ -1,15 +1,9 @@
 [Unit]
-Description=Compile & update AUR/Emacs when idle daily
+Description=Compile & update AUR/Emacs when idle every 8h
 
 [Timer]
-# test with:
-# ❯ systemd-analyze calendar 4:0
-#   Original form: 4:0
-# Normalized form: *-*-* 04:00:00
-#     Next elapse: Sun 2022-07-31 04:00:00 EDT
-#        (in UTC): Sun 2022-07-31 08:00:00 UTC
-#        From now: 11h left
-OnCalendar=4:0
+# test with `systemd-analyze calendar 4/8:0`
+OnCalendar=4/8:0
 
 [Install]
 WantedBy=timers.target
