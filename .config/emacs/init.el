@@ -218,7 +218,7 @@
    "C-x b"     'consult-buffer
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
-   "C-h a"     'consult-apropos
+   "C-h a"     'describe-symbol
    "M-y"       'consult-yank-pop
    "C-M-s"     'consult-ripgrep
    "C-x M-f"   'consult-fd
