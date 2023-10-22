@@ -24,7 +24,21 @@
 
 (straight-use-package 'use-package)
 
-(use-package f)                         ; add local load path
+(use-package f)
+
+(use-package no-littering               ; stop littering❗
+  :init
+  (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
+  :config
+  (require 'recentf)
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-var-directory))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-etc-directory))
+  (no-littering-theme-backups)
+  )
+
+;; load path
 (add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
 (load "config-fns.el")                  ; useful function definitions
 
@@ -37,7 +51,6 @@
 
 (use-package s)         ; host identification. (system-name) is lacking the "-f"
 (let ((host (s-trim (shell-command-to-string "hostname -f"))))
-  (defconst my/crostini?    (not (not (string-match-p "penguin" host))))
   (defconst my/laptop?      (not (not (string-match-p    "roam" host))))
   (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
   (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
@@ -50,37 +63,21 @@
   (inhibit-startup-screen t)
   (initial-scratch-message "")
   (uniquify-buffer-name-style 'forward)
-  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
-  :config (load custom-file :noerror))  ; customize is still useful
+  (ad-redefinition-action 'accept)
 
+  ;; custom custom.el file location for maximum custom
+  (custom-file (expand-file-name "custom.el" user-emacs-directory))
+  :config (load custom-file :noerror))
 
-;;;; UI / UX
-(use-package general)                   ; keybinds
-(use-package doom-themes                ; theme collection
-  :config (load-theme 'doom-dark+ t))
-(use-package emacs                      ; emacs prefs
-  :custom
-  (confirm-kill-processes nil)
-  (use-short-answers t)
-  (inhibit-startup-screen t)
-  (initial-scratch-message "")
-  (uniquify-buffer-name-style 'forward)
-  (custom-file (f-join user-emacs-directory "lisp/custom.el"))
-  :config (load custom-file :noerror))  ; customize is still useful
 (use-package server :config (unless (server-running-p) (server-start)))
 (use-package restart-emacs
   :general ("C-x M-c" 'restart-emacs)
   :custom (restart-emacs-daemon-with-tty-frames-p t))
 
-(use-package no-littering               ; stop littering❗
-  :init
-  (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
-  :config
-  (require 'recentf)
-  (add-list-to-list 'recentf-exclude '(no-littering-etc-directory
-                                       no-littering-var-directory))
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+;;;; UI / UX
+(use-package general)                   ; keybinds
+(use-package doom-themes                ; theme collection
+  :config (load-theme 'doom-dark+ t))
 
 ;;;; Interface
 (tool-bar-mode -1) (menu-bar-mode -1)   ; just use F10
@@ -229,8 +226,8 @@
             "C-o" 'consult-line)
   :init
   (defun my/consult-fd-dotfiles ()
-    "consult-fd on ~/dotfiles and other dotfiles repos"
-    (interactive) (consult-fd "~/.cache/both_dotfiles_dirs_linked" ""))
+    "consult-fd on dotfiles repos"
+    (interactive) (consult-fd "~/.dots" ""))
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :custom
   (xref-show-xrefs-function       #'consult-xref)
@@ -250,20 +247,12 @@
 
   (consult-customize consult-theme :preview-key '(:debounce 0.5 any)))
 
+;; TODO: kill existing non-dotfiles buffer to allow magit
 (general-def     ; not consult related, but an extension of my/consult-fd-config
-  ;; TODO: kill existing non-dotfiles buffer to allow magit
-  "C-c M-d i"
-  (defun my/config-open-init-el () (interactive)
-         (find-file "~/dotfiles/emacs/.config/emacs/init.el"))
-  "C-c M-d s"
-  (defun my/config-open-sway () (interactive)
-         (find-file "~/dotfiles/sway/.config/sway/config"))
-  "C-c M-d z"
-  (defun my/config-open-zshrc () (interactive)
-         (find-file "~/dotfiles/zsh/.zshrc"))
-  "C-c M-d w"
-  (defun my/config-open-wezterm () (interactive)
-         (find-file "~/dotfiles/wezterm/.config/wezterm/wezterm.lua")))
+  "C-c M-d i" 'my/config-open-init-el
+  "C-c M-d s" 'my/config-open-sway
+  "C-c M-d z" 'my/config-open-zshrc
+  "C-c M-d w" 'my/config-open-wezterm)
 
 (use-package bufler                     ; very nice buffer management overview
   :general
@@ -516,7 +505,7 @@
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
-(use-package vterm :defer 2     ; terminal in Emacs
+(use-package vterm :defer 2             ; terminal in Emacs
   :custom
   (vterm-always-compile-module t)
   :general
@@ -541,22 +530,4 @@
   :hook ((edit-server-start . (lambda () (auto-fill-mode -1)))))
 
 ;;;; Epilogue
-;; Local Variables:
-;; eval: (progn (column-enforce-mode))
-;; End:
-(use-package no-littering               ; Emacs, stop littering!❗!
-  :init
-  (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
-  :config
-  (require 'recentf)
-  (add-list-to-list 'recentf-exclude '(no-littering-etc-directory
-                                       no-littering-var-directory))
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
-
-(use-package server :config (unless (server-running-p) (server-start)))
-(use-package restart-emacs
-  :general ("C-x M-c" 'restart-emacs)
-  :custom (restart-emacs-daemon-with-tty-frames-p t))
-
 (load "specific.el" :noerror)           ; host-specific config

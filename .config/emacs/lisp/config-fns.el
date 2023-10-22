@@ -9,6 +9,16 @@
   (set dst
        (append (eval dst) src)))
 
+;;;; config BS
+(defun my/config-open-init-el () (interactive)
+       (find-file "~/.config/emacs/init.el"))
+(defun my/config-open-sway () (interactive)
+       (find-file "~/.config/sway/config"))
+(defun my/config-open-zshrc () (interactive)
+       (find-file "~/.zshrc"))
+(defun my/config-open-wezterm () (interactive)
+       (find-file "~/.config/wezterm/wezterm.lua"))
+
 ;;;; UI
 ;; https://tecosaur.github.io/emacs-config/#theme-modeline
 (defun doom-modeline-conditional-buffer-encoding ()
@@ -164,35 +174,6 @@ shell exits, the buffer is killed."
   (let* ((prompt-dir (consult--directory-prompt "fd" dir))
          (default-directory (cdr prompt-dir)))
     (find-file (consult--find (car prompt-dir) #'consult--fd-builder initial))))
-
-;;;; slow terminal toggling
-;; theme toggling, TODO: un-doom if needed
-;; (defun my/disable-save-theme ()
-;;   "Disable the theme, and save it to re-enable."
-;;   (interactive)
-;;   (disable-theme (car custom-enabled-themes))
-;;   (setq my/old-doom-theme doom-theme
-;;         doom-theme        nil))
-
-;; (defun my/enable-saved-theme ()
-;;   (interactive)
-;;   (setq doom-theme my/old-doom-theme)
-;;   (load-theme doom-theme t nil)
-;;   (doom/reload-theme))
-
-;; (defun my/slow-terminal ()
-;;   "For when the terminal is very slow.
-
-;; Like ChromeOS's hterm."
-;;   (interactive)
-;;   (my/disable-save-theme)
-;;   (setq my/old-scroll-conservatively scroll-conservatively
-;;         scroll-conservatively        0))
-
-;; (defun my/fast-terminal ()
-;;   (interactive)
-;;   (my/enable-saved-theme)
-;;   (setq scroll-conservatively my/old-scroll-conservatively))
 
 ;;;; buffer killing
 (defun kill-other-buffers ()       ; https://stackoverflow.com/a/3417473/3919508
