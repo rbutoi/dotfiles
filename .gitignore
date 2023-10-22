@@ -1,5 +1,1 @@
-# what happens if the whole .notmuch dir is symlinked. harmless ¯\_(ツ)_/¯
-notmuch/.mail/.notmuch/xapian/
-notmuch/.mail/.notmuch/dump-*
-
-\.DS_Store
+*.pyc
