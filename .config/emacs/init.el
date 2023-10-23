@@ -210,6 +210,7 @@
   :general                              ; remap some standard commands
   ("C-x M-:"   'consult-complex-command
    "C-x b"     'consult-buffer
+   "C-x C-b"   'consult-buffer
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
    "C-h a"     'describe-symbol
@@ -244,17 +245,8 @@
 
   (consult-customize consult-theme :preview-key '(:debounce 0.5 any)))
 
-;; TODO: kill existing non-dotfiles buffer to allow magit
-(general-def     ; not consult related, but an extension of my/consult-fd-config
-  "C-c M-d i" 'my/config-open-init-el
-  "C-c M-d s" 'my/config-open-sway
-  "C-c M-d z" 'my/config-open-zshrc
-  "C-c M-d w" 'my/config-open-wezterm)
-
 (use-package bufler                     ; very nice buffer management overview
-  :general
-  ("C-x C-b" 'bufler-switch-buffer
-   "C-x M-b" 'bufler))
+  :general ("C-x M-b" 'bufler))
 
 (use-package savehist                   ; save minibuffer history
   :straight (:type built-in)
