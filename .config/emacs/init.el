@@ -23,10 +23,15 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
-
 (use-package f)
 
-(use-package no-littering               ; stop littering❗
+(use-package benchmark-init             ; start benchmark
+  :hook (after-init . (lambda ()
+                        (message "Emacs loaded in %s" (emacs-init-time))
+                        (benchmark-init/deactivate))))
+(use-package gcmh :init (gcmh-mode))    ; GC magic hack: gitlab.com/koral/gcmh
+
+(use-package no-littering               ; must be before load path
   :init
   (setq no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
   :config
@@ -35,19 +40,10 @@
                (recentf-expand-file-name no-littering-var-directory))
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-etc-directory))
-  (no-littering-theme-backups)
-  )
+  (no-littering-theme-backups))
 
-;; load path
 (add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
 (load "config-fns.el")                  ; useful function definitions
-
-(use-package benchmark-init             ; start benchmark
-  :hook (after-init . (lambda ()
-                        (message "Emacs loaded in %s" (emacs-init-time))
-                        (benchmark-init/deactivate))))
-
-(use-package gcmh :init (gcmh-mode))    ; GC magic hack: gitlab.com/koral/gcmh
 
 (use-package s)         ; host identification. (system-name) is lacking the "-f"
 (let ((host (s-trim (shell-command-to-string "hostname -f"))))
@@ -55,6 +51,8 @@
   (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
   (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
   (defconst my/workstation? (and my/work? (not my/laptop?))))
+
+(use-package general)                   ; keybinds
 
 (use-package emacs                      ; emacs prefs
   :custom
@@ -75,7 +73,6 @@
   :custom (restart-emacs-daemon-with-tty-frames-p t))
 
 ;;;; UI / UX
-(use-package general)                   ; keybinds
 (use-package doom-themes                ; theme collection
   :config (load-theme 'doom-dark+ t))
 
@@ -199,12 +196,12 @@
                      "M-DEL"  'vertico-directory-delete-word)
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
-(use-package vertico-repeat :after vertico
+(use-package vertico-repeat    :after vertico
   :straight (:type built-in)
   :load-path "var/straight/repos/vertico/extensions/"
   :hook ((minibuffer-setup . vertico-repeat-save))
   :general ("C-x C-r" 'vertico-repeat))
-(use-package vertico-mouse :after vertico
+(use-package vertico-mouse     :after vertico
   :straight (:type built-in)
   :load-path "var/straight/repos/vertico/extensions/"
   :config (vertico-mouse-mode))
@@ -498,7 +495,8 @@
    "C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
   :custom
-  (magit-repository-directories `(("~/" . 1)))
+  (magit-repository-directories `(("~/.dots/dotfiles" . 0)
+                                  ("~/.dots/dotfiles-google" . 0)))
   (magit-log-auto-more t)
   (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
 
