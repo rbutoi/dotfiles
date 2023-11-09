@@ -64,7 +64,7 @@
   (ad-redefinition-action 'accept)
 
   ;; custom custom.el file location for maximum custom
-  (custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (custom-file (expand-file-name "custom.el" (f-join user-emacs-directory "lisp/")))
   :config (load custom-file :noerror))
 
 (use-package server :config (unless (server-running-p) (server-start)))
@@ -76,12 +76,10 @@
 (use-package doom-themes                ; theme collection
   :config (load-theme 'doom-dark+ t))
 
-;;;; Interface
-(tool-bar-mode -1) (menu-bar-mode -1)   ; just use F10
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
-(context-menu-mode)                     ; this is good tho
-(global-hl-line-mode)                   ; always good to keep track
+;; Interface: keep menu, scrollbars.
+(tool-bar-mode -1)
+(context-menu-mode)
+(global-hl-line-mode)
 
 (use-package defrepeater)
 (general-def
@@ -95,8 +93,7 @@
   "C-x ="     'balance-windows
   "C-x C-="   'balance-windows          ; redundancy
   "C-x +"     'what-cursor-position     ; former C-x =
-  "C-x M-="   'text-scale-adjust        ; former C-x C-=
-  "C-c M-S"   'scroll-bar-mode)         ; occasionally useful (e.g. w3m)
+  "C-x M-="   'text-scale-adjust)       ; former C-x C-=
 
 (general-def
   "M-1"       'delete-other-windows
