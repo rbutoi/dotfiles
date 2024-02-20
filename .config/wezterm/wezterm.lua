@@ -133,8 +133,8 @@ end
 
 return {
    -- text & colours
-   font = wezterm.font("JetBrains Mono"),
    font_size = font_size,
+   font = wezterm.font("Iosevka"),
    color_scheme = "GruvboxDark",
    -- color_scheme = "Gruvbox Light",
 

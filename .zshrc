@@ -65,6 +65,9 @@ zinit light romkatv/zsh-prompt-benchmark
 ##
 ## fzf
 ##
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
   --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
   --color=info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54"
@@ -352,6 +355,11 @@ nms() { notmuch search "$@" | cut -c24-; }
 ########################
 # external shell tools #
 ########################
+
+if [ -z $CARGO_PATH_SET ]; then
+  export PATH=~/.cargo/bin:$PATH
+  export CARGO_PATH_SET=1
+fi
 
 if [[ -d /home/linuxbrew && -z "$HOMEBREW_PREFIX" ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

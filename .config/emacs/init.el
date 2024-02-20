@@ -82,6 +82,7 @@
 (global-hl-line-mode)
 
 (use-package defrepeater)
+(setq mac-option-modifier 'meta)
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
   "C-x m"     'execute-extended-command
@@ -131,6 +132,8 @@
   (doom-modeline-mode)
   :hook
   ((after-change-major-mode . doom-modeline-conditional-buffer-encoding)))
+(use-package nerd-icons
+  :custom (nerd-icons-font-family "IosevkaTerm Nerd Font Mono"))
 (use-package all-the-icons)
 
 (use-package helpful                    ; improved help windows
@@ -308,7 +311,7 @@
   ([remap query-replace] 'vr/query-replace))
 
 (use-package ialign
-  :general ("C-x l" 'ialign)) ; interactive align regexp
+  :general ("C-x l" 'ialign))           ; interactive align regexp
 
 (use-package undo-tree                  ; visual undo
   :defer 2
@@ -338,7 +341,8 @@
 (use-package flyspell                   ; spellcheck
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode))
-  :custom (ispell-dictionary "canadian")
+  ;; TODO: install
+  ;; :custom (ispell-dictionary "canadian")
   :general (:keymaps                    ; default binds are a little overzealous
             'flyspell-mode-map "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
 
@@ -439,8 +443,8 @@
   :after smartparens
   :general (:keymaps 'c-mode-base-map "C-c C-o"
                      (defrepeater
-                       (lambda () (interactive)
-                         (ff-find-other-file nil 'ignore-include))))
+                      (lambda () (interactive)
+                        (ff-find-other-file nil 'ignore-include))))
   :hook ((c++-mode . (lambda () (c-set-offset 'innamespace [0]))))
   :config
   (general-add-hook '(c-mode-hook c++-mode-hook)
@@ -448,6 +452,8 @@
                                          'clang-format-buffer nil :local)))
   (sp-local-pair 'c++-mode "<" ">" :when '(sp-point-after-word-p))
   (general-unbind :keymaps 'c-mode-base-map "TAB")) ; really an upstream issue
+
+(use-package format-all)
 
 (use-package outshine
   :general (:keymaps 'outshine-mode-map
