@@ -1,5 +1,5 @@
 [include]                       # personal config
-    path = ~/.gitconfig.local
+    path = ~/.config/git/config.local
 
 [core]
     hooksPath = ~/.config/git-hooks/

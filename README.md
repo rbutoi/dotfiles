@@ -1,11 +1,11 @@
 ### Install
 
-With [`dotfiler`](https://github.com/svetlyak40wt/dotfiler):
+With [`dotfiler`](https://github.com/svetlyak40wt/dotfiler) (https://github.com/svetlyak40wt/dotfiler):
 
 ```
 git clone https://github.com/svetlyak40wt/dotfiler ~/.dots
-git clone git@github.com:rbutoi/dotfiles.git ~/.dots/dotfiles
-# git clone ${ any other repo } ~/.dots/dotfiles-other
 
-~/.dots/bin/dot update
+python3 ~/.dots/bin/dot add git@github.com:rbutoi/dotfiles.git
+python3 ~/.dots/bin/dot add git@gitlab.com:rbutoi/private-dots.git
+python3 ~/.dots/bin/dot update
 ```
