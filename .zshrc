@@ -366,6 +366,21 @@ if [[ -d /home/linuxbrew && -z "$HOMEBREW_PREFIX" ]]; then
   (( $+commands[clp] )) || (brew tap jpe90/clp && brew install jpe90/clp/clp)
 fi
 
+newbrew() {
+  # Include all commands that should do a brew dump
+  local dump_commands=('install' 'uninstall')
+  local main_command="${1}"
+
+  brew ${@}
+
+  for command in "${dump_commands[@]}"; do
+    [[ "${command}" == "${main_command}" ]] &&
+      (brew bundle dump --file=${HOME}/.config/Brewfile --force 2>&1 |
+         grep -v renamed &)
+  done
+}
+alias brew=newbrew
+
 zinit ice as"program" pick"bin/git-fuzzy"
 zinit light bigH/git-fuzzy      # or github.com/wfxr/forgit ?
 
