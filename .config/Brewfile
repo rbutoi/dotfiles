@@ -5,15 +5,17 @@ tap "railwaycat/emacsmacport"
 tap "rcmdnk/file"
 brew "bat"
 brew "black"
+brew "btop"
 brew "choose-rust"
 brew "cmake"
+brew "coreutils"
+brew "docker", link: false
 brew "dust"
 brew "fd"
-brew "libssh"
-brew "ffmpeg"
 brew "fish"
 brew "fisher"
 brew "fzf"
+brew "git"
 brew "git-delta"
 brew "go"
 brew "libtool"
@@ -22,48 +24,109 @@ brew "helix"
 brew "iproute2mac"
 brew "ispell"
 brew "lesspipe"
+brew "mackup"
+brew "mas"
+brew "media-info"
 brew "mercurial"
 brew "moreutils"
+brew "mosh"
+brew "mpv"
 brew "nmap"
+brew "nushell"
 brew "pipx"
 brew "procs"
 brew "python-lxml"
 brew "python-requests"
 brew "ripgrep"
 brew "ruff"
-brew "rust"
 brew "rust-analyzer"
+brew "rustup-init"
+brew "speedtest-cli"
 brew "stow"
 brew "tlrc"
 brew "tmux"
 brew "topgrade"
 brew "watchexec"
 brew "yapf"
+brew "youtube-dl"
+brew "zile"
 cask "1password"
 cask "arc"
 cask "bettertouchtool"
 cask "bluebubbles"
+cask "calibre"
 cask "darktable"
+cask "discord"
+cask "docker"
 cask "emacs-mac"
 cask "firefox"
+cask "fleet"
 cask "font-iosevka"
 cask "font-iosevka-term-nerd-font"
 cask "font-jetbrains-mono"
 cask "gimp"
 cask "google-chrome"
 cask "google-drive"
+cask "google-drive-file-stream"
+cask "intellij-idea-ce"
 cask "iterm2"
 cask "krita"
 cask "lastfm"
+cask "lmms"
+cask "logitech-options"
+cask "mediainfo"
 cask "microsoft-auto-update"
+cask "mullvadvpn"
 cask "rectangle-pro"
 cask "signal"
 cask "steam"
 cask "textmate"
 cask "visual-studio-code"
+cask "vlc"
 cask "wezterm"
+cask "whichspace"
 cask "zed"
 cask "zoom"
+mas "1Password for Safari", id: 1569813296
+mas "AdGuard for Safari", id: 1440147259
+mas "Adobe Lightroom", id: 1451544217
+mas "Affinity Photo 2", id: 1616822987
+mas "Amphetamine", id: 937984704
+mas "Brother iPrint&Scan", id: 1193539993
+mas "Capo", id: 696977615
+mas "CrystalFetch", id: 6454431289
+mas "DaisyDisk", id: 411643860
+mas "Final Cut Pro", id: 424389933
+mas "Flighty", id: 1358823008
+mas "Focus", id: 777233759
+mas "GarageBand", id: 682658836
+mas "Habitify", id: 1111447047
+mas "iMovie", id: 408981434
+mas "Keynote", id: 409183694
+mas "Kindle Classic", id: 405399194
+mas "Maccy", id: 1527619437
+mas "Microsoft Excel", id: 462058435
+mas "Microsoft OneNote", id: 784801555
+mas "Microsoft Outlook", id: 985367838
+mas "Microsoft Remote Desktop", id: 1295203466
+mas "Microsoft To Do", id: 1274495053
+mas "Microsoft Word", id: 462054704
+mas "Numbers", id: 409203825
+mas "Oldr", id: 1475048161
+mas "OneDrive", id: 823766827
+mas "Pages", id: 409201541
+mas "Prime Video", id: 545519333
+mas "Slack", id: 803453959
+mas "Speedtest", id: 1153157709
+mas "Steam Link", id: 1246969117
+mas "Structured", id: 1499198946
+mas "TestFlight", id: 899247664
+mas "The Unarchiver", id: 425424353
+mas "Time Out", id: 402592703
+mas "UTM", id: 1538878817
+mas "Xcode", id: 497799835
+mas "YamaCast", id: 1415107621
+mas "‎WhatsApp", id: 310633997
 vscode "13xforever.language-x86-64-assembly"
 vscode "akamud.vscode-theme-onedark"
 vscode "alefragnani.project-manager"
