@@ -491,7 +491,7 @@
    "C-x C-M-g" 'magit-list-repositories)
   :custom
   (magit-repository-directories `(("~/.dots/dotfiles" . 0)
-                                  ("~/.dots/dotfiles-google" . 0)))
+                                  ("~/dev" . 1)))
   (magit-log-auto-more t)
   (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
 

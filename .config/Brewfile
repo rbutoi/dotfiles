@@ -1,6 +1,7 @@
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "homebrew/services"
+tap "martido/graph"
 tap "railwaycat/emacsmacport"
 tap "rcmdnk/file"
 brew "bat"
@@ -12,6 +13,8 @@ brew "coreutils"
 brew "docker", link: false
 brew "dust"
 brew "fd"
+brew "libssh"
+brew "ffmpeg"
 brew "fish"
 brew "fisher"
 brew "fzf"
@@ -32,6 +35,7 @@ brew "moreutils"
 brew "mosh"
 brew "mpv"
 brew "nmap"
+brew "node"
 brew "nushell"
 brew "pipx"
 brew "procs"
@@ -57,7 +61,7 @@ cask "bluebubbles"
 cask "calibre"
 cask "darktable"
 cask "discord"
-cask "docker"
+cask "drawio"
 cask "emacs-mac"
 cask "firefox"
 cask "fleet"
@@ -67,7 +71,6 @@ cask "font-jetbrains-mono"
 cask "gimp"
 cask "google-chrome"
 cask "google-drive"
-cask "google-drive-file-stream"
 cask "intellij-idea-ce"
 cask "iterm2"
 cask "krita"
@@ -94,6 +97,7 @@ mas "Affinity Photo 2", id: 1616822987
 mas "Amphetamine", id: 937984704
 mas "Brother iPrint&Scan", id: 1193539993
 mas "Capo", id: 696977615
+mas "CotEditor", id: 1024640650
 mas "CrystalFetch", id: 6454431289
 mas "DaisyDisk", id: 411643860
 mas "Final Cut Pro", id: 424389933
