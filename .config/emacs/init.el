@@ -47,10 +47,8 @@
 
 (use-package s)         ; host identification. (system-name) is lacking the "-f"
 (let ((host (s-trim (shell-command-to-string "hostname -f"))))
-  (defconst my/laptop?      (not (not (string-match-p    "roam" host))))
-  (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
-  (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
-  (defconst my/workstation? (and my/work? (not my/laptop?))))
+  (defconst my/work?  (not (not (string-match-p  "\.com$" host)))))
+(defconst my/wayland? (not (not (getenv "WAYLAND_DISPLAY"))))
 
 (use-package general)                   ; keybinds
 
@@ -476,13 +474,13 @@
             [remap consult-imenu] 'consult-outline))
 
 ;;;; Emacs-as-XYZ
-(load "config-notmuch.el" :noerror)     ; email client
-
 (use-package man :straight (:type built-in) ; man(1)
   :custom (Man-width-max nil)
   ;; since man is used as a substitute for less(1), having vi-like
   ;; search is a useful mnemonic (and -word seems useful for man)
-  :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
+  :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word)
+  :config (when (eq system-type 'darwin)
+            (setq manual-program "gman")))
 
 (use-package magit                      ; version control
   :general
@@ -516,7 +514,8 @@
 
 (use-package xt-mouse :config (xterm-mouse-mode)) ; Emacs in terminal
 
-(use-package bluetooth)                 ; Bluetooth device manager?!
+(when (and (eq system-type 'gnu/linux) my/wayland?)
+  (use-package bluetooth))              ; Bluetooth device manager?!
 
 (use-package edit-server          ; Edit with Emacs: edit web browser text boxes
   :init (edit-server-start)

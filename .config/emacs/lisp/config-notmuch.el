@@ -1,5 +1,15 @@
 ;; -*- lexical-binding: t; -*-
 
+;; TODO: scrap?
+;; (defconst my/laptop?      (not (not (string-match-p    "roam" host))))
+;; (defconst my/wayland?     (not (not (getenv "WAYLAND_DISPLAY"))))
+;; (defconst my/work?        (not (not (string-match-p  "\.com$" host))))
+;; (defconst my/workstation? (and my/work? (not my/laptop?))))
+(defconst my/laptop?      nil)
+(defconst my/wayland?     nil)
+(defconst my/work?        nil)
+(defconst my/workstation? nil)
+
 (use-package notmuch
   :defer 2
   :init
@@ -72,9 +82,10 @@ take up to a minute (if stale)."
              (if (string-match-p "broadcast" (buffer-name))
                  "/mail/u/0/#label/broadcast" ""))))
   (setq
-   ;; laptop/muchsync needs an external script for proper ssh creds and since
-   ;; notmuch's call-process wrapper doesn't pass any args
-   notmuch-poll-script (when my/laptop? "notmuch_new_systemd.sh")
+
+   ;; ;; laptop/muchsync needs an external script for proper ssh creds and since
+   ;; ;; notmuch's call-process wrapper doesn't pass any args
+   ;; notmuch-poll-script (when my/laptop? "notmuch_new_systemd.sh")
 
    sendmail-program "msmtp"
    message-sendmail-f-is-evil t

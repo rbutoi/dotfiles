@@ -10,14 +10,18 @@
        (append (eval dst) src)))
 
 ;;;; config BS
-(defun my/config-open-init-el () (interactive)
+(defun my/config-open-emacs-init-el () (interactive)
        (find-file "~/.config/emacs/init.el"))
-(defun my/config-open-sway () (interactive)
-       (find-file "~/.config/sway/config"))
 (defun my/config-open-zshrc () (interactive)
        (find-file "~/.zshrc"))
 (defun my/config-open-wezterm () (interactive)
        (find-file "~/.config/wezterm/wezterm.lua"))
+
+(defmacro with-system (type &rest body) ; (with-system gnu/linux (...))
+  "Evaluate BODY if `system-type' equals TYPE."
+  (declare (indent defun))
+  `(when (eq system-type ',type)
+     ,@body))
 
 ;;;; UI
 ;; https://tecosaur.github.io/emacs-config/#theme-modeline

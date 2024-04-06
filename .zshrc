@@ -78,7 +78,7 @@ MY_FZF_BIND_FLAGS="--header 'C-o: e {}, C-M-o: en {}' --bind \
   'ctrl-o:execute(emacsclient -nw {1}),ctrl-alt-i:execute(emacsclient -n {1})'"
 fzfp()  {
     eval "fzf --preview 'if [[ -f {} ]] && [[ \$(stat -c%s {}) -lt 2000000 ]];
-            then clp {}; else exa -laa {}; fi' $MY_FZF_BIND_FLAGS $@" }
+            then clp {}; else eza -laa {}; fi' $MY_FZF_BIND_FLAGS $@" }
 enfz()  { en $(fzfp "$@")  }
 econf() { enfz . ~/.config }
 rg_fzfp() {  # from https://jeskin.net/blog/grep-fzf-clp/
@@ -96,7 +96,7 @@ zstyle ':fzf-tab:*' prefix ''
 # disable sort when completing options of any command
 zstyle ':completion:complete:*:options' sort false
 
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath' # cd preview
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath' # cd preview
 
 # give a preview of commandline arguments when completing `kill`
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
@@ -278,10 +278,10 @@ emacs_systemd_restart() {
 
 eman() {                        # (e)macs man
   # no emacs, fallback to man
-  pgrep emacs >/dev/null || return command man "$@"
+  pgrep -i emacs >/dev/null || return man "$@"
 
   # no manpage, print standard man error
-  command man -w "$@" > /dev/null || return
+  man -w "$@" > /dev/null || return
 
   if [ $# -eq 0 ]; then
     # `eman` sans arguments starts the client in completion mode
@@ -291,9 +291,10 @@ eman() {                        # (e)macs man
   fi
 
   if [ -n "$INSIDE_EMACS" ]; then
-    emacsclient -n --eval "$cmd"
+    emacsclient -n  --suppress-output --eval "$cmd"
   else
-    emacsclient -t --eval "(progn $cmd (other-window 1) (delete-other-windows))"
+    emacsclient -nw --suppress-output --eval \
+      "(progn $cmd (other-window 1) (delete-other-windows))"
   fi
 }
 compdef eman=man
@@ -417,9 +418,9 @@ else
   alias diff="diff --color=auto"
 fi
 
-if (( $+commands[exa] )); then
-  l()  { exa --group-directories-first "$@" }
-  ll() { exa -g -l --git "$@" }
+if (( $+commands[eza] )); then
+  l()  { eza --group-directories-first "$@" }
+  ll() { eza -g -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
 fi

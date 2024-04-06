@@ -201,3 +201,5 @@
 
 [protocol "file"]
 	allow = always
+[init]
+	defaultBranch = main

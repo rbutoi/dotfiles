@@ -1,7 +1,6 @@
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "homebrew/services"
-tap "martido/graph"
 tap "railwaycat/emacsmacport"
 tap "rcmdnk/file"
 brew "bat"
@@ -12,9 +11,8 @@ brew "cmake"
 brew "coreutils"
 brew "docker", link: false
 brew "dust"
+brew "eza"
 brew "fd"
-brew "libssh"
-brew "ffmpeg"
 brew "fish"
 brew "fisher"
 brew "fzf"
@@ -28,6 +26,7 @@ brew "iproute2mac"
 brew "ispell"
 brew "lesspipe"
 brew "mackup"
+brew "man-db"
 brew "mas"
 brew "media-info"
 brew "mercurial"
@@ -55,13 +54,12 @@ brew "yapf"
 brew "youtube-dl"
 brew "zile"
 cask "1password"
-cask "arc"
 cask "bettertouchtool"
 cask "bluebubbles"
 cask "calibre"
 cask "darktable"
 cask "discord"
-cask "drawio"
+cask "docker"
 cask "emacs-mac"
 cask "firefox"
 cask "fleet"
@@ -71,6 +69,7 @@ cask "font-jetbrains-mono"
 cask "gimp"
 cask "google-chrome"
 cask "google-drive"
+cask "google-drive-file-stream"
 cask "intellij-idea-ce"
 cask "iterm2"
 cask "krita"
@@ -78,9 +77,11 @@ cask "lastfm"
 cask "lmms"
 cask "logitech-options"
 cask "mediainfo"
+cask "messenger"
 cask "microsoft-auto-update"
 cask "mullvadvpn"
 cask "rectangle-pro"
+cask "ripcord"
 cask "signal"
 cask "steam"
 cask "textmate"
@@ -97,7 +98,6 @@ mas "Affinity Photo 2", id: 1616822987
 mas "Amphetamine", id: 937984704
 mas "Brother iPrint&Scan", id: 1193539993
 mas "Capo", id: 696977615
-mas "CotEditor", id: 1024640650
 mas "CrystalFetch", id: 6454431289
 mas "DaisyDisk", id: 411643860
 mas "Final Cut Pro", id: 424389933
@@ -119,7 +119,6 @@ mas "Numbers", id: 409203825
 mas "Oldr", id: 1475048161
 mas "OneDrive", id: 823766827
 mas "Pages", id: 409201541
-mas "Prime Video", id: 545519333
 mas "Slack", id: 803453959
 mas "Speedtest", id: 1153157709
 mas "Steam Link", id: 1246969117
@@ -130,7 +129,6 @@ mas "Time Out", id: 402592703
 mas "UTM", id: 1538878817
 mas "Xcode", id: 497799835
 mas "YamaCast", id: 1415107621
-mas "‎WhatsApp", id: 310633997
 vscode "13xforever.language-x86-64-assembly"
 vscode "akamud.vscode-theme-onedark"
 vscode "alefragnani.project-manager"
@@ -203,6 +201,7 @@ vscode "ms-vscode.cmake-tools"
 vscode "ms-vscode.cpptools"
 vscode "ms-vscode.cpptools-extension-pack"
 vscode "ms-vscode.cpptools-themes"
+vscode "ms-vscode.powershell"
 vscode "ms-vscode.remote-explorer"
 vscode "nyxiative.rust-and-friends"
 vscode "oscarcs.dart-syntax-highlighting-only"
