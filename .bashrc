@@ -7,7 +7,7 @@
 # set $PATH if not already
 [ -f ~/.config/path.sh ] && . ~/.config/path.sh
 
-. "$HOME/.cargo/env"
+[ -f ~/.cargo/env ] && . "$HOME/.cargo/env"
 
 #########################
 # Bash/terminal options #
@@ -30,21 +30,22 @@ export HISTSIZE=
 export HISTFILE=~/.bash_eternal_history
 set +H # disable history expansion
 
-# prompt + title
-eval "$(starship init bash)"
-set_win_title() {
-  bpwd="$(basename "$PWD")"
-  printf "${1:-\033]0;%s\007}" "${bpwd/#$USER/\~}@${HOSTNAME/butoi-/}"
-}
-set_win_title_tmux() { set_win_title "\033k%s\033"; }
-if [ -z "$TMUX" ]; then
-  if [ -z "$INSIDE_EMACS" ]; then
-    starship_precmd_user_func=set_win_title
-  fi
-else
-  starship_precmd_user_func=set_win_title_tmux
-fi
-export starship_precmd_user_func
+# TODO: reassess
+# # prompt + title
+# eval "$(starship init bash)"
+# set_win_title() {
+#   bpwd="$(basename "$PWD")"
+#   printf "${1:-\033]0;%s\007}" "${bpwd/#$USER/\~}@${HOSTNAME/butoi-/}"
+# }
+# set_win_title_tmux() { set_win_title "\033k%s\033"; }
+# if [ -z "$TMUX" ]; then
+#   if [ -z "$INSIDE_EMACS" ]; then
+#     starship_precmd_user_func=set_win_title
+#   fi
+# else
+#   starship_precmd_user_func=set_win_title_tmux
+# fi
+# export starship_precmd_user_func
 
 #######################################
 # User specific aliases and functions #
@@ -217,7 +218,7 @@ if command -v exa >/dev/null; then
   alias ll='exa --color always -aagl --git'; complete -F _complete_alias ll
 fi
 
-if [ -d ~/.config/broot ]; then
+if [ -f ~/.config/broot/launcher/bash/br ]; then
   . ~/.config/broot/launcher/bash/br
    cdb() { br --only-folders --cmd "$*:cd"; }
     lb() { br --sizes --dates --permissions; }
