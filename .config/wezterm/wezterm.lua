@@ -1,7 +1,7 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
 
-keys = {
+local keys = {
    -- emacs undo. C- don't need to be unbound, prefer s- prefix for WM
    {key = '_',         mods = 'CTRL|SHIFT',     action = 'DisableDefaultAssignment'},
    {key = '-',         mods = 'CTRL|SHIFT',     action = 'DisableDefaultAssignment'},
@@ -76,7 +76,7 @@ local config = {
    enable_kitty_keyboard = true,
 
    -- window
-   window_background_opacity = 0.9,
+   window_background_opacity = 0.98,
    hide_tab_bar_if_only_one_tab = true,
    window_close_confirmation = 'NeverPrompt',
    enable_scroll_bar = true,
