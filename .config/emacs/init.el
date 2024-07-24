@@ -71,8 +71,7 @@
   :custom (restart-emacs-daemon-with-tty-frames-p t))
 
 ;;;; UI / UX
-(use-package doom-themes                ; theme collection
-  :config (load-theme 'doom-dark+ t))
+(load-theme 'modus-vivendi t)
 
 ;; Interface: keep menu, scrollbars.
 (tool-bar-mode -1)
@@ -210,7 +209,6 @@
    "C-x b"     'consult-buffer
    "C-x C-b"   'consult-buffer
    "C-x p b"   'consult-project-buffer
-   "C-o"       'consult-imenu
    "C-h a"     'describe-symbol
    "M-y"       'consult-yank-pop
    "C-M-s"     'consult-ripgrep
@@ -453,9 +451,13 @@
 
 (use-package format-all)
 
+;; imenu headers for this config and other config-local evals
 (use-package outshine
-  :general (:keymaps 'outshine-mode-map
-                     [remap consult-imenu] 'consult-outline))
+  :general
+  (:keymaps 'outshine-mode-map
+            "M-p" 'outline-previous-visible-heading
+            "M-n" 'outline-next-visible-heading
+            [remap consult-imenu] 'consult-outline))
 
 (add-hook 'after-save-hook              ; automatically make scripts executable
           'executable-make-buffer-file-executable-if-script-p)
@@ -465,13 +467,6 @@
  '(conf-mode-hook emacs-lisp-mode-hook)
  (lambda () (run-mode-hooks 'prog-mode-hook)))
 
-;; imenu headers for this config and other config-local evals
-(use-package outshine
-  :general
-  (:keymaps 'outshine-mode-map
-            "M-p" 'outline-previous-visible-heading
-            "M-n" 'outline-next-visible-heading
-            [remap consult-imenu] 'consult-outline))
 
 ;;;; Emacs-as-XYZ
 (use-package man :straight (:type built-in) ; man(1)

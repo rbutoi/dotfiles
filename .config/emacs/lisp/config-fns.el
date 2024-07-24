@@ -188,6 +188,5 @@ shell exits, the buffer is killed."
               (cl-remove-if-not 'buffer-file-name (buffer-list)))))
 
 ;;;; epilogue
-;; Local Variables:
-;; eval: (outshine-mode)
-;; End:
+
+(provide 'config-fns)
