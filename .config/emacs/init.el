@@ -6,22 +6,13 @@
         (elpaca-use-package-mode)
         (setq use-package-always-ensure t))
 
-(use-package f)
-(elpaca-wait)
-(add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
+;; Set load path and initialize basic Emacs settings
+(load (expand-file-name "lisp/init-emacs.el" user-emacs-directory))
 
-(require 'init-emacs)
-
-;; (require 'init-fns) TODO
-(load "~/.config/emacs/lisp/config-fns.el")
+(require 'init-fns)
 (require 'init-ui)
 (require 'init-buffers)
 (require 'init-editing)
 (require 'init-programming)
-
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-
-
-(recentf-mode)
+(require 'init-langs)
+(require 'init-ext)

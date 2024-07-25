@@ -1,23 +1,32 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 ;;
-(use-package diminish)
 
-(use-package doom-themes)
-(elpaca-wait)
-(use-package auto-dark	      ; theme selection following OS dark mode
-  :diminish
-  :config
-  (setq auto-dark-dark-theme 'doom-acario-dark
-	auto-dark-light-theme 'doom-acario-light
-	auto-dark-allow-osascript t)
-  (auto-dark-mode))
+(setopt mac-option-modifier 'meta)
 
 (tool-bar-mode -1)
 (context-menu-mode)
 (global-hl-line-mode)
 (column-number-mode)
 
-(setq mac-option-modifier 'meta)
+(global-goto-address-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; extenal packages ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package diminish)                  ; TODO: consider doom-modeline
+(use-package doom-themes)
+(elpaca-wait)
+
+(use-package auto-dark	      ; theme selection following OS dark mode
+  :diminish
+  :config
+  (setopt auto-dark-dark-theme 'doom-acario-dark
+	  auto-dark-light-theme 'doom-acario-light
+          ;; TODO: system events no work
+	  ;; auto-dark-allow-osascript t
+          )
+  (auto-dark-mode))
 
 (use-package zoom-window                ; temporarily zoom window
   :general ("C-x C-z" 'zoom-window-zoom))
@@ -30,8 +39,19 @@
   ([remap describe-symbol]   'helpful-symbol)
   ([remap describe-variable] 'helpful-variable))
 
+(use-package which-key                  ; useful shortcut reminders
+  :diminish
+  :custom
+  (which-key-idle-secondary-delay 0.01)
+  (which-key-show-docstrings t)
+  :config
+  ;; (which-key-setup-side-window-bottom)
+  (which-key-mode))
+
 (use-package popper                     ; popups
-  :general ("M-`"   'popper-toggle-latest)
+  :general
+  ("M-`"   'popper-toggle)
+  ("M-~"   'popper-toggle-type)
   :custom (popper-reference-buffers
            '("\\*Messages\\*"
              "Output\\*$"
@@ -39,7 +59,9 @@
              help-mode
              helpful-mode
              "\\*Apropos\\*"))
-  :init (popper-mode) (popper-echo-mode)) ; For echo area hints
+  :init
+  (popper-mode)
+  (popper-echo-mode))
 
 
 (provide 'init-ui)
