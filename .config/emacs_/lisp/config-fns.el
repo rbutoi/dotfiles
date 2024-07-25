@@ -185,7 +185,8 @@ shell exits, the buffer is killed."
   (interactive)
   (mapc 'kill-buffer
         (delq (current-buffer)
-              (cl-remove-if-not 'buffer-file-name (buffer-list)))))
+              (cl-remove-if-not 'buffer-file-name (buffer-list))))
+  (message "Killed all other buffers."))
 
 ;;;; epilogue
 

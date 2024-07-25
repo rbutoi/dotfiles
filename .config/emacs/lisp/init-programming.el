@@ -1,33 +1,48 @@
-;; -*- lexical-binding: t; -*-
-;; init-programming.el - Emacs config for programming
+;; init-programming.el - Programming  -*- lexical-binding: t; -*-
 
-(setq-default indent-tabs-mode nil)     ; never tabs to indent
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq vc-follow-symlinks t)             ; don't prompt
+(setopt indent-tabs-mode nil            ; never tabs to indent
+        tab-always-indent 'complete
+        vc-follow-symlinks t)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
+
+(toggle-text-mode-auto-fill)            ; auto-fill
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+
+;;;;;;;;;;;;;;
+;; keybinds ;;
+;;;;;;;;;;;;;;
 
 (general-def
   "C-;"   'comment-line
-  ;; "C-x ;" (defrepeater 'comment-line)
-  )
+  "C-x ;" (defrepeater 'comment-line))
 
-(use-package elisp-autofmt		; elisp
+;;;;;;;;;;;;;;;;;;;;;;
+;; extenal packages ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
+  :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
+                     "C-c C-u" 'string-inflection-cycle))
+
+(use-package auto-highlight-symbol      ; highlight symbols
+  :diminish
+  :config (global-auto-highlight-symbol-mode))
+
+(use-package corfu			; inline completions
   :config
-  (with-system darwin
-    (setq elisp-autofmt-python-bin "python3"))
-  :commands (elisp-autofmt-mode elisp-autofmt-buffer)
-  :hook (emacs-lisp-mode . elisp-autofmt-mode))
-
-(use-package terraform-mode)		; tf
-
-(use-package magit			; version control
-  :general
-  ("C-x C-g"   'magit-status
-   "C-x C-M-g" 'magit-list-repositories)
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)
   :custom
-  (magit-repository-directories `(("~/.dots/dotfiles" . 0)
-                                  ("~/dev" . 1)))
-  ;; (magit-log-auto-more t) TODO: keep?
-  ;; (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
-  )
+  (corfu-auto t)
+  (corfu-auto-delay 1.5))
+
+;; TODO: cape?
+
+;; TODO: make work
+;; (use-package copilot                    ; GitHub Copilot
+;;   :ensure (:host github :repo "copilot-emacs/copilot.el")
+;;   :hook (prog-mode . copilot-mode))
+
+
 
 (provide 'init-programming)

@@ -1,0 +1,29 @@
+;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
+
+(add-hook 'after-save-hook              ; automatically make scripts executable
+          'executable-make-buffer-file-executable-if-script-p)
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; extenal packages ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package format-all)
+
+(use-package elisp-autofmt		; elisp
+  :commands (elisp-autofmt-mode elisp-autofmt-buffer)
+  :hook (emacs-lisp-mode . elisp-autofmt-mode)
+  :config (with-system darwin (setq elisp-autofmt-python-bin "python3")))
+
+(use-package lua-mode)
+(use-package terraform-mode)
+(use-package yaml-mode)
+(use-package json-mode)
+(use-package i3wm-config-mode)
+(use-package markdown-mode)
+(use-package sql-indent)
+
+(use-package rust-mode)
+;; TODO C++ config
+
+
+(provide 'init-langs)

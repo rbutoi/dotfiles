@@ -1,5 +1,4 @@
-;; -*- lexical-binding: t; -*-
-;; init.el - Emacs config
+;; init.el - Emacs config  -*- lexical-binding: t; -*-
 
 ;;;; Prologue
 ;; package management: straight.el / use-package
@@ -431,10 +430,9 @@
 (use-package yaml-mode)
 (use-package i3wm-config-mode)
 (use-package sql-indent)
-(use-package rust-mode                  ; compiled
-  :config
-  (use-package cargo)
-  (use-package cargo-mode))
+(use-package cargo)
+(use-package cargo-mode)
+(use-package rust-mode)
 (use-package cc-mode :straight (:type built-in) ; C++
   :after smartparens
   :general (:keymaps 'c-mode-base-map "C-c C-o"
