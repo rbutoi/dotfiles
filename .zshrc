@@ -341,14 +341,6 @@ mosh () {
   fi
 }
 alias mosha='mosh -p 61736 a -- tmux new -As auto'
-alias stow='stow -v'    # nice to see the actions taken by default
-stow_dots() {
-  pushd ~/dotfiles && stow * && popd
-  if [[ -d ~/dotfiles-google ]]; then
-    pushd ~/dotfiles-google && stow * && popd
-  fi
-}
-alias stow_dots=
 alias fd="fd --one-file-system"
 alias type='whence -f'  # am too used to bash
 nms() { notmuch search "$@" | cut -c24-; }
