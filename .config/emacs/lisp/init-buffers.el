@@ -5,10 +5,8 @@
 (savehist-mode)				; save minibuffer history
 (setopt
  savehist-file (no-littering-expand-var-file-name "savehist.el")
- savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-
-;; TODO: tricky to get initialization right
-;; (add-hook 'elpaca-after-init-hook 'desktop-save-mode)
+ savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+ enable-recursive-minibuffers t)
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -64,7 +62,8 @@
    "C-x f"     'consult-fd
    "C-x M-f"   'set-fill-column
    [remap goto-line] 'consult-goto-line
-   "C-x M-:"   'consult-complex-command)
+   "C-x M-:"   'consult-complex-command
+   "C-M-o" 'consult-line-thing-at-point)
   (:keymaps 'isearch-mode-map
             "C-o" 'consult-line)
   :config
@@ -79,7 +78,15 @@
    :initial (thing-at-point 'symbol))
   (general-def "C-M-o" 'consult-line-thing-at-point)
 
-  (consult-customize consult-theme :preview-key '(:debounce 0.5 any)))
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any))
+
+  (defun my/consult-fd-dotfiles ()
+    "consult-fd on dotfiles repos"
+    (interactive) (consult-fd "~/.dots"))
+  (defun my/consult-ripgrep-dotfiles ()
+    "consult-ripgrep on dotfiles repos"
+    (interactive) (consult-ripgrep "~/.dots")))
 
 
 (provide 'init-buffers)

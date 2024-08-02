@@ -14,8 +14,10 @@
 
 ;; magit needs newer versions of `seq` and `transient` apparently.
 ;; (use-package seq)                       ; elpaca warns about this
-;; (use-package transient)
+(use-package transient)
 (use-package magit                      ; version control
+  :hook
+  (after-save . magit-after-save-refresh-status)
   :general
   ("C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
@@ -26,7 +28,10 @@
   (magit-log-auto-more t)
   (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
 
+(use-package forge)
+
 (use-package git-gutter
+  :diminish
   :init (global-git-gutter-mode)
   :custom
   (git-gutter:handled-backends '(git hg bzr svn))
