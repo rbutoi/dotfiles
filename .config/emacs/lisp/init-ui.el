@@ -1,5 +1,4 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
-;;
 
 (setopt mac-option-modifier 'meta)
 
@@ -9,6 +8,9 @@
 (column-number-mode)
 
 (global-goto-address-mode)
+
+(add-hook 'elpaca-after-init-hook       ; game-changer
+          (lambda () (desktop-save-mode) (desktop-read)))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
@@ -23,9 +25,7 @@
   :config
   (setopt auto-dark-dark-theme 'doom-acario-dark
 	  auto-dark-light-theme 'doom-acario-light
-          ;; TODO: system events no work
-	  ;; auto-dark-allow-osascript t
-          )
+	  auto-dark-allow-osascript t)
   (auto-dark-mode))
 
 (use-package zoom-window                ; temporarily zoom window

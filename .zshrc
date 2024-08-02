@@ -47,9 +47,16 @@ zstyle ':completion:*' format '[%d]'
 # also: try wizard % autoload -Uz compinstall && compinstall
 # zstyle ':completion:*' cache-path "$HOME/.cache/zsh/.zcompcache"
 
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
 autoload -Uz compinit bashcompinit
 compinit
 bashcompinit
+
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 HISTFILE=~/.zsh_history # history
 HISTSIZE=1000000000     # unlimited
@@ -66,7 +73,8 @@ zinit light romkatv/zsh-prompt-benchmark
 ## fzf
 ##
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh # no mas?
+(( $+commands[fzf] )) && source <(fzf --zsh)
 
 export FZF_DEFAULT_OPTS="--bind=ctrl-v:page-down,alt-v:page-up
   --color=fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
@@ -443,20 +451,6 @@ function osc7 {
 }
 add-zsh-hook -Uz chpwd osc7
 
-# topgrade every week
-if [[ $(($(<~/.cache/last_topgrade) + 604800)) -lt $(date +%s) ]] 2>/dev/null &&
-     load_below; then
-  echo -ne "\033[36mLast topgrade was "$(date -d@$(<~/.cache/last_topgrade))
-  echo  -e ", running now...\033[0m"
-  date +%s >~/.cache/last_topgrade
-  if [[ -n "$TMUX" ]]; then
-      tmux new-window 'echo -e "\033[36mTopgrade...\033[0m"; topgrade;
-                       echo press enter to exit...; read'
-  else
-    topgrade --tmux
-  fi
-fi
-
 #################
 # host-specific #
 #################
@@ -468,3 +462,4 @@ source_if ~/.config/zsh/.zshrc_specific
 # Local Variables:
 # eval: (column-enforce-mode)
 # End:
+

@@ -3,6 +3,10 @@
 (add-hook 'after-save-hook              ; automatically make scripts executable
           'executable-make-buffer-file-executable-if-script-p)
 
+(general-add-hook                           ; this seems like an upstream bug?
+ '(conf-mode-hook yaml-mode-hook)
+ (lambda () (run-mode-hooks 'prog-mode-hook)))
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;

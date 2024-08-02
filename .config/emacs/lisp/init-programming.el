@@ -5,9 +5,6 @@
         vc-follow-symlinks t)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
 
-(toggle-text-mode-auto-fill)            ; auto-fill
-(add-hook 'prog-mode-hook 'auto-fill-mode)
-
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
@@ -26,7 +23,12 @@
 
 (use-package auto-highlight-symbol      ; highlight symbols
   :diminish
-  :config (global-auto-highlight-symbol-mode))
+  :config
+  (with-eval-after-load 'yaml-mode
+      (add-to-list 'ahs-modes 'yaml-mode))
+  (with-eval-after-load 'terraform-mode
+      (add-to-list 'ahs-modes 'terraform-mode))
+  (global-auto-highlight-symbol-mode))
 
 (use-package corfu			; inline completions
   :config

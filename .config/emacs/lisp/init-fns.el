@@ -37,7 +37,61 @@
   (mapc 'kill-buffer
         (delq (current-buffer)
               (cl-remove-if-not 'buffer-file-name (buffer-list))))
-  (message "Killed all other buffers."))
+ (message "Killed all other buffers."))
 
+;;;;;;;;;;;;;
+;; Consult ;;
+;;;;;;;;;;;;;
+
+(with-eval-after-load 'consult
+  ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
+  (defvar-local consult-toggle-preview-orig nil)
+
+  (defun consult-toggle-preview ()
+    "Command to enable/disable preview."
+    (interactive)
+    (if consult-toggle-preview-orig
+	(setq consult--preview-function consult-toggle-preview-orig
+              consult-toggle-preview-orig nil)
+      (setq consult-toggle-preview-orig consult--preview-function
+            consult--preview-function #'ignore)))
+
+  (define-key vertico-map (kbd "M-P") #'consult-toggle-preview)
+
+  ;; TODO: this prevents going up
+  ;; ;; https://github.com/minad/consult/wiki#previewing-files-in-find-file
+  ;; (setq read-file-name-function #'consult-find-file-with-preview)
+
+  ;; (defun consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+  ;;   (interactive)
+  ;;   (let ((default-directory (or dir default-directory))
+  ;;         (minibuffer-completing-file-name t))
+  ;;     (consult--read #'read-file-name-internal :state (consult--file-preview)
+  ;;                    :prompt prompt
+  ;;                    :initial initial
+  ;;                    :require-match mustmatch
+  ;;                    :predicate pred)))
+  )                                     ; end consult
+
+;;;;;;;;;;;
+;; Magit ;;
+;;;;;;;;;;;
+
+;; ;; http://endlessparentheses.com/create-github-prs-from-emacs-with-magit.html
+;; (defun endless/visit-pull-request-url ()
+;;   "Visit the current branch's PR on Github."
+;;   (interactive)
+;;   (browse-url
+;;    (format "https://github.com/%s/pull/new/%s"
+;;            (replace-regexp-in-string
+;;             "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+;;             (magit-get "remote"
+;;                        (magit-get-push-remote)
+;;                        "url"))
+;;            (magit-get-current-branch))))
+
+;; (eval-after-load 'magit
+;;   '(define-key magit-mode-map "v"
+;;      #'endless/visit-pull-request-url))
 
 (provide 'init-fns)

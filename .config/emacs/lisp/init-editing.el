@@ -3,9 +3,10 @@
 (delete-selection-mode)                 ; typing overwrites selection
 (electric-pair-mode)                    ; automatic ()
 (global-auto-revert-mode)
-(setopt global-auto-revert-non-file-buffers   t
-        set-mark-command-repeat-pop           t ; can keep C-u C-SPC C-SPC C-SPC...
-        kill-do-not-save-duplicates           t)
+(setopt global-auto-revert-non-file-buffers t
+        set-mark-command-repeat-pop t ; can keep C-u C-SPC C-SPC C-SPC...
+        kill-do-not-save-duplicates t
+        truncate-lines t)
 
 (use-package flyspell                   ; spellcheck
   :ensure nil
@@ -43,6 +44,11 @@
 
 (use-package ialign
   :general ("C-x l" 'ialign))           ; interactive align regexp
+
+(use-package hungry-delete              ; delete consecutive whitespace
+  :custom (hungry-delete-join-reluctantly t) ; leave a space between words
+  ;; :general ("C-c h" 'hungry-delete-mode) TODO: maybe??
+  :config (global-hungry-delete-mode))
 
 (use-package undo-tree                  ; visual undo
   :diminish
