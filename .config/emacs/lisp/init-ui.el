@@ -41,12 +41,7 @@
 
 (use-package which-key                  ; useful shortcut reminders
   :diminish
-  :custom
-  (which-key-idle-secondary-delay 0.01)
-  (which-key-show-docstrings t)
-  :config
-  ;; (which-key-setup-side-window-bottom)
-  (which-key-mode))
+  :config (which-key-mode))
 
 (use-package popper                     ; popups
   :general
