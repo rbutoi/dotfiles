@@ -38,6 +38,8 @@
 (use-package no-littering               ; must be set before load path
   :init
   (setopt no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
+  :custom
+  (create-lockfiles nil)
   :config
   (require 'recentf)
   (add-to-list 'recentf-exclude

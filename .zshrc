@@ -266,11 +266,10 @@ _e() {                          # emacs with stdin
     emacsclient -a= "$@"
   fi
 }
-ew()  { _e "$@" -nw;  }             # inline console editor
-en()  { _e "$@" -n ;  }             # open in existing editor
-ewc() { _e "$@" -nc;  }             # new graphical editor
+ew() { _e "$@" -nw;  }             # inline console editor
+en() { _e "$@" -n ;  }             # open in existing editor
+ec() { _e "$@" -nc;  }             # new graphical editor
 alias e=ew
-alias em='ew --eval "(my/notmuch)"' # (e)macs mail
 
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
@@ -406,7 +405,6 @@ if (( $+commands[bat] )); then
   alias xargs="TERM=screen-256color xargs" # if it calls bat/less
   alias c=bat
   alias m=bat # used to be `most` for a long time
-  export PAGER="bat --plain"
   export BAT_THEME=gruvbox-dark
   export BAT_STYLE=changes,header,rule,numbers,snip
 fi
@@ -414,6 +412,7 @@ fi
 if (( $+commands[delta] )); then
   diff()  { /usr/bin/diff -u "$@" | delta; }
   diffs() { /usr/bin/diff -u "$@" | delta --side-by-side; }
+  bdiff() { /usr/bin/diff --color=auto "$@" }
 else
   alias diff="diff --color=auto"
 fi
@@ -455,7 +454,7 @@ add-zsh-hook -Uz chpwd osc7
 # host-specific #
 #################
 source_if ~/.zshrc_specific
-source_if ~/.config/zsh/.zshrc_specific
+source_if ~/.config/zsh/zshrc_specific
 
 #  LocalWords:  shellenv
 

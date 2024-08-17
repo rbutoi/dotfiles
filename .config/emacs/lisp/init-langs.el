@@ -17,16 +17,18 @@
   :commands (elisp-autofmt-mode elisp-autofmt-buffer)
   :hook (emacs-lisp-mode . elisp-autofmt-mode)
   :config (with-system darwin (setq elisp-autofmt-python-bin "python3")))
-
 (use-package lua-mode)
+
 (use-package terraform-mode)
 (use-package yaml-mode)
 (use-package json-mode)
 (use-package i3wm-config-mode)
 (use-package markdown-mode)
 (use-package sql-indent)
+(use-package dockerfile-mode)
 
 (use-package rust-mode)
+(use-package go-mode)
 ;; TODO C++ config
 
 
