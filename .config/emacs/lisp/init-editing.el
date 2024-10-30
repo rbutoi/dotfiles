@@ -6,7 +6,8 @@
 (setopt global-auto-revert-non-file-buffers t
         set-mark-command-repeat-pop t ; can keep C-u C-SPC C-SPC C-SPC...
         kill-do-not-save-duplicates t
-        truncate-lines t)
+        truncate-lines t
+        fill-column 80)
 
 (use-package flyspell                   ; spellcheck
   :ensure nil
@@ -75,6 +76,5 @@
 ;;   :config
 ;;   (require 'smartparens-config)
 ;;   (smartparens-global-mode))
-
 
 (provide 'init-editing)

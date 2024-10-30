@@ -352,6 +352,22 @@ alias fd="fd --one-file-system"
 alias type='whence -f'  # am too used to bash
 nms() { notmuch search "$@" | cut -c24-; }
 
+gh_merge_approved() {
+  gh search prs --review approved --author=@me is:open --json url | xargs -n1 gh pr merge --squash
+}
+
+gh_approve_and_merge() {
+  gh pr review --approve "$@" && gh pr merge --squash "$@"
+}
+
+gh_stars() {
+  # 269 character width
+  echo 'my stars: updated | starred | created'
+  gh api --paginate user/starred                                 \
+     -H "Accept: application/vnd.github.v3.star+json" --template \
+     '{{range .}}{{printf "%-60s" (.repo.html_url) | color "yellow"}} {{printf "⭐%-6.0f" (.repo.stargazers_count) | color "white"}} {{printf "[%10.10s] %-120.120s %16s up %16s ⭐\t from %15s\n" (.repo.language) (.repo.description) (timeago .repo.updated_at) (timeago .starred_at) (timeago .repo.created_at)}}{{end}}'
+}
+
 ########################
 # external shell tools #
 ########################
@@ -419,7 +435,7 @@ fi
 
 if (( $+commands[eza] )); then
   l()  { eza --group-directories-first "$@" }
-  ll() { eza -g -l --git "$@" }
+  ll() { eza --group-directories-first --time-style=+'%a %e %b %H:%M' -g -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
 fi
@@ -462,3 +478,8 @@ source_if ~/.config/zsh/zshrc_specific
 # eval: (column-enforce-mode)
 # End:
 
+# hmm extras
+
+pupdate() { case ":${PATH:=$1}:" in *:"$1":*) ;; *) PATH="$1:$PATH" ;; esac; }
+
+pupdate ~/.local/bin

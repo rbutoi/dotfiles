@@ -1,5 +1,8 @@
 ;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
 
+(setq python-indent-offset 2
+      sh-basic-offset      2)
+
 (add-hook 'after-save-hook              ; automatically make scripts executable
           'executable-make-buffer-file-executable-if-script-p)
 
