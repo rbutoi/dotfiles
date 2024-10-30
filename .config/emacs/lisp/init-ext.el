@@ -21,12 +21,13 @@
   :general
   ("C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
+  (:keymaps 'magit-mode-map "M-m" 'magit-toggle-margin)
   :custom
-  (magit-repository-directories `(("~/.dots/dotfiles" . 0)
-                                  ("~/.dots/private-dots" . 0)
-                                  ("~/dev" . 1)))
+  (magit-repository-directories `(("~/dev" . 2)
+                                  ("~/oss" . 1)))
   (magit-log-auto-more t)
-  (magit-log-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
+  (magit-log-margin    '(t "%a %b %d %Y" magit-log-margin-width t 18))
+  (magit-status-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
 
 (use-package forge)
 

@@ -1,3 +1,9 @@
+[keyboard]
+bindings = [
+{ key = "Tab", mods =       "Control", action = "SelectNextTab"},
+{ key = "Tab", mods = "Shift|Control", action = "SelectPreviousTab"}
+]
+
 [font]
 size = 13
 

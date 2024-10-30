@@ -14,6 +14,6 @@ elif [ "$kind" = vnd.openxmlformats-officedocument.spreadsheetml.sheet ] || \
 elif [ "$category" = text ]; then
     bat --color=always "$1"
 else
-    lesspipe "$1" | bat --color=always
+    lesspipe.sh "$1" | bat --color=always
 fi
 # lesspipe.sh don't use exa, bat and chafa, it use ls and exiftool. so we create a lessfilter.
