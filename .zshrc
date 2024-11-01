@@ -420,7 +420,7 @@ if (( $+commands[bat] )); then
   alias bat="TERM=screen-256color bat --italic-text=always"
   alias xargs="TERM=screen-256color xargs" # if it calls bat/less
   alias c=bat
-  alias m=bat # used to be `most` for a long time
+  alias m=less # used to be `most` for a long time
   export BAT_THEME=gruvbox-dark
   export BAT_STYLE=changes,header,rule,numbers,snip
 fi
@@ -483,3 +483,5 @@ source_if ~/.config/zsh/zshrc_specific
 pupdate() { case ":${PATH:=$1}:" in *:"$1":*) ;; *) PATH="$1:$PATH" ;; esac; }
 
 pupdate ~/.local/bin
+
+export PYTHON_HISTORY="${XDG_STATE_HOME:-$HOME/.local/state}"/python_history
