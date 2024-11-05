@@ -16,11 +16,6 @@
 (use-package defrepeater)
 (elpaca-wait)
 
-(setopt custom-file		     ; store customizations separately
-      (expand-file-name "custom.el"
-                        (f-join user-emacs-directory "lisp/")))
-(add-hook 'elpaca-after-init-hook (lambda () (load custom-file)))
-
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
@@ -47,6 +42,7 @@
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-etc-directory))
   (no-littering-theme-backups))
+(elpaca-wait)
 
 
 (add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
