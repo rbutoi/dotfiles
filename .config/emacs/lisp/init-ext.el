@@ -12,6 +12,8 @@
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
+(when (executable-find "gls") (setopt insert-directory-program "gls"))
+
 ;; magit needs newer versions of `seq` and `transient` apparently.
 ;; (use-package seq)                       ; elpaca warns about this
 (use-package transient)

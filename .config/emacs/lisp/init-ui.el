@@ -10,23 +10,17 @@
 (global-goto-address-mode)
 
 (add-hook 'elpaca-after-init-hook       ; game-changer
-          (lambda () (desktop-save-mode) (desktop-read)))
+          (lambda ()
+            (desktop-save-mode)
+            (desktop-read)))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package diminish)                  ; TODO: consider doom-modeline
-(use-package doom-themes)
-(elpaca-wait)
+(use-package ef-themes :config (load-theme 'ef-autumn))
 
-(use-package auto-dark	      ; theme selection following OS dark mode
-  :diminish
-  :config
-  (setopt auto-dark-dark-theme 'doom-acario-dark
-	  auto-dark-light-theme 'doom-acario-light
-	  auto-dark-allow-osascript t)
-  (auto-dark-mode))
+(use-package diminish)                  ; TODO: consider doom-modeline
 
 (use-package zoom-window                ; temporarily zoom window
   :general ("C-x C-z" 'zoom-window-zoom))
@@ -57,6 +51,5 @@
   :init
   (popper-mode)
   (popper-echo-mode))
-
 
 (provide 'init-ui)

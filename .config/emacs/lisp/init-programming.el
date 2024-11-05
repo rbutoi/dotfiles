@@ -6,6 +6,9 @@
         tab-width 2)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
 
+(general-add-hook '(python-mode-hook typescript-ts-base-mode-hook)
+                  #'eglot-ensure)
+
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
@@ -52,6 +55,17 @@
      :ext "\\.ts\\'")
     "Recipe for libtree-sitter-typescript.dylib")
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
+
+(use-package treemacs
+  :hook (emacs-startup . treemacs)
+  :config
+  (treemacs-project-follow-mode)
+  (treemacs-git-commit-diff-mode))
+
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once))
+(use-package treemacs-magit
+  :after (treemacs magit))
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)

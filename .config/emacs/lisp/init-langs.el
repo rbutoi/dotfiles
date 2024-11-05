@@ -29,6 +29,9 @@
 (use-package markdown-mode)
 (use-package sql-indent)
 (use-package dockerfile-mode)
+(use-package deno-ts-mode)
+(use-package deno-fmt
+  :hook (deno-ts-mode deno-tsx-ts-mode))
 
 (use-package rust-mode)
 (use-package go-mode)
