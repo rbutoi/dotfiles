@@ -52,6 +52,7 @@
   :config (global-hungry-delete-mode))
 
 (use-package undo-tree                  ; visual undo
+  :defer 2
   :diminish
   :general
   ("C-z"   'undo-tree-undo)

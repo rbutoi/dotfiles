@@ -6,8 +6,20 @@
         tab-width 2)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
 
-(general-add-hook '(python-mode-hook typescript-ts-base-mode-hook)
+(general-add-hook '(python-ts-mode-hook typescript-ts-base-mode-hook)
                   #'eglot-ensure)
+
+(defun my/search-gh-web ()
+  "Search GitHub repos in browser"
+  (interactive)
+  (browse-url
+   (concat "https://github.com/search?type=code&q="
+           (url-hexify-string
+            (read-from-minibuffer "GitHub code search on web: "
+                                  (thing-at-point 'symbol)
+                                  nil
+                                  nil
+                                  'my/gh-web-searches)))))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -75,9 +87,9 @@
   :diminish
   :config
   (with-eval-after-load 'yaml-mode
-      (add-to-list 'ahs-modes 'yaml-mode))
+    (add-to-list 'ahs-modes 'yaml-mode))
   (with-eval-after-load 'terraform-mode
-      (add-to-list 'ahs-modes 'terraform-mode))
+    (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
 
 (use-package corfu			; inline completions
