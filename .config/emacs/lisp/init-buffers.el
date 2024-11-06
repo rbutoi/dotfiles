@@ -83,10 +83,12 @@
 
   (defun my/consult-fd-dotfiles ()
     "consult-fd on dotfiles repos"
-    (interactive) (consult-fd "~/.dots"))
+    (interactive) (consult-fd "~/.dots -- --hidden"))
   (defun my/consult-ripgrep-dotfiles ()
     "consult-ripgrep on dotfiles repos"
-    (interactive) (consult-ripgrep "~/.dots")))
+    (interactive) (consult-ripgrep "~/.dots" " -- -.")))
+
+(use-package recursion-indicator :config (recursion-indicator-mode))
 
 
 (provide 'init-buffers)

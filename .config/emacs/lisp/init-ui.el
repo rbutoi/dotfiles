@@ -1,6 +1,6 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
-(setopt mac-option-modifier 'meta)
+(set-face-attribute 'default nil :family "Iosevka" :height 130)
 
 (tool-bar-mode -1)
 (context-menu-mode)
@@ -9,16 +9,18 @@
 
 (global-goto-address-mode)
 
-(add-hook 'elpaca-after-init-hook       ; game-changer
+(add-hook 'elpaca-after-init-hook
           (lambda ()
-            (desktop-save-mode)
+            (desktop-save-mode)         ; game-changer
             (desktop-read)))
+
+(setopt mac-option-modifier 'meta)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package ef-themes :config (load-theme 'ef-autumn))
+(use-package ef-themes :config (load-theme 'ef-owl))
 
 (use-package diminish)                  ; TODO: consider doom-modeline
 

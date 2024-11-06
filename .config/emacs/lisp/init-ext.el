@@ -38,12 +38,19 @@
   :init (global-git-gutter-mode)
   :custom
   (git-gutter:handled-backends '(git hg bzr svn))
-  (git-gutter:hide-gutter t)
   (git-gutter:update-interval 2)
   :general
   ("C-x v =" 'git-gutter:popup-hunk
    "C-x v s" 'git-gutter:stage-hunk
-   "C-x v r" 'git-gutter:revert-hunk)
+   "C-x v r" 'git-gutter:revert-hunk
+   "C-x v p"
+   (defun my/git-gutter:toggle-start-revision ()
+     "Toggle git-gutter:start-revision between \"\" and \"HEAD^\"."
+     (interactive)
+     (if (string= git-gutter:start-revision "HEAD^")
+         (git-gutter:set-start-revision "")
+       (git-gutter:set-start-revision "HEAD^"))
+     (message "Set git-gutter:start-revision to \"%s\"" git-gutter:start-revision)))
   :config
   (with-eval-after-load 'consult
     (add-list-to-list 'git-gutter:update-commands

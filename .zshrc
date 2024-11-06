@@ -58,12 +58,24 @@ bashcompinit
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
+# HISTORY
+setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format.
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history.
+setopt HIST_FIND_NO_DUPS         # Do not display a previously found event.
+setopt HIST_IGNORE_ALL_DUPS      # Delete an old recorded event if a new event is a duplicate.
+setopt HIST_IGNORE_DUPS          # Do not record an event that was just recorded again.
+setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file.
+setopt SHARE_HISTORY             # Share history between all sessions.
+# END HISTORY
+
+## history
 HISTFILE=~/.zsh_history # history
 HISTSIZE=1000000000     # unlimited
 SAVEHIST=$HISTSIZE
 # `fc -R` to read history (from other running shells) now. otherwise history is
 # preserved per-shell
-setopt inc_append_history hist_ignore_space hist_ignore_dups
+setopt inc_append_history hist_ignore_space hist_ignore_dups extended_history
 
 zinit light romkatv/powerlevel10k # prompt
 source_if ~/.p10k.zsh             # `p10k configure` or edit this file
@@ -366,6 +378,10 @@ gh_stars() {
   gh api --paginate user/starred                                 \
      -H "Accept: application/vnd.github.v3.star+json" --template \
      '{{range .}}{{printf "%-60s" (.repo.html_url) | color "yellow"}} {{printf "⭐%-6.0f" (.repo.stargazers_count) | color "white"}} {{printf "[%10.10s] %-120.120s %16s up %16s ⭐\t from %15s\n" (.repo.language) (.repo.description) (timeago .repo.updated_at) (timeago .starred_at) (timeago .repo.created_at)}}{{end}}'
+}
+
+gh_rate_limit_left() {
+  gdate -d@$(($(gh api rate_limit | jq .rate.reset) - $(date +%s))) -u +'github rate limit %X left'
 }
 
 ########################
