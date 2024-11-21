@@ -384,6 +384,10 @@ gh_rate_limit_left() {
   gdate -d@$(($(gh api rate_limit | jq .rate.reset) - $(date +%s))) -u +'github rate limit %X left'
 }
 
+git_clean_branches() {
+  git branch --merged | grep -v "\*\|main" | xargs -n 1 git branch -d
+}
+
 ########################
 # external shell tools #
 ########################
@@ -454,6 +458,9 @@ if (( $+commands[eza] )); then
   ll() { eza --group-directories-first --time-style=+'%a %e %b %H:%M' -g -l --git "$@" }
   alias la='l -aa'
   alias lla='ll -aa'
+  alias llr='ll --time-style=relative'
+  alias llra='llr -aa'
+  alias llar=llra
 fi
 
 if [[ -e ~/.config/broot/launcher/bash/br ]]; then
