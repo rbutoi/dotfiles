@@ -16,6 +16,7 @@
 (use-package terraform-mode)
 (use-package yaml-mode)
 (use-package json-mode)
+(use-package jq-mode)
 (use-package i3wm-config-mode)
 (use-package markdown-mode)
 (use-package sql-indent)
