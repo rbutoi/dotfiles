@@ -29,7 +29,8 @@
                                   ("~/oss" . 1)))
   (magit-log-auto-more t)
   (magit-log-margin    '(t "%a %b %d %Y" magit-log-margin-width t 18))
-  (magit-status-margin '(t "%a %b %d %Y" magit-log-margin-width t 18)))
+  (magit-status-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
+  (magit-pull-or-fetch t))
 
 (use-package forge)
 
