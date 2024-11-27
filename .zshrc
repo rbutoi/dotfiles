@@ -282,6 +282,14 @@ ew() { _e "$@" -nw;  }             # inline console editor
 en() { _e "$@" -n ;  }             # open in existing editor
 ec() { _e "$@" -nc;  }             # new graphical editor
 alias e=ew
+function magit () {
+    git_root=$(git rev-parse --show-toplevel)
+    emacsclient -a emacs \
+        -e "(magit-status \"${git_root}\")"
+    if [[ -f `which osascript` ]]; then
+        osascript -e "tell application \"Emacs\" to activate"
+    fi
+}
 
 export EDITOR="emacsclient -t"
 export ALTERNATE_EDITOR=zile
@@ -437,7 +445,7 @@ fi
 alias less="TERM=screen-256color less"
 if (( $+commands[bat] )); then
   # change TERM for proper italics support in bat and less
-  alias bat="TERM=screen-256color bat --italic-text=always"
+  alias bat="TERM=screen-256color bat --italic-text=always --wrap=never"
   alias xargs="TERM=screen-256color xargs" # if it calls bat/less
   alias c=bat
   alias m=less # used to be `most` for a long time
