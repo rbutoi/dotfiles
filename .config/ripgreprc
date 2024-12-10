@@ -1,5 +1,5 @@
 --type-add=desktop:*.desktop
---max-columns=300
+--max-columns=2000
 --max-columns-preview
 --hidden
 --smart-case
