@@ -25,6 +25,7 @@
 (use-package deno-fmt :hook (deno-ts-mode deno-tsx-ts-mode))
 (use-package rust-mode)
 (use-package go-mode)
+(use-package just-mode)
 ;; TODO C++ config
 
 

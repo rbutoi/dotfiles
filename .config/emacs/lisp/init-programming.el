@@ -6,7 +6,11 @@
         tab-width 2)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
 
-(general-add-hook '(python-ts-mode-hook typescript-ts-base-mode-hook)
+(add-hook 'eglot-managed-mode-hook
+          (lambda () (eglot-inlay-hints-mode -1)))
+(general-add-hook '(python-ts-mode-hook
+                    typescript-ts-base-mode-hook
+                    c++-ts-mode-hook)
                   #'eglot-ensure)
 
 (defun my/search-gh-web ()
