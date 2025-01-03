@@ -81,6 +81,8 @@ zinit light romkatv/powerlevel10k # prompt
 source_if ~/.p10k.zsh             # `p10k configure` or edit this file
 zinit light romkatv/zsh-prompt-benchmark
 
+setopt interactive_comments
+
 ##
 ## fzf
 ##
