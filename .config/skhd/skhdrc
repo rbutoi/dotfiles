@@ -1,8 +1,11 @@
 # -*- mode: conf-unix -*-
 
-cmd + shift - return : alacritty msg create-window || alacritty
+cmd + shift - return : open /Applications/Ghostty.app
 
-f14                  : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
-f15                  : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"
-shift - f14          : osascript -e "set volume output volume ((output volume of (get volume settings)) - 1)"
-shift - f15          : osascript -e "set volume output volume ((output volume of (get volume settings)) + 1)"
+f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
+f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"
+shift - f14 : osascript -e "set volume output volume ((output volume of (get volume settings)) - 1)"
+shift - f15 : osascript -e "set volume output volume ((output volume of (get volume settings)) + 1)"
+
+# gmail mark all as read shortcut
+cmd + shift + ctrl - u : skhd -t '*u'; skhd -k 'shift - i'; skhd -t '*n'
