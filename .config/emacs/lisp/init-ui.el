@@ -1,6 +1,6 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "Iosevka" :height 130)
+(set-face-attribute 'default nil :family "Iosevka Fixed" :height 130)
 
 (tool-bar-mode -1)
 (context-menu-mode)
