@@ -22,7 +22,8 @@
 
 (general-def
   "M-z"   'toggle-truncate-lines
-  "C-M-z" 'zap-up-to-char)
+  "C-M-z" 'zap-up-to-char
+  "s-v"   'clipboard-yank)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
