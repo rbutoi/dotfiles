@@ -23,7 +23,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("9d8d60e69db09062e759f008e59fac1d76618b09cddaf06cef093653c16f1e75" default))
+   '("b9c002dc827fb75b825da3311935c9f505d48d7ee48f470f0aa7ac5d2a595ab2" "9d8d60e69db09062e759f008e59fac1d76618b09cddaf06cef093653c16f1e75" default))
  '(safe-local-variable-values '((elisp-lint-indent-specs (git-gutter:awhen . 1)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

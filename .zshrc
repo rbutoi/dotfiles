@@ -371,6 +371,7 @@ mosh () {
 }
 alias mosha='mosh -p 61736 a -- tmux new -As auto'
 alias fd="fd --one-file-system"
+alias fdh="fd -H"
 alias type='whence -f'  # am too used to bash
 nms() { notmuch search "$@" | cut -c24-; }
 
