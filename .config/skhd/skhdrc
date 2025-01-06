@@ -1,6 +1,8 @@
 # -*- mode: conf-unix -*-
 
-cmd + shift - return : open /Applications/Ghostty.app
+cmd + shift - return : open /Applications/kitty.app
+cmd + shift - e : open /Applications/Emacs.app
+cmd + shift - z : open /Applications/zoom.us.app
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"

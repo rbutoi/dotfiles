@@ -14,7 +14,8 @@
             (desktop-save-mode)         ; game-changer
             (desktop-read)))
 
-(setopt mac-option-modifier 'meta)
+(setopt mac-option-modifier  'meta
+        mac-command-modifier 'super)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;

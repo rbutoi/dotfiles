@@ -23,6 +23,7 @@
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
   "C-x m"     'execute-extended-command
+  "s-m"       'suspend-frame
   "C-x M-c"   'restart-emacs
   "C-x C-M-c" 'save-buffers-kill-emacs)
 
