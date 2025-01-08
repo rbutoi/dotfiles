@@ -279,6 +279,8 @@ _e() {                          # emacs with stdin
   else
     emacsclient -a= "$@"
   fi
+
+  a=/Applications/Emacs.app; [[ -e $a ]] && open $a
 }
 ew() { _e "$@" -nw;  }             # inline console editor
 en() { _e "$@" -n ;  }             # open in existing editor
