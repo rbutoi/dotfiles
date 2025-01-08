@@ -23,7 +23,9 @@
   "M-k"       (lambda () (interactive) (kill-buffer nil))
   "C-M-k"     'kill-sexp
   "C-c M-k"   'kill-sentence
-  "C-x M-k"   'kill-other-buffers)
+  "C-x M-k"   'kill-other-buffers
+  "s-n"       'make-frame-command
+  "s-w"       'delete-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
@@ -33,6 +35,8 @@
   :general ("C-x b" 'bufler))
 
 ;; minibuffer
+(use-package recursion-indicator :config (recursion-indicator-mode))
+
 (use-package vertico                    ; VERTical Interactive COmpletion
   :demand t                             ; otherwise first invocation is a dud
   :hook ((minibuffer-setup . vertico-repeat-save))
@@ -83,12 +87,10 @@
 
   (defun my/consult-fd-dotfiles ()
     "consult-fd on dotfiles repos"
-    (interactive) (consult-fd "~/.dots -- --hidden"))
+    (interactive) (consult-fd "~/.dots" " -- --hidden"))
   (defun my/consult-ripgrep-dotfiles ()
     "consult-ripgrep on dotfiles repos"
     (interactive) (consult-ripgrep "~/.dots" " -- -.")))
-
-(use-package recursion-indicator :config (recursion-indicator-mode))
 
 
 (provide 'init-buffers)

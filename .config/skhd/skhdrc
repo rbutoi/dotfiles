@@ -1,13 +1,25 @@
 # -*- mode: conf-unix -*-
 
-cmd + shift - return : open /Applications/kitty.app
-cmd + shift - e : open /Applications/Emacs.app
-cmd + shift - z : open /Applications/zoom.us.app
+cmd + ctrl    - return : open /Applications/kitty.app --args -- tmux new -A -s auto
+cmd + ctrl    - e      : open /Applications/Emacs.app
+cmd + ctrl    - c      : open "/Applications/Google Chrome.app"
+# cmd + ctrl  - s already pops up Last.fm natively
+cmd + shift   - s      : open /Applications/Slack.app
+cmd + ctrl    - z      : open /Applications/zoom.us.app
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"
 shift - f14 : osascript -e "set volume output volume ((output volume of (get volume settings)) - 1)"
 shift - f15 : osascript -e "set volume output volume ((output volume of (get volume settings)) + 1)"
+
+# ref: https://github.com/p5quared/apple-music.nvim/blob/ed0b10dbd28f544ebbf04694c6056fed6b63394f/lua/apple-music/init.lua
+cmd         - f13 : osascript -e 'tell application "Music" to playpause'
+cmd + alt   - f14 : osascript -e 'tell application "Music" to play previous track'
+cmd + alt   - f15 : osascript -e 'tell application "Music" to play next track'
+cmd         - f14 : osascript -e 'tell application "Music" to set sound volume to sound volume - 5'
+cmd         - f15 : osascript -e 'tell application "Music" to set sound volume to sound volume + 5'
+cmd + shift - f14 : osascript -e 'tell application "Music" to set sound volume to sound volume - 1'
+cmd + shift - f15 : osascript -e 'tell application "Music" to set sound volume to sound volume + 1'
 
 # gmail mark all as read shortcut
 cmd + shift + ctrl - u : skhd -t '*u'; skhd -k 'shift - i'; skhd -t '*n'

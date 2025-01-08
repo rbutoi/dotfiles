@@ -80,8 +80,8 @@
 
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once))
-(use-package treemacs-magit
-  :after (treemacs magit))
+(with-eval-after-load 'magit
+  (use-package treemacs-magit))
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)

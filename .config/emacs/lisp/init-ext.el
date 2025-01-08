@@ -14,9 +14,9 @@
 
 (when (executable-find "gls") (setopt insert-directory-program "gls"))
 
-;; magit needs newer versions of `seq` and `transient` apparently.
-;; (use-package seq)                       ; elpaca warns about this
-(use-package transient)
+;; https://github.com/progfolio/elpaca/issues/343
+;; (elpaca seq)                            ; comment after initial install
+(elpaca (transient :wait t))
 (use-package magit                      ; version control
   :hook
   (after-save . magit-after-save-refresh-status)
@@ -32,7 +32,9 @@
   (magit-status-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
   (magit-pull-or-fetch t))
 
-(use-package forge)
+;; Package	Status	Info
+;; forge		failed	magit installed version (4 2 0) lower than min required 4.2.1
+;; (use-package forge)
 
 (use-package git-gutter
   :diminish

@@ -1,6 +1,10 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
+;; Font, theme
 (set-face-attribute 'default nil :family "Iosevka Fixed" :height 130)
+(use-package gruvbox-theme
+  :hook
+  (elpaca-after-init . (lambda () (load-theme 'gruvbox t))))
 
 (tool-bar-mode -1)
 (context-menu-mode)
@@ -9,19 +13,22 @@
 
 (global-goto-address-mode)
 
-(add-hook 'elpaca-after-init-hook
-          (lambda ()
-            (desktop-save-mode)         ; game-changer
-            (desktop-read)))
+(add-hook 'elpaca-after-init-hook       ; restore buffers and frames on startup
+          (lambda () (desktop-save-mode) (desktop-read)) -10)
+
+;;;;;;;;;;;;;;
+;; keybinds ;;
+;;;;;;;;;;;;;;
 
 (setopt mac-option-modifier  'meta
         mac-command-modifier 'super)
 
+(general-def
+  "C-s-f" 'toggle-frame-fullscreen)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package ef-themes :config (load-theme 'ef-owl))
 
 (use-package diminish)                  ; TODO: consider doom-modeline
 
