@@ -1,3 +1,0 @@
-function .~
-        . ~/.bashrc $argv;
-end
