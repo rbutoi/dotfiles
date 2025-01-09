@@ -3,7 +3,18 @@
 ;; tweaked. intentionally only definitions without anyhook-adding or
 ;; functionality-changing.
 
-;; TODO: copy needed things over
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stolen from https://github.com/doomemacs/doomemacs ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmacro cmd! (&rest body)
+  "Returns (lambda () (interactive) ,@body)
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
+  (declare (doc-string 1))
+  `(lambda (&rest _) (interactive) ,@body))
+
+;;;
 
 (defun add-list-to-list (dst src) ; https://emacs.stackexchange.com/a/68048/26271
   "Similar to `add-to-list', but accepts a list as 2nd argument"

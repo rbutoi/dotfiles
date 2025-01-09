@@ -17,10 +17,10 @@
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
   "M-3"       'split-window-right
-  "M-o"       (lambda () (interactive) (other-window +1))
-  "M-i"       (lambda () (interactive) (other-window -1))
+  "M-o"       (cmd! (other-window +1))
+  "M-i"       (cmd! (other-window -1))
   "C-c M-i"   'tab-to-tab-stop		; former M-i
-  "M-k"       (lambda () (interactive) (kill-buffer nil))
+  "M-k"       (cmd! (kill-buffer nil))
   "C-M-k"     'kill-sexp
   "C-c M-k"   'kill-sentence
   "C-x M-k"   'kill-other-buffers
