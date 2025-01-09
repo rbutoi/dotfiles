@@ -73,8 +73,8 @@
             "M-1"  'delete-other-windows ; re-bind these
             "M-2"  'split-window-below
             "M-3"  'split-window-right
-            "M-o"  (lambda () (interactive) (other-window +1))
-            "M-i"  (lambda () (interactive) (other-window -1))
+            "M-o"  (cmd! (other-window +1))
+            "M-i"  (cmd! (other-window -1))
             "<f5>" 'vterm-toggle
             ;; ;; terminal binds
             ;; "C-M-]" 'query-replace-regexp

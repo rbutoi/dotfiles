@@ -4,7 +4,9 @@
         tab-always-indent 'complete
         vc-follow-symlinks t
         tab-width 2)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode) ; duh
+(add-hook 'prog-mode-hook
+          (defun my/prog-mode-hook ()
+            (display-line-numbers-mode))) ; duh
 
 (add-hook 'eglot-managed-mode-hook
           (lambda () (eglot-inlay-hints-mode -1)))
