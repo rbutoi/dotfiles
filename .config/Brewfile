@@ -25,6 +25,7 @@ brew "emacs", link: false
 brew "eza"
 brew "fd"
 brew "ffmpeg"
+brew "fish"
 brew "fswatch"
 brew "fzf"
 brew "gcc"
