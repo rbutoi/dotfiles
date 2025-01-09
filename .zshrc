@@ -81,6 +81,9 @@ zinit light romkatv/powerlevel10k # prompt
 source_if ~/.p10k.zsh             # `p10k configure` or edit this file
 zinit light romkatv/zsh-prompt-benchmark
 
+# TODO: stty: stdin isn't a terminal
+# stty -ixon # disable START/STOP output control
+
 setopt interactive_comments
 
 ##

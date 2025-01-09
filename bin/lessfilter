@@ -1,4 +1,8 @@
 #! /usr/bin/env sh
+# -*- mode: shell-script -*-
+
+exit 0                          # until further notice
+
 # this is a example of .lessfilter, you can change it
 mime=$(file -bL --mime-type "$1")
 category=${mime%%/*}
