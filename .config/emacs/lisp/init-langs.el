@@ -26,6 +26,7 @@
 (use-package rust-mode)
 (use-package go-mode)
 (use-package just-mode)
+(use-package fish-mode :custom (fish-indent-offset 2))
 ;; TODO C++ config
 
 
