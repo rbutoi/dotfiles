@@ -8,8 +8,8 @@
 
 ;; Set load path and initialize basic Emacs settings
 (load (expand-file-name "lisp/init-emacs.el" user-emacs-directory))
+(require 'init-fns)                     ; some convenience functions
 
-(require 'init-fns)
 (require 'init-ui)
 (require 'init-buffers)
 (require 'init-editing)

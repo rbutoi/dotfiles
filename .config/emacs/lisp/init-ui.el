@@ -2,9 +2,9 @@
 
 ;; Font, theme
 (set-face-attribute 'default nil :family "Iosevka Fixed" :height 130)
-(use-package gruvbox-theme
+(use-package doom-themes
   :hook
-  (elpaca-after-init . (lambda () (load-theme 'gruvbox t))))
+  (elpaca-after-init . (lambda () (load-theme 'doom-gruvbox t))))
 
 (tool-bar-mode -1)
 (context-menu-mode)
@@ -24,7 +24,13 @@
         mac-command-modifier 'super)
 
 (general-def
-  "C-s-f" 'toggle-frame-fullscreen)
+  "C-x C-m"   'execute-extended-command ; more convenient than M-x
+  "C-x m"     'execute-extended-command
+  "s-m"       'suspend-frame
+  "C-x M-c"   'restart-emacs
+  "C-x C-M-c" 'save-buffers-kill-emacs
+  "s-q"       'save-buffers-kill-emacs
+  "C-s-f"     'toggle-frame-fullscreen)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;

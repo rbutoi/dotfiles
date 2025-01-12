@@ -2,7 +2,7 @@
 
 (recentf-mode)                          ; recent files
 (save-place-mode)                       ; remember buffer location
-(savehist-mode)				; save minibuffer history
+(savehist-mode)                         ; save minibuffer history
 (setopt
  savehist-file (no-littering-expand-var-file-name "savehist.el")
  savehist-additional-variables '(kill-ring search-ring regexp-search-ring)

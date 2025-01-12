@@ -8,45 +8,21 @@
  ad-redefinition-action 'accept
  load-prefer-newer t)                   ; weird that it's not default
 
-(require 'server)                       ; emacs --daemon
-(unless (server-running-p) (server-start))
-
-(use-package f)
-(use-package general)
-(use-package defrepeater)
-(elpaca-wait)
-
-;;;;;;;;;;;;;;
-;; keybinds ;;
-;;;;;;;;;;;;;;
-
-(general-def
-  "C-x C-m"   'execute-extended-command ; more convenient than M-x
-  "C-x m"     'execute-extended-command
-  "s-m"       'suspend-frame
-  "C-x M-c"   'restart-emacs
-  "C-x C-M-c" 'save-buffers-kill-emacs)
+(require 'server) (unless (server-running-p) (server-start)) ; emacs --daemon
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package no-littering               ; must be set before load path
-  :init
-  (setopt no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
-  :custom
-  (create-lockfiles nil)
-  :config
-  (require 'recentf)
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-var-directory))
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-etc-directory))
-  (no-littering-theme-backups))
+(use-package f)
+(use-package general) (use-package defrepeater) ; keybinds
 (elpaca-wait)
-
-
-(add-to-list 'load-path (f-join user-emacs-directory "lisp/"))
+(use-package no-littering               ; must be set before load path
+  :init   (setopt no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
+  :custom (create-lockfiles nil)
+  :config (no-littering-theme-backups))
+(elpaca-wait)
+(add-to-list 'load-path no-littering-etc-directory)
 
 
 (provide 'init-emacs)
