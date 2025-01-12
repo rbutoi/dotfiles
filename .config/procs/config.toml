@@ -6,6 +6,27 @@ nonnumeric_search = false
 align = "Left"
 
 [[columns]]
+kind = "User"
+style = "BrightGreen|Green"
+numeric_search = false
+nonnumeric_search = true
+align = "Left"
+
+[[columns]]
+kind = "Separator"
+style = "White|BrightBlack"
+numeric_search = false
+nonnumeric_search = false
+align = "Left"
+
+[[columns]]
+kind = "Tty"
+style = "BrightWhite|Black"
+numeric_search = false
+nonnumeric_search = false
+align = "Left"
+
+[[columns]]
 kind = "UsageCpu"
 style = "ByPercentage"
 numeric_search = false
@@ -27,11 +48,11 @@ nonnumeric_search = false
 align = "Left"
 
 [[columns]]
-kind = "StartTime"
-style = "BrightMagenta|Magenta"
+kind = "MultiSlot"
+style = "ByUnit"
 numeric_search = false
 nonnumeric_search = false
-align = "Left"
+align = "Right"
 
 [[columns]]
 kind = "Separator"
@@ -82,9 +103,17 @@ color_x = "BrightBlue|Blue"
 numeric_search = "Exact"
 nonnumeric_search = "Partial"
 logic = "And"
+case = "Smart"
 
 [display]
 show_self = false
+show_self_parents = false
+show_thread = false
+show_thread_in_tree = true
+show_parent_in_tree = true
+show_children_in_tree = true
+show_header = true
+show_footer = false
 cut_to_terminal = true
 cut_to_pager = false
 cut_to_pipe = false
@@ -94,6 +123,8 @@ ascending = "▲"
 descending = "▼"
 tree_symbols = ["│", "─", "┬", "├", "└"]
 abbr_sid = true
+theme = "Auto"
+show_kthreads = true
 
 [sort]
 column = 0
@@ -103,4 +134,7 @@ order = "Ascending"
 path = "unix:///var/run/docker.sock"
 
 [pager]
-mode = "Always"
+mode = "Auto"
+detect_width = false
+use_builtin = false
+

@@ -75,7 +75,8 @@
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
 
 (use-package treemacs
-  :hook (emacs-startup . treemacs)
+  ;; :hook (emacs-startup . treemacs)
+
   :config
   (treemacs-project-follow-mode)
   (treemacs-git-commit-diff-mode))

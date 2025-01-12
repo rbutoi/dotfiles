@@ -12,12 +12,12 @@
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
-(when (executable-find "gls") (setopt insert-directory-program "gls"))
+(when (executable-find "gls") (setopt insert-directory-program "gls")) ; macOS
 
 ;; https://github.com/progfolio/elpaca/issues/343
-;; (elpaca seq)                            ; comment after initial install
-(elpaca (transient :wait t))
+(elpaca (transient))
 (use-package magit                      ; version control
+  ;; :ensure (:host github :repo "magit/magit")
   :hook
   (after-save . magit-after-save-refresh-status)
   :general
@@ -31,6 +31,9 @@
   (magit-log-margin    '(t "%a %b %d %Y" magit-log-margin-width t 18))
   (magit-status-margin '(t "%a %b %d %Y" magit-log-margin-width t 18))
   (magit-pull-or-fetch t))
+;; (elpaca seq)                            ; comment after initial install if bothers
+
+;; TODO: try https://github.com/armindarvish/consult-gh ?
 
 ;; Package	Status	Info
 ;; forge		failed	magit installed version (4 2 0) lower than min required 4.2.1
@@ -86,6 +89,10 @@
 (use-package edit-server ; Edit with Emacs: edit web browser text boxes
   :init (edit-server-start)
   :hook ((edit-server-start . (lambda () (auto-fill-mode -1)))))
+
+(use-package activity-watch-mode
+  :diminish
+  :config (global-activity-watch-mode))
 
 ;; TODO: notmuch again?
 

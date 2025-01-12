@@ -5,7 +5,7 @@
 
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(general-add-hook '(conf-mode-hook yaml-mode-hook yaml-ts-mode-hook) 'my/prog-mode-hook)
+(general-add-hook '(conf-mode-hook yaml-mode-hook) 'my/prog-mode-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
@@ -27,7 +27,10 @@
 (use-package rust-mode)
 (use-package go-mode)
 (use-package just-mode)
-(use-package fish-mode :custom (fish-indent-offset 2))
+(use-package fish-mode
+  :hook (fish-mode . (lambda ()
+                       (add-hook 'before-save-hook
+                                 #'fish_indent-before-save))))
 ;; TODO C++ config
 
 

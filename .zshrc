@@ -513,10 +513,6 @@ source_if ~/.config/zsh/zshrc_specific
 
 #  LocalWords:  shellenv
 
-# Local Variables:
-# eval: (column-enforce-mode)
-# End:
-
 # hmm extras
 
 pupdate() { case ":${PATH:=$1}:" in *:"$1":*) ;; *) PATH="$1:$PATH" ;; esac; }
