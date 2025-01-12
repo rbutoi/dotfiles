@@ -50,7 +50,6 @@ function _e_gui --wraps emacsclient
     set -l a '/Applications/Emacs.app'
     test -e "$a" && open $a
 end
-
 alias e '_e -nw' # inline console editor
 alias en '_e_gui -n' # open in existing editor
 alias ec '_e_gui -nc' # new graphical editor
@@ -68,6 +67,7 @@ end
 
 if type -q bat
     alias c=bat
+    set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 end
 
 type -q procs && alias psg=procs

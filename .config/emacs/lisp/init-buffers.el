@@ -67,20 +67,17 @@
    "C-x M-f"   'set-fill-column
    [remap goto-line] 'consult-goto-line
    "C-x M-:"   'consult-complex-command
-   "C-M-o" 'consult-line-thing-at-point)
+   "C-M-o"     'consult-line-thing-at-point
+   "M-s o"     'consult-line-multi
+   "M-s M-o"   'consult-line-multi)
   (:keymaps 'isearch-mode-map
-            "C-o" 'consult-line)
+            "C-o"   'consult-line
+            "M-s o" 'consult-line-multi)
   :config
-  ;; From upstream docs:
-  ;; https://github.com/minad/consult/blob/1.8/README.org?plain=1#L999-L1009
-  (consult-customize
-   consult-line
-   :add-history (seq-some #'thing-at-point '(region symbol)))
   (defalias 'consult-line-thing-at-point 'consult-line)
   (consult-customize
    consult-line-thing-at-point
    :initial (thing-at-point 'symbol))
-  (general-def "C-M-o" 'consult-line-thing-at-point)
 
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any))
@@ -92,5 +89,12 @@
     "consult-ripgrep on dotfiles repos"
     (interactive) (consult-ripgrep "~/.dots" " -- -.")))
 
+(use-package embark
+  :bind (("C-." . embark-act)
+         :map minibuffer-local-map
+         ("C-c C-c" . embark-collect)
+         ("C-c C-e" . embark-export)))
+(use-package embark-consult)
+(use-package wgrep)
 
 (provide 'init-buffers)
