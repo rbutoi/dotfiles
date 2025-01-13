@@ -2,9 +2,9 @@
 
 ;; Font, theme
 (set-face-attribute 'default nil :family "Iosevka Fixed" :height 130)
-(use-package doom-themes
+(use-package ef-themes
   :hook
-  (elpaca-after-init . (lambda () (load-theme 'doom-gruvbox t))))
+  (elpaca-after-init . (lambda () (load-theme 'ef-owl t))))
 
 (tool-bar-mode -1)
 (context-menu-mode)
