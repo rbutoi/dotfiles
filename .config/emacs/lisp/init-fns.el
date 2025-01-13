@@ -105,4 +105,5 @@ or aliases."
 ;;   '(define-key magit-mode-map "v"
 ;;      #'endless/visit-pull-request-url))
 
+
 (provide 'init-fns)

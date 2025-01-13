@@ -13,8 +13,8 @@
   :ensure nil
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode))
-  :general (:keymaps                    ; default binds are a little overzealous
-            'flyspell-mode-map "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
+  :general (:keymap 'flyspell-mode-map  ; default binds are a little overzealous
+                 "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -38,6 +38,8 @@
   :general ("C-=" 'er/expand-region))
 
 (use-package deadgrep)                  ; ripgrep UI
+(setenv "RIPGREP_CONFIG_PATH"
+        (substitute-env-vars "$HOME/.config/ripgreprc"))
 
 (use-package visual-regexp              ; visual replace
   :general
@@ -78,5 +80,6 @@
 ;;   :config
 ;;   (require 'smartparens-config)
 ;;   (smartparens-global-mode))
+
 
 (provide 'init-editing)
