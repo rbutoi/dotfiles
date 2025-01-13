@@ -72,6 +72,11 @@ end
 
 type -q procs && alias psg=procs
 
+if type -q bat
+    alias g=rg
+    set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
+end
+
 function brew --wraps brew # dumps package list to source control
     command brew $argv
 

@@ -73,28 +73,37 @@
   (:keymaps 'isearch-mode-map
             "C-o"   'consult-line
             "M-s o" 'consult-line-multi)
+  :custom
+  (consult-fd-args '((if (executable-find "fdfind" 'remote) "fdfind" "fd")
+                     "--full-path --color=never --hidden"))
   :config
   (defalias 'consult-line-thing-at-point 'consult-line)
   (consult-customize
    consult-line-thing-at-point
    :initial (thing-at-point 'symbol))
-
   (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any))
+   consult-theme :preview-key '(:debounce 0.2 any)))
 
-  (defun my/consult-fd-dotfiles ()
-    "consult-fd on dotfiles repos"
-    (interactive) (consult-fd "~/.dots" " -- --hidden"))
-  (defun my/consult-ripgrep-dotfiles ()
-    "consult-ripgrep on dotfiles repos"
-    (interactive) (consult-ripgrep "~/.dots" " -- -.")))
-
+(use-package consult-dir
+  :after vertico
+  :general
+  ("C-x C-d" 'consult-dir)
+  (:keymaps 'vertico-map
+            "C-x C-d" 'consult-dir
+            "C-x C-j" 'consult-dir-jump-file))
 (use-package embark
-  :bind (("C-." . embark-act)
-         :map minibuffer-local-map
-         ("C-c C-c" . embark-collect)
-         ("C-c C-e" . embark-export)))
+  :general
+  ("C-." 'embark-act)
+  (:keymaps 'minibuffer-local-map
+            "C-c C-c" 'embark-collect
+            "C-c C-e" 'embark-export))
 (use-package embark-consult)
-(use-package wgrep)
+(use-package wgrep
+  :init (require 'grep)
+  :general
+  (:keymaps 'grep-mode-map
+            "e"       'wgrep-change-to-wgrep-mode   ; occur-style
+            "C-x C-q" 'wgrep-change-to-wgrep-mode)) ; dired-style
+
 
 (provide 'init-buffers)

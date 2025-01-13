@@ -18,14 +18,12 @@
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
   (interactive)
-  (browse-url
-   (concat "https://github.com/search?type=code&q="
-           (url-hexify-string
-            (read-from-minibuffer "GitHub code search on web: "
-                                  (thing-at-point 'symbol)
-                                  nil
-                                  nil
-                                  'my/gh-web-searches)))))
+  (browse-url (concat
+               "https://github.com/search?type=code&q="
+               (url-hexify-string
+                (read-from-minibuffer "GitHub code search on web: "
+                                      (thing-at-point 'symbol) nil nil
+                                      'my/gh-web-searches)))))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -41,7 +39,7 @@
 
 (use-package treesit-auto
   :custom
-  (treesit-auto-install 'prompt)
+  (treesit-auto-install 't)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode)
