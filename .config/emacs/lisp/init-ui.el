@@ -6,7 +6,6 @@
   :hook
   (elpaca-after-init . (lambda () (load-theme 'ef-owl t))))
 
-(tool-bar-mode -1)
 (context-menu-mode)
 (global-hl-line-mode)
 (column-number-mode)
