@@ -13,8 +13,8 @@
   :ensure nil
   :hook ((text-mode . flyspell-mode)
          (prog-mode . flyspell-prog-mode))
-  :general (:keymap 'flyspell-mode-map  ; default binds are a little overzealous
-                 "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
+  :general (:keymaps 'flyspell-mode-map  ; default binds are a little overzealous
+                     "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;

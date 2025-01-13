@@ -50,7 +50,8 @@ function _e_gui --wraps emacsclient
     set -l a '/Applications/Emacs.app'
     test -e "$a" && open $a
 end
-alias e '_e -nw' # inline console editor
+# TODO: only emacs has termcap issues?? *ERROR*: Terminal type xterm-kitty is not defined
+alias e 'TERM=xterm-256color _e -nw' # inline console editor
 alias en '_e_gui -n' # open in existing editor
 alias ec '_e_gui -nc' # new graphical editor
 
