@@ -62,6 +62,7 @@
 
 [rebase]
     autoSquash          = true
+	updateRefs = true
 
 [color]
     advice              = true
