@@ -1,5 +1,6 @@
 tap "chase/tap"
 tap "d12frosted/emacs-plus"
+tap "da-luce/astroterm"
 tap "hashicorp/tap"
 tap "homebrew/bundle"
 tap "homebrew/services"
@@ -55,12 +56,14 @@ brew "krew"
 brew "lesspipe"
 brew "llm"
 brew "mas"
+brew "minikube"
 brew "moreutils"
 brew "mosh"
 brew "mypy"
 brew "nnn"
 brew "node"
 brew "openjdk"
+brew "poetry"
 brew "poppler"
 brew "procs"
 brew "prometheus"
@@ -103,6 +106,7 @@ brew "zoxide"
 brew "zx"
 brew "chase/tap/awrit"
 brew "d12frosted/emacs-plus/emacs-plus@30"
+brew "da-luce/astroterm/astroterm"
 brew "hashicorp/tap/terraform"
 brew "koekeishiya/formulae/skhd"
 brew "koekeishiya/formulae/yabai"
@@ -138,6 +142,7 @@ cask "orion"
 cask "rectangle-pro"
 cask "scroll-reverser"
 cask "signal"
+cask "steam"
 cask "stolendata-mpv"
 cask "vlc"
 cask "whichspace"
@@ -155,14 +160,15 @@ mas "Maccy", id: 1527619437
 mas "MC Desktop Controller", id: 6448796222
 mas "Messenger", id: 1480068668
 mas "Mic Drop", id: 1489816366
+mas "OneDrive", id: 823766827
 mas "rcmd", id: 1596283165
 mas "Tim", id: 1449619230
 mas "Tot", id: 1491071483
 mas "UTM", id: 1538878817
+mas "WhatsApp", id: 310633997
 mas "Windows App", id: 1295203466
 mas "Xcode", id: 497799835
 mas "YamaCast", id: 1415107621
-mas "‎WhatsApp", id: 310633997
 vscode "13xforever.language-x86-64-assembly"
 vscode "activitywatch.aw-watcher-vscode"
 vscode "akamud.vscode-theme-onedark"

@@ -1,5 +1,10 @@
 ;; init-ext.el - External integrations  -*- lexical-binding: t; -*-
 
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize)
+  (when (executable-find "gls") (setopt insert-directory-program "gls")))
+
 (xterm-mouse-mode)                      ; mouse in terminal Emacs
 
 (use-package man                        ; man(1)
@@ -12,7 +17,6 @@
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 
-(when (executable-find "gls") (setopt insert-directory-program "gls")) ; macOS
 
 (elpaca (transient))            ; https://github.com/progfolio/elpaca/issues/343
 (use-package magit              ; version control
