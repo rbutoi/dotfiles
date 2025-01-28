@@ -1,8 +1,4 @@
 ;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
-
-(setopt python-indent-offset 2
-        sh-basic-offset      2)
-
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (general-add-hook '(conf-mode-hook yaml-mode-hook) 'my/prog-mode-hook)
@@ -14,7 +10,9 @@
 (use-package format-all)
 
 (use-package lua-mode)
-(use-package terraform-mode)
+(use-package terraform-mode
+  :custom
+  (terraform-format-on-save t))
 (use-package yaml-mode)
 (use-package json-mode)
 (use-package jq-mode)
@@ -31,6 +29,9 @@
   :hook (fish-mode . (lambda ()
                        (add-hook 'before-save-hook
                                  #'fish_indent-before-save))))
+(use-package ruff-format
+  :diminish
+  :hook (python-mode . ruff-format-on-save-mode))
 ;; TODO C++ config
 
 

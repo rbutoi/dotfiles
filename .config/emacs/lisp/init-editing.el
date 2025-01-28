@@ -75,11 +75,11 @@
 
 ;; TODO: or just electric-pair-mode? what is a replacement for sp-splice-sexp?
 
-;; (use-package smartparens                ; parentheses
-;;   :general ("M-D" 'sp-splice-sexp)
-;;   :config
-;;   (require 'smartparens-config)
-;;   (smartparens-global-mode))
+(use-package smartparens                ; parentheses
+  :general ("M-D" 'sp-splice-sexp)
+  :config
+  (require 'smartparens-config)
+  (smartparens-global-mode))
 
 
 (provide 'init-editing)
