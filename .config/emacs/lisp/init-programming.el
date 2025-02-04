@@ -12,7 +12,8 @@
           (lambda () (eglot-inlay-hints-mode -1)))
 (general-add-hook '(python-ts-mode-hook
                     typescript-ts-base-mode-hook
-                    c++-ts-mode-hook)
+                    c++-ts-mode-hook
+                    terraform-mode-hook)
                   #'eglot-ensure)
 
 (defun my/search-gh-web ()
