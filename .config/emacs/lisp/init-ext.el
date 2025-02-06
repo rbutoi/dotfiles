@@ -16,6 +16,9 @@
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
+(use-package dired-gitignore
+  :init (dired-gitignore-global-mode t)
+  :general (:keymaps 'dired-mode-map "M-." 'dired-gitignore-global-mode))
 
 
 (elpaca (transient))            ; https://github.com/progfolio/elpaca/issues/343

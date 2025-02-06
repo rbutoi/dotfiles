@@ -74,14 +74,11 @@
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
 
 (use-package treemacs
-  ;; :hook (emacs-startup . treemacs)
-
+  :general ("C-x C-M-SPC" 'treemacs)
   :config
   (treemacs-project-follow-mode)
   (treemacs-git-commit-diff-mode))
 
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once))
 (with-eval-after-load 'magit
   (use-package treemacs-magit))
 

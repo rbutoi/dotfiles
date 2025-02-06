@@ -7,12 +7,17 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package format-all)
+(use-package apheleia
+  :init (apheleia-global-mode)
+  :config
+  (setf (alist-get 'python-mode apheleia-mode-alist)
+        '(ruff ruff-isort))
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+        '(ruff ruff-isort)))
+
 
 (use-package lua-mode)
-(use-package terraform-mode
-  :custom
-  (terraform-format-on-save t))
+(use-package terraform-mode)
 (use-package yaml-mode)
 (use-package json-mode)
 (use-package jq-mode)
@@ -21,18 +26,10 @@
 (use-package sql-indent)
 (use-package dockerfile-mode)
 (use-package deno-ts-mode)
-(use-package deno-fmt :hook (deno-ts-mode deno-tsx-ts-mode))
 (use-package rust-mode)
 (use-package go-mode)
 (use-package just-mode)
-(use-package fish-mode
-  :hook (fish-mode . (lambda ()
-                       (add-hook 'before-save-hook
-                                 #'fish_indent-before-save))))
-(use-package ruff-format
-  :diminish
-  :hook (python-mode . ruff-format-on-save-mode))
-;; TODO C++ config
+(use-package fish-mode)
 
 
 (provide 'init-langs)
