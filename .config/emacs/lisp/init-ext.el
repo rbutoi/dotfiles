@@ -35,37 +35,12 @@
   (magit-log-auto-more t)
   (magit-pull-or-fetch t))
 (use-package git-modes)
+(use-package forge)
 
-;; forge		failed	magit installed version (4 2 0) lower than min required 4.2.1
-;; https://github.com/magit/forge/discussions/738
-;; (use-package forge)
-
-(use-package git-gutter
-  :diminish
-  :init (global-git-gutter-mode)
-  :custom
-  (git-gutter:handled-backends '(git hg bzr svn))
-  (git-gutter:update-interval 2)
-  :general
-  (:keymaps 'prog-mode-map
-            "C-x v =" 'git-gutter:popup-hunk
-            "C-x v s" 'git-gutter:stage-hunk
-            "C-x v r" 'git-gutter:revert-hunk
-            "C-x v p"
-            (defun my/git-gutter:toggle-start-revision ()
-              "Toggle git-gutter:start-revision between \"\" and \"HEAD^\"."
-              (interactive)
-              (if (string= git-gutter:start-revision "HEAD^")
-                  (git-gutter:set-start-revision "")
-                (git-gutter:set-start-revision "HEAD^"))
-              (message "Set git-gutter:start-revision to \"%s\"" git-gutter:start-revision)))
+(use-package diff-hl
   :config
-  (with-eval-after-load 'consult
-    (add-list-to-list 'git-gutter:update-commands
-                      '(switch-to-buffer consult-buffer)))
-  (general-def                          ; in :general it warns
-    "C-c p"   (defrepeater 'git-gutter:previous-hunk)
-    "C-c n"   (defrepeater 'git-gutter:next-hunk)))
+  (global-diff-hl-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
 
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 

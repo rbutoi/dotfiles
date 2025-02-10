@@ -1,0 +1,22 @@
+{
+  "colors" : {
+    "slow" : "systemYellow",
+    "connected" : "systemGreen",
+    "disconnected" : "systemRed"
+  },
+  "sounds" : {
+    "slow" : "",
+    "volume" : 0.7,
+    "connected" : "",
+    "disconnected" : ""
+  },
+  "pingIP" : "1.1.1.1",
+  "fadeSeconds" : {
+    "disconnected" : 0,
+    "slow" : 10,
+    "connected" : 5
+  },
+  "pingTimeoutSeconds" : 1,
+  "pingSlowThresholdMilliseconds" : 300,
+  "pingIntervalSeconds" : 5
+}
