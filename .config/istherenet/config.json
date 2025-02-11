@@ -10,7 +10,7 @@
     "connected" : "",
     "disconnected" : ""
   },
-  "pingIP" : "1.1.1.1",
+  "pingIP" : "8.8.8.8",
   "fadeSeconds" : {
     "disconnected" : 0,
     "slow" : 10,
