@@ -8,6 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package apheleia
+  :diminish "A"
   :init (apheleia-global-mode)
   :config
   (setf (alist-get 'python-mode apheleia-mode-alist)
@@ -23,7 +24,6 @@
 (use-package jq-mode)
 (use-package i3wm-config-mode)
 (use-package markdown-mode)
-(use-package sql-indent)
 (use-package dockerfile-mode)
 (use-package deno-ts-mode)
 (use-package rust-mode)

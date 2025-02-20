@@ -1,9 +1,10 @@
 # ref: https://fishshell.com/docs/current/language.html#configuration
 
 ## paths
-fish_add_path -g ~/.local/bin
 set -gx GOPATH ~/.local/go
+fish_add_path -g ~/.local/bin
 fish_add_path -g ~/.local/go/bin
+fish_add_path -g ~/.cargo/bin
 
 status is-interactive || exit
 
@@ -20,6 +21,12 @@ set -gx EDITOR emacsclient -t
 
 bind \ek backward-kill-line # better than default C-u
 
+# fzf
+set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
+
+# https://github.com/PatrickF1/fzf.fish
+fzf_configure_bindings --directory=\ct --variables=\e\cv
+set fzf_history_time_format %a %b %d %H:%M:%S
 #######################
 # aliases (broad-ish) #
 #######################
@@ -58,6 +65,7 @@ alias ec '_e_gui -nc' # new graphical editor
 ###
 
 if type -q eza
+    set -gx EZA_ICONS_AUTO
     alias ls=eza
     alias l='ls --group-directories-first'
     alias ll="l --time-style=+'%a %e %b %H:%M' -g -l --git"
@@ -73,7 +81,7 @@ end
 
 type -q procs && alias psg=procs
 
-if type -q bat
+if type -q rg
     alias g=rg
     set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
 end

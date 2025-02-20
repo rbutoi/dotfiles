@@ -213,4 +213,9 @@
   smudge = git-lfs smudge -- %f
 
 [include]                       # personal config
-  path = ~/.config/git/config.local
+	path = ~/.config/git/config.local
+
+# forced to include this here for git-xargs: https://github.com/gruntwork-io/git-xargs/issues/48
+[user]
+	email = Radu.Butoi@cardlytics.com
+	name = Radu Butoi
