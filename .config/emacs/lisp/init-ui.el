@@ -1,7 +1,7 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
 ;; Font, theme
-(set-face-attribute 'default nil :family "Iosevka Fixed" :height 130)
+(set-face-attribute 'default nil :family "Iosevka" :height 130)
 (use-package ef-themes
   :hook
   (elpaca-after-init . (lambda () (load-theme 'ef-owl t))))
@@ -11,9 +11,6 @@
 (column-number-mode)
 
 (global-goto-address-mode)
-
-(add-hook 'elpaca-after-init-hook       ; restore buffers and frames on startup
-          (lambda () (desktop-save-mode) (desktop-read)) -10)
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -35,6 +32,20 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package easysession
+  :diminish
+  :commands (easysession-switch-to
+             easysession-save-as
+             easysession-save-mode
+             easysession-load-including-geometry)
+  :custom
+  (easysession-save-interval (* 60 60)) ; Save every hour
+  :init
+  (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
+  (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103)
+  :config
+  (diminish 'easysession-save-mode))
+
 (use-package diminish)                  ; TODO: consider doom-modeline
 
 (use-package zoom-window                ; temporarily zoom window
@@ -49,6 +60,7 @@
   ([remap describe-variable] 'helpful-variable))
 
 (use-package which-key                  ; useful shortcut reminders
+  :defer 2
   :diminish
   :config (which-key-mode))
 
