@@ -5,7 +5,7 @@
 (savehist-mode)                         ; save minibuffer history
 (setopt
  savehist-file (no-littering-expand-var-file-name "savehist.el")
- savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+ savehist-additional-variables '(kill-ring mark-ring search-ring regexp-search-ring)
  enable-recursive-minibuffers t)
 
 ;;;;;;;;;;;;;;
@@ -82,7 +82,8 @@
    consult-line-thing-at-point
    :initial (thing-at-point 'symbol))
   (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)))
+   consult-theme consult-buffer consult-ripgrep
+   :preview-key '(:debounce 0.1 any)))
 
 (use-package consult-dir
   :after vertico
