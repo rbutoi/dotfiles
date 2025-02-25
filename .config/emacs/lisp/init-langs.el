@@ -1,13 +1,6 @@
 ;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(general-add-hook '(conf-mode-hook yaml-mode-hook) 'my/prog-mode-hook)
-
-;;;;;;;;;;;;;;;;;;;;;;
-;; extenal packages ;;
-;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package apheleia
+(use-package apheleia                   ; auto format
   :diminish "A"
   :init (apheleia-global-mode)
   :config
@@ -15,7 +8,6 @@
         '(ruff ruff-isort))
   (setf (alist-get 'python-ts-mode apheleia-mode-alist)
         '(ruff ruff-isort)))
-
 
 (use-package lua-mode)
 (use-package terraform-mode)
