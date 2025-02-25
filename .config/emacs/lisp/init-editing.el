@@ -74,13 +74,10 @@
   :custom (ws-butler-keep-whitespace-before-point nil)
   :config (ws-butler-global-mode))
 
-;; TODO: or just electric-pair-mode? what is a replacement for sp-splice-sexp?
-
-(use-package smartparens                ; parentheses
+(use-package smartparens
   :general ("M-D" 'sp-splice-sexp)
   :config
-  (require 'smartparens-config)
-  (smartparens-global-mode))
+  (require 'smartparens-config))        ; don't enable major mode
 
 
 (provide 'init-editing)

@@ -40,7 +40,11 @@
 (use-package diff-hl
   :config
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
+  (add-hook 'diff-hl-mode-hook
+            (lambda ()
+              (unless (display-graphic-p)
+                (diff-hl-margin-local-mode)))))
 
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 

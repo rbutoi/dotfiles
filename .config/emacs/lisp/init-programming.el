@@ -4,17 +4,17 @@
         tab-always-indent 'complete
         vc-follow-symlinks t
         tab-width 2)
-(add-hook 'prog-mode-hook
-          (defun my/prog-mode-hook ()
-            (display-line-numbers-mode))) ; duh
+(general-add-hook '(prog-mode-hook text-mode-hook)
+                  'display-line-numbers-mode)
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(add-hook 'eglot-managed-mode-hook
-          (lambda () (eglot-inlay-hints-mode -1)))
 (general-add-hook '(python-ts-mode-hook
                     typescript-ts-base-mode-hook
                     c++-ts-mode-hook
                     terraform-mode-hook)
                   #'eglot-ensure)
+(add-hook 'eglot-managed-mode-hook
+          (lambda () (eglot-inlay-hints-mode -1))) ; distracting
 
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
@@ -86,6 +86,9 @@
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
                      "C-c C-u" 'string-inflection-cycle))
 
+;; TODO: use??
+;; (use-package flycheck)
+
 (use-package auto-highlight-symbol      ; highlight symbols
   :diminish
   :config
@@ -102,7 +105,6 @@
   :custom
   (corfu-auto t)
   (corfu-auto-delay 1.5))
-
 ;; TODO: cape?
 
 ;; TODO: make work
