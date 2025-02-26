@@ -28,7 +28,9 @@
   :general
   ("C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
-  (:keymaps 'magit-mode-map "M-m" 'magit-toggle-margin)
+  (:keymaps 'magit-mode-map
+            "M-m" 'magit-toggle-margin
+            "@"   'endless/visit-pull-request-url)
   :custom
   (magit-repository-directories `(("~/dev" . 2)
                                   ("~/oss" . 1)))
@@ -64,9 +66,9 @@
   :after vterm
   :general ("<f5>" 'vterm-toggle))
 
-(use-package edit-server ; Edit with Emacs: edit web browser text boxes
-  :init (edit-server-start)
-  :hook ((edit-server-start . (lambda () (auto-fill-mode -1)))))
+(use-package atomic-chrome
+  :config
+  (atomic-chrome-start-server))
 
 (use-package activity-watch-mode
   :diminish

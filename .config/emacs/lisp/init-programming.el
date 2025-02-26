@@ -38,6 +38,11 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package disproject
+  ;; Replace `project-prefix-map' with `disproject-dispatch'.
+  :general (:keymaps 'ctl-x-map
+                     "p" 'disproject-dispatch))
+
 (use-package treesit-auto
   :custom
   (treesit-auto-install 't)

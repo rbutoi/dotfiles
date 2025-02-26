@@ -70,6 +70,8 @@
    "C-M-o"     'consult-line-thing-at-point
    "M-s o"     'consult-line-multi
    "M-s M-o"   'consult-line-multi)
+  (:keymaps 'vertico-map
+            "M-P" 'consult-toggle-preview)
   (:keymaps 'isearch-mode-map
             "C-o"   'consult-line
             "M-s o" 'consult-line-multi)

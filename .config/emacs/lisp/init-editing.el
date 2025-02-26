@@ -10,12 +10,10 @@
         fill-column 80)
 (when (fboundp 'global-completion-preview-mode) (global-completion-preview-mode))
 
-(use-package flyspell                   ; spellcheck
-  :ensure nil
-  :hook ((text-mode . flyspell-mode)
-         (prog-mode . flyspell-prog-mode))
-  :general (:keymaps 'flyspell-mode-map  ; default binds are a little overzealous
-                     "C-," nil "C-." nil "C-;" nil "C-M-i" nil))
+(use-package jinx
+  :hook (elpaca-after-init-hook . global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages)))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
