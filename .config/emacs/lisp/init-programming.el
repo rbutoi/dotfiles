@@ -8,11 +8,13 @@
                   'display-line-numbers-mode)
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(general-add-hook '(python-ts-mode-hook
-                    typescript-ts-base-mode-hook
-                    c++-ts-mode-hook
-                    terraform-mode-hook)
-                  #'eglot-ensure)
+(general-add-hook
+ '(python-ts-mode-hook
+   typescript-ts-base-mode-hook
+   c++-ts-mode-hook
+   terraform-mode-hook
+   go-ts-mode-hook)
+ #'eglot-ensure)
 (add-hook 'eglot-managed-mode-hook
           (lambda () (eglot-inlay-hints-mode -1))) ; distracting
 
