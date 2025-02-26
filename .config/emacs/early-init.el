@@ -1,6 +1,8 @@
+;; early-init.el - Early Emacs config  -*- lexical-binding: t; -*-
+
 ;; package manager: Elpaca (https://github.com/progfolio/elpaca)
 (setq package-enable-at-startup nil)
-(load (expand-file-name "lisp/init-elpaca.el" user-emacs-directory))
+(load (locate-user-emacs-file "lisp/init-elpaca.el"))
 (elpaca elpaca-use-package
   (elpaca-use-package-mode)
   (setq use-package-always-ensure t))
