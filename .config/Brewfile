@@ -12,6 +12,7 @@ brew "act"
 brew "shellcheck"
 brew "actionlint"
 brew "awscli"
+brew "babelfish"
 brew "bash"
 brew "bat"
 brew "btop"
@@ -160,6 +161,7 @@ mas "DaisyDisk", id: 411643860
 mas "Enchanted", id: 6474268307
 mas "GarageBand", id: 682658836
 mas "Hidden Bar", id: 1452453066
+mas "Hyperspace", id: 6739505345
 mas "Kindle", id: 302584613
 mas "Maccy", id: 1527619437
 mas "MC Desktop Controller", id: 6448796222
