@@ -11,6 +11,7 @@
 (when (fboundp 'global-completion-preview-mode) (global-completion-preview-mode))
 
 (use-package jinx
+  :diminish
   :hook (elpaca-after-init-hook . global-jinx-mode)
   :bind (("M-$" . jinx-correct)
          ("C-M-$" . jinx-languages)))

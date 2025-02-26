@@ -36,6 +36,14 @@
                                   ("~/oss" . 1)))
   (magit-log-auto-more t)
   (magit-pull-or-fetch t))
+(use-package magit-delta
+  :after magit
+  :hook (magit-mode . magit-delta-mode)
+  :custom (magit-delta-delta-args
+           '(;; defaults
+             "--max-line-distance" "0.6" "--true-color" "always" "--color-only"
+             ;; magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
+             "--features" "magit-delta")))
 (use-package git-modes)
 (use-package forge)
 
