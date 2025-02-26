@@ -24,16 +24,6 @@
 [interactive]
   diffFilter = delta --color-only
 
-[merge]
-  conflictstyle = diff3
-
-[diff]
-  colorMoved = default
-
-[icdiff]
-  options             = --line-numbers
-
-
 [url "git@github.com:"]
   insteadOf = @gh:
 [url "git@gitlab.com:"]
@@ -59,10 +49,6 @@
 
 [credential]
   helper              = store
-
-[rebase]
-  autoSquash          = true
-	updateRefs = true
 
 [color]
   advice              = true
@@ -178,9 +164,6 @@
   sld = stash list --pretty=rlf --stat
   sls = stash show --patch
 
-  # mine
-  root = rev-parse --show-toplevel
-
 [log]
   abbrevCommit        = true
   decorate            = short
@@ -201,21 +184,77 @@
   rlc                 =  format:%C(auto)%h%C(reset) %C(white)-%C(reset) %C(italic blue)%ad%C(reset) %C(italic cyan)(%ar)%C(reset)%C(auto)%d%C(reset)%n %C(white)⤷%C(reset) %s %C(241)- %aN <%aE>%C(reset)%n %C(white)⤷%C(reset) %C(bold yellow)(%C(magenta)%gd%C(bold yellow))%C(reset) %gs %C(241)- %gN <%gE>%C(reset)%n
   rlf                 =  format:%C(auto)%h%C(reset) %C(bold yellow)(%C(magenta)%gd%C(bold yellow))%C(reset)%C(auto)%d%C(reset)   %C(italic 239)[P: %p] [T: %t]%C(reset)%n%C(white)Author:%C(reset)   %aN %C(241)<%aE>%C(reset)%n          %C(italic blue)%ad%C(reset) %C(italic cyan)(%ar)%C(reset)%n%C(white)Commit:%C(reset)   %cN %C(241)<%cE>%C(reset)   %C(italic 239)[GPG: %G?% GK]%C(reset)%n          %C(italic blue)%cd%C(reset) %C(italic cyan)(%cr)%C(reset)%n%C(white)Reflog:%C(reset)   %gN %C(241)<%gE>%C(reset)%n          %C(italic)%gs%C(reset)%w(0,0,0)0%n%n%C(bold)%s%C(reset)%n%n%-b%n%n%-N%n
 
-[protocol "file"]
-  allow = always
-[init]
-  defaultBranch = main
+[include]                       # personal config
+  path = ~/.config/git/config.local
 
-[filter "lfs"]
+# forced to include this here for git-xargs: https://github.com/gruntwork-io/git-xargs/issues/48
+[user]
+  email = Radu.Butoi@cardlytics.com
+  name = Radu Butoi
+
+[icdiff]                        # TODO: if used??
+  options = --line-numbers
+
+[protocol "file"]                 # TODO: needed?
+  allow = always
+
+[filter "lfs"]                  # TODO: auto-added, needed?
   process = git-lfs filter-process
   required = true
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
 
-[include]                       # personal config
-	path = ~/.config/git/config.local
+[alias]
+  root = rev-parse --show-toplevel
 
-# forced to include this here for git-xargs: https://github.com/gruntwork-io/git-xargs/issues/48
-[user]
-	email = Radu.Butoi@cardlytics.com
-	name = Radu Butoi
+### https://blog.gitbutler.com/how-git-core-devs-configure-git/
+
+# clearly makes git better
+
+[column]
+  ui = auto
+[branch]
+  sort = -committerdate
+[tag]
+  sort = version:refname
+[init]
+  defaultBranch = main
+[diff]
+  algorithm = histogram
+  colorMoved = plain
+  mnemonicPrefix = true
+  renames = true
+[push]
+  default = simple
+  autoSetupRemote = true
+  followTags = true
+[fetch]
+  prune = true
+  pruneTags = true
+  all = true
+
+# why the hell not?
+
+[help]
+  autocorrect = prompt
+[commit]
+  verbose = true
+[rerere]
+  enabled = true
+  autoupdate = true
+[core]
+  excludesfile = ~/.gitignore
+[rebase]
+  autoSquash = true
+  autoStash = true
+  updateRefs = true
+
+# a matter of taste (uncomment if you dare)
+
+[core]
+  # fsmonitor = true
+  # untrackedCache = true
+[merge]
+  conflictstyle = zdiff3
+[pull]
+  # rebase = true
