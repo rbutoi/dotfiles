@@ -51,14 +51,6 @@
 (use-package zoom-window                ; temporarily zoom window
   :general ("C-x C-z" 'zoom-window-zoom))
 
-(use-package helpful                    ; improved help windows
-  :general
-  ([remap describe-command]  'helpful-command)
-  ([remap describe-function] 'helpful-callable)
-  ([remap describe-key]      'helpful-key)
-  ([remap describe-symbol]   'helpful-symbol)
-  ([remap describe-variable] 'helpful-variable))
-
 (use-package which-key                  ; useful shortcut reminders
   :defer 2
   :diminish
