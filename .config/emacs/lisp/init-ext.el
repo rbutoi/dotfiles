@@ -82,7 +82,4 @@
   :diminish
   :config (global-activity-watch-mode))
 
-;; TODO: notmuch again?
-
-
 (provide 'init-ext)
