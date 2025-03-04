@@ -16,6 +16,10 @@
 (use-package jq-mode)
 (use-package i3wm-config-mode)
 (use-package markdown-mode)
+(use-package grip-mode                  ; markdown preview
+  :config (setq grip-command 'auto)     ; auto, grip, go-grip or mdopen
+  :general (:keymaps 'markdown-mode-command-map
+                     "g" 'grip-mode))
 (use-package dockerfile-mode)
 (use-package deno-ts-mode)
 (use-package rust-mode)
