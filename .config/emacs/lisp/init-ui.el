@@ -1,10 +1,6 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
-;; Font, theme
 (set-face-attribute 'default nil :family "Iosevka" :height 130)
-(use-package ef-themes
-  :hook
-  (elpaca-after-init . (lambda () (load-theme 'ef-owl t))))
 
 (context-menu-mode)
 (global-hl-line-mode)
@@ -31,6 +27,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package ef-themes)
+(use-package auto-dark
+  :init (auto-dark-mode)
+  :custom
+  (auto-dark-themes '((ef-owl) (ef-light)))
+  (auto-dark-allow-osascript t))
 
 (use-package easysession
   :diminish

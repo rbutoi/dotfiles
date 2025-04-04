@@ -19,7 +19,6 @@ brew "btop"
 brew "cargo-watch"
 brew "choose"
 brew "cliclick"
-brew "cloud-nuke"
 brew "cmake"
 brew "coreutils"
 brew "csvlens"
@@ -129,6 +128,7 @@ cask "appcleaner"
 cask "chatgpt"
 cask "claude"
 cask "contexts"
+cask "darktable"
 cask "firefox"
 cask "font-iosevka"
 cask "fork"
@@ -158,6 +158,7 @@ cask "stolendata-mpv"
 cask "vlc"
 cask "whichspace"
 cask "znotch"
+mas "AdGuard for Safari", id: 1440147259
 mas "Amphetamine", id: 937984704
 mas "Boop", id: 1518425043
 mas "CotEditor", id: 1024640650
