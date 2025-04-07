@@ -1,11 +1,16 @@
 ;; init-ext.el - External integrations  -*- lexical-binding: t; -*-
 
+(url-handler-mode)                      ; open HTTP links in Emacs
+(xterm-mouse-mode)                      ; mouse in terminal Emacs
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; extenal packages ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize)
   (when (executable-find "gls") (setopt insert-directory-program "gls")))
-
-(xterm-mouse-mode)                      ; mouse in terminal Emacs
 
 (use-package man                        ; man(1)
   :ensure nil
