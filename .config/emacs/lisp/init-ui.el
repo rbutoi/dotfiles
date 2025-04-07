@@ -32,7 +32,7 @@
 (use-package auto-dark
   :init (auto-dark-mode)
   :custom
-  (auto-dark-themes '((ef-owl) (ef-light)))
+  (auto-dark-themes '((ef-owl) (ef-eagle)))
   (auto-dark-allow-osascript t))
 
 (use-package easysession

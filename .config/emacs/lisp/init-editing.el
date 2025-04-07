@@ -10,12 +10,6 @@
         fill-column 80)
 (when (fboundp 'global-completion-preview-mode) (global-completion-preview-mode))
 
-(use-package jinx
-  :diminish
-  :hook (elpaca-after-init-hook . global-jinx-mode)
-  :bind (("M-$" . jinx-correct)
-         ("C-M-$" . jinx-languages)))
-
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
@@ -28,6 +22,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package jinx
+  :diminish
+  :hook (elpaca-after-init-hook . global-jinx-mode)
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages)))
 
 (use-package mwim                       ; better C-a/C-e
   :general

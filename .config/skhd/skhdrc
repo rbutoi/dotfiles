@@ -23,3 +23,6 @@ cmd + shift - f15 : osascript -e 'tell application "Music" to set sound volume t
 
 # gmail mark all as read shortcut
 cmd + shift + ctrl - u : skhd -t '*u'; skhd -k 'shift - i'; skhd -t '*n'
+
+# toggle dark mode
+cmd + ctrl + alt - u : osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to not dark mode'
