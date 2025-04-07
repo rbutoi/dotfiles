@@ -110,15 +110,19 @@
   (global-corfu-mode)
   (corfu-popupinfo-mode)
   :custom
-  (corfu-auto t)
-  (corfu-auto-delay 1.5))
+  (corfu-auto t))
 ;; TODO: cape?
 
-;; TODO: make work
-;; (use-package copilot                    ; GitHub Copilot
-;;   :ensure (:host github :repo "copilot-emacs/copilot.el")
-;;   :hook (prog-mode . copilot-mode))
-
+(use-package copilot                    ; GitHub Copilot
+  :ensure (:host github :repo "copilot-emacs/copilot.el")
+  :hook (prog-mode . copilot-mode)
+  :general
+  (:keymaps 'copilot-completion-map
+            "<tab>" 'copilot-accept-completion
+            "M-f"   'copilot-accept-completion-by-word
+            "C-n"   'copilot-next-completion
+            "C-p"   'copilot-previous-completion
+            "C-g"   'copilot-clear-overlay))
 
 
 (provide 'init-programming)
