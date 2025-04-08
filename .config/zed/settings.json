@@ -9,14 +9,18 @@
 {
   "assistant": {
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-3-5-sonnet"
+      "provider": "google",
+      "model": "gemini-2.5-pro-exp-03-25"
     },
     "version": "2"
   },
   "vim_mode": false,
   "base_keymap": "VSCode",
-  "theme": "One Light",
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Latte",
+    "dark": "One Dark"
+  },
   "ui_font_size": 16,
   "buffer_font_size": 13,
   "buffer_font_family": "Iosevka"

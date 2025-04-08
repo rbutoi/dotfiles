@@ -1,6 +1,8 @@
 ;; init-ext.el - External integrations  -*- lexical-binding: t; -*-
 
-(url-handler-mode)                      ; open HTTP links in Emacs
+;; TODO: broken, https://mail.gnu.org/archive/html/bug-gnu-emacs/2024-07/msg00824.html
+;; (url-handler-mode)                      ; open HTTP links in Emacs
+
 (xterm-mouse-mode)                      ; mouse in terminal Emacs
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -61,6 +63,14 @@
               (unless (display-graphic-p)
                 (diff-hl-margin-local-mode)))))
 
+(use-package blamer
+  :general ("C-c i" 'blamer-show-posframe-commit-info)
+  :defer 2
+  :custom
+  (blamer-idle-time 0.7)
+  (blamer-type 'visual)
+  :config (global-blamer-mode 1))
+
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package vterm                      ; terminal
@@ -79,12 +89,17 @@
   :after vterm
   :general ("<f5>" 'vterm-toggle))
 
+(use-package google-this)               ; Google word at point
+
+;; extenal servers
+
 (use-package atomic-chrome
   :config
   (atomic-chrome-start-server))
 
-(use-package activity-watch-mode
-  :diminish
-  :config (global-activity-watch-mode))
+;; (use-package activity-watch-mode
+;;   :diminish
+;;   :config (global-activity-watch-mode))
+
 
 (provide 'init-ext)
