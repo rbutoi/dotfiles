@@ -55,6 +55,10 @@
 (use-package forge)
 
 (use-package diff-hl
+  :general
+  (:keymaps 'diff-hl-mode-map
+            "C-x v [" (defrepeater 'diff-hl-previous-hunk)
+            "C-x v ]" (defrepeater 'diff-hl-next-hunk))
   :config
   (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
