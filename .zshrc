@@ -458,7 +458,7 @@ if (( $+commands[bat] )); then
   alias c=bat
   alias m=less # used to be `most` for a long time
   export BAT_THEME=gruvbox-dark
-  export BAT_STYLE=changes,header,rule,numbers,snip
+  export BAT_STYLE=changes,header,header-filename,header-filesize,numbers,snip
 fi
 
 if (( $+commands[delta] )); then

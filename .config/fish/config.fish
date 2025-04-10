@@ -77,6 +77,7 @@ end
 if type -q bat
     alias c=bat
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+    set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
 end
 
 type -q procs && alias psg=procs
