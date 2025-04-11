@@ -97,3 +97,7 @@ function brew --wraps brew # dumps package list to source control
         end
     end
 end
+
+if string match -q "*homebrew*" "$SHELL" # check for macOS by proxy
+    set -gx aichat_config_dir ~/.config/aichat
+end
