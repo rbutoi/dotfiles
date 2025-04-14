@@ -82,4 +82,37 @@ or aliases."
                        "url"))
            (magit-get-current-branch))))
 
+;;;;;;;;;;;;
+;; fixing ;;
+;;;;;;;;;;;;
+
+;; https://genehack.blog/2024/02/fixing-an-emacs-typescript-ts-mode-problem/
+;; this fixes a problem where v0.20.4 of this grammar blows up with emacs
+(with-eval-after-load 'treesit-auto
+  (defvar genehack/tsx-treesit-auto-recipe
+    (make-treesit-auto-recipe
+     :lang 'tsx
+     :ts-mode 'tsx-ts-mode
+     :remap '(typescript-tsx-mode)
+     :requires 'typescript
+     :url "https://github.com/tree-sitter/tree-sitter-typescript"
+     :revision "v0.20.3"
+     :source-dir "tsx/src"
+     :ext "\\.tsx\\'")
+    "Recipe for libtree-sitter-tsx.dylib")
+  (add-to-list 'treesit-auto-recipe-list genehack/tsx-treesit-auto-recipe)
+
+  (defvar genehack/typescript-treesit-auto-recipe
+    (make-treesit-auto-recipe
+     :lang 'typescript
+     :ts-mode 'typescript-ts-mode
+     :remap 'typescript-mode
+     :requires 'tsx
+     :url "https://github.com/tree-sitter/tree-sitter-typescript"
+     :revision "v0.20.3"
+     :source-dir "typescript/src"
+     :ext "\\.ts\\'")
+    "Recipe for libtree-sitter-typescript.dylib")
+  (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
+
 (provide 'init-fns)

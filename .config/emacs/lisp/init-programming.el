@@ -52,39 +52,10 @@
                      "p" 'disproject-dispatch))
 
 (use-package treesit-auto
-  :custom
-  (treesit-auto-install 't)
+  :custom (treesit-auto-install 't)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode)
-
-  ;; https://genehack.blog/2024/02/fixing-an-emacs-typescript-ts-mode-problem/
-  ;; this fixes a problem where v0.20.4 of this grammar blows up with emacs
-  (defvar genehack/tsx-treesit-auto-recipe
-    (make-treesit-auto-recipe
-     :lang 'tsx
-     :ts-mode 'tsx-ts-mode
-     :remap '(typescript-tsx-mode)
-     :requires 'typescript
-     :url "https://github.com/tree-sitter/tree-sitter-typescript"
-     :revision "v0.20.3"
-     :source-dir "tsx/src"
-     :ext "\\.tsx\\'")
-    "Recipe for libtree-sitter-tsx.dylib")
-  (add-to-list 'treesit-auto-recipe-list genehack/tsx-treesit-auto-recipe)
-
-  (defvar genehack/typescript-treesit-auto-recipe
-    (make-treesit-auto-recipe
-     :lang 'typescript
-     :ts-mode 'typescript-ts-mode
-     :remap 'typescript-mode
-     :requires 'tsx
-     :url "https://github.com/tree-sitter/tree-sitter-typescript"
-     :revision "v0.20.3"
-     :source-dir "typescript/src"
-     :ext "\\.ts\\'")
-    "Recipe for libtree-sitter-typescript.dylib")
-  (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
+  (global-treesit-auto-mode))
 
 (use-package treemacs
   :general ("C-x C-M-SPC" 'treemacs)
@@ -110,6 +81,8 @@
   (with-eval-after-load 'terraform-mode
     (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
+
+;; completion
 
 (use-package corfu			; inline completions
   :config

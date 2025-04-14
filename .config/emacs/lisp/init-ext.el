@@ -44,6 +44,7 @@
   (magit-log-auto-more t)
   (magit-pull-or-fetch t))
 (use-package magit-delta                ; nicer magit diffs
+  :diminish
   :after magit
   :hook (magit-mode . magit-delta-mode)
   :custom (magit-delta-delta-args
@@ -69,10 +70,10 @@
                 (diff-hl-margin-local-mode)))))
 
 (use-package blamer                     ; inline git blame
-  :general ("C-c i" 'blamer-show-posframe-commit-info)
+  :general ("C-x v I" 'blamer-show-posframe-commit-info)
   :defer 2
   :custom
-  (blamer-idle-time 0.7)
+  (blamer-idle-time 0.3)
   (blamer-type 'visual)
   :config (global-blamer-mode 1))
 
@@ -94,6 +95,11 @@
   :after vterm
   :general ("<f5>" 'vterm-toggle))
 
+(use-package verb
+  :general
+  (:keymaps 'org-mode-map
+            "C-c C-r" verb-command-map))
+
 (use-package google-this)               ; Google word at point
 
 ;; external servers
@@ -102,9 +108,9 @@
   :config
   (atomic-chrome-start-server))
 
-;; (use-package activity-watch-mode
-;;   :diminish
-;;   :config (global-activity-watch-mode))
+(use-package activity-watch-mode
+  :diminish
+  :config (global-activity-watch-mode))
 
 
 (provide 'init-ext)

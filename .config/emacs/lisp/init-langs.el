@@ -26,6 +26,9 @@
 (use-package terraform-mode)
 (use-package i3wm-config-mode)
 
+(with-eval-after-load 'diminish
+  (diminish 'eldoc-mode))
+
 ;; Systems programming
 (use-package rust-mode)
 (use-package go-mode)
@@ -36,7 +39,6 @@
 
 ;; Build systems
 (use-package just-mode)
-
 
 
 (provide 'init-langs)
