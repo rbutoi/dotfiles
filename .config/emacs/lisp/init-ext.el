@@ -43,7 +43,7 @@
                                   ("~/oss" . 1)))
   (magit-log-auto-more t)
   (magit-pull-or-fetch t))
-(use-package magit-delta
+(use-package magit-delta                ; nicer magit diffs
   :after magit
   :hook (magit-mode . magit-delta-mode)
   :custom (magit-delta-delta-args
@@ -54,7 +54,8 @@
 (use-package git-modes)
 (use-package forge)
 
-(use-package diff-hl
+(use-package diff-hl                    ; margin diff markers
+  :defer 1
   :general
   (:keymaps 'diff-hl-mode-map
             "C-x v [" (defrepeater 'diff-hl-previous-hunk)
@@ -67,7 +68,7 @@
               (unless (display-graphic-p)
                 (diff-hl-margin-local-mode)))))
 
-(use-package blamer
+(use-package blamer                     ; inline git blame
   :general ("C-c i" 'blamer-show-posframe-commit-info)
   :defer 2
   :custom
@@ -95,9 +96,9 @@
 
 (use-package google-this)               ; Google word at point
 
-;; extenal servers
+;; external servers
 
-(use-package atomic-chrome
+(use-package atomic-chrome              ; edit Chrome text fields in Emacs
   :config
   (atomic-chrome-start-server))
 

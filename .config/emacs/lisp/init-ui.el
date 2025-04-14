@@ -30,6 +30,7 @@
 
 (use-package ef-themes)
 (use-package auto-dark
+  :diminish
   :init (auto-dark-mode)
   :custom
   (auto-dark-themes '((ef-owl) (ef-eagle)))
