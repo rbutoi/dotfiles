@@ -8,7 +8,6 @@
         kill-do-not-save-duplicates t
         truncate-lines t
         fill-column 80)
-(when (fboundp 'global-completion-preview-mode) (global-completion-preview-mode))
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;

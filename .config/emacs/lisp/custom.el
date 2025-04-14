@@ -14,7 +14,7 @@
  '(safe-local-variable-values
    '((eval when (fboundp 'rainbow-mode) (rainbow-mode 1))
      (elisp-lint-indent-specs (git-gutter:awhen . 1))))
- '(warning-suppress-log-types '((copilot copilot-no-mode-indent))))
+ '(warning-suppress-log-types '((emacs) (copilot copilot-no-mode-indent))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -11,12 +11,18 @@
 (general-add-hook
  '(python-ts-mode-hook
    typescript-ts-base-mode-hook
-   c++-ts-mode-hook
    terraform-mode-hook
-   go-ts-mode-hook)
+   c++-ts-mode-hook
+   go-ts-mode-hook
+   rust-ts-mode-hook)
  #'eglot-ensure)
 (add-hook 'eglot-managed-mode-hook
           (lambda () (eglot-inlay-hints-mode -1))) ; distracting
+
+(with-eval-after-load 'diminish
+  (when (fboundp 'global-completion-preview-mode) ; as of emacs 30.1
+    (global-completion-preview-mode)
+    (diminish 'completion-preview-mode)))
 
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
@@ -114,7 +120,10 @@
 ;; TODO: cape?
 
 (use-package copilot                    ; GitHub Copilot
+  :diminish
   :ensure (:host github :repo "copilot-emacs/copilot.el")
+  :custom
+  (copilot-idle-delay 0.7)
   :hook (prog-mode . copilot-mode)
   :general
   (:keymaps 'copilot-completion-map
