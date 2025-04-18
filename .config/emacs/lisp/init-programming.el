@@ -102,8 +102,8 @@
   (:keymaps 'copilot-completion-map
             "<tab>" 'copilot-accept-completion
             "M-f"   'copilot-accept-completion-by-word
-            "C-n"   'copilot-next-completion
-            "C-p"   'copilot-previous-completion
+            "C-M-n"   'copilot-next-completion
+            "C-M-p"   'copilot-previous-completion
             "C-g"   'copilot-clear-overlay))
 
 

@@ -25,8 +25,12 @@ bind \ek backward-kill-line # better than default C-u
 set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
 
 # https://github.com/PatrickF1/fzf.fish
-fzf_configure_bindings --directory=\ct --variables=\e\cv
 set fzf_history_time_format %a %b %d %H:%M:%S
+fzf_configure_bindings --directory=\ct --variables=\e\cv --history=
+
+# atuin
+atuin init fish | source
+
 #######################
 # aliases (broad-ish) #
 #######################
