@@ -96,7 +96,7 @@ function brew --wraps brew # dumps package list to source control
 
     for c in {,un}install
         if test $c = $argv[1]
-            fish -c "command brew bundle dump --file=$HOME/.config/Brewfile --force 2>&1 | grep -v renamed" &
+            fish -c "command brew bundle dump --file=$HOME/.config/Brewfile --force --describe" &
             break
         end
     end
