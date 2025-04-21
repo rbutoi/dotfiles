@@ -19,7 +19,7 @@ alias .~='source ~/.config/fish/config.fish'
 set -g fish_greeting # none
 set -gx EDITOR emacsclient -t
 
-bind \ek backward-kill-line # better than default C-u
+bind alt-k backward-kill-line # better than default C-u
 
 # fzf
 set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
@@ -34,6 +34,8 @@ atuin init fish | source
 #######################
 # aliases (broad-ish) #
 #######################
+set -gx LESS -im
+
 alias s sudo
 alias chmox 'chmod +x'
 abbr -- - cd -
@@ -42,6 +44,10 @@ abbr tm tmux new -A -s auto
 function md
     mkdir -p $argv[1] && cd $argv[1]
 end
+
+##################
+# external tools #
+##################
 
 ## emacs
 function _e --wraps emacsclient # emacs with stdin
@@ -65,8 +71,6 @@ end
 alias e 'TERM=xterm-256color _e -nw' # inline console editor
 alias en '_e_gui -n' # open in existing editor
 alias ec '_e_gui -nc' # new graphical editor
-
-###
 
 if type -q eza
     set -gx EZA_ICONS_AUTO

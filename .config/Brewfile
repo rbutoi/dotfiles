@@ -69,7 +69,7 @@ brew "fd"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
-brew "fish", args: ["HEAD"]
+brew "fish"
 # Monitor a directory for changes and run a shell command
 brew "fswatch"
 # Command-line fuzzy finder written in Go
@@ -350,7 +350,6 @@ mas "Slack", id: 803453959
 mas "Tim", id: 1449619230
 mas "Tot", id: 1491071483
 mas "UTM", id: 1538878817
-mas "WhatsApp", id: 310633997
 mas "Windows App", id: 1295203466
 mas "Xcode", id: 497799835
 mas "YamaCast", id: 1415107621
