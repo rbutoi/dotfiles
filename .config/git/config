@@ -39,6 +39,12 @@
 [alias]
   root = rev-parse --show-toplevel
 
+## url short forms
+[url "git@github.com:"]
+  insteadOf = @gh:
+[url "https://github.com/"]
+  insteadOf = gh://
+
 ### https://blog.gitbutler.com/how-git-core-devs-configure-git/
 
 # clearly makes git better
