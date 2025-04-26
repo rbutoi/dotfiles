@@ -29,7 +29,9 @@ set fzf_history_time_format %a %b %d %H:%M:%S
 fzf_configure_bindings --directory=\ct --variables=\e\cv --history=
 
 # atuin
-atuin init fish | source
+if type -q atuin
+    atuin init fish | source
+end
 
 #######################
 # aliases (broad-ish) #

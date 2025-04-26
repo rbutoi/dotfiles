@@ -30,6 +30,8 @@ brew "babelfish"
 brew "bash"
 # Clone of cat(1) with syntax highlighting and Git integration
 brew "bat"
+# Breadth-first version of find
+brew "bfs"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew "btop"
 # Watches over your Cargo project's source
