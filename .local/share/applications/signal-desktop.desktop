@@ -1,0 +1,19 @@
+[Desktop Entry]
+Categories=Network;InstantMessaging;
+Comment=Signal - Private Messenger
+# Exec=signal-desktop -- %u
+Exec=signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland -- %u
+Icon=signal-desktop
+Keywords=sgnl;chat;im;messaging;messenger;security;privat;
+MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
+Name=Signal
+NoDisplay=false
+Path=
+StartupNotify=true
+StartupWMClass=signal
+Terminal=false
+TerminalOptions=
+Type=Application
+X-GNOME-UsesNotifications=true
+X-KDE-SubstituteUID=false
+X-KDE-Username=
