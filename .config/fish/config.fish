@@ -30,7 +30,7 @@ fzf_configure_bindings --directory=\ct --variables=\e\cv --history=
 
 # atuin
 if type -q atuin
-    atuin init fish | source
+    atuin init fish --disable-up-arrow | source
 end
 
 #######################
