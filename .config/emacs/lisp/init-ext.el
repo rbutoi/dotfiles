@@ -69,14 +69,6 @@
               (unless (display-graphic-p)
                 (diff-hl-margin-local-mode)))))
 
-(use-package blamer                     ; inline git blame
-  :general ("C-x v I" 'blamer-show-posframe-commit-info)
-  :defer 2
-  :custom
-  (blamer-idle-time 0.3)
-  (blamer-type 'visual)
-  :config (global-blamer-mode 1))
-
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package vterm                      ; terminal
