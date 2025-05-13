@@ -2,7 +2,7 @@
 <provider id="google">
   <name>Google</name>
   
-  <description>Sync calendars, contacts, and tasks, and upload videos to YouTube in supported apps</description>
+  <description>Sync calendars, contacts, and tasks, and upload videos to YouTube in supported apps. +Google Drive</description>
   <icon>im-google</icon>
   <translations>kaccounts-providers</translations>
   <domains>.*google\.com</domains>
@@ -25,11 +25,12 @@
               'https://www.googleapis.com/auth/calendar',
               'https://www.googleapis.com/auth/tasks',
               'https://www.google.com/m8/feeds/',
-              'https://www.googleapis.com/auth/youtube.upload'
+              'https://www.googleapis.com/auth/youtube.upload',
+              'https://www.googleapis.com/auth/drive'
           ]</setting>
           <setting type="as" name="AllowedSchemes">['https']</setting>
-          <setting name="ClientId">317066460457-pkpkedrvt2ldq6g2hj1egfka2n7vpuoo.apps.googleusercontent.com</setting>
-          <setting name="ClientSecret">Y8eFAaWfcanV3amZdDvtbYUq</setting>
+          <setting name="ClientId">56782779492-4goeprulrfqpaf0o00du8hhfuf9plplf.apps.googleusercontent.com</setting>
+          <setting name="ClientSecret">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</setting>
           <setting type="b" name="ForceClientAuthViaRequestBody">true</setting>
         </group>
       </group>
