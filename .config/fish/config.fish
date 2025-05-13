@@ -26,7 +26,7 @@ set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
 
 # https://github.com/PatrickF1/fzf.fish
 set fzf_history_time_format %a %b %d %H:%M:%S
-fzf_configure_bindings --directory=\ct --variables=\e\cv --history=
+fzf_configure_bindings --directory=\ct --variables=\e\cv --history=\e\cr
 
 # atuin
 if type -q atuin
@@ -36,7 +36,7 @@ end
 #######################
 # aliases (broad-ish) #
 #######################
-set -gx LESS -im
+set -gx LESS -Rim
 
 alias s sudo
 alias chmox 'chmod +x'
