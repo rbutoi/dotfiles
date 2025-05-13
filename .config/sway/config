@@ -5,9 +5,7 @@
 # basics
 #
 
-set $wezterm wezterm
-
-set $term       $wezterm start --
+set $term       kitty
 set $term_tmux  $term tmux new -As auto
 set $term_emacs $term -- emacsclient -nw -a=
 set $web        google-chrome
