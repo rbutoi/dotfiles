@@ -86,7 +86,7 @@ end
 
 if type -q bat
     alias c=bat
-    set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+    set -gx MANPAGER "sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
     set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
 end
 
@@ -111,3 +111,5 @@ end
 if string match -q "*homebrew*" "$SHELL" # check for macOS by proxy
     set -gx aichat_config_dir ~/.config/aichat
 end
+
+type -q paru && alias p=paru
