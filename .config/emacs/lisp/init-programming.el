@@ -10,6 +10,8 @@
 
 (general-add-hook
  '(python-ts-mode-hook
+   js-base-mode-hook
+   js-ts-mode-hook
    typescript-ts-base-mode-hook
    terraform-mode-hook
    c++-ts-mode-hook
@@ -52,7 +54,7 @@
                      "p" 'disproject-dispatch))
 
 (use-package treesit-auto
-  :custom (treesit-auto-install 't)
+  :custom (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
