@@ -2,6 +2,8 @@
 
 (delete-selection-mode)                 ; typing overwrites selection
 (electric-pair-mode)                    ; automatic ()
+(add-to-list 'electric-pair-pairs '( ?\` . ?\`))
+
 (global-auto-revert-mode)
 (setopt global-auto-revert-non-file-buffers t
         set-mark-command-repeat-pop t ; can keep C-u C-SPC C-SPC C-SPC...
@@ -25,8 +27,7 @@
 (use-package jinx
   :diminish
   :hook (elpaca-after-init-hook . global-jinx-mode)
-  :bind (("M-$" . jinx-correct)
-         ("C-M-$" . jinx-languages)))
+  :bind (("M-$" . jinx-correct)))
 
 (use-package mwim                       ; better C-a/C-e
   :general
