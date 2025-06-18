@@ -42,7 +42,10 @@
 
 (general-def
   "C-;"   'comment-line
-  "C-x ;" (defrepeater 'comment-line))
+  "C-x ;" (defrepeater 'comment-line)
+  :keymaps 'eglot-mode-map
+  "C-c r"  'eglot-rename
+  "C-c a"  'eglot-code-actions)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
