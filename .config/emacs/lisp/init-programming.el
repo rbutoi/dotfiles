@@ -57,6 +57,7 @@
                      "p" 'disproject-dispatch))
 
 (use-package treesit-auto
+  :disabled                             ; TODO: slow?????
   :custom (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
@@ -98,6 +99,7 @@
 ;; TODO: cape?
 
 (use-package copilot                    ; GitHub Copilot
+  :disabled                             ; hmm
   :diminish
   :ensure (:host github :repo "copilot-emacs/copilot.el")
   :custom
