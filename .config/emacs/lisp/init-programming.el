@@ -8,24 +8,6 @@
                   'display-line-numbers-mode)
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
-(general-add-hook
- '(python-ts-mode-hook
-   js-base-mode-hook
-   js-ts-mode-hook
-   typescript-ts-base-mode-hook
-   terraform-mode-hook
-   c++-ts-mode-hook
-   go-ts-mode-hook
-   rust-ts-mode-hook)
- #'eglot-ensure)
-(add-hook 'eglot-managed-mode-hook
-          (lambda () (eglot-inlay-hints-mode -1))) ; distracting
-
-(with-eval-after-load 'diminish
-  (when (fboundp 'global-completion-preview-mode) ; as of emacs 30.1
-    (global-completion-preview-mode)
-    (diminish 'completion-preview-mode)))
-
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
   (interactive)
@@ -36,14 +18,19 @@
                                       (thing-at-point 'symbol) nil nil
                                       'my/gh-web-searches)))))
 
-;;;;;;;;;;;;;;
-;; keybinds ;;
-;;;;;;;;;;;;;;
-
-(general-def
-  "C-;"   'comment-line
-  "C-x ;" (defrepeater 'comment-line)
-  :keymaps 'eglot-mode-map
+;; eglot
+(add-hook 'eglot-managed-mode-hook
+          (lambda () (eglot-inlay-hints-mode -1))) ; distracting
+(general-add-hook
+ '(python-base-mode-hook js-base-mode-hook
+                         typescript-ts-base-mode-hook
+                         terraform-mode-hook c++-mode-hook go-mode-hook
+                         rust-mode-hook)
+ #'eglot-ensure)
+(setq c++-ts-mode-hook  c++-mode-hook   ; needed: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#keep-track-of-your-hooks
+      go-ts-mode-hook   go-mode-hook
+      rust-ts-mode-hook rust-mode-hook)
+(general-def :keymaps 'eglot-mode-map
   "C-c r"  'eglot-rename
   "C-c a"  'eglot-code-actions)
 
@@ -51,33 +38,36 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+;; completion
+
+(with-eval-after-load 'diminish
+  ;; (when (fboundp 'global-completion-preview-mode) ; as of emacs 30.1
+  (global-completion-preview-mode)
+  (diminish 'completion-preview-mode)) ;; )
+(use-package corfu			; inline completions
+  :config
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)
+  :custom
+  (corfu-auto t))
+;; TODO: cape?
+
 (use-package disproject
   ;; Replace `project-prefix-map' with `disproject-dispatch'.
   :general (:keymaps 'ctl-x-map
                      "p" 'disproject-dispatch))
-
-(use-package treesit-auto
-  :disabled                             ; TODO: slow?????
-  :custom (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
 
 (use-package treemacs
   :general ("C-x C-M-SPC" 'treemacs)
   :config
   (treemacs-project-follow-mode)
   (treemacs-git-commit-diff-mode))
-
 (with-eval-after-load 'magit
   (use-package treemacs-magit))
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
                      "C-c C-u" 'string-inflection-cycle))
-
-;; TODO: use??
-;; (use-package flycheck)
 
 (use-package auto-highlight-symbol      ; highlight symbols
   :diminish
@@ -88,15 +78,17 @@
     (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
 
-;; completion
+(provide 'init-programming)
 
-(use-package corfu			; inline completions
+;;
+;;; banished
+
+(use-package treesit-auto
+  :disabled                         ; definitely adds too much to file load time
+  :custom (treesit-auto-install 'prompt)
   :config
-  (global-corfu-mode)
-  (corfu-popupinfo-mode)
-  :custom
-  (corfu-auto t))
-;; TODO: cape?
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 (use-package copilot                    ; GitHub Copilot
   :disabled                             ; hmm
@@ -112,6 +104,3 @@
             "C-M-n"   'copilot-next-completion
             "C-M-p"   'copilot-previous-completion
             "C-g"   'copilot-clear-overlay))
-
-
-(provide 'init-programming)

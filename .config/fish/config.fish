@@ -67,15 +67,10 @@ function _e --wraps emacsclient # emacs with stdin
         emacsclient -a= $argv
     end
 end
-function _e_gui --wraps emacsclient
-    _e $argv
-    set -l a '/Applications/Emacs.app'
-    test -e "$a" && open $a # on macOS: raise the Emacs app
-end
 # TODO: only emacs has termcap issues?? *ERROR*: Terminal type xterm-kitty is not defined
 alias e 'TERM=xterm-256color _e -nw' # inline console editor
-alias en '_e_gui -n' # open in existing editor
-alias ec '_e_gui -nc' # new graphical editor
+alias en '_e -n' # open in existing editor
+alias ec '_e -nc' # new graphical editor
 
 if type -q eza
     set -gx EZA_ICONS_AUTO
@@ -93,7 +88,7 @@ if type -q bat
     set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
 end
 
-type -q procs && alias psg=procs
+type -q procs && alias psg=procs # historically "ps aux | grep"
 
 if type -q rg
     alias g=rg
