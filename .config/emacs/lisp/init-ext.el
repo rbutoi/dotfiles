@@ -100,7 +100,9 @@
   :config
   (atomic-chrome-start-server))
 
+
 (use-package activity-watch-mode
+  :disabled                             ; TODO: causing errors, re-eval
   :diminish
   :config (global-activity-watch-mode))
 

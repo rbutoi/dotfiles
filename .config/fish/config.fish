@@ -59,7 +59,10 @@ function _e --wraps emacsclient # emacs with stdin
         set tempfile '/tmp/emacs-stdin-'"$USER"
         cat - >"$tempfile"
         # if stdin, definitely want a local terminal client
-        emacsclient -a= --tty --eval '(find-file "'"$tempfile"'")' --eval '(set-visited-file-name nil)' --eval '(rename-buffer "*stdin*" t)'
+        emacsclient -a= --tty \
+            --eval '(find-file "'"$tempfile"'")' \
+            --eval '(set-visited-file-name nil)' \
+            --eval '(rename-buffer "*stdin*" t)'
     else
         emacsclient -a= $argv
     end
@@ -67,7 +70,7 @@ end
 function _e_gui --wraps emacsclient
     _e $argv
     set -l a '/Applications/Emacs.app'
-    test -e "$a" && open $a
+    test -e "$a" && open $a # on macOS: raise the Emacs app
 end
 # TODO: only emacs has termcap issues?? *ERROR*: Terminal type xterm-kitty is not defined
 alias e 'TERM=xterm-256color _e -nw' # inline console editor

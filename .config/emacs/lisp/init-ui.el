@@ -1,6 +1,6 @@
 ;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "Iosevka" :height 130)
+(set-face-attribute 'default nil :family "Iosevka" :height 140)
 
 (context-menu-mode)
 (global-hl-line-mode)
@@ -28,27 +28,9 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package ef-themes)
-(use-package auto-dark
-  :diminish
-  :init (auto-dark-mode)
-  :custom
-  (auto-dark-themes '((ef-owl) (ef-eagle)))
-  (auto-dark-allow-osascript t))
-
-(use-package easysession
-  :diminish
-  :commands (easysession-switch-to
-             easysession-save-as
-             easysession-save-mode
-             easysession-load-including-geometry)
-  :custom
-  (easysession-save-interval (* 60 60)) ; Save every hour
-  :init
-  (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
-  (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103)
+(use-package doom-themes
   :config
-  (diminish 'easysession-save-mode))
+  (load-theme 'doom-gruvbox))
 
 (use-package diminish)                  ; TODO: consider doom-modeline
 
