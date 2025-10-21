@@ -20,7 +20,7 @@
   "M-o"       (cmd! (other-window +1))
   "M-i"       (cmd! (other-window -1))
   "C-c M-i"   'tab-to-tab-stop		; former M-i
-  "M-k"       (cmd! (kill-buffer nil))
+  "M-k"       'kill-current-buffer
   "C-M-k"     'kill-sexp
   "C-c M-k"   'kill-sentence
   "C-x M-k"   'kill-other-buffers
