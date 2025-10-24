@@ -29,7 +29,8 @@
  #'eglot-ensure)
 (setq c++-ts-mode-hook  c++-mode-hook   ; needed: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#keep-track-of-your-hooks
       go-ts-mode-hook   go-mode-hook
-      rust-ts-mode-hook rust-mode-hook)
+      rust-ts-mode-hook rust-mode-hook
+      eglot-autoshutdown t)
 (general-def :keymaps 'eglot-mode-map
   "C-c r"  'eglot-rename
   "C-c a"  'eglot-code-actions)

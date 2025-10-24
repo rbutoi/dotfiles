@@ -88,7 +88,10 @@ if type -q bat
     set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
 end
 
-type -q procs && alias psg=procs # historically "ps aux | grep"
+if type -q procs
+    alias psg=procs # historically psg="ps aux | grep"
+    alias psgl='procs --use-config large'
+end
 
 if type -q rg
     alias g=rg
