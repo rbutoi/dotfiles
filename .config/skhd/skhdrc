@@ -1,11 +1,8 @@
 # -*- mode: conf-unix -*-
 
-cmd + ctrl    - return : open /Applications/kitty.app --args -- tmux new -A -s auto
-cmd + ctrl    - e      : open /Applications/Emacs.app
-cmd + ctrl    - c      : open "/Applications/Google Chrome.app"
-# cmd + ctrl  - s already pops up Last.fm natively
-cmd + shift   - s      : open /Applications/Slack.app
-cmd + ctrl    - z      : open /Applications/zoom.us.app
+cmd - return : open -a Ghostty --args -e tmux new -As auto
+cmd - e      : open /Applications/Emacs.app
+cmd - i      : open "/Applications/Google Chrome.app"
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"
@@ -25,4 +22,4 @@ cmd + shift - f15 : osascript -e 'tell application "Music" to set sound volume t
 cmd + shift + ctrl - u : skhd -t '*u'; skhd -k 'shift - i'; skhd -t '*n'
 
 # toggle dark mode
-cmd + ctrl + alt - u : osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to not dark mode'
+cmd + ctrl + alt - t : osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to not dark mode'
