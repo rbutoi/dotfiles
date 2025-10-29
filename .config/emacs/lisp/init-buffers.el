@@ -40,13 +40,19 @@
 (use-package vertico                    ; VERTical Interactive COmpletion
   :demand t                             ; otherwise first invocation is a dud
   :hook ((minibuffer-setup . vertico-repeat-save))
-  :general ("C-x C-r" 'vertico-repeat)
+  :general
+  ("C-x C-r" 'vertico-repeat)
+  (:keymaps 'vertico-map
+            "<escape>" #'minibuffer-keyboard-quit
+            "C-M-n" #'vertico-next-group
+            "C-M-p" #'vertico-previous-group)
   :custom
   (vertico-count 17)
   (vertico-cycle t)
   (vertico-sort-function 'vertico-sort-history-alpha)
   :config
   (vertico-mode)
+  ;; TOOD: how to disable for man-mode?? vertico-multiform-mode didn't seem to work
   (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
 
 (use-package marginalia                 ; extra info in margins

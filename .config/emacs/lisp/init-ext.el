@@ -39,8 +39,9 @@
             "M-m" 'magit-toggle-margin
             "@"   'endless/visit-pull-request-url)
   :custom
-  (magit-repository-directories `(("~/dev" . 2)
-                                  ("~/oss" . 1)))
+  (magit-repository-directories `(("~/.dots/dotfiles" . 0)
+                                  ("~/dev"            . 2)
+                                  ("~/oss"            . 1)))
   (magit-log-auto-more t)
   (magit-pull-or-fetch t))
 (use-package magit-delta                ; nicer magit diffs
