@@ -21,6 +21,36 @@
   (Man-notify-method 'aggressive)
   :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
 
+;; TODO: figure out a better place to run this
+
+;; we want to override a `defmacro`: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
+;; that means you can't just re-define the function. it seems like the cleanest way is to just patch the whole man.el file??
+
+;; patch man.el to let width work properly on macOS
+(let ((get-file-contents-shell
+       (if (file-exists-p
+            (concat
+             (file-name-sans-extension (locate-library "man")) ".el"))
+           "cat %s" "gunzip %s.gz")))
+  (let ((upstream-el-file-md5
+         (string-trim
+          (shell-command-to-string
+           (concat
+            get-file-contents-shell " | md5sum | sed 's/\s.*//'" )))))
+    (let ((my-file (format "/tmp/my-man-from-%s.el" upstream-el-file-md5))) ; TODO: dir
+      (unless (file-exists-p my-file)
+        (write-region
+         (string-replace
+          "(setenv \"COLUMNS\" (number-to-string Man-columns))"
+          "(setenv \"COLUMNS\" (number-to-string Man-columns))
+      (setenv \"MANWIDTH\" (number-to-string Man-columns))"
+          (shell-command-to-string get-file-contents-shell))
+         nil
+         my-file))
+
+      (load-file my-file)
+      )))
+
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
 (use-package dired-gitignore
@@ -106,6 +136,5 @@
   :disabled                             ; TODO: causing errors, re-eval
   :diminish
   :config (global-activity-watch-mode))
-
 
 (provide 'init-ext)
