@@ -26,30 +26,33 @@
 ;; we want to override a `defmacro`: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
 ;; that means you can't just re-define the function. it seems like the cleanest way is to just patch the whole man.el file??
 
-;; patch man.el to let width work properly on macOS
-(let ((get-file-contents-shell
-       (if (file-exists-p
-            (concat
-             (file-name-sans-extension (locate-library "man")) ".el"))
-           "cat %s" "gunzip %s.gz")))
-  (let ((upstream-el-file-md5
-         (string-trim
-          (shell-command-to-string
-           (concat
-            get-file-contents-shell " | md5sum | sed 's/\s.*//'" )))))
-    (let ((my-file (format "/tmp/my-man-from-%s.el" upstream-el-file-md5))) ; TODO: dir
-      (unless (file-exists-p my-file)
-        (write-region
-         (string-replace
-          "(setenv \"COLUMNS\" (number-to-string Man-columns))"
-          "(setenv \"COLUMNS\" (number-to-string Man-columns))
+;; patch upstream emacs/lisp/man.el to let width work properly on macOS's `man`
+(let ((man-el-file (concat
+                    (file-name-sans-extension (locate-library "man")) ".el")))
+  (let ((get-file-contents-shell
+         (format (if (file-exists-p man-el-file)
+                     "cat %s" "gunzip %s.gz")
+                 man-el-file)))
+    (let ((upstream-el-file-md5
+           (string-trim
+            (shell-command-to-string
+             (concat
+              get-file-contents-shell " | md5sum | sed 's/\s.*//'" )))))
+      (let ((my-file (expand-file-name
+                      (format "patched-man-from-%s.el" upstream-el-file-md5)
+                      no-littering-var-directory)))
+        (unless (file-exists-p my-file)
+          (write-region
+           (string-replace
+            "(setenv \"COLUMNS\" (number-to-string Man-columns))"
+            "(setenv \"COLUMNS\" (number-to-string Man-columns))
       (setenv \"MANWIDTH\" (number-to-string Man-columns))"
-          (shell-command-to-string get-file-contents-shell))
-         nil
-         my-file))
+            (shell-command-to-string get-file-contents-shell))
+           nil
+           my-file))
 
-      (load-file my-file)
-      )))
+        (load-file my-file)
+        ))))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
