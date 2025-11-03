@@ -21,38 +21,29 @@
   (Man-notify-method 'aggressive)
   :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
 
-;; TODO: figure out a better place to run this
-
-;; we want to override a `defmacro`: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
-;; that means you can't just re-define the function. it seems like the cleanest way is to just patch the whole man.el file??
-
-;; patch upstream emacs/lisp/man.el to let width work properly on macOS's `man`
-(let ((man-el-file (concat
-                    (file-name-sans-extension (locate-library "man")) ".el")))
-  (let ((get-file-contents-shell
-         (format (if (file-exists-p man-el-file)
-                     "cat %s" "gunzip %s.gz")
-                 man-el-file)))
-    (let ((upstream-el-file-md5
-           (string-trim
-            (shell-command-to-string
-             (concat
-              get-file-contents-shell " | md5sum | sed 's/\s.*//'" )))))
-      (let ((my-file (expand-file-name
-                      (format "patched-man-from-%s.el" upstream-el-file-md5)
+;; Patch man.el to set MANWIDTH for macOS compatibility
+;; Must patch the source since Man-start-calling is a defmacro: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
+(let* ((man-el-file (concat
+                     (file-name-sans-extension (locate-library "man")) ".el"))
+       (file-contents (with-temp-buffer
+                        (if (file-exists-p man-el-file)
+                            (insert-file-contents man-el-file)
+                          (call-process "gunzip" nil t nil "-c" (concat man-el-file ".gz")))
+                        (buffer-string)))
+       (patched-file (expand-file-name
+                      (format "patched-man-from-%s.el"
+                              (secure-hash 'md5 file-contents))
                       no-littering-var-directory)))
-        (unless (file-exists-p my-file)
-          (write-region
-           (string-replace
-            "(setenv \"COLUMNS\" (number-to-string Man-columns))"
-            "(setenv \"COLUMNS\" (number-to-string Man-columns))
-      (setenv \"MANWIDTH\" (number-to-string Man-columns))"
-            (shell-command-to-string get-file-contents-shell))
-           nil
-           my-file))
 
-        (load-file my-file)
-        ))))
+  (unless (file-exists-p patched-file)
+    (with-temp-file patched-file
+      (insert
+       (string-replace
+        "(setenv \"COLUMNS\" (number-to-string Man-columns))"
+        "(setenv \"COLUMNS\" (number-to-string Man-columns))\n      (setenv \"MANWIDTH\" (number-to-string Man-columns))"
+        file-contents))))
+
+  (load-file patched-file))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
