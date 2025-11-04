@@ -12,3 +12,5 @@
 
 (setq custom-file (locate-user-emacs-file "lisp/custom.el"))
 (load custom-file)
+
+(message "(emacs-init-time): %s" (emacs-init-time))
