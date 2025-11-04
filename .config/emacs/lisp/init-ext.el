@@ -12,38 +12,16 @@
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize)
-  (when (executable-find "gls") (setopt insert-directory-program "gls")))
+  (when (executable-find "gls") (setopt insert-directory-program "gls"))) ; macOS gnu coreutils
 
+(with-system darwin
+  (my/patch-man-el-set-MANWIDTH))
 (use-package man                        ; man(1)
   :ensure nil
   :custom
   (Man-width-max nil)
   (Man-notify-method 'aggressive)
   :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
-
-;; Patch man.el to set MANWIDTH for macOS compatibility
-;; Must patch the source since Man-start-calling is a defmacro: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
-(let* ((man-el-file (concat
-                     (file-name-sans-extension (locate-library "man")) ".el"))
-       (file-contents (with-temp-buffer
-                        (if (file-exists-p man-el-file)
-                            (insert-file-contents man-el-file)
-                          (call-process "gunzip" nil t nil "-c" (concat man-el-file ".gz")))
-                        (buffer-string)))
-       (patched-file (expand-file-name
-                      (format "patched-man-from-%s.el"
-                              (secure-hash 'md5 file-contents))
-                      no-littering-var-directory)))
-
-  (unless (file-exists-p patched-file)
-    (with-temp-file patched-file
-      (insert
-       (string-replace
-        "(setenv \"COLUMNS\" (number-to-string Man-columns))"
-        "(setenv \"COLUMNS\" (number-to-string Man-columns))\n      (setenv \"MANWIDTH\" (number-to-string Man-columns))"
-        file-contents))))
-
-  (load-file patched-file))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
@@ -78,7 +56,7 @@
              ;; magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
              "--features" "magit-delta")))
 (use-package git-modes)
-(use-package forge)
+(use-package forge :defer 5)
 
 (use-package diff-hl                    ; margin diff markers
   :defer 1
@@ -113,6 +91,7 @@
   :general ("<f5>" 'vterm-toggle))
 
 (use-package verb
+  :defer 5
   :general
   (:keymaps 'org-mode-map
             "C-c C-r" verb-command-map))

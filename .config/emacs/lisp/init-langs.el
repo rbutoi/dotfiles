@@ -10,9 +10,9 @@
         '(ruff ruff-isort)))
 
 ;; Web and data formats
-(use-package json-mode)
+(use-package json-mode    :defer 2)
 (use-package jq-mode)
-(use-package deno-ts-mode)
+(use-package deno-ts-mode :defer 2)
 (use-package csv-mode)
 
 ;; Markup and config files
@@ -25,6 +25,7 @@
 (use-package dockerfile-mode)
 (use-package terraform-mode)
 (use-package i3wm-config-mode)
+;; TODO: rainbow-mode??
 
 (with-eval-after-load 'diminish
   (diminish 'eldoc-mode))

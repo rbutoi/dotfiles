@@ -115,4 +115,32 @@ or aliases."
     "Recipe for libtree-sitter-typescript.dylib")
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
 
+;; Patch man.el to set MANWIDTH for macOS compatibility
+;; Must patch the source since Man-start-calling is a defmacro: https://github.com/search?q=repo%3Aemacs-mirror%2Femacs+%22defmacro+Man-start-calling%22&type=code
+(with-system darwin
+  (defun my/patch-man-el-set-MANWIDTH ()
+    (let* ((man-el-file (concat
+                         (file-name-sans-extension (locate-library "man")) ".el"))
+           (file-contents (with-temp-buffer
+                            (if (file-exists-p man-el-file)
+                                (insert-file-contents man-el-file)
+                              (call-process "gunzip" nil t nil "-c" (concat man-el-file ".gz")))
+                            (buffer-string)))
+           (patched-dir (expand-file-name
+                         (format "patched-man-%s" (secure-hash 'md5 file-contents))
+                         no-littering-var-directory))
+           (patched-file (expand-file-name "man.el" patched-dir)))
+
+      (unless (file-exists-p patched-file)
+        (unless (file-exists-p patched-dir)
+          (make-directory patched-dir nil))
+        (with-temp-file patched-file
+          (insert
+           (string-replace
+            "(setenv \"COLUMNS\" (number-to-string Man-columns))"
+            "(setenv \"COLUMNS\" (number-to-string Man-columns))\n;;;;;;;;;;;; EDIT: set MANWIDTH for macOS\n      (setenv \"MANWIDTH\" (number-to-string Man-columns))"
+            file-contents))))
+
+      (add-to-list 'load-path patched-dir))))
+
 (provide 'init-fns)
