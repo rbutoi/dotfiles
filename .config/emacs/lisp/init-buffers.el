@@ -3,10 +3,12 @@
 (recentf-mode)                          ; recent files
 (save-place-mode)                       ; remember buffer location
 (savehist-mode)                         ; save minibuffer history
-(setopt
- savehist-file (no-littering-expand-var-file-name "savehist.el")
- savehist-additional-variables '(kill-ring mark-ring search-ring regexp-search-ring)
- enable-recursive-minibuffers t)
+(dolist (v '(kill-ring
+             mark-ring
+             search-ring
+             regexp-search-ring))
+  (add-to-list 'savehist-additional-variables v))
+(setopt enable-recursive-minibuffers t)
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;

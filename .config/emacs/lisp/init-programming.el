@@ -22,6 +22,8 @@
 (add-hook 'eglot-managed-mode-hook
           (lambda () (eglot-inlay-hints-mode -1))) ; distracting
 (general-add-hook
+ ;; LSP servers to use:
+ ;; - python: pylsp
  '(python-base-mode-hook js-base-mode-hook
                          typescript-ts-base-mode-hook
                          terraform-mode-hook c++-mode-hook go-mode-hook

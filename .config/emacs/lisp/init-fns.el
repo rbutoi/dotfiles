@@ -16,11 +16,6 @@ or aliases."
 
 ;;;
 
-(defun add-list-to-list (dst src) ; https://emacs.stackexchange.com/a/68048/26271
-  "Similar to `add-to-list', but accepts a list as 2nd argument"
-  (set dst
-       (append (eval dst) src)))
-
 (defmacro with-system (type &rest body) ; (with-system gnu/linux (...))
   "Evaluate BODY if `system-type' equals TYPE."
   (declare (indent defun))

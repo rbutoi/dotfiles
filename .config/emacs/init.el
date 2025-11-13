@@ -10,7 +10,7 @@
 (require 'init-langs)
 (require 'init-ext)
 
-(setq custom-file (locate-user-emacs-file "lisp/custom.el"))
+(setq custom-file (locate-library "custom"))
 (load custom-file)
 
 (message "(emacs-init-time): %s" (emacs-init-time))
