@@ -14,14 +14,14 @@
   (exec-path-from-shell-initialize)
   (when (executable-find "gls") (setopt insert-directory-program "gls"))) ; macOS gnu coreutils
 
-(with-system darwin
-  (my/patch-man-el-set-MANWIDTH))
 (use-package man                        ; man(1)
   :ensure nil
   :custom
   (Man-width-max nil)
   (Man-notify-method 'aggressive)
   :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
+(with-system darwin
+  (my/patch-man-el-set-MANWIDTH))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))

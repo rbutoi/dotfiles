@@ -1,9 +1,8 @@
 # -*- mode: conf-unix -*-
 
-# cmd + shift - return : open -a Ghostty --args -e tmux new -As auto
-cmd - return   : open -a Ghostty --args -e tmux new -As auto
-cmd - e        : open /Applications/Emacs.app
-cmd + ctrl - i : open "/Applications/Google Chrome.app" # cmd - i used by vscode
+cmd + ctrl - return : open -a Ghostty --args -e tmux new -As auto
+cmd + ctrl - e      : open /Applications/Emacs.app
+cmd + ctrl - i      : open "/Applications/Google Chrome.app" # cmd - i used by vscode
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"

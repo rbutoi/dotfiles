@@ -28,6 +28,18 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package easysession
+  :diminish easysession-save-mode
+  :commands (easysession-switch-to
+             easysession-save-as
+             easysession-save-mode
+             easysession-load-including-geometry)
+  :custom
+  (easysession-buffer-list-function (cmd! () ())) ; Only save window geometry
+  :init
+  (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
+  (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
+
 (use-package doom-themes
   :config
   (load-theme 'doom-gruvbox))
