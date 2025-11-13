@@ -40,9 +40,9 @@
   (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
   (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
 
-(use-package doom-themes
+(use-package modus-themes
   :config
-  (load-theme 'doom-gruvbox))
+  (load-theme 'modus-operandi))
 
 (use-package diminish)                  ; TODO: consider doom-modeline
 

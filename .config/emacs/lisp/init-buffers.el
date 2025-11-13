@@ -54,8 +54,14 @@
   (vertico-sort-function 'vertico-sort-history-alpha)
   :config
   (vertico-mode)
-  ;; TOOD: how to disable for man-mode?? vertico-multiform-mode didn't seem to work
-  (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
+  (add-to-list 'savehist-additional-variables 'vertico-repeat-history)
+
+  (defun my/man-no-vertico ()           ; completions take seconds to load
+    (interactive)
+    (vertico-mode -1)
+    (unwind-protect
+        (call-interactively #'man)
+      (vertico-mode +1))))
 
 (use-package marginalia                 ; extra info in margins
   :config (marginalia-mode))
