@@ -63,7 +63,7 @@
 (use-package treemacs
   :hook (emacs-startup
          . (lambda ()            ; without timer, Treemacs modeline is messed up
-             (run-with-timer 0.2 nil 'treemacs-start-on-boot)))
+             (run-with-timer 0.1 nil 'treemacs-start-on-boot)))
   :general
   (  "C-S-M-SPC" 'treemacs)
   ("C-x C-M-SPC" 'treemacs)             ; cli

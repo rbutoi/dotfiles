@@ -45,7 +45,10 @@
                                   ("~/dev"            . 2)
                                   ("~/oss"            . 1)))
   (magit-log-auto-more t)
-  (magit-pull-or-fetch t))
+  (magit-pull-or-fetch t)
+  :config
+  (setcar magit-status-margin 't))      ; show margin initially
+
 (use-package magit-delta                ; nicer magit diffs
   :diminish
   :after magit
