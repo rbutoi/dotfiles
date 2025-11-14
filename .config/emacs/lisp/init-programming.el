@@ -61,12 +61,16 @@
                      "p" 'disproject-dispatch))
 
 (use-package treemacs
-  :general ("C-x C-M-SPC" 'treemacs)
+  :hook (emacs-startup
+         . (lambda ()            ; without timer, Treemacs modeline is messed up
+             (run-with-timer 0.2 nil 'treemacs-start-on-boot)))
+  :general
+  (  "C-S-M-SPC" 'treemacs)
+  ("C-x C-M-SPC" 'treemacs)             ; cli
   :config
   (treemacs-project-follow-mode)
   (treemacs-git-commit-diff-mode))
-(with-eval-after-load 'magit
-  (use-package treemacs-magit))
+(use-package treemacs-magit :after magit)
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
