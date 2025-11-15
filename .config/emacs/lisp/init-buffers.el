@@ -8,20 +8,22 @@
              search-ring
              regexp-search-ring))
   (add-to-list 'savehist-additional-variables v))
-(setopt enable-recursive-minibuffers t)
+(setopt recentf-max-saved-items 100
+        enable-recursive-minibuffers t)
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
 
-(general-def
+(general-def :keymaps 'override
   "M-0"       'delete-window
   "M-1"       'delete-other-windows
   "M-2"       'split-window-below
   "M-3"       'split-window-right
-  "M-o"       (cmd! (other-window +1))
-  "M-i"       (cmd! (other-window -1))
-  "C-c M-i"   'tab-to-tab-stop		; former M-i
+  "M-o"       'other-window
+  "M-i"       (cmd! (other-window -1)))
+(general-def
+  "C-c M-i"   'tab-to-tab-stop          ; former M-i
   "M-k"       'kill-current-buffer
   "C-M-k"     'kill-sexp
   "C-c M-k"   'kill-sentence

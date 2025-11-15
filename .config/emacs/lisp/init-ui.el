@@ -35,7 +35,7 @@
              easysession-save-mode
              easysession-load-including-geometry)
   :custom
-  (easysession-buffer-list-function (cmd! () ())) ; Only save window geometry
+  (easysession-buffer-list-function (cmd! () nil)) ; Only save window geometry
   :init
   (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
   (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
