@@ -12,7 +12,9 @@
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize)
-  (when (executable-find "gls") (setopt insert-directory-program "gls"))) ; macOS gnu coreutils
+  (when (executable-find "gls") (setopt insert-directory-program "gls")) ; macOS gnu coreutils
+  (setenv "RIPGREP_CONFIG_PATH"
+          (substitute-env-vars "$HOME/.config/ripgreprc")))
 
 (use-package man                        ; man(1)
   :ensure nil
@@ -78,20 +80,14 @@
 (use-package git-link :general ("C-x v G" 'git-link)) ; github link at point
 
 (use-package vterm                      ; terminal
-  :defer 2
+  :defer 1
   :custom
-  (vterm-always-compile-module t)
-  :general
-  (:keymaps 'vterm-mode-map
-            "M-1"  'delete-other-windows ; re-bind these
-            "M-2"  'split-window-below
-            "M-3"  'split-window-right
-            "M-o"  (cmd! (other-window +1))
-            "M-i"  (cmd! (other-window -1))
-            "<f5>" 'vterm-toggle))
+  (vterm-always-compile-module t))
 (use-package vterm-toggle
   :after vterm
-  :general ("<f5>" 'vterm-toggle))
+  :general
+  ("<f5>" 'vterm-toggle)
+  (:keymaps 'vterm-mode-map "<f5>" 'vterm-toggle))
 
 (use-package verb
   :defer 5
@@ -108,9 +104,12 @@
   (atomic-chrome-start-server))
 
 
+(provide 'init-ext)
+
+;;
+;;; banished
+
 (use-package activity-watch-mode
-  :disabled                             ; TODO: causing errors, re-eval
+  :disabled ; TODO: causing errors, re-eval
   :diminish
   :config (global-activity-watch-mode))
-
-(provide 'init-ext)

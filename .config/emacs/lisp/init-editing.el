@@ -34,12 +34,11 @@
   ([remap move-beginning-of-line] 'mwim-beginning-of-code-or-line
    [remap move-end-of-line]       'mwim-end-of-code-or-line))
 
-(use-package expand-region		; expand selection
+(use-package expand-region              ; expand selection
   :general ("C-=" 'er/expand-region))
 
-(use-package deadgrep)                  ; ripgrep UI
-(setenv "RIPGREP_CONFIG_PATH"
-        (substitute-env-vars "$HOME/.config/ripgreprc"))
+(use-package deadgrep                   ; ripgrep UI
+  :config (add-to-list 'deadgrep-extra-arguments "--multiline"))
 
 (use-package visual-regexp              ; visual replace
   :general
