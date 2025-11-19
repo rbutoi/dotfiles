@@ -1,15 +1,17 @@
 # ref: https://fishshell.com/docs/current/language.html#configuration
 
 ## paths
-set -gx GOPATH ~/.local/go
 fish_add_path -g ~/.local/bin
-fish_add_path -g ~/.local/go/bin
 fish_add_path -g ~/.cargo/bin
+set -gx GOPATH ~/.local/go
+fish_add_path -g ~/.local/go/bin
+
+# Added by Antigravity
+fish_add_path /Users/radu/.antigravity/antigravity/bin
 
 status is-interactive || exit
 
 # TODO: organize into files once I find a natural order to this.
-# also find a way for these not to be indented?
 
 #################
 # fish settings #
@@ -47,6 +49,10 @@ function md
     mkdir -p $argv[1] && cd $argv[1]
 end
 
+function waitpid
+    tail --pid=$argv[1] -f /dev/null
+end
+
 ##################
 # external tools #
 ##################
@@ -74,10 +80,10 @@ alias ec '_e -nc' # new graphical editor
 
 if type -q eza
     set -gx EZA_ICONS_AUTO
-    alias ls=eza
-    alias l='ls --group-directories-first'
-    alias ll="l --time-style=+'%a %e %b %H:%M' -g -l --git"
-    alias la='l -a'
+    alias ls='eza --group-directories-first'
+    alias l='ls --git-ignore'
+    alias ll="ls --time-style=+'%a %e %b %H:%M' -g -l --git"
+    alias la='ls -a'
     alias lla='ll -a'
     alias llr='ll --time-style=relative'
 end

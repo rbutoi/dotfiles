@@ -37,8 +37,8 @@
 (use-package expand-region              ; expand selection
   :general ("C-=" 'er/expand-region))
 
-(use-package deadgrep                   ; ripgrep UI
-  :config (add-to-list 'deadgrep-extra-arguments "--multiline"))
+(use-package rg                         ; ripgrep UI
+  :config (add-to-list 'rg-command-line-flags "--multiline"))
 
 (use-package visual-regexp              ; visual replace
   :general

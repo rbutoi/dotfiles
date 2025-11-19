@@ -69,7 +69,8 @@
   ("C-x C-M-SPC" 'treemacs)             ; cli
   :config
   (treemacs-project-follow-mode)
-  (treemacs-git-commit-diff-mode))
+  (treemacs-git-commit-diff-mode)
+  (treemacs-hide-gitignored-files-mode))
 (use-package treemacs-magit :after magit)
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase

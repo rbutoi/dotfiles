@@ -22,8 +22,6 @@
   (Man-width-max nil)
   (Man-notify-method 'aggressive)
   :general (:keymaps 'Man-mode-map "/" 'isearch-forward-word))
-(with-system darwin
-  (my/patch-man-el-set-MANWIDTH))
 
 (use-package dired-hide-dotfiles        ; file manager
   :general (:keymaps 'dired-mode-map "." 'dired-hide-dotfiles-mode))
@@ -49,7 +47,14 @@
   (magit-log-auto-more t)
   (magit-pull-or-fetch t)
   :config
-  (setcar magit-status-margin 't))      ; show margin initially
+  (dotimes (i 4)
+    (let ((n (1+ i)))
+      (general-define-key
+       :keymaps 'magit-mode-map         ; since M-{1, 2, 3} are overridden
+       (format     "%d" n) (intern (format "magit-section-show-level-%d-all" n))
+       (format "C-M-%d" n) (intern (format "magit-section-show-level-%d"     n)))))
+
+  (setcar magit-status-margin 't))       ; show margin initially
 
 (use-package magit-delta                ; nicer magit diffs
   :diminish
@@ -65,10 +70,6 @@
 
 (use-package diff-hl                    ; margin diff markers
   :defer 1
-  :general
-  (:keymaps 'diff-hl-mode-map
-            "C-x v [" (defrepeater 'diff-hl-previous-hunk)
-            "C-x v ]" (defrepeater 'diff-hl-next-hunk))
   :config
   (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
@@ -102,6 +103,16 @@
 (use-package atomic-chrome              ; edit Chrome text fields in Emacs
   :config
   (atomic-chrome-start-server))
+
+;;;;;;;;;;;;;;;;;
+;; OS-specific ;;
+;;;;;;;;;;;;;;;;;
+
+(with-system darwin
+  (setopt mac-option-modifier  'meta
+          mac-command-modifier 'super)
+
+  (my/patch-man-el-set-MANWIDTH))
 
 
 (provide 'init-ext)
