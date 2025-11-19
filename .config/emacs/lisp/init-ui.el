@@ -12,8 +12,7 @@
 ;; keybinds ;;
 ;;;;;;;;;;;;;;
 
-(setopt mac-option-modifier  'meta
-        mac-command-modifier 'super)
+(repeat-mode)
 
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
