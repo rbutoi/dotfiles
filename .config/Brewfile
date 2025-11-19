@@ -128,6 +128,8 @@ brew "lesspipe"
 brew "lnav"
 # Text-to-HTML conversion tool
 brew "markdown"
+# Unix documentation system
+brew "man-db"
 # Mac App Store command-line interface
 brew "mas"
 # Run a Kubernetes cluster locally

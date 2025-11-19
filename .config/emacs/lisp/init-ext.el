@@ -12,7 +12,6 @@
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize)
-  (when (executable-find "gls") (setopt insert-directory-program "gls")) ; macOS gnu coreutils
   (setenv "RIPGREP_CONFIG_PATH"
           (substitute-env-vars "$HOME/.config/ripgreprc")))
 
@@ -109,10 +108,10 @@
 ;;;;;;;;;;;;;;;;;
 
 (with-system darwin
-  (setopt mac-option-modifier  'meta
-          mac-command-modifier 'super)
-
-  (my/patch-man-el-set-MANWIDTH))
+  (setopt mac-option-modifier       'meta
+          mac-command-modifier      'super
+          insert-directory-program  "gls" ; gnu coreutils
+          manual-program            "gman"))
 
 
 (provide 'init-ext)
