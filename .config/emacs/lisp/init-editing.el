@@ -3,13 +3,15 @@
 (delete-selection-mode)                 ; typing overwrites selection
 (electric-pair-mode)                    ; automatic ()
 (add-to-list 'electric-pair-pairs '( ?\` . ?\`))
+(add-to-list 'electric-pair-pairs '( ?\' . ?\'))
 
 (global-auto-revert-mode)
 (setopt global-auto-revert-non-file-buffers t
-        set-mark-command-repeat-pop t ; can keep C-u C-SPC C-SPC C-SPC...
-        kill-do-not-save-duplicates t
-        truncate-lines t
-        fill-column 80)
+        set-mark-command-repeat-pop         t ; can keep C-u C-SPC C-SPC C-SPC...
+        kill-do-not-save-duplicates         t
+        truncate-lines                      t
+        fill-column                         80
+        ediff-window-setup-function         'ediff-setup-windows-plain)
 
 ;;;;;;;;;;;;;;
 ;; keybinds ;;
@@ -21,7 +23,7 @@
   "s-v"   'clipboard-yank)
 
 ;;;;;;;;;;;;;;;;;;;;;;
-;; extenal packages ;;
+;; external packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package jinx
@@ -50,7 +52,6 @@
 
 (use-package hungry-delete              ; delete consecutive whitespace
   :custom (hungry-delete-join-reluctantly t) ; leave a space between words
-  ;; :general ("C-c h" 'hungry-delete-mode) TODO: maybe??
   :config (global-hungry-delete-mode))
 
 (use-package undo-tree                  ; visual undo

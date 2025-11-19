@@ -1,8 +1,5 @@
 ;; init-ext.el - External integrations  -*- lexical-binding: t; -*-
 
-;; TODO: broken, https://mail.gnu.org/archive/html/bug-gnu-emacs/2024-07/msg00824.html
-;; (url-handler-mode)                      ; open HTTP links in Emacs
-
 (xterm-mouse-mode)                      ; mouse in terminal Emacs
 
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -40,9 +37,9 @@
             "M-m" 'magit-toggle-margin
             "@"   'endless/visit-pull-request-url)
   :custom
-  (magit-repository-directories `(("~/.dots/dotfiles" . 0)
-                                  ("~/dev"            . 2)
-                                  ("~/oss"            . 1)))
+  (magit-repository-directories
+   `(("~/dev" . 2)
+     ("~/.dots/dotfiles" . 0)))
   (magit-log-auto-more t)
   (magit-pull-or-fetch t)
   :config
