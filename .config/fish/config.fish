@@ -13,9 +13,13 @@ status is-interactive || exit
 
 # TODO: organize into files once I find a natural order to this.
 
-#################
-# fish settings #
-#################
+####################
+# core shell stuff #
+####################
+
+# prompt: hydro
+set -Ux hydro_color_git green
+
 alias .~='source ~/.config/fish/config.fish'
 
 set -g fish_greeting # none
@@ -23,17 +27,11 @@ set -gx EDITOR emacsclient -t
 
 bind alt-k backward-kill-line # better than default C-u
 
-# fzf
-set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
-
 # https://github.com/PatrickF1/fzf.fish
 set fzf_history_time_format %a %b %d %H:%M:%S
 fzf_configure_bindings --directory=\ct --variables=\e\cv --history=\e\cr
 
-# atuin
-if type -q atuin
-    atuin init fish --disable-up-arrow | source
-end
+set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'" # fzf
 
 #######################
 # aliases (broad-ish) #
@@ -117,6 +115,11 @@ end
 
 if string match -q "*homebrew*" "$SHELL" # check for macOS by proxy
     set -gx aichat_config_dir ~/.config/aichat
+end
+
+# atuin
+if type -q atuin
+    atuin init fish --disable-up-arrow | source
 end
 
 type -q paru && alias p=paru
