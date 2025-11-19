@@ -86,6 +86,8 @@
     (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
 
+(use-package compiler-explorer)
+
 
 (provide 'init-programming)
 
