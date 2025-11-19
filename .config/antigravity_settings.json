@@ -1,4 +1,10 @@
 {
     "workbench.colorTheme": "Default Light Modern",
-    "python.languageServer": "Default"
+    "python.languageServer": "Default",
+    "editor.fontFamily": "Iosevka, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 13,
+    "explorer.excludeGitIgnore": true,
+    "emacs-mcx.killWholeLine": true,
+    "editor.tabSize": 2,
+    "terminal.integrated.suggest.enabled": true
 }
