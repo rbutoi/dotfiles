@@ -112,11 +112,3 @@
 
 
 (provide 'init-ext)
-
-;;
-;;; banished
-
-(use-package activity-watch-mode
-  :disabled ; TODO: causing errors, re-eval
-  :diminish
-  :config (global-activity-watch-mode))

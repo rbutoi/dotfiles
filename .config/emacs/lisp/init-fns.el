@@ -110,6 +110,38 @@ or aliases."
     "Recipe for libtree-sitter-typescript.dylib")
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
 
+;;;;;;;;;;;;;;
+;; banished ;;
+;;;;;;;;;;;;;;
+
+(use-package treesit-auto
+  :disabled                         ; definitely adds too much to file load time
+  :custom (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+(use-package copilot                    ; GitHub Copilot
+  :disabled                             ; hmm
+  :diminish
+  :ensure (:host github :repo "copilot-emacs/copilot.el")
+  :custom
+  (copilot-idle-delay 0.7)
+  :hook (prog-mode . copilot-mode)
+  :general
+  (:keymaps 'copilot-completion-map
+            "<tab>" 'copilot-accept-completion
+            "M-f"   'copilot-accept-completion-by-word
+            "C-M-n"   'copilot-next-completion
+            "C-M-p"   'copilot-previous-completion
+            "C-g"   'copilot-clear-overlay))
+
+(use-package activity-watch-mode
+  :disabled ; TODO: causing errors, re-eval
+  :diminish
+  :config (global-activity-watch-mode))
+
+;;;
 
 
 (provide 'init-fns)

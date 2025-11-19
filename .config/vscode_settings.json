@@ -1,0 +1,120 @@
+{
+    "editor.fontFamily": "Iosevka, Jetbrains Mono, Menlo, Monaco, 'Courier New', monospace",
+    "security.workspace.trust.untrustedFiles": "open",
+    "explorer.confirmDragAndDrop": false,
+    "cmake.configureOnOpen": true,
+    "projectManager.git.baseFolders": [
+        "~/dev"
+    ],
+    "projectManager.hg.baseFolders": [
+        "~/dev"
+    ],
+    "git.openRepositoryInParentFolders": "always",
+    "explorer.confirmDelete": false,
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "editor.accessibilitySupport": "off",
+    "C_Cpp.clang_format_fallbackStyle": "Google",
+    "emacs-mcx.killWholeLine": true,
+    "github.copilot.advanced": {},
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.guides.indentation": false,
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+    "explorer.sortOrder": "modified",
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "workbench.iconTheme": "vscode-icons",
+    "redhat.telemetry.enabled": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "settingsSync.ignoredExtensions": [
+        "github.copilot",
+        "github.copilot-chat"
+    ],
+    "explorer.excludeGitIgnore": true,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        },
+        "Arch (WSL)": {
+            "path": "C:\\WINDOWS\\System32\\wsl.exe",
+            "args": [
+                "-d",
+                "Arch"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Arch (WSL)",
+    "editor.formatOnSave": true,
+    "go.toolsManagement.autoUpdate": true,
+    "vsicons.dontShowNewVersionMessage": true,
+    "lldb.suppressUpdateNotifications": true,
+    "[yaml]": {
+        // "editor.defaultFormatter": "redhat.vscode-yaml"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.preferredLightColorTheme": "Noctis Lux",
+    "workbench.preferredDarkColorTheme": "Noctis Minimus",
+    "github.copilot.selectedCompletionModel": "",
+    "editor.formatOnSaveMode": "modifications",
+    "git.allowForcePush": true,
+    "git.confirmForcePush": false,
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "makefile.configureOnOpen": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "vs-kubernetes": {
+        "vscode-kubernetes.minikube-path-mac": "/Users/radu/.vs-kubernetes/tools/minikube/darwin-arm64/minikube",
+        "vscode-kubernetes.helm-path-mac": "/Users/radu/.vs-kubernetes/tools/helm/darwin-arm64/helm"
+    },
+    "github.copilot.chat.codesearch.enabled": true,
+    "outline.showVariables": false,
+    "outline.showFields": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "python.analysis.typeCheckingMode": "standard",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "C_Cpp.default.cppStandard": "c++23",
+    "[cpp]": {
+        "editor.wordBasedSuggestions": "off",
+        "editor.semanticHighlighting.enabled": true,
+        "editor.stickyScroll.defaultModel": "foldingProviderModel",
+        "editor.suggest.insertMode": "replace"
+    },
+    "workbench.colorTheme": "Default Light Modern",
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "chat.tools.terminal.autoApprove": {
+        "mkdir": true,
+        "cmake": true,
+        "brew": true
+    },
+    "docker.extension.enableComposeLanguageServer": false,
+    "editor.fontSize": 13,
+    "C_Cpp.autocompleteAddParentheses": true,
+    "terminal.integrated.suggest.enabled": true,
+ }
