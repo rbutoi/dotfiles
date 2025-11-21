@@ -39,9 +39,17 @@
   (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
   (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
 
-(use-package modus-themes
+(use-package doom-themes
   :config
-  (load-theme 'modus-operandi))
+  (load-theme 'doom-acario-light))
+
+(use-package solaire-mode
+  :config
+  (solaire-global-mode))
+
+(use-package ultra-scroll
+  :config
+  (ultra-scroll-mode 1))
 
 (use-package diminish)                  ; TODO: consider doom-modeline
 
