@@ -66,7 +66,7 @@
   :config
   (global-undo-tree-mode))
 
-(use-package so-long :config (global-so-long-mode)) ; long file handling
+;; (use-package so-long :config (global-so-long-mode)) ; long file handling
 
 (use-package ws-butler                 ; automatically trim whitespace
   :diminish
