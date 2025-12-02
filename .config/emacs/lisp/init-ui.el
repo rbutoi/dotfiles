@@ -18,7 +18,7 @@
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
   "C-x m"     'execute-extended-command
   "s-m"       'suspend-frame
-  "C-x M-c"   'restart-emacs
+  "C-x M-c"   (cmd! () (message "restarting...") (restart-emacs))
   "C-x C-M-c" 'save-buffers-kill-emacs
   "s-q"       'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
@@ -26,18 +26,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package easysession
-  :diminish easysession-save-mode
-  :commands (easysession-switch-to
-             easysession-save-as
-             easysession-save-mode
-             easysession-load-including-geometry)
-  :custom
-  (easysession-buffer-list-function (cmd! () nil)) ; Only save window geometry
-  :init
-  (add-hook 'elpaca-after-init-hook #'easysession-load-including-geometry 102)
-  (add-hook 'elpaca-after-init-hook #'easysession-save-mode 103))
 
 (use-package doom-themes
   :config

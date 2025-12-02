@@ -14,6 +14,7 @@
 (use-package jq-mode)
 (use-package deno-ts-mode :defer 2)
 (use-package csv-mode)
+(setopt js-indent-level tab-width)
 
 ;; Markup and config files
 (use-package yaml-mode)
@@ -33,6 +34,7 @@
 ;; Systems programming
 (use-package rust-mode)
 (use-package go-mode)
+(use-package zig-mode)
 
 ;; Scripting languages
 (use-package lua-mode)

@@ -13,4 +13,4 @@
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 
-(setq initial-frame-alist '((width . 100) (height . 50))) ; before any frames are created
+(setq initial-frame-alist '((width . 130) (height . 50))) ; before any frames are created

@@ -145,6 +145,10 @@ brew "xdg-ninja", args: ["HEAD"]
 brew "yazi"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
+# Programming language designed for robustness, optimality, and clarity
+brew "zig"
+# Language Server for Zig
+brew "zls"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
 # Native, fast starting Clojure interpreter for scripting.
