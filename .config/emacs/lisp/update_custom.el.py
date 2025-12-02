@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import concurrent.futures
 import hashlib
 import re
 import sys
@@ -21,7 +22,8 @@ def calculate_sha256(filepath: Path) -> str:
     sha256 = hashlib.sha256()
     try:
         with open(filepath, "rb") as f:
-            while chunk := f.read(8192):
+            # Increased buffer size to 64kb for better IO performance
+            while chunk := f.read(65536):
                 sha256.update(chunk)
         return sha256.hexdigest()
     except (OSError, PermissionError):
@@ -30,18 +32,29 @@ def calculate_sha256(filepath: Path) -> str:
 
 def find_elisp_files_map(root_dir: Path) -> dict[str, Path]:
     """
-    Recursively finds all .el files in root_dir.
+    Recursively finds all .el files in root_dir using parallel processing.
     Returns a dict mapping {sha256_hash: relative_path}.
     """
     print(f"Scanning {root_dir} for .el files...")
+
+    # 1. Collect all paths first (fast)
+    paths = [p for p in root_dir.rglob("*.el") if p.is_file()]
+
+    # Helper to return both hash and path for mapping
+    def _hash_job(path):
+        return calculate_sha256(path), path
+
     sha_map = {}
 
-    # rglob is equivalent to `fd` or `find`
-    for path in root_dir.rglob("*.el"):
-        if path.is_file():
-            sha = calculate_sha256(path)
+    # 2. Process hashes in parallel
+    # We use ThreadPoolExecutor because file I/O releases the GIL in Python,
+    # making threads efficient here without the overhead of ProcessPool.
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # map returns results in the order they were submitted
+        results = executor.map(_hash_job, paths)
+
+        for sha, path in results:
             if sha:
-                # Store path relative to HOME for cleaner output
                 try:
                     rel_path = path.relative_to(HOME)
                 except ValueError:
@@ -58,8 +71,6 @@ def extract_theme_shas(content: str) -> list[str]:
     """
     # Regex for a 64-char hex string surrounded by double quotes
     pattern = re.compile(r'"([a-f0-9]{64})"')
-
-    # Find all matches (returns the captured group only)
     return pattern.findall(content)
 
 
@@ -79,33 +90,29 @@ def main():
         # No marker found, assume whole file is the base
         base_content = original_content.rstrip()
 
-    # 3. Find SHAs currently active in the config part (ignoring the old footer)
+    # 3. Find SHAs currently active in the config part
     active_shas = extract_theme_shas(base_content)
 
     if not active_shas:
         print("No theme SHAs found in custom-set-variables.")
         sys.exit(0)
 
-    # 4. Build the map of filesystem SHAs
-    # (We only do this expensive step if we actually found SHAs in the config)
+    # 4. Build the map of filesystem SHAs (now in parallel)
     fs_sha_map = find_elisp_files_map(REPO_DIR)
 
     # 5. Generate the new footer
     new_footer_lines = ["\n\n" + FOOTER_MARKER]
 
     for sha in active_shas:
-        # Look up the path, default to "???" if not found
         path_str = str(fs_sha_map.get(sha, "???"))
         new_footer_lines.append(f";; {sha}  {path_str}")
 
-    # Add a final newline for POSIX compliance
     new_footer_lines.append("")
     new_footer = "\n".join(new_footer_lines)
 
-    # 6. Reassemble
+    # 6. Reassemble and write if changed
     new_full_content = base_content + new_footer
 
-    # 7. Write only if changed
     if new_full_content != original_content:
         CUSTOM_FILE.write_text(new_full_content, encoding="utf-8")
         print(f"Updated {CUSTOM_FILE} with {len(active_shas)} theme annotations.")
