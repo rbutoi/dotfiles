@@ -19,14 +19,19 @@
 
 (general-def
   "M-z"   'toggle-truncate-lines
-  "C-M-z" 'zap-up-to-char
+  "C-M-z" 'visual-line-mode
+  "M-Z"   'zap-up-to-char
   "s-v"   'clipboard-yank)
 
-;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;
 ;; external packages ;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package jinx
+(use-package visual-fill-column
+  :config
+  (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
+
+(use-package jinx                       ; spell checking
   :diminish
   :hook (elpaca-after-init-hook . global-jinx-mode)
   :bind (("M-$" . jinx-correct)))

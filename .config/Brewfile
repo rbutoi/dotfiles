@@ -6,6 +6,7 @@ tap "jackielii/tap"
 tap "jimeh/emacs-builds"
 tap "koekeishiya/formulae"
 tap "nikitabobko/tap"
+tap "oven-sh/bun"
 tap "riscv/riscv"
 # Planetarium for your terminal
 brew "astroterm"
@@ -57,6 +58,8 @@ brew "fish"
 brew "fisher"
 # Command-line fuzzy finder written in Go
 brew "fzf"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
 # Distributed revision control system
 brew "git"
 # Syntax-highlighting pager for git and diff output
@@ -95,6 +98,8 @@ brew "ninja"
 brew "ollama", restart_service: :changed
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
+# Fast, disk space efficient package manager
+brew "pnpm"
 # Code formatter for JavaScript, CSS, JSON, GraphQL, Markdown, YAML
 brew "prettier"
 # Modern replacement for ps written in Rust
@@ -159,6 +164,8 @@ brew "cirruslabs/cli/tart"
 brew "felixkratz/formulae/borders"
 # Simple hotkey daemon for macOS, written in Zig
 brew "jackielii/tap/skhd-zig"
+# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
+brew "oven-sh/bun/bun"
 # RISC-V toolchain including gcc (with newlib), simulator (spike), and pk
 brew "riscv/riscv/riscv-tools"
 # Password manager that keeps all passwords secure behind one password
@@ -167,8 +174,8 @@ cask "1password"
 cask "activitywatch"
 # AeroSpace is an i3-like tiling window manager for macOS
 cask "aerospace"
-# Enable Windows-like alt-tab
-cask "alt-tab"
+# AI Coding Agent IDE
+cask "antigravity"
 # File manager
 cask "bloom"
 # OpenAI's official ChatGPT desktop app

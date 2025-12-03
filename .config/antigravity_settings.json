@@ -6,5 +6,8 @@
     "explorer.excludeGitIgnore": true,
     "emacs-mcx.killWholeLine": true,
     "editor.tabSize": 2,
-    "terminal.integrated.suggest.enabled": true
+    "terminal.integrated.suggest.enabled": true,
+    "zig.zls.enabled": "on",
+    "security.workspace.trust.untrustedFiles": "open",
+    "svelte.enable-ts-plugin": true
 }

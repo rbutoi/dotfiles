@@ -1,5 +1,8 @@
 ;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
 
+;; TODO: weird init issues
+;; diminish goes away after 2 secs (something with idle loading), needs re-eval
+;; to get it back
 (use-package apheleia                   ; auto format
   :diminish "A"
   :init (apheleia-global-mode)
@@ -12,7 +15,7 @@
 ;; Web and data formats
 (use-package json-mode    :defer 2)
 (use-package jq-mode)
-(use-package deno-ts-mode :defer 2)
+;; (use-package deno-ts-mode :defer 2)
 (use-package csv-mode)
 (setopt js-indent-level tab-width)
 
