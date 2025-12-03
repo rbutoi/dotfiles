@@ -37,6 +37,11 @@
   "C-c r"  'eglot-rename
   "C-c a"  'eglot-code-actions)
 
+;; (use-package eldoc-mouse
+;;   :general (:keymaps eldoc-mouse-mode-map
+;;                      "<f1> <f1>" ''eldoc-mouse-pop-doc-at-cursor)
+;;   :hook eldoc-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;

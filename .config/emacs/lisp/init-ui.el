@@ -39,7 +39,8 @@
   :config
   (ultra-scroll-mode 1))
 
-(use-package diminish)                  ; TODO: consider doom-modeline
+;; TODO: doesn't seem to consistently work
+;; (use-package diminish)                  ; TODO: consider doom-modeline
 
 (use-package zoom-window                ; temporarily zoom window
   :general ("C-x C-z" 'zoom-window-zoom))
