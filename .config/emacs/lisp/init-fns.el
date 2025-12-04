@@ -59,6 +59,83 @@ or aliases."
             consult-toggle-preview-orig nil)
     (setq consult-toggle-preview-orig consult--preview-function
           consult--preview-function #'ignore)))
+;;;
+;; https://old.reddit.com/r/emacs/comments/1p7wm82/make_consultripgrep_grep_fd_completion_argument/
+(defun consult--get-completion-options-from-help (exec)
+  "Generate exec options table vai `exec' -h."
+  (when (executable-find exec)
+    (let* ((-h (shell-command-to-string (concat exec  " --help")))
+           (-h-list (string-split -h "\\(\\.\\|:\\)\n"))
+           (doc-left-pad 30))
+      (mapcan (lambda (h)
+                (let ((l (string-replace "\n" "" h)))
+                  (when (string-match (rx-to-string
+                                       '(: bol (* space)
+                                           (group "-" (? "-") (+ (or alnum "-")))
+                                           (? ", ") (? (group "-" (? "-") (+ (or alnum "-"))))
+                                           (? "=" (+ (or "_" "-" alnum)))
+                                           (+ space)
+                                           (group (* any)) eol))
+                                      l)
+                    (let* ((short (match-string 1 l))
+                           (long (match-string 2 l))
+                           (doc (match-string 3 l))
+                           (s-pad (- doc-left-pad (length short)))
+                           (l-pad (when long (- doc-left-pad (length long))))
+                           (s-doc (concat (make-string s-pad ?\s) doc))
+                           (l-doc (when long (concat (make-string l-pad ?\s) doc))))
+                      (if long
+                          (list `(,short . ,s-doc)
+                                `(,long . ,l-doc))
+                        (list `(,short . ,s-doc)))))))
+              -h-list))))
+
+(defmacro def-consult-help (command exec)
+  (let ((options-fun (intern (format "consult-%s-get-completion-options" exec)))
+        (options-alist (intern (format "consult-%s-completion-options-alist" exec)))
+        (annotion (intern (format "consult-%s-completion-annotation" exec)))
+        (table (intern (format "consult-%s-completion-table" exec)))
+        (capf (intern (format "consult-%s-completion-at-point" exec)))
+        (adv (intern (format "consult-%s-with-completion-at-point" exec))))
+    `(progn
+       (defun ,options-fun ()
+         "Generate options table vai -h."
+         (consult--get-completion-options-from-help ,exec))
+
+       (defcustom ,options-alist
+         (,options-fun)
+         ,(format "%s options alist." exec))
+
+       (defun ,annotion (candidate)
+         "Annotation for rg option."
+         (cdr (assoc candidate ,options-alist)))
+
+       (defun ,table ()
+         "List all option for rg."
+         (mapcar #'car ,options-alist))
+
+       (defun ,capf ()
+         "Completion option.
+This is the function to be used for the hook `completion-at-point-functions'."
+         (interactive)
+         (let* ((bds (bounds-of-thing-at-point 'symbol))
+                (start (car bds))
+                (end (cdr bds)))
+           (list start end (,table) :annotation-function #',annotion)))
+
+       (defun ,adv (orign &rest args)
+         (minibuffer-with-setup-hook
+             (:append
+              (lambda ()
+                (add-hook 'completion-at-point-functions
+                          #',capf nil t)))
+           (apply orign args)))
+
+       (advice-add ,command :around ',adv))))
+
+(def-consult-help 'consult-ripgrep "rg")
+(def-consult-help 'consult-fd "fd")
+;;;
 
 ;;;;;;;;;;;
 ;; Magit ;;

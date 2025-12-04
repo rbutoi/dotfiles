@@ -20,22 +20,25 @@ status is-interactive || exit
 # prompt: hydro
 set -Ux hydro_color_git green
 
-alias .~='source ~/.config/fish/config.fish'
-
-set -g fish_greeting # none
+set -g fish_greeting ''
 set -gx EDITOR emacsclient -t
 
 bind alt-k backward-kill-line # better than default C-u
 
+# fzf
+set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
+
 # https://github.com/PatrickF1/fzf.fish
 set fzf_history_time_format %a %b %d %H:%M:%S
-fzf_configure_bindings --directory=\ct --variables=\e\cv --history=\e\cr
-
-set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'" # fzf
+fzf_configure_bindings --directory=\ct --variables=\e\cv
+bind \e\cr history-pager # keep original around
 
 #######################
 # aliases (broad-ish) #
 #######################
+
+alias .~='source ~/.config/fish/config.fish'
+
 set -gx LESS -Rim
 
 alias s sudo
