@@ -1,4 +1,4 @@
-;; init-ui.el - UI / UX  -*- lexical-binding: t; -*-
+;;; init-ui.el --- UI / UX  -*- lexical-binding: t; -*-
 
 (set-face-attribute 'default nil :family "Iosevka" :height 140)
 

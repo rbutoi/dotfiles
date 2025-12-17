@@ -1,4 +1,4 @@
-;; init-buffers.el - Buffer and window management  -*- lexical-binding: t; -*-
+;;; init-buffers.el --- Buffer and window management  -*- lexical-binding: t; -*-
 
 (recentf-mode)                          ; recent files
 (save-place-mode)                       ; remember buffer location

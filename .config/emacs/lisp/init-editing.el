@@ -1,4 +1,4 @@
-;; init-editing.el -  Editing  -*- lexical-binding: t; -*-
+;;; init-editing.el ---  Editing  -*- lexical-binding: t; -*-
 
 (delete-selection-mode)                 ; typing overwrites selection
 (electric-pair-mode)                    ; automatic ()

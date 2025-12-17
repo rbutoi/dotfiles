@@ -1,4 +1,4 @@
-;; init.el - Emacs config  -*- lexical-binding: t; -*-
+;;; init.el --- Emacs config  -*- lexical-binding: t; -*-
 
 (load (locate-user-emacs-file "lisp/init-emacs.el")) ; set load path and initialize basic Emacs settings
 (require 'init-fns)                                  ; some fns used later

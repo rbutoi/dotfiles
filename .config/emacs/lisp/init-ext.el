@@ -1,4 +1,4 @@
-;; init-ext.el - External integrations  -*- lexical-binding: t; -*-
+;;; init-ext.el --- External integrations  -*- lexical-binding: t; -*-
 
 (xterm-mouse-mode)                      ; mouse in terminal Emacs
 

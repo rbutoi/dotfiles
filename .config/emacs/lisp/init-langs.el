@@ -1,4 +1,4 @@
-;; init-langs.el - Programming languages  -*- lexical-binding: t; -*-
+;;; init-langs.el --- Programming languages  -*- lexical-binding: t; -*-
 
 ;; TODO: weird init issues
 ;; diminish goes away after 2 secs (something with idle loading), needs re-eval

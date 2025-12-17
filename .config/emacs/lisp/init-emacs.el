@@ -1,4 +1,4 @@
-;; init-emacs.el - Emacs-specific misc config  -*- lexical-binding: t; -*-
+;;; init-emacs.el --- Emacs-specific misc config  -*- lexical-binding: t; -*-
 
 (setopt
  confirm-kill-processes     nil

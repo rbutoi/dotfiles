@@ -1,4 +1,4 @@
-;; init-programming.el - Programming  -*- lexical-binding: t; -*-
+;;; init-programming.el --- Programming  -*- lexical-binding: t; -*-
 
 (setopt indent-tabs-mode nil            ; never tabs to indent
         tab-always-indent 'complete

@@ -1,4 +1,4 @@
-;; config-fns.el: longer functions  -*- lexical-binding: t; -*-
+;;; config-fns.el --- longer functions  -*- lexical-binding: t; -*-
 ;; ...copied in externally for workarounds, or internally and
 ;; tweaked. intentionally only definitions without anyhook-adding or
 ;; functionality-changing.

@@ -1,4 +1,4 @@
-;; early-init.el - Early Emacs config  -*- lexical-binding: t; -*-
+;;; early-init.el --- Early Emacs config  -*- lexical-binding: t; -*-
 
 (setq load-prefer-newer t)
 
