@@ -10,7 +10,7 @@ set -gx GOPATH ~/.local/go
 fish_add_path -g $GOPATH/bin
 
 # Added by Antigravity
-fish_add_path /Users/radu/.antigravity/antigravity/bin
+fish_add_path ~/.antigravity/antigravity/bin
 
 ###
 

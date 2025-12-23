@@ -7,8 +7,14 @@
 # on Ghostty's website, at https://ghostty.org/docs/config.
 
 font-family = Iosevka
-font-size = 16
+font-size = 15
 
 keybind = global:cmd+shift+grave_accent=toggle_quick_terminal
 
 background-opacity = 0.9
+
+macos-option-as-alt = true
+
+macos-non-native-fullscreen = visible-menu
+
+confirm-close-surface = false
