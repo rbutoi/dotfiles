@@ -19,11 +19,6 @@
 [include]                       # personal config
   path = ~/.config/git/config.local
 
-# forced to include this here for git-xargs: https://github.com/gruntwork-io/git-xargs/issues/48
-[user]
-  email = Radu.Butoi@cardlytics.com
-  name = Radu Butoi
-
 [icdiff]                        # TODO: if used??
   options = --line-numbers
 
