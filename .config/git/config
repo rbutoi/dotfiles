@@ -1,6 +1,4 @@
 [core]
-  hooksPath = ~/.config/git-hooks/
-
 ## https://github.com/dandavison/delta
   pager = delta
 

@@ -27,9 +27,12 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package doom-themes
+(use-package doom-themes)
+
+(use-package auto-dark
+  :init (auto-dark-mode)
   :config
-  (load-theme 'doom-acario-light))
+  (setq auto-dark-themes '((doom-acario-dark) (doom-acario-light))))
 
 (use-package solaire-mode
   :config
