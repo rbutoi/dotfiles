@@ -1,0 +1,39 @@
+#
+# Basic Options
+#
+
+confirm-close-surface = false
+
+background-opacity = 0.9
+background-blur = true
+font-family = SF Mono
+font-size = 15
+
+shell-integration-features = ssh-terminfo
+
+#
+# Keybinds
+#
+
+keybind = alt+shift+r=reload_config
+
+# --- Navigation ---
+keybind = alt+shift+n=next_tab
+keybind = alt+shift+p=previous_tab
+keybind = alt+c=new_tab
+keybind = alt+shift+f=goto_split:next
+keybind = alt+shift+b=goto_split:previous
+
+# --- Splits ---
+keybind = alt+\=new_split:right
+keybind = alt+-=new_split:down
+keybind = alt+shift+==equalize_splits
+
+# --- Resizing ---
+keybind = super+z=toggle_split_zoom
+keybind = ctrl+shift+up=resize_split:up,60
+keybind = ctrl+shift+down=resize_split:down,60
+keybind = ctrl+shift+left=resize_split:left,60
+keybind = ctrl+shift+right=resize_split:right,60
+
+keybind = global:cmd+shift+grave_accent=toggle_quick_terminal

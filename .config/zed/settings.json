@@ -7,8 +7,38 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "features": {
-    "edit_prediction_provider": "copilot"
+  "use_system_window_tabs": false,
+  "tab_bar": {
+    "show_pinned_tabs_in_separate_row": false
+  },
+  "tabs": {
+    "file_icons": true,
+    "git_status": true
+  },
+  "terminal": {
+    "toolbar": {
+      "breadcrumbs": true
+    }
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  "prettier": {
+    "allowed": false
+  },
+  "tab_size": 4,
+  "inlay_hints": {
+    "enabled": true
+  },
+  "auto_signature_help": true,
+  "which_key": {
+    "enabled": true
+  },
+  "buffer_line_height": "comfortable",
+  "edit_predictions": {
+    "provider": "copilot"
   },
   "telemetry": {
     "diagnostics": true,
@@ -26,6 +56,7 @@
   },
   "icon_theme": "Zed (Default)",
   "agent": {
+    "always_allow_tool_actions": true,
     "default_model": {
       "provider": "google",
       "model": "gemini-2.0-flash"
@@ -34,11 +65,11 @@
   "vim_mode": false,
   "base_keymap": "Emacs",
   "theme": {
-    "mode": "dark",
+    "mode": "light",
     "light": "One Light",
     "dark": "One Dark"
   },
   "ui_font_size": 16,
-  "buffer_font_size": 14.0,
-  "buffer_font_family": "Iosevka"
+  "buffer_font_size": 15.0,
+  "buffer_font_family": "SF Mono"
 }

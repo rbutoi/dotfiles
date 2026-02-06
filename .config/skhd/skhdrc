@@ -1,6 +1,6 @@
 # -*- mode: conf-unix -*-
 
-cmd + ctrl - return : open -a Ghostty --args -e tmux new -As auto
+cmd + ctrl - return : open -a Ghostty
 cmd + ctrl - e      : open /Applications/Emacs.app
 cmd + ctrl - i      : open "/Applications/Google Chrome.app" # cmd - i used by vscode
 
