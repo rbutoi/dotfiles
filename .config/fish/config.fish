@@ -22,7 +22,7 @@ status is-interactive || exit
 
 set -g fish_greeting ''
 
-set -Ux hydro_color_git green
+starship init fish | source
 
 bind alt-k backward-kill-line # standard readline, better than default C-u
 
@@ -95,3 +95,6 @@ type -q paru && alias p paru
 if string match -q "*homebrew*" "$SHELL"; or test (uname) = Darwin
     set -gx aichat_config_dir ~/.config/aichat
 end
+
+## retired
+set -Ux hydro_color_git green

@@ -1,6 +1,7 @@
 tap "borkdude/brew"
 tap "cirruslabs/cli"
 tap "d12frosted/emacs-plus"
+tap "dmmulroy/tap"
 tap "felixkratz/formulae"
 tap "jackielii/tap"
 tap "jimeh/emacs-builds"
@@ -76,6 +77,10 @@ brew "htop"
 brew "hyperfine"
 # Tools and libraries to manipulate images in many formats
 brew "imagemagick"
+# Git-compatible distributed version control system
+brew "jj"
+# TUI for interacting with the Jujutsu version control system
+brew "jjui"
 # Curses-based tool for viewing and analyzing log files
 brew "lnav"
 # Language Server for the Lua language
@@ -122,6 +127,8 @@ brew "sd"
 brew "sdl3"
 # Command-line interface for https://speedtest.net bandwidth tests
 brew "speedtest-cli"
+# Cross-shell prompt for astronauts
+brew "starship"
 # Swift toolchain installer and manager
 brew "swiftly"
 # Very fast implementation of tldr in Rust
@@ -160,6 +167,8 @@ brew "zoxide"
 brew "borkdude/brew/babashka"
 # Run macOS and Linux VMs on Apple Hardware
 brew "cirruslabs/cli/tart"
+# Unified Starship prompt module for Git and Jujutsu repositories
+brew "dmmulroy/tap/jj-starship"
 # A window border system for macOS
 brew "felixkratz/formulae/borders"
 # Simple hotkey daemon for macOS, written in Zig

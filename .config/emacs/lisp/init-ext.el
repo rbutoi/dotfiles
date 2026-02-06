@@ -65,6 +65,10 @@
 (use-package git-modes)
 (use-package forge :defer 5)
 
+(use-package vc-jj)
+(use-package majutsu
+  :ensure (:host github :repo "0WD0/majutsu"))
+
 (use-package diff-hl                    ; margin diff markers
   :defer 1
   :config

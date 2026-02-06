@@ -1,6 +1,6 @@
 ;;; init-ui.el --- UI / UX  -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "Iosevka" :height 140)
+(set-face-attribute 'default nil :family "SF Mono" :height 150)
 
 (context-menu-mode)
 (global-hl-line-mode)
@@ -33,6 +33,15 @@
   :init (auto-dark-mode)
   :config
   (setq auto-dark-themes '((doom-acario-dark) (doom-acario-light))))
+
+;; Mode line
+(use-package minions :config (minions-mode))
+
+(use-package moody
+  :config
+  (moody-replace-mode-line-front-space)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
 
 (use-package solaire-mode
   :config
