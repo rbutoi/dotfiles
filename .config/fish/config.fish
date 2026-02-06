@@ -4,13 +4,18 @@
 
 fish_add_path -g ~/.local/bin
 
-fish_add_path -g ~/.cargo/bin
-
 set -gx GOPATH ~/.local/go
 fish_add_path -g $GOPATH/bin
 
 # Added by Antigravity
 fish_add_path ~/.antigravity/antigravity/bin
+
+# pnpm
+set -gx PNPM_HOME "$HOME/Library/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+    set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
 
 ###
 

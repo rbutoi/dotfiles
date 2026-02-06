@@ -24,10 +24,14 @@
 (general-add-hook
  ;; LSP servers to use:
  ;; - python: pylsp
- '(python-base-mode-hook js-base-mode-hook
-                         typescript-ts-base-mode-hook
-                         terraform-mode-hook c++-mode-hook go-mode-hook
-                         rust-mode-hook)
+ '(js-base-mode-hook
+   typescript-base-mode-hook
+   svelte-mode-hook
+   python-base-mode-hook
+   terraform-mode-hook
+   c++-mode-hook
+   go-mode-hook
+   rust-mode-hook)
  #'eglot-ensure)
 (setq c++-ts-mode-hook  c++-mode-hook   ; needed: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#keep-track-of-your-hooks
       go-ts-mode-hook   go-mode-hook

@@ -1,3 +1,4 @@
+tap "anomalyco/tap"
 tap "borkdude/brew"
 tap "cirruslabs/cli"
 tap "d12frosted/emacs-plus"
@@ -8,7 +9,12 @@ tap "jimeh/emacs-builds"
 tap "koekeishiya/formulae"
 tap "nikitabobko/tap"
 tap "oven-sh/bun"
+tap "ramonvermeulen/whosthere"
 tap "riscv/riscv"
+tap "steipete/tap"
+tap "terror/tap"
+# All-in-one AI-Powered CLI Chat & Copilot
+brew "aichat"
 # Planetarium for your terminal
 brew "astroterm"
 # Background rust code check
@@ -25,18 +31,28 @@ brew "brightness"
 brew "broot"
 # Resource monitor. C++ version and continuation of bashtop and bpytop
 brew "btop"
+# Cargo subcommand to easily use LLVM source-based code coverage
+brew "cargo-llvm-cov"
+# Cargo subcommand for checking and applying updates to installed executables
+brew "cargo-update"
 # Human-friendly and fast alternative to cut and (sometimes) awk
 brew "choose-rust"
 # Formatting tools for C, C++, Obj-C, Java, JavaScript, TypeScript
 brew "clang-format"
 # Cross-platform make
 brew "cmake"
-# CLI tool to convert your codebase into a single LLM prompt
-brew "code2prompt"
+# Container runtimes on MacOS (and Linux) with minimal setup
+brew "colima"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
+# Apjanke's fork of the classic cowsay project
+brew "cowsay"
+# Suite of command-line tools for converting to and working with CSV
+brew "csvkit"
 # Command-line csv viewer
 brew "csvlens"
+# Pack, ship and run any application as a lightweight container
+brew "docker"
 # Command-line DNS Client for Humans
 brew "doggo"
 # Disk Usage/Free Utility - a better 'df' alternative
@@ -61,6 +77,8 @@ brew "fisher"
 brew "fzf"
 # Interact with Google Gemini AI models from the command-line
 brew "gemini-cli"
+# GitHub command-line tool
+brew "gh"
 # Distributed revision control system
 brew "git"
 # Syntax-highlighting pager for git and diff output
@@ -75,12 +93,16 @@ brew "libtool"
 brew "htop"
 # Command-line benchmarking tool
 brew "hyperfine"
-# Tools and libraries to manipulate images in many formats
+# Tools and libraries to manipulate images in select formats
 brew "imagemagick"
 # Git-compatible distributed version control system
 brew "jj"
 # TUI for interacting with the Jujutsu version control system
 brew "jjui"
+# Handy way to save and run project-specific commands
+brew "just"
+# Access large language models from the command-line
+brew "llm"
 # Curses-based tool for viewing and analyzing log files
 brew "lnav"
 # Language Server for the Lua language
@@ -99,12 +121,12 @@ brew "yt-dlp"
 brew "mpv"
 # Small build system for use with gyp or CMake
 brew "ninja"
-# Create, run, and share large language models (LLMs)
-brew "ollama", restart_service: :changed
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Fast, disk space efficient package manager
 brew "pnpm"
+# Pre-commit re-implemented in Rust
+brew "prek"
 # Code formatter for JavaScript, CSS, JSON, GraphQL, Markdown, YAML
 brew "prettier"
 # Modern replacement for ps written in Rust
@@ -113,6 +135,8 @@ brew "procs"
 brew "python-lsp-server"
 # Generic machine emulator and virtualizer
 brew "qemu"
+# Ultra-fast CSV data-wrangling toolkit
+brew "qsv"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Status/progress bar for rsync
@@ -139,8 +163,12 @@ brew "timg"
 brew "tmux"
 # Program that allows you to count code, quickly
 brew "tokei"
+# Upgrade all the things
+brew "topgrade"
 # Lightweight BitTorrent client
 brew "transmission-cli"
+# Language Server Protocol implementation for TypeScript wrapping tsserver
+brew "typescript-language-server"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
 # Modern watch command
@@ -149,20 +177,22 @@ brew "viddy"
 brew "watch"
 # Execute commands when watched files change
 brew "watchexec"
-# CSV CLI magician written in Rust
-brew "xan"
 # Check your $HOME for unwanted files and directories
 brew "xdg-ninja", args: ["HEAD"]
 # Blazing fast terminal file manager written in Rust, based on async I/O
 brew "yazi"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
+# Pluggable terminal workspace, with terminal multiplexer as the base feature
+brew "zellij"
 # Programming language designed for robustness, optimality, and clarity
 brew "zig"
 # Language Server for Zig
 brew "zls"
 # Shell extension to navigate your filesystem faster
 brew "zoxide"
+# The AI coding agent built for the terminal.
+brew "anomalyco/tap/opencode"
 # Native, fast starting Clojure interpreter for scripting.
 brew "borkdude/brew/babashka"
 # Run macOS and Linux VMs on Apple Hardware
@@ -177,12 +207,18 @@ brew "jackielii/tap/skhd-zig"
 brew "oven-sh/bun/bun"
 # RISC-V toolchain including gcc (with newlib), simulator (spike), and pk
 brew "riscv/riscv/riscv-tools"
+# Fast X CLI for tweeting, replying, and reading
+brew "steipete/tap/bird"
+# Google CLI for Gmail, Calendar, Drive, and Contacts
+brew "steipete/tap/gogcli"
+# Language server for just
+brew "terror/tap/just-lsp"
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Time tracker
 cask "activitywatch"
 # AeroSpace is an i3-like tiling window manager for macOS
-cask "aerospace"
+cask "nikitabobko/tap/aerospace"
 # AI Coding Agent IDE
 cask "antigravity"
 # File manager
@@ -191,19 +227,25 @@ cask "bloom"
 cask "chatgpt"
 # Anthropic's official Claude AI desktop app
 cask "claude"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
 # Photography workflow application and raw developer
 cask "darktable"
 # Voice and text chat software
 cask "discord"
+# Thin client for Bitcoin Cash
+cask "electron-cash"
 # GNU Emacs text editor
-cask "emacs-app"
+cask "jimeh/emacs-builds/emacs-app"
 # Web browser
 cask "firefox"
 cask "font-iosevka"
 # GIT client
 cask "fork"
 # Terminal emulator that uses platform-native UI and GPU acceleration
-cask "ghostty"
+cask "ghostty@tip"
 # Web browser
 cask "google-chrome"
 # Client for the Google Drive storage service
@@ -212,22 +254,24 @@ cask "google-drive"
 cask "iina"
 # System monitoring app
 cask "istat-menus"
-# Menu bar manager
-cask "jordanbaird-ice"
 # GPU-based terminal emulator
 cask "kitty"
 # Menu bar app for running local LLMs
 cask "llamabarn"
-# Adaptive brightness for external displays
-cask "lunar"
 # Display technical and tag data for video and audio files
 cask "mediainfo"
 # VPN client
 cask "mullvad-vpn"
+# Free and open-source RSS reader
+cask "netnewswire"
 # Cloud storage client
 cask "onedrive"
+# AI coding agent desktop client
+cask "opencode-desktop"
 # Android file transfer
 cask "openmtp"
+# LLM server built on MLX
+cask "osaurus"
 # Playstation 2 Emulator
 cask "pcsx2"
 # Peer to peer Bitorrent client
@@ -240,14 +284,16 @@ cask "scroll-reverser"
 cask "signal"
 # Video game digital distribution service
 cask "steam"
-# Mux and tag mp4 files
-cask "subler"
 # Open-source BitTorrent client
 cask "transmission"
 # Open-source code editor
 cask "visual-studio-code"
 # Multimedia player
 cask "vlc"
+# Local network discovery tool with a modern Terminal User Interface (TUI) written in Go.
+cask "ramonvermeulen/whosthere/whosthere"
+# Voice-to-text dictation with AI-powered auto-editing
+cask "wispr-flow"
 # Multiplayer code editor
 cask "zed"
 # Video communication and virtual meeting platform
@@ -256,9 +302,7 @@ mas "1Password for Safari", id: 1569813296
 mas "Amphetamine", id: 937984704
 mas "CrystalFetch", id: 6454431289
 mas "DaisyDisk", id: 411643860
-mas "Enchanted", id: 6474268307
 mas "GarageBand", id: 682658836
-mas "Hyperfocus", id: 1621523525
 mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
 mas "Kindle", id: 302584613
@@ -300,7 +344,6 @@ vscode "formulahendry.code-runner"
 vscode "fredrikbakke.agda-syntax"
 vscode "geforcelegend.vscode-glsl"
 vscode "gimly81.fortran"
-vscode "github.copilot"
 vscode "github.copilot-chat"
 vscode "github.github-vscode-theme"
 vscode "github.vscode-github-actions"
@@ -311,6 +354,7 @@ vscode "guyskk.language-cython"
 vscode "harryhopkinson.vs-code-runner"
 vscode "humao.rest-client"
 vscode "idleberg.applescript"
+vscode "idleberg.jxa"
 vscode "jakebathman.mysql-syntax"
 vscode "jasonnutter.vscode-codeowners"
 vscode "jdinhlife.gruvbox"
@@ -404,3 +448,5 @@ vscode "willmtemple.vscode-hyperion"
 vscode "yuce.erlang-otp"
 vscode "zhangyue.rust-mod-generator"
 vscode "zhuangtongfa.material-theme"
+cargo "cargo-autoinherit"
+cargo "fracturedjson"

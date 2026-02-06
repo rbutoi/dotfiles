@@ -17,6 +17,13 @@
 (use-package jq-mode)
 ;; (use-package deno-ts-mode :defer 2)
 (use-package csv-mode)
+(use-package typescript-mode)
+(use-package svelte-mode)
+
+;; TODO: doesn't work
+;; (with-eval-after-load 'eglot
+;;   (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
+
 (setopt js-indent-level tab-width)
 
 ;; Markup and config files

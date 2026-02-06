@@ -31,10 +31,13 @@
   :config
   (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
 
-(use-package jinx                       ; spell checking
-  :diminish
-  :hook (elpaca-after-init-hook . global-jinx-mode)
-  :bind (("M-$" . jinx-correct)))
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+(use-package flyspell-correct
+  :after flyspell
+  :general
+  ([remap ispell-word] 'flyspell-correct-wrapper))
 
 (use-package mwim                       ; better C-a/C-e
   :general

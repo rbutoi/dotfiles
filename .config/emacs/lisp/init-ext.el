@@ -71,6 +71,8 @@
 
 (use-package diff-hl                    ; margin diff markers
   :defer 1
+  :general
+  ("C-x v a" 'diff-hl-amend-mode)
   :config
   (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
