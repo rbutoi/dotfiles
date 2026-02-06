@@ -88,8 +88,10 @@ set -gx MANPAGER "sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -
 alias psg procs
 alias psgl 'procs --use-config large'
 
-# alias g rg
+alias g rg
 set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
+
+alias fd 'command fd --no-ignore-vcs' # very surprising results
 
 ###
 

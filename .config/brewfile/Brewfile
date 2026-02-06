@@ -10,6 +10,7 @@ tap "koekeishiya/formulae"
 tap "nikitabobko/tap"
 tap "oven-sh/bun"
 tap "ramonvermeulen/whosthere"
+tap "rcmdnk/file"
 tap "riscv/riscv"
 tap "steipete/tap"
 tap "terror/tap"
@@ -205,6 +206,8 @@ brew "felixkratz/formulae/borders"
 brew "jackielii/tap/skhd-zig"
 # Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
 brew "oven-sh/bun/bun"
+# Brewfile manager for Homebrew.
+brew "rcmdnk/file/brew-file"
 # RISC-V toolchain including gcc (with newlib), simulator (spike), and pk
 brew "riscv/riscv/riscv-tools"
 # Fast X CLI for tweeting, replying, and reading
