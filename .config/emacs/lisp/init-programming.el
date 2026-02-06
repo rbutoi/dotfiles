@@ -21,13 +21,19 @@
 ;; eglot
 (add-hook 'eglot-managed-mode-hook
           (lambda () (eglot-inlay-hints-mode -1))) ; distracting
+
+(use-package eglot-python-preset
+  :ensure (:host github :repo "mwolson/eglot-python-preset") ; should be on MELPA but isn't for some reason
+  :after eglot
+  :custom
+  (eglot-python-preset-lsp-server 'ty)
+  :config
+  (eglot-python-preset-setup))
+
 (general-add-hook
- ;; LSP servers to use:
- ;; - python: pylsp
  '(js-base-mode-hook
    typescript-base-mode-hook
    svelte-mode-hook
-   python-base-mode-hook
    terraform-mode-hook
    c++-mode-hook
    go-mode-hook

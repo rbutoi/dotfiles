@@ -11,6 +11,7 @@ tap "nikitabobko/tap"
 tap "oven-sh/bun"
 tap "ramonvermeulen/whosthere"
 tap "rcmdnk/file"
+tap "rcmdnk/rcmdnkpac"
 tap "riscv/riscv"
 tap "steipete/tap"
 tap "terror/tap"
@@ -74,6 +75,8 @@ brew "fd"
 brew "fish"
 # Plugin manager for the Fish shell
 brew "fisher"
+# Command-line utilities for the FSEvents API
+brew "fsevents-tools"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # Interact with Google Gemini AI models from the command-line
@@ -122,6 +125,10 @@ brew "yt-dlp"
 brew "mpv"
 # Small build system for use with gyp or CMake
 brew "ninja"
+# Thread-based email index, search, and tagging
+brew "notmuch"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Fast, disk space efficient package manager
@@ -168,6 +175,8 @@ brew "tokei"
 brew "topgrade"
 # Lightweight BitTorrent client
 brew "transmission-cli"
+# Extremely fast Python type checker, written in Rust
+brew "ty"
 # Language Server Protocol implementation for TypeScript wrapping tsserver
 brew "typescript-language-server"
 # Extremely fast Python package installer and resolver, written in Rust

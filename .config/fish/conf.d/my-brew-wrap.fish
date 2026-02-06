@@ -18,6 +18,7 @@ function brew
   end
   set -l cmd $argv[1]
   set -l cmd2 $argv[2]
+  set -l _brew_file_update 0
 
   switch "$cmd"
     case 'file'
@@ -25,13 +26,13 @@ function brew
       set argv $argv[2..-1]
     case 'install' 'reinstall' 'tap' 'rm' 'remove' 'uninstall' 'untap'
       if test $nargs -gt 1
-        set exe brew-file brew
+        set _brew_file_update 1
       end
     case 'cask'
       if test $nargs -gt 2
         switch "$cmd2"
           case 'rm' 'remove' 'uninstall' 'install' 'instal'
-            set exe brew-file brew
+            set _brew_file_update 1
         end
       end
     case '*'
@@ -46,16 +47,14 @@ function brew
   end
 
   # Execute command
-  set -l brewfile (brew-file cat 2>/dev/null)
   eval "$env $exe $argv"
   set -l ret $status
 
-  # Commands after brew command
-  set -l brewfile_after (brew-file cat 2>/dev/null)
-  if test $ret -eq 0
-    if not diff (echo $brewfile | psub) (echo $brewfile_after | psub) >/dev/null
-      _post_brewfile_update
-    end
+  # Update Brewfile in background
+  if test $ret -eq 0 -a $_brew_file_update -eq 1
+    fish -c 'brew-file dump -y' &>/dev/null &
+    disown
+    _post_brewfile_update
   end
 
   return $ret
