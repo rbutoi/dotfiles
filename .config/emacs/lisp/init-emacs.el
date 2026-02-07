@@ -4,6 +4,7 @@
  confirm-kill-processes     nil
  use-short-answers          t
  ;; use-package-compute-statistics t       ; for (use-package-report)
+ inhibit-startup-screen     t
  initial-scratch-message    "")
 
 (require 'server) (unless (server-running-p) (server-start)) ; emacs --daemon

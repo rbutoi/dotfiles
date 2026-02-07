@@ -133,8 +133,9 @@ This is the function to be used for the hook `completion-at-point-functions'."
 
        (advice-add ,command :around ',adv))))
 
-(def-consult-help 'consult-ripgrep "rg")
-(def-consult-help 'consult-fd "fd")
+;; hmmmmmmm
+;; (def-consult-help 'consult-ripgrep "rg")
+;; (def-consult-help 'consult-fd "fd")
 ;;;
 
 ;;;;;;;;;;;
@@ -197,21 +198,6 @@ This is the function to be used for the hook `completion-at-point-functions'."
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
-
-(use-package copilot                    ; GitHub Copilot
-  :disabled                             ; hmm
-  :diminish
-  :ensure (:host github :repo "copilot-emacs/copilot.el")
-  :custom
-  (copilot-idle-delay 0.7)
-  :hook (prog-mode . copilot-mode)
-  :general
-  (:keymaps 'copilot-completion-map
-            "<tab>" 'copilot-accept-completion
-            "M-f"   'copilot-accept-completion-by-word
-            "C-M-n"   'copilot-next-completion
-            "C-M-p"   'copilot-previous-completion
-            "C-g"   'copilot-clear-overlay))
 
 (use-package activity-watch-mode
   :disabled ; TODO: causing errors, re-eval

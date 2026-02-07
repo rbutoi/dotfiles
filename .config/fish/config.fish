@@ -30,6 +30,7 @@ set -g fish_greeting ''
 starship init fish | source # prompt
 
 bind alt-k backward-kill-line # standard readline, better than default C-u
+bind alt-shift-c capitalize-word # alt-c for new ghostty tab
 
 # fzf
 set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"

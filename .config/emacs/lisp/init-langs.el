@@ -55,6 +55,7 @@
 
 ;; Build systems
 (use-package just-mode)
+(use-package cmake-mode)
 
 
 (provide 'init-langs)

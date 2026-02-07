@@ -31,8 +31,9 @@
   :config
   (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
 
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;; TODO: don't take over C-M-i for completing
+;; (add-hook 'text-mode-hook 'flyspell-mode)
+;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 (use-package flyspell-correct
   :after flyspell

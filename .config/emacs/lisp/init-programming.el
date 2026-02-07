@@ -62,13 +62,39 @@
   ;; (when (fboundp 'global-completion-preview-mode) ; as of emacs 30.1
   (global-completion-preview-mode)
   (diminish 'completion-preview-mode)) ;; )
-(use-package corfu			; inline completions
-  :config
-  (global-corfu-mode)
-  (corfu-popupinfo-mode)
-  :custom
-  (corfu-auto t))
+;; (use-package corfu			; inline completions
+;;   :config
+;;   (global-corfu-mode)
+;;   (corfu-popupinfo-mode)
+;;   :custom
+;;   (corfu-auto t))
 ;; TODO: cape?
+
+(use-package company
+  :init
+  (global-company-mode))
+
+(use-package company-box
+  :after company
+  :hook (company-mode . company-box-mode))
+
+(use-package track-changes)
+(use-package copilot                    ; GitHub Copilot
+  :after track-changes
+  ;; :disabled                             ; hmm
+  :diminish
+  :ensure (:host github :repo "copilot-emacs/copilot.el")
+  :custom
+  (copilot-idle-delay 0.7)
+  ;; :hook (prog-mode . copilot-mode)
+  :general
+  (:keymaps 'copilot-completion-map
+            "<tab>" 'copilot-accept-completion
+            "M-f"   'copilot-accept-completion-by-word
+            "C-M-n"   'copilot-next-completion
+            "C-M-p"   'copilot-previous-completion
+            "C-g"   'copilot-clear-overlay))
+;; TODO: copilot-chat.el
 
 (use-package disproject
   ;; Replace `project-prefix-map' with `disproject-dispatch'.
@@ -76,9 +102,9 @@
                      "p" 'disproject-dispatch))
 
 (use-package treemacs
-  :hook (emacs-startup
-         . (lambda ()            ; without timer, Treemacs modeline is messed up
-             (run-with-timer 0.1 nil 'treemacs-start-on-boot)))
+  ;; :hook (emacs-startup
+  ;;        . (lambda ()            ; without timer, Treemacs modeline is messed up
+  ;;            (run-with-timer 0.1 nil 'treemacs-start-on-boot)))
   :general
   (  "C-S-M-SPC" 'treemacs)
   ("C-x C-M-SPC" 'treemacs)             ; cli

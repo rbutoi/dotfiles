@@ -1,6 +1,6 @@
 ;;; init-ui.el --- UI / UX  -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "SF Mono" :height 150)
+(set-face-attribute 'default nil :family "SF Mono" :height 140)
 
 (context-menu-mode)
 (global-hl-line-mode)
