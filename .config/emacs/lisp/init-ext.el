@@ -93,12 +93,6 @@
   ("<f5>" 'vterm-toggle)
   (:keymaps 'vterm-mode-map "<f5>" 'vterm-toggle))
 
-(use-package verb
-  :defer 5
-  :general
-  (:keymaps 'org-mode-map
-            "C-c C-r" verb-command-map))
-
 (use-package google-this)               ; Google word at point
 
 ;; external servers

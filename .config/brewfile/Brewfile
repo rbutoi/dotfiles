@@ -28,6 +28,7 @@ brew 'cffi' # C Foreign Function Interface for Python
 brew 'choose-rust' # Human-friendly and fast alternative to cut and (sometimes) awk
 brew 'cjson' # Ultralightweight JSON parser in ANSI C
 brew 'clang-format' # Formatting tools for C, C++, Obj-C, Java, JavaScript, TypeScript
+brew 'clp' # command line syntax highlighter
 brew 'cmake' # Cross-platform make
 brew 'colima' # Container runtimes on MacOS (and Linux) with minimal setup
 brew 'coreutils' # GNU File, Shell, and Text utilities
@@ -169,8 +170,10 @@ brew 'llm' # Access large language models from the command-line
 brew 'llvm' # Next-gen compiler infrastructure
 brew 'llvm@20' # Next-gen compiler infrastructure
 brew 'lnav' # Curses-based tool for viewing and analyzing log files
+brew 'lua' # Powerful, lightweight programming language
 brew 'lua-language-server' # Language Server for the Lua language
 brew 'luajit' # Just-In-Time Compiler (JIT) for the Lua programming language
+brew 'luarocks' # Package manager for the Lua programming language
 brew 'lz4' # Extremely Fast Compression algorithm
 brew 'lzo' # Real-time data compression library
 brew 'm4' # Macro processing language
@@ -360,6 +363,8 @@ tap 'jackielii/tap'
 brew 'skhd-zig' # Simple hotkey daemon for macOS, written in Zig
 
 tap 'jimeh/emacs-builds'
+
+tap 'jpe90/clp'
 
 tap 'koekeishiya/formulae'
 

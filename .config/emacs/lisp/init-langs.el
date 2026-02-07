@@ -21,8 +21,11 @@
 (use-package svelte-mode)
 
 ;; TODO: doesn't work
-;; (with-eval-after-load 'eglot
-;;   (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio")))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(svelte-mode . (eglot-alternatives '("svelteserver" "--stdio"))))
+  )
 
 (setopt js-indent-level tab-width)
 

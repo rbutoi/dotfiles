@@ -27,13 +27,19 @@ status is-interactive || exit
 
 set -g fish_greeting ''
 
-starship init fish | source
+starship init fish | source # prompt
 
 bind alt-k backward-kill-line # standard readline, better than default C-u
 
+# fzf
 set -gx FZF_DEFAULT_OPTS "--bind 'ctrl-v:page-down,alt-v:page-up'"
+set -gx fzf_preview_dir_cmd eza --all --color=always
+set -gx fzf_fd_opts --hidden
+set -gx fzf_diff_highlighter delta --paging=never --width=20
+set -gx fzf_preview_file_cmd preview
+
 set fzf_history_time_format %a %b %d %H:%M:%S
-fzf_configure_bindings --directory=\ct --variables=\e\cv
+fzf_configure_bindings --variables=\e\cv
 bind \e\cr history-pager # keep original history search
 
 # Atuin (Shell History). TODO: remove?

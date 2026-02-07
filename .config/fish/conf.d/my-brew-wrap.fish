@@ -52,7 +52,7 @@ function brew
 
   # Update Brewfile in background
   if test $ret -eq 0 -a $_brew_file_update -eq 1
-    fish -c 'brew-file dump -y' &>/dev/null &
+    fish -c '~/dev/homebrew-file/bin/brew-file dump -y --describe' &>/dev/null &
     disown
     _post_brewfile_update
   end
