@@ -1,6 +1,6 @@
 ;;; config-fns.el --- longer functions  -*- lexical-binding: t; -*-
 ;; ...copied in externally for workarounds, or internally and
-;; tweaked. intentionally only definitions without anyhook-adding or
+;; tweaked. intentionally only definitions without any hook-adding or
 ;; functionality-changing.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

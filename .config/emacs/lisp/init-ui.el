@@ -77,5 +77,8 @@
   (popper-mode)
   (popper-echo-mode))
 
+(use-package async)
+(use-package elpaca-daily-update :after async :ensure nil)
+
 
 (provide 'init-ui)
