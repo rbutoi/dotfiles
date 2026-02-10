@@ -37,3 +37,12 @@ keybind = ctrl+shift+left=resize_split:left,60
 keybind = ctrl+shift+right=resize_split:right,60
 
 keybind = global:cmd+shift+grave_accent=toggle_quick_terminal
+
+# MacOS note:
+#
+# Emacs needs TERMINFO set at process launch time to read the terminfo
+# db. Setting it by `emacsclient` is too late. Setting it even after startup
+# with `exec-path-from-shell` is too late. So:
+#
+# > cp -Rs /Applications/kitty.app/Contents/Resources/kitty/terminfo ~/.terminfo &&
+#   cp -Rs /Applications/Ghostty.app/Contents/Resources/terminfo     ~/.terminfo

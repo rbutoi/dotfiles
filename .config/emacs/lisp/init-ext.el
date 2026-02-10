@@ -7,12 +7,6 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package exec-path-from-shell
-  :config
-  (exec-path-from-shell-initialize)
-  (setenv "RIPGREP_CONFIG_PATH"
-          (substitute-env-vars "$HOME/.config/ripgreprc")))
-
 (use-package man                        ; man(1)
   :ensure nil
   :custom

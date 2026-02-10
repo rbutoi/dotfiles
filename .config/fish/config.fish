@@ -19,6 +19,8 @@ end
 
 ###
 
+set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
+
 status is-interactive || exit
 
 ############
@@ -96,7 +98,6 @@ alias psg procs
 alias psgl 'procs --use-config large'
 
 alias g rg
-set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
 
 alias fd 'command fd --no-ignore-vcs' # very surprising results
 

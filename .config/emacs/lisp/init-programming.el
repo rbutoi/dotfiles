@@ -24,6 +24,7 @@
 
 (use-package eglot-python-preset
   :ensure (:host github :repo "mwolson/eglot-python-preset") ; should be on MELPA but isn't for some reason
+  :ensure-system-package ty
   :after eglot
   :custom
   (eglot-python-preset-lsp-server 'ty)

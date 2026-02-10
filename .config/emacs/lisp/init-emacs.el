@@ -13,6 +13,14 @@
 ;; extenal packages ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package system-packages)
+
+(use-package exec-path-from-shell
+  :config
+  (dolist (var '("RIPGREP_CONFIG_PATH"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
+
 (use-package f)
 (use-package general)                   ; keybinds
 (elpaca-wait)
