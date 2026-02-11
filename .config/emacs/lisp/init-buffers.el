@@ -75,7 +75,6 @@
           (consult-line                (:not posframe))
           (consult-line-thing-at-point (:not posframe))
           (consult-imenu               (:not posframe))
-          ;; (consult-xref                (:not posframe))
           (t                                 posframe))))
 
 (use-package marginalia                 ; extra info in margins
@@ -99,12 +98,22 @@
    "C-M-o"     'consult-line-thing-at-point
    "M-s o"     'consult-line-multi
    "M-s M-o"   'consult-line-multi)
-  (:keymaps 'vertico-map
-            "M-P" 'consult-toggle-preview)
-  (:keymaps 'isearch-mode-map
-            "C-o"   'consult-line
-            "M-s o" 'consult-line-multi)
+  (:keymaps
+   'consult-narrow-map
+   "C-M-h" 'consult-narrow-help)
+  (:keymaps
+   'isearch-mode-map
+   "C-o"       'consult-line
+   "M-s o"     'consult-line-multi)
+  (:keymaps
+   'minibuffer-local-map
+   [remap next-matching-history-element]     'consult-history
+   [remap previous-matching-history-element] 'consult-history)
+
   :custom
+  (xref-search-program 'ripgrep)
+  (xref-show-definitions-function #'consult-xref)
+  (xref-show-xrefs-function #'consult-xref)
   (consult-fd-args '((if (executable-find "fdfind" 'remote) "fdfind" "fd")
                      "--full-path --color=never --hidden"))
   :config

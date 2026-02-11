@@ -3,7 +3,6 @@
 (delete-selection-mode)                 ; typing overwrites selection
 (electric-pair-mode)                    ; automatic ()
 (add-to-list 'electric-pair-pairs '( ?\` . ?\`))
-(add-to-list 'electric-pair-pairs '( ?\' . ?\'))
 
 (global-auto-revert-mode)
 (setopt global-auto-revert-non-file-buffers t

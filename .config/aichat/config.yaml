@@ -1,0 +1,11 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+
+model: llamabarn-llama-server:gpt-oss-20b
+clients:
+- type: openai-compatible
+  name: llamabarn-llama-server
+  api_base: http://localhost:2276/v1
+  models:
+  - name: devstral-2-24b-q4
+  - name: gemma-3-12b
+  - name: gpt-oss-20b

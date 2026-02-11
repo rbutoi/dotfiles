@@ -77,6 +77,8 @@ function waitpid --description "Wait for a specific PID to finish"
     gtail --pid=$argv[1] -f /dev/null
 end
 
+alias clipcp fish_clipboard_copy
+
 #####################
 # modern UNIX tools #
 #####################
@@ -106,7 +108,4 @@ alias fd 'command fd --no-ignore-vcs' # very surprising results
 # TODO: OS specific?
 type -q paru && alias p paru
 
-# Detect macOS via Homebrew variable presence or uname
-if string match -q "*homebrew*" "$SHELL"; or test (uname) = Darwin
-    set -gx aichat_config_dir ~/.config/aichat
-end
+test -d ~/.dots && alias dotup 'python3 ~/.dots/bin/dot update'
