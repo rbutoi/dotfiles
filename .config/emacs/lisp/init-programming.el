@@ -26,10 +26,8 @@
   :ensure (:host github :repo "mwolson/eglot-python-preset") ; should be on MELPA but isn't for some reason
   :ensure-system-package ty
   :after eglot
-  :custom
-  (eglot-python-preset-lsp-server 'ty)
-  :config
-  (eglot-python-preset-setup))
+  :custom (eglot-python-preset-lsp-server 'ty)
+  :config (eglot-python-preset-setup))
 
 (general-add-hook
  '(js-base-mode-hook
@@ -58,26 +56,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 
 ;; completion
-
-(with-eval-after-load 'diminish
-  ;; (when (fboundp 'global-completion-preview-mode) ; as of emacs 30.1
-  (global-completion-preview-mode)
-  (diminish 'completion-preview-mode)) ;; )
-;; (use-package corfu			; inline completions
-;;   :config
-;;   (global-corfu-mode)
-;;   (corfu-popupinfo-mode)
-;;   :custom
-;;   (corfu-auto t))
+(global-completion-preview-mode)
+(use-package corfu			; inline completions
+  :custom
+  (corfu-auto t)
+  :config
+  (global-corfu-mode)
+  (corfu-popupinfo-mode))
 ;; TODO: cape?
-
-(use-package company
-  :init
-  (global-company-mode))
-
-(use-package company-box
-  :after company
-  :hook (company-mode . company-box-mode))
 
 (use-package track-changes)
 (use-package copilot                    ; GitHub Copilot
@@ -128,7 +114,9 @@
     (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
 
-(use-package compiler-explorer)
+(use-package compiler-explorer
+  :custom (compiler-explorer-sessions-file
+           (no-littering-expand-var-file-name "compiler-explorer")))
 
 
 (provide 'init-programming)

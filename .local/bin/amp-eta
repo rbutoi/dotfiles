@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import datetime as dt
+import re
+import subprocess
+
+try:
+    out = subprocess.check_output(["amp", "usage"], text=True)
+    cur, rate = map(float, re.search(r"Free: \$([\d.]+).*\+\$([\d.]+)", out).groups())
+
+    wait = (10 - cur) / rate
+    if wait <= 0:
+        print("Quota already full.")
+    else:
+        eta = dt.datetime.now() + dt.timedelta(hours=wait)
+        h, m = divmod(wait * 60, 60)
+        print(
+            f"${cur}/$10 | {int(h)}h {int(m)}m until $10 | ETA: {eta.strftime('%I:%M %p')}"
+        )
+except Exception as e:
+    print(f"Error: {e}")

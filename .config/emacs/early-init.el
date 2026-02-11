@@ -9,6 +9,14 @@
   (elpaca-use-package-mode)
   (setq use-package-always-ensure t))
 
+;; https://github.com/emacscollective/no-littering#native-compilation-cache
+(when (and (fboundp 'startup-redirect-eln-cache)
+           (fboundp 'native-comp-available-p)
+           (native-comp-available-p))
+  (startup-redirect-eln-cache
+   (convert-standard-filename
+    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+
 ;; UI speedups
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)

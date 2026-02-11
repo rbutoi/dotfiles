@@ -28,7 +28,6 @@ brew 'cffi' # C Foreign Function Interface for Python
 brew 'choose-rust' # Human-friendly and fast alternative to cut and (sometimes) awk
 brew 'cjson' # Ultralightweight JSON parser in ANSI C
 brew 'clang-format' # Formatting tools for C, C++, Obj-C, Java, JavaScript, TypeScript
-brew 'clp' # command line syntax highlighter
 brew 'cmake' # Cross-platform make
 brew 'colima' # Container runtimes on MacOS (and Linux) with minimal setup
 brew 'coreutils' # GNU File, Shell, and Text utilities
@@ -75,7 +74,6 @@ brew 'gmp' # GNU multiple precision arithmetic library
 brew 'gnu-sed' # GNU implementation of the famous stream editor
 brew 'gnupg' # GNU Privacy Guard (OpenPGP)
 brew 'gnutls' # GNU Transport Layer Security (TLS) Library
-brew 'gogcli' # Google CLI for Gmail, Calendar, Drive, and Contacts
 brew 'gpgme' # Library access to GnuPG
 brew 'gpgmepp' # C++ bindings for gpgme
 brew 'graphicsmagick' # Image processing tools collection
@@ -201,7 +199,6 @@ brew 'npth' # New GNU portable threads library
 brew 'nspr' # Platform-neutral API for system-level and libc-like functions
 brew 'nss' # Libraries for security-enabled client and server applications
 brew 'oniguruma' # Regular expressions library
-brew 'opencode' # The AI coding agent built for the terminal.
 brew 'opencore-amr' # Audio codecs extracted from Android open source project
 brew 'openexr' # High dynamic-range image file format
 brew 'openjpeg' # Library for JPEG-2000 image manipulation
@@ -255,7 +252,6 @@ brew 'starship' # Cross-shell prompt for astronauts
 brew 'svt-av1' # AV1 encoder
 brew 'swiftly' # Swift toolchain installer and manager
 brew 'talloc' # Hierarchical, reference-counted memory pool with destructors
-brew 'tart' # Run macOS and Linux VMs on Apple Hardware
 brew 'tealdeer' # Very fast implementation of tldr in Rust
 brew 'tesseract' # OCR (Optical Character Recognition) engine
 brew 'theora' # Open video compression format
@@ -305,7 +301,6 @@ tap 'homebrew/cask'
 cask '1password' # Password manager that keeps all passwords secure behind one password
 cask 'activitywatch' # Time tracker
 cask 'antigravity' # AI Coding Agent IDE
-cask 'bloom' # File manager
 cask 'chatgpt' # OpenAI's official ChatGPT desktop app
 cask 'claude' # Anthropic's official Claude AI desktop app
 cask 'codex' # OpenAI's coding agent that runs in your terminal
@@ -313,7 +308,7 @@ cask 'copilot-cli' # Brings the power of Copilot coding agent directly to your t
 cask 'darktable' # Photography workflow application and raw developer
 cask 'discord' # Voice and text chat software
 cask 'electron-cash' # Thin client for Bitcoin Cash
-cask 'emacs-app' # GNU Emacs text editor
+cask 'element' # Matrix collaboration client
 cask 'firefox' # Web browser
 cask 'font-iosevka' #
 cask 'fork' # GIT client
@@ -346,12 +341,14 @@ cask 'zed' # Multiplayer code editor
 cask 'zoom' # Video communication and virtual meeting platform
 
 tap 'anomalyco/tap'
+brew 'opencode' # The AI coding agent built for the terminal.
 
 tap 'borkdude/brew'
 brew 'babashka' # Native, fast starting Clojure interpreter for scripting.
 
 tap 'cirruslabs/cli'
 brew 'softnet' # Software networking with isolation for Tart
+brew 'tart' # Run macOS and Linux VMs on Apple Hardware
 
 tap 'd12frosted/emacs-plus'
 
@@ -365,8 +362,10 @@ tap 'jackielii/tap'
 brew 'skhd-zig' # Simple hotkey daemon for macOS, written in Zig
 
 tap 'jimeh/emacs-builds'
+cask 'emacs-app' # GNU Emacs text editor
 
 tap 'jpe90/clp'
+brew 'clp' # command line syntax highlighter
 
 tap 'koekeishiya/formulae'
 
@@ -392,6 +391,7 @@ brew 'riscv-tools' # RISC-V toolchain including gcc (with newlib), simulator (sp
 
 tap 'steipete/tap'
 brew 'bird' # Fast X CLI for tweeting, replying, and reading
+brew 'gogcli' # Google CLI for Gmail, Calendar, Drive, and Contacts
 
 tap 'terror/tap'
 brew 'just-lsp' # Language server for just

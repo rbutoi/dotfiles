@@ -63,7 +63,20 @@
     (vertico-mode -1)
     (unwind-protect
         (call-interactively #'man)
-      (vertico-mode +1))))
+      (vertico-mode +1)))
+
+  (vertico-multiform-mode))
+
+(use-package vertico-posframe
+  :after vertico
+  :config
+  (setq vertico-multiform-commands
+        '((consult-line-multi          (:not posframe))
+          (consult-line                (:not posframe))
+          (consult-line-thing-at-point (:not posframe))
+          (consult-imenu               (:not posframe))
+          ;; (consult-xref                (:not posframe))
+          (t                                 posframe))))
 
 (use-package marginalia                 ; extra info in margins
   :config (marginalia-mode))

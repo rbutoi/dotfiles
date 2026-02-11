@@ -50,11 +50,15 @@ function brew
   eval "$env $exe $argv"
   set -l ret $status
 
-  # Update Brewfile in background
+  # Update Brewfile in background; call _post_brewfile_update only if it changed
   if test $ret -eq 0 -a $_brew_file_update -eq 1
-    fish -c '~/dev/homebrew-file/bin/brew-file dump -y --describe' &>/dev/null &
+    set -l hash_before (brew-file cat 2>/dev/null | md5)
+    fish -c (string join '; ' \
+      "set hash_before $hash_before" \
+      '~/dev/homebrew-file/bin/brew-file dump --yes --describe &>/dev/null' \
+      'set hash_after (brew-file cat 2>/dev/null | md5)' \
+      'if test "$hash_before" != "$hash_after"; _post_brewfile_update; end') &
     disown
-    _post_brewfile_update
   end
 
   return $ret

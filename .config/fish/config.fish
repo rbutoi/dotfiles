@@ -110,6 +110,3 @@ type -q paru && alias p paru
 if string match -q "*homebrew*" "$SHELL"; or test (uname) = Darwin
     set -gx aichat_config_dir ~/.config/aichat
 end
-
-## retired
-set -Ux hydro_color_git green
