@@ -12,7 +12,7 @@
  '(safe-local-variable-values
    '((lisp-indent-local-overrides (cond . 0) (interactive . 0))
      (checkdoc-allow-quoting-nil-and-t . t)))
- '(warning-suppress-log-types '((emacs))))
+ '(warning-suppress-log-types '((native-compiler) (emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

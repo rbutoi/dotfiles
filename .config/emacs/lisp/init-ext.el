@@ -3,10 +3,6 @@
 (xterm-mouse-mode)                      ; mouse in terminal Emacs
 (setopt dired-mouse-drag-files t)
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; extenal packages ;;
-;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package man                        ; man(1)
   :ensure nil
   :custom
@@ -48,7 +44,6 @@
   (setcar magit-status-margin 't))       ; show margin initially
 
 (use-package magit-delta                ; nicer magit diffs
-  :diminish
   :after magit
   :hook (magit-mode . magit-delta-mode)
   :custom (magit-delta-delta-args

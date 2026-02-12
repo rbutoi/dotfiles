@@ -12,27 +12,15 @@
         fill-column                         80
         ediff-window-setup-function         'ediff-setup-windows-plain)
 
-;;;;;;;;;;;;;;
-;; keybinds ;;
-;;;;;;;;;;;;;;
-
 (general-def
   "M-z"   'toggle-truncate-lines
   "C-M-z" 'visual-line-mode
   "M-Z"   'zap-up-to-char
   "s-v"   'clipboard-yank)
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; external packages ;;
-;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package visual-fill-column
   :config
   (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
-
-;; TODO: don't take over C-M-i for completing
-;; (add-hook 'text-mode-hook 'flyspell-mode)
-;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 (use-package flyspell-correct
   :after flyspell
@@ -64,7 +52,6 @@
 
 (use-package undo-tree                  ; visual undo
   :defer 2
-  :diminish
   :general
   ("C-z"   'undo-tree-undo)
   :custom
@@ -74,10 +61,7 @@
   :config
   (global-undo-tree-mode))
 
-;; (use-package so-long :config (global-so-long-mode)) ; long file handling
-
 (use-package ws-butler                 ; automatically trim whitespace
-  :diminish
   :custom (ws-butler-keep-whitespace-before-point nil)
   :config (ws-butler-global-mode))
 

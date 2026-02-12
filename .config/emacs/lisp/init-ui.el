@@ -8,10 +8,6 @@
 
 (global-goto-address-mode)
 
-;;;;;;;;;;;;;;
-;; keybinds ;;
-;;;;;;;;;;;;;;
-
 (repeat-mode)
 
 (general-def
@@ -23,16 +19,10 @@
   "s-q"       'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
 
-;;;;;;;;;;;;;;;;;;;;;;
-;; extenal packages ;;
-;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package doom-themes)
-
 (use-package auto-dark
   :init (auto-dark-mode)
   :config
-  (setq auto-dark-themes '((doom-acario-dark) (doom-acario-light))))
+  (setq auto-dark-themes '((modus-vivendi-tinted) (modus-operandi-tinted))))
 
 ;; Mode line
 (use-package minions :config (minions-mode))
@@ -41,6 +31,7 @@
   :config
   (moody-replace-mode-line-front-space)
   (moody-replace-mode-line-buffer-identification)
+  (moody-replace-eldoc-minibuffer-message-function)
   (moody-replace-vc-mode))
 
 (use-package solaire-mode
@@ -51,15 +42,11 @@
   :config
   (ultra-scroll-mode 1))
 
-;; TODO: doesn't seem to consistently work
-;; (use-package diminish)                  ; TODO: consider doom-modeline
-
 (use-package zoom-window                ; temporarily zoom window
   :general ("C-x C-z" 'zoom-window-zoom))
 
 (use-package which-key                  ; useful shortcut reminders
   :defer 2
-  :diminish
   :config (which-key-mode))
 
 (use-package popper                     ; popups

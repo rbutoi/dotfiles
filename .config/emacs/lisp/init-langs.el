@@ -1,10 +1,6 @@
 ;;; init-langs.el --- Programming languages  -*- lexical-binding: t; -*-
 
-;; TODO: weird init issues
-;; diminish goes away after 2 secs (something with idle loading), needs re-eval
-;; to get it back
 (use-package apheleia                   ; auto format
-  :diminish "A"
   :init (apheleia-global-mode)
   :config
   (setf (alist-get 'python-mode apheleia-mode-alist)
@@ -41,9 +37,6 @@
 (use-package i3wm-config-mode)
 ;; TODO: rainbow-mode??
 
-(with-eval-after-load 'diminish
-  (diminish 'eldoc-mode))
-
 ;; Systems programming
 (use-package rust-mode)
 (use-package go-mode)
@@ -56,6 +49,9 @@
 ;; Build systems
 (use-package just-mode)
 (use-package cmake-mode)
+
+;; hmm
+(use-package swift-mode)
 
 
 (provide 'init-langs)

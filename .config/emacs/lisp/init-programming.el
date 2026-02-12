@@ -6,7 +6,6 @@
         tab-width 2)
 (general-add-hook '(prog-mode-hook text-mode-hook)
                   'display-line-numbers-mode)
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
@@ -44,12 +43,15 @@
       eglot-autoshutdown t)
 (general-def :keymaps 'eglot-mode-map
   "C-c r"  'eglot-rename
-  "C-c a"  'eglot-code-actions)
+  "C-c a"  'eglot-code-actions
+  "<f7>"   'eglot-momentary-inlay-hints)
 
-;; (use-package eldoc-mouse
-;;   :general (:keymaps eldoc-mouse-mode-map
-;;                      "<f1> <f1>" ''eldoc-mouse-pop-doc-at-cursor)
-;;   :hook eldoc-mode)
+(use-package eldoc-mouse
+  :ensure (:host github :repo "huangfeiyu/eldoc-mouse")
+  :general
+  (:keymaps 'eldoc-mouse-mode-map
+            "<f1> <f1>" 'eldoc-mouse-pop-doc-at-cursor)
+  :hook eldoc-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; extenal packages ;;
@@ -63,13 +65,14 @@
   :config
   (global-corfu-mode)
   (corfu-popupinfo-mode))
-;; TODO: cape?
+(use-package cape
+  :config
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
 (use-package track-changes)
 (use-package copilot                    ; GitHub Copilot
   :after track-changes
   ;; :disabled                             ; hmm
-  :diminish
   :ensure (:host github :repo "copilot-emacs/copilot.el")
   :custom
   (copilot-idle-delay 0.7)
@@ -83,30 +86,11 @@
             "C-g"   'copilot-clear-overlay))
 ;; TODO: copilot-chat.el
 
-(use-package disproject
-  ;; Replace `project-prefix-map' with `disproject-dispatch'.
-  :general (:keymaps 'ctl-x-map
-                     "p" 'disproject-dispatch))
-
-(use-package treemacs
-  ;; :hook (emacs-startup
-  ;;        . (lambda ()            ; without timer, Treemacs modeline is messed up
-  ;;            (run-with-timer 0.1 nil 'treemacs-start-on-boot)))
-  :general
-  (  "C-S-M-SPC" 'treemacs)
-  ("C-x C-M-SPC" 'treemacs)             ; cli
-  :config
-  (treemacs-project-follow-mode)
-  (treemacs-git-commit-diff-mode)
-  (treemacs-hide-gitignored-files-mode))
-(use-package treemacs-magit :after magit)
-
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
                      "C-c C-u" 'string-inflection-cycle))
 
 (use-package auto-highlight-symbol      ; highlight symbols
-  :diminish
   :config
   (with-eval-after-load 'yaml-mode
     (add-to-list 'ahs-modes 'yaml-mode))

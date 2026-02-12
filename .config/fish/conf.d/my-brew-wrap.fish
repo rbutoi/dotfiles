@@ -55,7 +55,7 @@ function brew
     set -l hash_before (brew-file cat 2>/dev/null | md5)
     fish -c (string join '; ' \
       "set hash_before $hash_before" \
-      '~/dev/homebrew-file/bin/brew-file dump --yes --describe &>/dev/null' \
+      '~/dev/homebrew-file/bin/brew-file dump --yes --describe --on_request &>/dev/null' \
       'set hash_after (brew-file cat 2>/dev/null | md5)' \
       'if test "$hash_before" != "$hash_after"; _post_brewfile_update; end') &
     disown

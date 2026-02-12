@@ -108,4 +108,4 @@ alias fd 'command fd --no-ignore-vcs' # very surprising results
 # TODO: OS specific?
 type -q paru && alias p paru
 
-test -d ~/.dots && alias dotup 'python3 ~/.dots/bin/dot update'
+test -d ~/.dots && alias dotup 'python3 ~/.dots/bin/dot update --skip-pull'

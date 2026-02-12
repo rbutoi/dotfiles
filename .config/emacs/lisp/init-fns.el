@@ -245,7 +245,6 @@ This is the function to be used for the hook `completion-at-point-functions'."
 
 (use-package activity-watch-mode
   :disabled ; TODO: causing errors, re-eval
-  :diminish
   :config (global-activity-watch-mode))
 
 ;;;

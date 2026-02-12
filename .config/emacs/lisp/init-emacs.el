@@ -7,11 +7,7 @@
  inhibit-startup-screen     t
  initial-scratch-message    "")
 
-(require 'server) (unless (server-running-p) (server-start)) ; emacs --daemon
-
-;;;;;;;;;;;;;;;;;;;;;;
-;; extenal packages ;;
-;;;;;;;;;;;;;;;;;;;;;;
+(server-start)
 
 (use-package system-packages)
 
