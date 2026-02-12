@@ -2,7 +2,6 @@
 
 (setopt indent-tabs-mode nil            ; never tabs to indent
         tab-always-indent 'complete
-        vc-follow-symlinks t
         tab-width 2)
 (general-add-hook '(prog-mode-hook text-mode-hook)
                   'display-line-numbers-mode)

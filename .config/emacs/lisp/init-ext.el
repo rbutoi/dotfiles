@@ -34,12 +34,5 @@
   :config
   (atomic-chrome-start-server))
 
-;; OS-specific
-(with-system darwin
-  (setopt mac-option-modifier       'meta
-          mac-command-modifier      'super
-          insert-directory-program  "gls" ; gnu coreutils
-          manual-program            "gman"))
-
 
 (provide 'init-ext)

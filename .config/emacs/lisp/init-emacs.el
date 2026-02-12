@@ -29,5 +29,16 @@
   (add-to-list 'load-path no-littering-etc-directory))
 (elpaca-wait)
 
+;; OS-specific
+(with-system darwin
+  (setopt mac-option-modifier       'meta
+          mac-command-modifier      'super
+          insert-directory-program  "gls" ; gnu coreutils
+          manual-program            "gman"))
+
+;; Package updates
+(use-package async)
+(use-package elpaca-daily-update :after async :ensure nil)
+
 
 (provide 'init-emacs)

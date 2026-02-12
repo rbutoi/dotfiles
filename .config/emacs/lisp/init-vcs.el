@@ -1,5 +1,7 @@
 ;;; init-vcs.el --- Version control  -*- lexical-binding: t; -*-
 
+(setopt vc-follow-symlinks t)
+
 (elpaca (transient))            ; https://github.com/progfolio/elpaca/issues/343
 (use-package magit              ; version control
   :hook
