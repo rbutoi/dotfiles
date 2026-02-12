@@ -10,6 +10,7 @@
 (require 'init-programming)
 (require 'init-eglot)
 (require 'init-langs)
+(require 'init-vcs)
 (require 'init-ext)
 
 (setq custom-file (locate-library "custom"))
