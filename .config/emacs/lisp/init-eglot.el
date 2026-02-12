@@ -11,7 +11,8 @@
   :config (eglot-python-preset-setup))
 
 (general-add-hook
- '(js-base-mode-hook
+ '(fish-mode-hook
+   js-base-mode-hook
    typescript-base-mode-hook
    svelte-mode-hook
    terraform-mode-hook

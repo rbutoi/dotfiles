@@ -33,6 +33,7 @@ brew 'entr' # Run arbitrary commands when files change
 brew 'eza' # Modern, maintained replacement for ls
 brew 'fd' # Simple, fast and user-friendly alternative to find
 brew 'fish' # User-friendly command-line shell for UNIX-like operating systems
+brew 'fish-lsp' # LSP implementation for the fish shell language
 brew 'fisher' # Plugin manager for the Fish shell
 brew 'fsevents-tools' # Command-line utilities for the FSEvents API
 brew 'fzf' # Command-line fuzzy finder written in Go
@@ -128,14 +129,12 @@ cask 'netnewswire' # Free and open-source RSS reader
 cask 'onedrive' # Cloud storage client
 cask 'opencode-desktop' # AI coding agent desktop client
 cask 'openmtp' # Android file transfer
-cask 'osaurus' # LLM server built on MLX
 cask 'pcsx2' # Playstation 2 Emulator
 cask 'qbittorrent' # Peer to peer Bitorrent client
 cask 'rectangle-pro' # Window snapping tool
 cask 'scroll-reverser' # Tool to reverse the direction of scrolling
 cask 'signal' # Instant messaging application focusing on security
 cask 'steam' # Video game digital distribution service
-cask 'supacode' # Native terminal coding agents command center
 cask 'transmission' # Open-source BitTorrent client
 cask 'visual-studio-code' # Open-source code editor
 cask 'vlc' # Multimedia player

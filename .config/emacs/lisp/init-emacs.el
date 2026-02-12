@@ -30,7 +30,7 @@
 (elpaca-wait)
 
 ;; OS-specific
-(with-system darwin
+(when (eq system-type 'darwin)
   (setopt mac-option-modifier       'meta
           mac-command-modifier      'super
           insert-directory-program  "gls" ; gnu coreutils

@@ -3,24 +3,13 @@
 ;; tweaked. intentionally only definitions without any hook-adding or
 ;; functionality-changing.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Stolen from https://github.com/doomemacs/doomemacs ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;; Stolen from https://github.com/doomemacs/doomemacs
 (defmacro cmd! (&rest body)
   "Returns (lambda () (interactive) ,@body)
 A factory for quickly producing interaction commands, particularly for keybinds
 or aliases."
   (declare (doc-string 1))
   `(lambda (&rest _) (interactive) ,@body))
-
-;;;
-
-(defmacro with-system (type &rest body) ; (with-system gnu/linux (...))
-  "Evaluate BODY if `system-type' equals TYPE."
-  (declare (indent defun))
-  `(when (eq system-type ',type)
-     ,@body))
 
 ;; better C/M-w, from 2009 blog:
 ;; https://emacs-fu.blogspot.com/2009/11/copying-lines-without-selecting-them.html
@@ -45,9 +34,6 @@ or aliases."
               (cl-remove-if-not 'buffer-file-name (buffer-list))))
   (message "Killed all other buffers."))
 
-;;;;;;;;;;;;;;;;;;;
-;; from upstream ;;
-;;;;;;;;;;;;;;;;;;;
 ;; https://github.com/emacs-mirror/emacs/blob/4e6a81da6ce9a4ec44642424533496db483c139a/lisp/progmodes/eglot.el#L4885-L4922
 (defvar eglot--momentary-hints-data (list nil nil nil 0 nil))
 
@@ -89,10 +75,7 @@ initial delay and repeat rate, and may not be 100% accurate."
              (runit (or initial-delay 1.0)))))))
 
 
-;;;;;;;;;;;;;
-;; Consult ;;
-;;;;;;;;;;;;;
-
+;;; Consult
 ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
 (defvar-local consult-toggle-preview-orig nil)
 (defun consult-toggle-preview ()
@@ -182,10 +165,7 @@ This is the function to be used for the hook `completion-at-point-functions'."
 ;; (def-consult-help 'consult-fd "fd")
 ;;;
 
-;;;;;;;;;;;
-;; Magit ;;
-;;;;;;;;;;;
-
+;;; Magit
 ;; http://endlessparentheses.com/create-github-prs-from-emacs-with-magit.html
 (defun endless/visit-pull-request-url ()
   "Visit the current branch's PR on Github."
@@ -199,10 +179,7 @@ This is the function to be used for the hook `completion-at-point-functions'."
                        "url"))
            (magit-get-current-branch))))
 
-;;;;;;;;;;;;
-;; fixing ;;
-;;;;;;;;;;;;
-
+;;; fixing
 ;; https://genehack.blog/2024/02/fixing-an-emacs-typescript-ts-mode-problem/
 ;; this fixes a problem where v0.20.4 of this grammar blows up with emacs
 (with-eval-after-load 'treesit-auto
@@ -232,10 +209,7 @@ This is the function to be used for the hook `completion-at-point-functions'."
     "Recipe for libtree-sitter-typescript.dylib")
   (add-to-list 'treesit-auto-recipe-list genehack/typescript-treesit-auto-recipe))
 
-;;;;;;;;;;;;;;
-;; banished ;;
-;;;;;;;;;;;;;;
-
+;;; banished
 (use-package treesit-auto
   :disabled                         ; definitely adds too much to file load time
   :custom (treesit-auto-install 'prompt)
