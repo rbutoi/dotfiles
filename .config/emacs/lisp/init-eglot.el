@@ -35,5 +35,9 @@
             "<f1> <f1>" 'eldoc-mouse-pop-doc-at-cursor)
   :hook eldoc-mode)
 
+;; TODO: doesn't work
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
+
 
 (provide 'init-eglot)

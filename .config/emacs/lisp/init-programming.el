@@ -46,6 +46,14 @@
     (add-to-list 'ahs-modes 'terraform-mode))
   (global-auto-highlight-symbol-mode))
 
+(use-package apheleia                   ; auto format
+  :init (apheleia-global-mode)
+  :config
+  (setf (alist-get 'python-mode apheleia-mode-alist)
+        '(ruff ruff-isort))
+  (setf (alist-get 'python-ts-mode apheleia-mode-alist)
+        '(ruff ruff-isort)))
+
 (use-package compiler-explorer
   :custom (compiler-explorer-sessions-file
            (no-littering-expand-var-file-name "compiler-explorer")))
