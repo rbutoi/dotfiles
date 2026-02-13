@@ -1,6 +1,7 @@
 ;;; init-ui.el --- UI / UX  -*- lexical-binding: t; -*-
 
 (set-face-attribute 'default nil :family "SF Mono" :height 140)
+(use-package doom-themes :config (load-theme 'doom-dark+))
 
 (context-menu-mode)
 (global-hl-line-mode)
@@ -18,11 +19,6 @@
   "C-x C-M-c" 'save-buffers-kill-emacs
   "s-q"       'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
-
-(use-package auto-dark
-  :init (auto-dark-mode)
-  :config
-  (setq auto-dark-themes '((modus-vivendi-tinted) (modus-operandi-tinted))))
 
 ;; Mode line
 (use-package minions :config (minions-mode))

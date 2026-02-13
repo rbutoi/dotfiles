@@ -11,29 +11,6 @@ or aliases."
   (declare (doc-string 1))
   `(lambda (&rest _) (interactive) ,@body))
 
-;; better C/M-w, from 2009 blog:
-;; https://emacs-fu.blogspot.com/2009/11/copying-lines-without-selecting-them.html
-(defadvice kill-ring-save (before slick-cut activate compile)
-  "When called interactively with no active region, save a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-(defadvice kill-region (before slick-cut activate compile)
-  "When called interactively with no active region, kill a single line instead."
-  (interactive
-   (if mark-active (list (region-beginning) (region-end))
-     (list (line-beginning-position)
-           (line-beginning-position 2)))))
-
-(defun kill-other-buffers ()       ; https://stackoverflow.com/a/3417473/3919508
-  "Kill all other buffers."
-  (interactive)
-  (mapc 'kill-buffer
-        (delq (current-buffer)
-              (cl-remove-if-not 'buffer-file-name (buffer-list))))
-  (message "Killed all other buffers."))
-
 ;; https://github.com/emacs-mirror/emacs/blob/4e6a81da6ce9a4ec44642424533496db483c139a/lisp/progmodes/eglot.el#L4885-L4922
 (defvar eglot--momentary-hints-data (list nil nil nil 0 nil))
 

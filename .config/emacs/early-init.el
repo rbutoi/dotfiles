@@ -20,5 +20,7 @@
 ;; UI speedups
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
 
 (setq initial-frame-alist '((width . 130) (height . 50))) ; before any frames are created
