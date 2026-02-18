@@ -13,15 +13,13 @@ font-size = 14
 
 confirm-close-surface = false
 macos-non-native-fullscreen = visible-menu
-# macos-option-as-alt = true
-
+macos-option-as-alt = true
+clipboard-paste-protection = false
 shell-integration-features = ssh-terminfo
 
 #
 # Keybinds
 #
-
-keybind = alt+shift+r=reload_config
 
 # --- Navigation ---
 keybind = alt+shift+n=next_tab
@@ -42,7 +40,7 @@ keybind = ctrl+shift+down=resize_split:down,60
 keybind = ctrl+shift+left=resize_split:left,60
 keybind = ctrl+shift+right=resize_split:right,60
 
-keybind = global:cmd+shift+grave_accent=toggle_quick_terminal
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 
 # MacOS note:

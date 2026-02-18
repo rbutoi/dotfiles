@@ -2,7 +2,7 @@
 
 cmd + ctrl - return : open -a Ghostty
 cmd + ctrl - e      : open /Applications/Emacs.app
-cmd + ctrl - i      : open "/Applications/Google Chrome.app" # cmd - i used by vscode
+cmd + ctrl - i      : open "/Applications/Google Chrome.app"
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"

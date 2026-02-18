@@ -45,8 +45,8 @@
    "C-c d"    'crux-duplicate-current-line-or-region
    "C-c M-d"  'crux-duplicate-and-comment-current-line-or-region
    "M-o"      'crux-other-window-or-switch-buffer
-   "C-c i"    'crux-find-user-init-file
-   "C-c s"    'crux-find-shell-init-file
+   "C-c I"    'crux-find-user-init-file
+   "C-c S"    'crux-find-shell-init-file
    "C-^"      'crux-top-join-line
    "C-x C-u"  'crux-upcase-region
    "C-x C-l"  'crux-downcase-region
@@ -75,6 +75,7 @@
   :general ("C-=" 'er/expand-region))
 
 (use-package rg                         ; ripgrep UI
+  :after transient
   :config (add-to-list 'rg-command-line-flags "--multiline"))
 
 (use-package visual-regexp              ; visual replace

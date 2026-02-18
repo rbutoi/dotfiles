@@ -187,15 +187,14 @@ tap 'riscv/riscv'
 brew 'riscv-tools' # RISC-V toolchain including gcc (with newlib), simulator (spike), and pk
 
 tap 'steipete/tap'
-brew 'bird' # Fast X CLI for tweeting, replying, and reading
 brew 'gogcli' # Google CLI for Gmail, Calendar, Drive, and Contacts
 
 tap 'terror/tap'
 brew 'just-lsp' # Language server for just
 
 # App Store applications
-mas '1Password for Safari (8.12.0)', id: 1569813296
-mas 'Amazon Kindle (7.51)', id: 302584613
+mas '1Password for Safari (8.12.2)', id: 1569813296
+mas 'Amazon Kindle (7.52)', id: 302584613
 mas 'Amphetamine (5.3.2)', id: 937984704
 mas 'CrystalFetch (2.2.0)', id: 6454431289
 mas 'DaisyDisk (4.33.2)', id: 411643860
@@ -210,6 +209,6 @@ mas 'Scrobbles for Last.fm (9.4.1)', id: 1344679160
 mas 'Tim (9.6.0)', id: 1449619230
 mas 'Time Out (2.9.7)', id: 402592703
 mas 'UTM (4.7.5)', id: 1538878817
-mas 'WhatsApp (26.4.73)', id: 310633997
+mas 'WhatsApp (26.5.77)', id: 310633997
 mas 'Xcode (26.2)', id: 497799835
 mas 'YamaCast (2.0.7)', id: 1415107621

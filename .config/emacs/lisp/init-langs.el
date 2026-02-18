@@ -2,7 +2,10 @@
 
 ;; Web
 (use-package typescript-mode)
-(use-package svelte-mode)
+(use-package svelte-mode
+  :config
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio")))))
 (use-package json-mode    :defer 2)
 (use-package jq-mode)
 (use-package csv-mode)

@@ -1,7 +1,6 @@
 {
-    "workbench.colorTheme": "Default Light Modern",
     "python.languageServer": "Default",
-    "editor.fontFamily": "Iosevka, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontFamily": "SF Mono, Iosevka, Menlo, Monaco, 'Courier New', monospace",
     "editor.fontSize": 13,
     "explorer.excludeGitIgnore": true,
     "emacs-mcx.killWholeLine": true,
@@ -31,5 +30,6 @@
     "workbench.auxiliaryActivityBar.location": "default",
     "amp.dangerouslyAllowAll": true,
     "editor.accessibilitySupport": "off",
-    "window.autoDetectColorScheme": true
+    "window.systemColorTheme": "auto",
+    "workbench.colorTheme": "Default Dark+"
 }

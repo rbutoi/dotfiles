@@ -2,7 +2,7 @@
 
 With [`dotfiler`](https://github.com/svetlyak40wt/dotfiler) (https://github.com/svetlyak40wt/dotfiler):
 
-```
+```bash
 git clone https://github.com/svetlyak40wt/dotfiler ~/.dots
 
 # make sure automatically-written files aren't in source control

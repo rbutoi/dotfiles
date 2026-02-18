@@ -45,11 +45,6 @@ set fzf_history_time_format %a %b %d %H:%M:%S
 fzf_configure_bindings --variables=\e\cv
 bind \e\cr history-pager # keep original history search
 
-# Atuin (Shell History). TODO: remove?
-if type -q atuin
-    atuin init fish --disable-up-arrow | source
-end
-
 set -gx EDITOR emacsclient -t
 set -gx LESS -Rim
 
@@ -85,13 +80,13 @@ alias clipcp fish_clipboard_copy
 
 alias ls 'eza --group-directories-first'
 alias l 'ls --git-ignore'
-alias ll "ls --time-style=+'%a %e %b %H:%M' -g -l --git"
+alias ll 'ls -l --git --git-repos'
 alias la 'ls -a'
 alias lla 'll -a'
 alias llr 'll --time-style=relative'
 set -gx EZA_ICONS_AUTO
 
-alias c bat
+alias b bat
 set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
 # Use bat as MANPAGER (strips formatting codes then colorizes)
 set -gx MANPAGER "sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
@@ -100,8 +95,7 @@ alias psg procs
 alias psgl 'procs --use-config large'
 
 alias g rg
-
-alias fd 'command fd --no-ignore-vcs' # very surprising results
+alias fd 'command fd --no-ignore-vcs'
 
 ###
 
