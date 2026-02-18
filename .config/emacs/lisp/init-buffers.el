@@ -1,6 +1,7 @@
 ;;; init-buffers.el --- Buffer and window management  -*- lexical-binding: t; -*-
 
-(recentf-mode)                          ; recent files
+(use-package recentf :ensure nil :hook (elpaca-after-init . recentf-mode))
+
 (save-place-mode)                       ; remember buffer location
 (savehist-mode)                         ; save minibuffer history
 (dolist (v '(kill-ring

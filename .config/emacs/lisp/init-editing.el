@@ -38,6 +38,7 @@
   :general
   ([remap move-end-of-line]       'mwim-end-of-code-or-line))
 (use-package crux
+  :defer 2
   :general
   ([remap move-beginning-of-line] 'crux-move-beginning-of-line
    "C-k"      'crux-smart-kill-line
@@ -50,8 +51,7 @@
    "C-^"      'crux-top-join-line
    "C-x C-u"  'crux-upcase-region
    "C-x C-l"  'crux-downcase-region
-   "C-g"      'crux-keyboard-quit-dwim
-   )
+   "C-g"      'crux-keyboard-quit-dwim)
   :config
   (crux-with-region-or-sexp-or-line kill-region)
   (crux-with-region-or-line         kill-ring-save))

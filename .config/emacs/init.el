@@ -1,7 +1,8 @@
 ;;; init.el --- Emacs config  -*- lexical-binding: t; -*-
 
-(load (locate-user-emacs-file "lisp/init-emacs.el")) ; set load path and initialize basic Emacs settings
-(require 'init-fns)                                  ; some fns used later
+(add-to-list 'load-path (file-name-concat user-emacs-directory "lisp/"))
+(require 'init-emacs)
+(require 'init-fns)
 
 (require 'init-ui)
 (require 'init-buffers)
@@ -13,7 +14,7 @@
 (require 'init-vcs)
 (require 'init-ext)
 
-(setq custom-file (locate-library "custom"))
-(load custom-file)
+;; (setq custom-file (locate-library "custom"))
+;; (load custom-file)
 
 (message "(emacs-init-time): %s" (emacs-init-time))

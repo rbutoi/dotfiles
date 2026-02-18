@@ -17,17 +17,14 @@
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-(use-package f)
-(use-package general)                   ; keybinds
-(elpaca-wait)
-(use-package no-littering               ; must be set before load path
-  :init   (setopt no-littering-etc-directory (f-join user-emacs-directory "lisp/"))
+(use-package general :ensure (:wait t) :demand t)
+(use-package no-littering               ; must be set before load path--hmmmmm
+  :init   (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
   :custom (create-lockfiles nil)
   :config
   (no-littering-theme-backups)
-  ;; load path setup
-  (add-to-list 'load-path no-littering-etc-directory))
-(elpaca-wait)
+  (setopt custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (load custom-file))
 
 ;; OS-specific
 (when (eq system-type 'darwin)
