@@ -20,7 +20,7 @@
 [icdiff]                        # TODO: if used??
   options = --line-numbers
 
-[protocol "file"]                 # TODO: needed?
+[protocol "file"]               # TODO: needed?
   allow = always
 
 [filter "lfs"]                  # TODO: auto-added, needed?
@@ -83,7 +83,7 @@
 # a matter of taste (uncomment if you dare)
 
 [core]
-  # fsmonitor = true
+  fsmonitor = true
   # untrackedCache = true
 [merge]
   conflictstyle = zdiff3

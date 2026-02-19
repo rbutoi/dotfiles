@@ -12,6 +12,9 @@
 (defvar elpaca-daily-update-threshold (* 7 24 60 60)
   "Seconds repo must be old to trigger prompt (default 7 days).")
 
+(defvar elpaca-daily-update-timer nil
+  "Timer object for daily update checks.")
+
 (defvar elpaca-daily-update-state-file "elpaca-update-check.time"
   "Filename relative to `no-littering-var-directory' to store the last check timestamp.")
 
@@ -74,7 +77,8 @@ even if repositories are up to date."
 (defun elpaca-daily-update-init ()
   "Initialize the daily update timer."
   ;; If you keep Emacs open for days, it will trigger close to the 24h mark.
-  (run-with-idle-timer 5 (* 60 60) #'elpaca-daily-update-check))
+  (setq elpaca-daily-update-timer
+        (run-with-idle-timer 5 (* 60 60) #'elpaca-daily-update-check)))
 
 ;; Hook into Elpaca's initialization
 (add-hook 'elpaca-after-init-hook #'elpaca-daily-update-init)

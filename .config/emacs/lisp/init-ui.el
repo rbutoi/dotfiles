@@ -43,13 +43,11 @@
   ("M-`"   'popper-toggle)
   ("M-~"   'popper-toggle-type)
   :config
-  (dolist (m '(;; "Output\\*$"
-               "\\*Async Shell Command\\*"
-               help-mode
-               ;; helpful-mode
-               ;; "\\*Apropos\\*"
-               ))
-    (add-to-list 'popper-reference-buffers m)))
+  (setq popper-reference-buffers
+        (-union popper-reference-buffers
+                '("\\*.*Shell Command.*\\*"
+                  help-mode
+                  ))))
 
 
 (provide 'init-ui)

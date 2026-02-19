@@ -12,11 +12,12 @@
 (use-package save-place :ensure nil :hook elpaca-after-init)
 (use-package savehist   :ensure nil :hook elpaca-after-init
   :config
-  (dolist (v '(kill-ring
-               mark-ring
-               search-ring
-               regexp-search-ring))
-    (add-to-list 'savehist-additional-variables v)))
+  (setq savehist-additional-variables
+        (-union savehist-additional-variables
+                '(kill-ring
+                  mark-ring
+                  search-ring
+                  regexp-search-ring))))
 
 (general-def :keymaps 'override
   "M-0"       'delete-window

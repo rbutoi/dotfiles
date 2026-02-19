@@ -31,11 +31,9 @@
 (use-package magit-delta                ; nicer magit diffs
   :after magit
   :hook magit-mode
-  :custom (magit-delta-delta-args
-           '(;; defaults
-             "--max-line-distance" "0.6" "--true-color" "always" "--color-only"
-             ;; magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
-             "--features" "magit-delta")))
+  :config
+  (setq magit-delta-delta-args
+        (-union magit-delta-delta-args '("--features" "magit-delta"))))
 (use-package git-modes)
 (use-package forge)
 

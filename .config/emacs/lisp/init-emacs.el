@@ -12,6 +12,7 @@
 (use-package system-packages)
 
 (use-package exec-path-from-shell
+  :disabled                             ; hmm
   :config
   (dolist (var '("RIPGREP_CONFIG_PATH"))
     (add-to-list 'exec-path-from-shell-variables var))
@@ -21,7 +22,7 @@
 
 (use-package no-littering :demand t
   :init   (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
-  :custom (create-lockfiles nil)
+  ;; :custom (create-lockfiles nil)
   :config
   (no-littering-theme-backups)
   (setopt custom-file (no-littering-expand-etc-file-name "custom.el"))
@@ -36,7 +37,8 @@
 
 ;; Package updates
 (use-package async)
-(use-package elpaca-daily-update :after async :ensure nil)
+(use-package elpaca-daily-update :ensure nil
+  :hook (elpaca-after-init . elpaca-daily-update-init))
 
 
 (provide 'init-emacs)
