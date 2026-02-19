@@ -1,10 +1,12 @@
 ;;; init-editing.el ---  Editing  -*- lexical-binding: t; -*-
 
-(delete-selection-mode)                 ; typing overwrites selection
-(electric-pair-mode)                    ; automatic ()
-(add-to-list 'electric-pair-pairs '( ?\` . ?\`))
+(general-add-hook 'elpaca-after-init-hook
+                  '(delete-selection-mode ; typing overwrites selection
+                    electric-pair-mode    ; automatic ()
+                    global-auto-revert-mode))
+(with-eval-after-load 'elec-pair
+  (add-to-list 'electric-pair-pairs '( ?\` . ?\`)))
 
-(global-auto-revert-mode)
 (setopt global-auto-revert-non-file-buffers t
         set-mark-command-repeat-pop         t ; can keep C-u C-SPC C-SPC C-SPC...
         kill-do-not-save-duplicates         t
@@ -19,26 +21,21 @@
   "M-Z"   'zap-up-to-char
   "s-v"   'clipboard-yank)
 (use-package visual-fill-column
-  :config
-  (add-hook 'visual-line-mode-hook #'visual-fill-column-for-vline))
+  :hook (visual-line-mode . visual-fill-column-for-vline))
 
 (use-package undo-tree                  ; visual undo
-  :defer 2
-  :general
-  ("C-z"   'undo-tree-undo)
+  :hook    (elpaca-after-init . global-undo-tree-mode)
+  :general ("C-z" 'undo-tree-undo)
   :custom
-  (undo-tree-history-directory-alist backup-directory-alist)
   (undo-tree-visualizer-diff t)
-  (undo-tree-visualizer-timestamps t)
-  :config
-  (global-undo-tree-mode))
+  (undo-tree-visualizer-timestamps t))
 
 ;; TODO or: https://github.com/purcell/whole-line-or-region
 (use-package mwim
   :general
   ([remap move-end-of-line]       'mwim-end-of-code-or-line))
-(use-package crux
-  :defer 2
+(use-package crux :demand t
+  :custom (kill-whole-line t)
   :general
   ([remap move-beginning-of-line] 'crux-move-beginning-of-line
    "C-k"      'crux-smart-kill-line
@@ -63,13 +60,11 @@
 
 (use-package smartparens
   :general ("M-D" 'sp-splice-sexp)
-  :config
-  (require 'smartparens-config))        ; don't enable major mode
+  :config (require 'smartparens-config)) ; don't enable major mode
 
 (use-package flyspell-correct
   :after flyspell
-  :general
-  ([remap ispell-word] 'flyspell-correct-wrapper))
+  :general ([remap ispell-word] 'flyspell-correct-wrapper))
 
 (use-package expand-region              ; expand selection
   :general ("C-=" 'er/expand-region))
@@ -84,18 +79,22 @@
   ([remap query-replace]        'vr/query-replace))
 
 (use-package pcre2el
-  :config
-  (pcre-mode))
+  :hook (elpaca-after-init . pcre-mode))
 (use-package ialign
   :general ("C-x l" 'ialign))           ; interactive align regexp
 
 (use-package ws-butler                 ; automatically trim whitespace
-  :custom (ws-butler-keep-whitespace-before-point nil)
-  :config (ws-butler-global-mode))
+  :hook   elpaca-after-init
+  :custom (ws-butler-keep-whitespace-before-point nil))
 
 (use-package hungry-delete              ; delete consecutive whitespace
-  :custom (hungry-delete-join-reluctantly t) ; leave a space between words
-  :config (global-hungry-delete-mode))
+  :hook   (elpaca-after-init . global-hungry-delete-mode)
+  :custom (hungry-delete-join-reluctantly t)) ; leave a space between words
+
+(use-package fancy-fill-paragraph
+  :general ([remap fill-paragraph] 'fancy-fill-paragraph)
+  :config
+  (add-to-list 'fancy-fill-paragraph-dot-point-prefix "* "))
 
 
 (provide 'init-editing)

@@ -1,16 +1,22 @@
 ;;; init-buffers.el --- Buffer and window management  -*- lexical-binding: t; -*-
 
-(use-package recentf :ensure nil :hook (elpaca-after-init . recentf-mode))
+(setopt enable-recursive-minibuffers t)
 
-(save-place-mode)                       ; remember buffer location
-(savehist-mode)                         ; save minibuffer history
-(dolist (v '(kill-ring
-             mark-ring
-             search-ring
-             regexp-search-ring))
-  (add-to-list 'savehist-additional-variables v))
-(setopt recentf-max-saved-items 100
-        enable-recursive-minibuffers t)
+(use-package recentf    :ensure nil :hook elpaca-after-init
+  :custom
+  (find-file-visit-truename  t) ; resolve symlinks so recentf doesn't keep both names
+  (recentf-max-saved-items   100)
+  (recentf-auto-cleanup      nil)       ; TODO, not at start though
+  :config
+  (add-to-list 'recentf-exclude (locate-user-emacs-file "elpaca/")))
+(use-package save-place :ensure nil :hook elpaca-after-init)
+(use-package savehist   :ensure nil :hook elpaca-after-init
+  :config
+  (dolist (v '(kill-ring
+               mark-ring
+               search-ring
+               regexp-search-ring))
+    (add-to-list 'savehist-additional-variables v)))
 
 (general-def :keymaps 'override
   "M-0"       'delete-window
@@ -20,7 +26,8 @@
   "M-i"       (cmd! (other-window -1)))
 (general-def
   "C-c M-i"   'tab-to-tab-stop          ; former M-i
-  "M-k"       'kill-current-buffer
+  ;; still considering
+  ;; "M-k"       'kill-current-buffer
   "s-n"       'make-frame-command
   "s-w"       'delete-frame)
 

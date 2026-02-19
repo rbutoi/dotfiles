@@ -1,11 +1,11 @@
 ;;; init-completion.el --- Completion framework  -*- lexical-binding: t; -*-
 
 ;; Minibuffer
-(use-package recursion-indicator :config (recursion-indicator-mode))
-
 (use-package vertico                    ; VERTical Interactive COmpletion
-  :demand t                             ; otherwise first invocation is a dud
-  :hook ((minibuffer-setup . vertico-repeat-save))
+  :hook (elpaca-after-init
+         (minibuffer-setup . minibuffer-depth-indicate-mode)
+         (minibuffer-setup . vertico-repeat-save)
+         (vertico-mode . vertico-multiform-mode))
   :general
   ("C-x C-r" 'vertico-repeat)
   (:keymaps 'vertico-map
@@ -17,37 +17,27 @@
   (vertico-cycle t)
   (vertico-sort-function 'vertico-sort-history-alpha)
   :config
-  (vertico-mode)
-  (add-to-list 'savehist-additional-variables 'vertico-repeat-history)
-
-  (defun my/man-no-vertico ()           ; completions take seconds to load
-    (interactive)
-    (vertico-mode -1)
-    (unwind-protect
-        (call-interactively #'man)
-      (vertico-mode +1)))
-
-  (vertico-multiform-mode))
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'vertico-repeat-history)))
 
 (use-package vertico-posframe
+  :demand t
   :after vertico
   :config
-  (setq vertico-multiform-commands
-        '((consult-line-multi          (:not posframe))
-          (consult-line                (:not posframe))
-          (consult-line-thing-at-point (:not posframe))
-          (consult-imenu               (:not posframe))
-          (t                                 posframe))))
+  (setopt vertico-multiform-commands
+          '((consult-line-multi          (:not posframe))
+            (consult-line                (:not posframe))
+            (consult-line-thing-at-point (:not posframe))
+            (consult-imenu               (:not posframe))
+            (consult-ripgrep             (:not posframe))
+            (t                                 posframe))))
 
-(use-package marginalia                 ; extra info in margins
-  :config (marginalia-mode))
+(use-package marginalia :hook elpaca-after-init)
 
-(use-package orderless			; completion style
-  :custom (completion-styles '(orderless basic)))
+(use-package orderless :custom (completion-styles '(orderless basic)))
 
-;; Consult
-(use-package consult			; navigation
-  :general                              ; remap some standard commands
+(use-package consult                    
+  :general                              
   ("C-x C-b"   'consult-buffer
    "C-x p b"   'consult-project-buffer
    "C-o"       'consult-imenu
@@ -87,7 +77,6 @@
   (consult-customize
    consult-theme consult-buffer consult-ripgrep
    :preview-key '(:debounce 0.1 any)))
-
 (use-package consult-dir
   :after vertico
   :general
@@ -96,7 +85,6 @@
             "C-x C-d" 'consult-dir
             "C-x C-j" 'consult-dir-jump-file))
 
-;; Embark
 (use-package embark
   :general
   ("C-." 'embark-act)
@@ -105,22 +93,21 @@
             "C-c C-e" 'embark-export))
 (use-package embark-consult)
 (use-package wgrep
-  :init (require 'grep)
+  :after grep
   :general
   (:keymaps 'grep-mode-map
             "e"       'wgrep-change-to-wgrep-mode   ; occur-style
             "C-x C-q" 'wgrep-change-to-wgrep-mode)) ; dired-style
 
-;; Corfu (in-buffer completion)
-(global-completion-preview-mode)
-(use-package corfu			; inline completions
+;; Inline completions
+(use-package corfu
+  :hook ((elpaca-after-init . global-corfu-mode)
+         (elpaca-after-init . global-completion-preview-mode)
+         (global-corfu-mode . corfu-popupinfo-mode))
   :custom
-  (corfu-auto t)
-  :config
-  (global-corfu-mode)
-  (corfu-popupinfo-mode))
+  (corfu-auto t))
 (use-package cape
-  :config
+  :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
 

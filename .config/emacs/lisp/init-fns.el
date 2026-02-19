@@ -193,6 +193,10 @@ This is the function to be used for the hook `completion-at-point-functions'."
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
+;; (setq c++-ts-mode-hook  c++-mode-hook ; needed: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#keep-track-of-your-hooks
+;;       go-ts-mode-hook   go-mode-hook
+;;       rust-ts-mode-hook rust-mode-hook)
+
 
 (use-package activity-watch-mode
   :disabled ; TODO: causing errors, re-eval

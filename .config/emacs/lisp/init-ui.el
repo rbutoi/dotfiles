@@ -1,15 +1,12 @@
 ;;; init-ui.el --- UI / UX  -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "SF Mono" :height 140)
-(use-package doom-themes :config (load-theme 'doom-dark+))
-
-(context-menu-mode)
-(global-hl-line-mode)
-(column-number-mode)
-
-(global-goto-address-mode)
-
-(repeat-mode)
+(general-add-hook 'elpaca-after-init-hook
+                  '(context-menu-mode
+                    global-hl-line-mode
+                    column-number-mode
+                    global-goto-address-mode
+                    ;; repeat-mode
+                    ))
 
 (general-def
   "C-x C-m"   'execute-extended-command ; more convenient than M-x
@@ -21,9 +18,9 @@
   "C-s-f"     'toggle-frame-fullscreen)
 
 ;; Mode line
-(use-package minions :config (minions-mode))
+(use-package minions :hook elpaca-after-init)
 
-(use-package moody
+(use-package moody :demand t
   :config
   (moody-replace-mode-line-front-space)
   (moody-replace-mode-line-buffer-identification)
@@ -31,34 +28,28 @@
   (moody-replace-vc-mode))
 
 (use-package solaire-mode
-  :config
-  (solaire-global-mode))
+  :hook (elpaca-after-init . solaire-global-mode))
 
-(use-package ultra-scroll
-  :config
-  (ultra-scroll-mode 1))
+(use-package ultra-scroll :hook elpaca-after-init)
 
-(use-package zoom-window                ; temporarily zoom window
-  :general ("C-x C-z" 'zoom-window-zoom))
+(use-package zoom-window :general ("C-x C-z" 'zoom-window-zoom))
 
-(use-package which-key                  ; useful shortcut reminders
-  :defer 2
-  :config (which-key-mode))
+(use-package which-key :hook elpaca-after-init)
 
-(use-package popper                     ; popups
+(use-package popper                     
+  :hook (elpaca-after-init
+         (popper-mode . popper-echo-mode))  
   :general
   ("M-`"   'popper-toggle)
   ("M-~"   'popper-toggle-type)
-  :custom (popper-reference-buffers
-           '("\\*Messages\\*"
-             "Output\\*$"
-             "\\*Async Shell Command\\*"
-             help-mode
-             helpful-mode
-             "\\*Apropos\\*"))
-  :init
-  (popper-mode)
-  (popper-echo-mode))
+  :config
+  (dolist (m '(;; "Output\\*$"
+               "\\*Async Shell Command\\*"
+               help-mode
+               ;; helpful-mode
+               ;; "\\*Apropos\\*"
+               ))
+    (add-to-list 'popper-reference-buffers m)))
 
 
 (provide 'init-ui)

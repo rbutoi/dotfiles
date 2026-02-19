@@ -6,7 +6,7 @@
   :config
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio")))))
-(use-package json-mode    :defer 2)
+(use-package json-mode)
 (use-package jq-mode)
 (use-package csv-mode)
 (setopt js-indent-level tab-width)

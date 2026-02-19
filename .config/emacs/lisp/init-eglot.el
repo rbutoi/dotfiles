@@ -1,7 +1,6 @@
 ;;; init-eglot.el --- Eglot (LSP)  -*- lexical-binding: t; -*-
 
-(use-package eglot
-  :ensure nil
+(use-package eglot :ensure nil
   :hook ((eglot-managed-mode . (lambda () (eglot-inlay-hints-mode -1))) ; distracting
          (fish-mode       . eglot-ensure)
          (js-base-mode    . eglot-ensure)
@@ -17,16 +16,9 @@
   (:keymaps 'eglot-mode-map
             "C-c r"  'eglot-rename
             "C-c a"  'eglot-code-actions
-            "<f7>"   'eglot-momentary-inlay-hints)
-  :config
-  (setq c++-ts-mode-hook  c++-mode-hook ; needed: https://github.com/renzmann/treesit-auto?tab=readme-ov-file#keep-track-of-your-hooks
-        go-ts-mode-hook   go-mode-hook
-        rust-ts-mode-hook rust-mode-hook)
-  ;; TODO: doesn't work
-  (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
+            "<f7>"   'eglot-momentary-inlay-hints))
 
 (use-package eglot-python-preset
-  :ensure (:host github :repo "mwolson/eglot-python-preset") ; should be on MELPA but isn't for some reason
   :ensure-system-package ty
   :after eglot
   :custom (eglot-python-preset-lsp-server 'ty)

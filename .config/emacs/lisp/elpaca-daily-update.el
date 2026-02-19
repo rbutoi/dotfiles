@@ -64,6 +64,8 @@ even if repositories are up to date."
            (cond
             ((> age elpaca-daily-update-threshold)
              (when (y-or-n-p (format "Elpaca: Repos are %.1f days old. Update all packages? " days))
+               (elpaca-update-menus)
+               (elpaca-wait)
                (elpaca-update-all t)
                (elpaca-log nil t)))
             (verbose-p

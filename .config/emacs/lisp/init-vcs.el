@@ -30,25 +30,23 @@
 
 (use-package magit-delta                ; nicer magit diffs
   :after magit
-  :hook (magit-mode . magit-delta-mode)
+  :hook magit-mode
   :custom (magit-delta-delta-args
            '(;; defaults
              "--max-line-distance" "0.6" "--true-color" "always" "--color-only"
              ;; magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
              "--features" "magit-delta")))
 (use-package git-modes)
-(use-package forge :defer 5)
+(use-package forge)
 
 (use-package vc-jj)
-(use-package majutsu
-  :ensure (:host github :repo "0WD0/majutsu"))
+(use-package majutsu :ensure (:host github :repo "0WD0/majutsu"))
 
 (use-package diff-hl                    ; margin diff markers
-  :defer 1
+  :hook (elpaca-after-init . global-diff-hl-mode)
   :general
   ("C-x v a" 'diff-hl-amend-mode)
   :config
-  (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
   (add-hook 'diff-hl-mode-hook
             (lambda ()

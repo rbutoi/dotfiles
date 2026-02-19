@@ -1,13 +1,13 @@
 ;;; init-emacs.el --- Emacs-specific misc config  -*- lexical-binding: t; -*-
 
 (setopt
- confirm-kill-processes     nil
- use-short-answers          t
- ;; use-package-compute-statistics t       ; for (use-package-report)
- inhibit-startup-screen     t
- initial-scratch-message    "")
+ confirm-kill-processes   nil
+ use-short-answers        t
+ inhibit-startup-screen   t
+ initial-scratch-message  "")
 
-(server-start)
+(use-package server :ensure nil
+  :config (unless (server-running-p) (server-start)))
 
 (use-package system-packages)
 
@@ -17,14 +17,15 @@
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-(use-package general :ensure (:wait t) :demand t)
-(use-package no-littering               ; must be set before load path--hmmmmm
+(use-package general      :demand t :ensure (:wait t))
+
+(use-package no-littering :demand t
   :init   (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
   :custom (create-lockfiles nil)
   :config
   (no-littering-theme-backups)
   (setopt custom-file (no-littering-expand-etc-file-name "custom.el"))
-  (load custom-file))
+  (load custom-file nil :nomessage))
 
 ;; OS-specific
 (when (eq system-type 'darwin)
