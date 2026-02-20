@@ -46,7 +46,7 @@ fzf_configure_bindings --variables=\e\cv
 bind \e\cr history-pager # keep original history search
 
 set -gx EDITOR emacsclient -t
-set -gx LESS -Rim
+set -gx LESS -RMiF
 
 ###########
 # aliases #
@@ -87,7 +87,8 @@ alias llr 'll --time-style=relative'
 set -gx EZA_ICONS_AUTO
 
 alias b bat
-set -gx BAT_STYLE changes,header,header-filename,header-filesize,numbers,snip
+alias bp 'b -p'
+set -gx BAT_STYLE changes,header,header-filename,header-filesize,snip,grid
 # Use bat as MANPAGER (strips formatting codes then colorizes)
 set -gx MANPAGER "sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
 

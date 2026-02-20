@@ -14,37 +14,26 @@
   "s-m"       'suspend-frame
   "C-x M-c"   (cmd! () (message "restarting...") (restart-emacs))
   "C-x C-M-c" 'save-buffers-kill-emacs
-  "s-q"       'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
 
-(use-package persistent-geometry :ensure nil ; retain frame geometry across restarts
-  :hook (kill-emacs . persistent-geometry-save))
-
-;; Mode line
+(use-package persistent-geometry :ensure nil :hook (kill-emacs . persistent-geometry-save))
 (use-package minions :hook elpaca-after-init)
-
-(use-package moody :demand t
-  :config
-  (moody-replace-mode-line-front-space)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-eldoc-minibuffer-message-function)
-  (moody-replace-vc-mode))
-
-(use-package solaire-mode
-  :hook (elpaca-after-init . solaire-global-mode))
-
+(use-package solaire-mode :hook (elpaca-after-init . solaire-global-mode))
 (use-package ultra-scroll :hook elpaca-after-init)
-
 (use-package zoom-window :general ("C-x C-z" 'zoom-window-zoom))
 
-(use-package which-key :hook elpaca-after-init)
+(use-package which-key
+  :hook elpaca-after-init
+  :general ("C-h M-m" 'which-key-show-major-mode))
+(use-package which-key-posframe
+  :hook (which-key-mode . which-key-posframe-mode))
 
 (use-package popper                     
   :hook (elpaca-after-init
          (popper-mode . popper-echo-mode))  
   :general
-  ("M-`"   'popper-toggle)
-  ("M-~"   'popper-toggle-type)
+  ("M-`"   'popper-toggle
+   "M-~"   'popper-toggle-type)
   :config
   (setq popper-reference-buffers
         (-union popper-reference-buffers

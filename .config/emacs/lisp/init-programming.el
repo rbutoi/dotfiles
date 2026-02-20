@@ -2,7 +2,8 @@
 
 (setopt indent-tabs-mode nil            ; never tabs to indent
         tab-always-indent 'complete
-        tab-width 2)
+        tab-width 2
+        eldoc-idle-delay 0.2)
 (general-add-hook '(prog-mode-hook text-mode-hook)
                   'display-line-numbers-mode)
 
@@ -19,10 +20,9 @@
 (use-package track-changes)
 (use-package copilot                    ; GitHub Copilot
   :after (track-changes corfu)
-  :defer 1
+  :defer 1              ; can't use :hook without loading copilot immediately
   :ensure (:host github :repo "copilot-emacs/copilot.el")
-  :custom
-  (copilot-idle-delay corfu-auto-delay)
+  :custom (copilot-idle-delay corfu-auto-delay)
   :general
   (:keymaps 'copilot-completion-map
             "<tab>" 'copilot-accept-completion
@@ -30,10 +30,11 @@
             "C-M-n" 'copilot-next-completion
             "C-M-p" 'copilot-previous-completion
             "C-g"   'copilot-clear-overlay)
-  :config
-  (add-hook 'prog-mode-hook #'copilot-mode))
-;; TODO: copilot-chat.el
-(use-package agent-shell)
+  :config (add-hook 'prog-mode-hook #'copilot-mode))
+(use-package agent-shell
+  ;; TODO doesn't work
+  ;; :hook (agent-shell-mode . (lambda () (visual-line-mode -1)))
+  )
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)

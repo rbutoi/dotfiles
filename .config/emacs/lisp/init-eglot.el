@@ -10,8 +10,7 @@
          (c++-mode        . eglot-ensure)
          (go-mode         . eglot-ensure)
          (rust-mode       . eglot-ensure))
-  :custom
-  (eglot-autoshutdown t)
+  :custom (eglot-autoshutdown t)
   :general
   (:keymaps 'eglot-mode-map
             "C-c r"  'eglot-rename
