@@ -22,7 +22,7 @@
   (:keymaps 'vterm-mode-map
             "<f5>" 'vterm-toggle))
 
-(use-package google-this)               ; Google word at point
+(use-package google-this :hook elpaca-after-init)
 
 (use-package atomic-chrome              ; edit Chrome text fields in Emacs
   :disabled                             ; hmm

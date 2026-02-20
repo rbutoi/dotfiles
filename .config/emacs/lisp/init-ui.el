@@ -17,6 +17,9 @@
   "s-q"       'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
 
+(use-package persistent-geometry :ensure nil ; retain frame geometry across restarts
+  :hook (kill-emacs . persistent-geometry-save))
+
 ;; Mode line
 (use-package minions :hook elpaca-after-init)
 

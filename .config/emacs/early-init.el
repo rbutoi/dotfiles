@@ -23,7 +23,7 @@
       use-package-always-defer         t
       ;; use-package-compute-statistics   use-package-verbose ; for (use-package-report)
       use-package-enable-imenu-support t)
-(load (locate-user-emacs-file "lisp/init-elpaca.el") nil :nomessage)
+(load "init-elpaca.el" nil :nomessage)
 (elpaca elpaca-use-package (elpaca-use-package-mode))
 
 ;; https://github.com/emacscollective/no-littering#native-compilation-cache
@@ -35,12 +35,17 @@
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
 
 ;; UI settings before initial frame is created
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark))
-(setq initial-frame-alist '((width . 130) (height . 50)))
-
-(use-package doom-themes :init (load-theme 'doom-dark+ t))
-(add-to-list 'default-frame-alist '(font . "SF Mono-14"))
-
-(push '(tool-bar-lines . 0)   default-frame-alist) ; speedups
-(push '(vertical-scroll-bars) default-frame-alist)
+(setq initial-frame-alist               ; frame size and position
+      (or (ignore-errors
+            (with-temp-buffer
+              (insert-file-contents (locate-user-emacs-file "var/frame-geometry.el"))
+              (read (current-buffer))))
+          '((width . 130) (height . 50))))
+(setq default-frame-alist
+      '((tool-bar-lines . 0)            ; speedups
+        (vertical-scroll-bars)
+        (ns-transparent-titlebar . t)   ; macOS: dark titlebar
+        (ns-appearance . dark)
+        (font . "Iosevka-15")))         ; font
+(use-package doom-themes                ; theme
+  :init (load-theme 'doom-dark+ t))     

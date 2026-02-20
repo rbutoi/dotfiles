@@ -33,6 +33,7 @@
   :config
   (add-hook 'prog-mode-hook #'copilot-mode))
 ;; TODO: copilot-chat.el
+(use-package agent-shell)
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
