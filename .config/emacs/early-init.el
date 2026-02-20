@@ -1,27 +1,19 @@
 ;;; early-init.el --- Early Emacs config  -*- lexical-binding: t; -*-
 
-(setq use-package-verbose            t
-      my/original-gc-cons-threshold  gc-cons-threshold
+(setq my/original-gc-cons-threshold  gc-cons-threshold
       gc-cons-threshold              most-positive-fixnum)
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (when use-package-verbose
-              (message "Emacs ready in %s with %d garbage collections."
-                       (format "%.2f seconds"
-                               (float-time (time-subtract after-init-time before-init-time)))
-                       gcs-done)
-              ;; (use-package-report)
-              )
             (setq gc-cons-threshold my/original-gc-cons-threshold)))
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp/"))
-(setq load-prefer-newer t)
+(setq load-prefer-newer noninteractive)
 
 ;; package manager: Elpaca (https://github.com/progfolio/elpaca)
 (setq package-enable-at-startup        nil
+      use-package-verbose              t
       use-package-always-ensure        t
       use-package-always-defer         t
-      ;; use-package-compute-statistics   use-package-verbose ; for (use-package-report)
       use-package-enable-imenu-support t)
 (load "init-elpaca.el" nil :nomessage)
 (elpaca elpaca-use-package (elpaca-use-package-mode))

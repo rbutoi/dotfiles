@@ -2,8 +2,8 @@
 
 (require 'init-emacs)
 (require 'init-fns)
-
 (require 'init-ui)
+
 (require 'init-buffers)
 (require 'init-completion)
 (require 'init-editing)

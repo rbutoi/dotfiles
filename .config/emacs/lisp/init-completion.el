@@ -76,7 +76,7 @@
    :initial (thing-at-point 'symbol))
   (consult-customize
    consult-theme consult-buffer consult-ripgrep
-   :preview-key '(:debounce 0.1 any)))
+   :preview-key '(:debounce 0.1 any)))  ; TODO: consult-narrow-*
 (use-package consult-dir
   :after vertico
   :general

@@ -15,26 +15,17 @@
         ediff-window-setup-function         'ediff-setup-windows-plain)
 
 (general-def
+  "s-r"   'revert-buffer-quick
   "C-S-k" 'kill-whole-line
   "M-z"   'toggle-truncate-lines
   "C-M-z" 'visual-line-mode
   "M-Z"   'zap-up-to-char
   "s-v"   'clipboard-yank)
-(use-package visual-fill-column
-  :hook (visual-line-mode . visual-fill-column-for-vline))
 
-(use-package undo-tree                  ; visual undo
-  :hook    (elpaca-after-init . global-undo-tree-mode)
-  :general ("C-z" 'undo-tree-undo)
-  :custom
-  (undo-tree-visualizer-diff t)
-  (undo-tree-visualizer-timestamps t))
-
-;; TODO or: https://github.com/purcell/whole-line-or-region
-(use-package mwim
+(use-package mwim                       ; smarter basics
   :general
   ([remap move-end-of-line]       'mwim-end-of-code-or-line))
-(use-package crux :demand t
+(use-package crux :demand t             
   :custom (kill-whole-line t)
   :general
   ([remap move-beginning-of-line] 'crux-move-beginning-of-line
@@ -53,10 +44,24 @@
   (crux-with-region-or-sexp-or-line kill-region)
   (crux-with-region-or-line         kill-ring-save))
 
+(use-package vundo                      ; visual undo
+  :general ("C-z"   'vundo
+            "C-x u" 'vundo))
 (use-package goto-chg
   :general
-  ("M-m" 'goto-last-change)
-  ("M-M" 'goto-last-change-reverse))
+  ("C-," 'goto-last-change))
+
+(use-package treemacs                   ; side panel file tree
+  :defer 1
+  :general
+  (  "C-S-M-SPC" 'treemacs)
+  ("C-x C-M-SPC" 'treemacs)             ; cli
+  :custom
+  (treemacs-eldoc-display 'detailed)
+  (treemacs--project-follow-delay 0.3)
+  :config
+  (treemacs-project-follow-mode))
+(use-package treemacs-magit :after treemacs)
 
 (use-package smartparens
   :general ("M-D" 'sp-splice-sexp)
@@ -69,9 +74,9 @@
 (use-package expand-region              ; expand selection
   :general ("C-=" 'er/expand-region))
 
-(use-package rg                         ; ripgrep UI
-  :after transient
-  :config (add-to-list 'rg-command-line-flags "--multiline"))
+(use-package multiple-cursors)          ; edit like it's 1999
+
+(use-package deadgrep)                  ; ripgrep UI
 
 (use-package visual-regexp              ; visual replace
   :general
@@ -80,10 +85,10 @@
 
 (use-package pcre2el
   :hook (elpaca-after-init . pcre-mode))
-(use-package ialign
-  :general ("C-x l" 'ialign))           ; interactive align regexp
+(use-package ialign                     ; interactive align regexp
+  :general ("C-x l" 'ialign))           
 
-(use-package ws-butler                 ; automatically trim whitespace
+(use-package ws-butler                  ; automatically trim whitespace
   :hook   elpaca-after-init
   :custom (ws-butler-keep-whitespace-before-point nil))
 
@@ -91,10 +96,16 @@
   :hook   (elpaca-after-init . global-hungry-delete-mode)
   :custom (hungry-delete-join-reluctantly t)) ; leave a space between words
 
-(use-package fancy-fill-paragraph
+(use-package fancy-fill-paragraph       ; better fill-paragraph
   :general ([remap fill-paragraph] 'fancy-fill-paragraph)
   :config
   (add-to-list 'fancy-fill-paragraph-dot-point-prefix "* "))
+
+(use-package so-long-mode :hook elpaca-after-init) ; help with huge files
+
+;; hmm
+;; (use-package visual-fill-column
+;;   :hook (visual-line-mode . visual-fill-column-for-vline))
 
 
 (provide 'init-editing)

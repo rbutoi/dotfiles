@@ -4,8 +4,6 @@
         tab-always-indent 'complete
         tab-width 2
         eldoc-idle-delay 0.2)
-(general-add-hook '(prog-mode-hook text-mode-hook)
-                  'display-line-numbers-mode)
 
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"
@@ -32,9 +30,7 @@
             "C-g"   'copilot-clear-overlay)
   :config (add-hook 'prog-mode-hook #'copilot-mode))
 (use-package agent-shell
-  ;; TODO doesn't work
-  ;; :hook (agent-shell-mode . (lambda () (visual-line-mode -1)))
-  )
+  :general ("s-l" 'agent-shell))        ; like in vscode
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)
