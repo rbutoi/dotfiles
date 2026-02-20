@@ -3,13 +3,16 @@
 ;; tweaked. intentionally only definitions without any hook-adding or
 ;; functionality-changing.
 
-;; Stolen from https://github.com/doomemacs/doomemacs
-(defmacro cmd! (&rest body)
+(defmacro cmd! (&rest body) ; from https://github.com/doomemacs/doomemacs
   "Returns (lambda () (interactive) ,@body)
 A factory for quickly producing interaction commands, particularly for keybinds
 or aliases."
   (declare (doc-string 1))
   `(lambda (&rest _) (interactive) ,@body))
+
+(defmacro setq-union (place list)
+  "Add LIST to PLACE if they are not already present, using -union."
+  `(setq ,place (-union ,place ,list)))
 
 ;; https://github.com/emacs-mirror/emacs/blob/4e6a81da6ce9a4ec44642424533496db483c139a/lisp/progmodes/eglot.el#L4885-L4922
 (defvar eglot--momentary-hints-data (list nil nil nil 0 nil))

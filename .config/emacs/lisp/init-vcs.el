@@ -32,8 +32,7 @@
   :after magit
   :hook magit-mode
   :config
-  (setq magit-delta-delta-args
-        (-union magit-delta-delta-args '("--features" "magit-delta"))))
+  (setq-union magit-delta-delta-args '("--features" "magit-delta")))
 (use-package git-modes)
 (use-package forge)
 

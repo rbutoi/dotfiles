@@ -8,16 +8,18 @@
   (recentf-max-saved-items   100)
   (recentf-auto-cleanup      nil)       ; TODO, not at start though
   :config
-  (add-to-list 'recentf-exclude (locate-user-emacs-file "elpaca/")))
+  (setq-union recentf-exclude
+              '((locate-user-emacs-file "elpaca/")
+                (locate-user-emacs-file "var/")
+                )))
 (use-package save-place :ensure nil :hook elpaca-after-init)
 (use-package savehist   :ensure nil :hook elpaca-after-init
   :config
-  (setq savehist-additional-variables
-        (-union savehist-additional-variables
-                '(kill-ring
-                  mark-ring
-                  search-ring
-                  regexp-search-ring))))
+  (setq-union savehist-additional-variables
+              '(kill-ring
+                mark-ring
+                search-ring
+                regexp-search-ring)))
 
 (general-def :keymaps 'override
   "M-0"       'delete-window

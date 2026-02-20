@@ -35,11 +35,10 @@
   ("M-`"   'popper-toggle
    "M-~"   'popper-toggle-type)
   :config
-  (setq popper-reference-buffers
-        (-union popper-reference-buffers
-                '("\\*.*Shell Command.*\\*"
-                  help-mode
-                  ))))
+  (setq-union popper-reference-buffers
+              '("\\*.*Shell Command.*\\*"
+                help-mode
+                )))
 
 
 (provide 'init-ui)

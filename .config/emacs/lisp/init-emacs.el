@@ -21,7 +21,7 @@
 (use-package general      :demand t :ensure (:wait t))
 
 (use-package no-littering :demand t
-  :init   (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
+  :init (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
   ;; :custom (create-lockfiles nil)
   :config
   (no-littering-theme-backups)
