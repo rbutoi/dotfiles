@@ -1,1 +1,2 @@
-((magit-pull "--autostash"))
+((magit-log:magit-log-mode "-n256" "--graph" "--decorate")
+ (magit-pull "--autostash"))

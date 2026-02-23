@@ -17,7 +17,6 @@
 
 (use-package system-packages)           ; installing system packages from Emacs
 
-;; misc
 (setopt confirm-kill-processes nil
         use-short-answers t)
 (when (eq system-type 'darwin)
@@ -26,9 +25,9 @@
           insert-directory-program  "gls" ; gnu coreutils
           manual-program            "gman"))
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (when use-package-verbose
+(when use-package-verbose
+  (add-hook 'emacs-startup-hook
+            (lambda ()
               (message "Emacs ready in %s with %d garbage collections."
                        (format "%.2f seconds"
                                (float-time (time-subtract after-init-time before-init-time)))

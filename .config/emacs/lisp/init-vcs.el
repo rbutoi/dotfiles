@@ -3,9 +3,8 @@
 (setopt vc-follow-symlinks t)
 
 (elpaca (transient))            ; https://github.com/progfolio/elpaca/issues/343
-(use-package magit              ; version control
-  :hook
-  (after-save . magit-after-save-refresh-status)
+(use-package magit              ; git porcelain
+  :hook (after-save . magit-after-save-refresh-status)
   :general
   ("C-x C-g"   'magit-status
    "C-x C-M-g" 'magit-list-repositories)
@@ -26,17 +25,17 @@
        (format     "%d" n) (intern (format "magit-section-show-level-%d-all" n))
        (format "C-M-%d" n) (intern (format "magit-section-show-level-%d"     n)))))
 
-  (setcar magit-status-margin 't))       ; show margin initially
-
-(use-package magit-delta                ; nicer magit diffs
+  (setopt magit-margin-default-time-format "%a %Y-%m-%d %H:%M ") ; show weekday
+  (setf (nth 3 magit-log-margin) nil)   ; don't show author in log margin by default
+  (setcar magit-status-margin 't))      ; show margin initially
+(use-package magit-delta                ; nicer diffs
   :after magit
   :hook magit-mode
-  :config
-  (setq-union magit-delta-delta-args '("--features" "magit-delta")))
+  :config (setq-union magit-delta-delta-args '("--features" "magit-delta")))
 (use-package git-modes)
-(use-package forge)
+(use-package forge)                     ; github issues and PRs in magit
 
-(use-package vc-jj)
+(use-package vc-jj)                     ; jujutsu
 (use-package majutsu :ensure (:host github :repo "0WD0/majutsu"))
 
 (use-package diff-hl                    ; margin diff markers

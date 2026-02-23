@@ -19,7 +19,6 @@
 (use-package copilot                    ; GitHub Copilot
   :after (track-changes corfu)
   :defer 1              ; can't use :hook without loading copilot immediately
-  :ensure (:host github :repo "copilot-emacs/copilot.el")
   :custom (copilot-idle-delay corfu-auto-delay)
   :general
   (:keymaps 'copilot-completion-map
@@ -52,11 +51,11 @@
   (setf (alist-get 'python-ts-mode apheleia-mode-alist)
         '(ruff ruff-isort)))
 
-(use-package compiler-explorer
+(use-package compiler-explorer          ; godbolt.org
   :custom (compiler-explorer-sessions-file
-           (no-littering-expand-var-file-name "compiler-explorer"))
-  ;; :config (message "Compiler Explorer sessions will be saved to %s" compiler-explorer-sessions-file)
-  )
+           (no-littering-expand-var-file-name "compiler-explorer")))
+
+(use-package flyover)                   ; TODO
 
 
 (provide 'init-programming)

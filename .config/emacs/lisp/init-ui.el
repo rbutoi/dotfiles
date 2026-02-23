@@ -20,20 +20,34 @@
   "C-x C-M-c" 'save-buffers-kill-emacs
   "C-s-f"     'toggle-frame-fullscreen)
 
-(use-package persistent-geometry :ensure nil :hook (kill-emacs . persistent-geometry-save))
-(use-package minions :hook elpaca-after-init)
-(use-package solaire-mode :hook (elpaca-after-init . solaire-global-mode))
-(use-package ultra-scroll :hook elpaca-after-init)
-(use-package zoom-window :general ("C-x C-z" 'zoom-window-zoom))
-(use-package transient-posframe :hook elpaca-after-init)
+(use-package persistent-geometry :ensure ; save window geometry across restarts
+  nil :hook (kill-emacs . persistent-geometry-save))
+(use-package minions                    ; hiding list of minor modes in modeline
+  :hook elpaca-after-init)
+(use-package solaire-mode               ; differentiate background of non-file buffers
+  :hook (elpaca-after-init . solaire-global-mode))
+(use-package ultra-scroll               ; pixel-smooth scrolling
+  :hook elpaca-after-init) 
+(use-package zoom-window                ; temporarily show one window
+  :general ("C-x C-z" 'zoom-window-zoom)) 
+(use-package transient-posframe         ; popups in middle of emacs
+  :hook elpaca-after-init) 
 
-(use-package which-key
+(use-package which-key                  ; show available keybinds after a prefix
   :hook elpaca-after-init
   :general ("C-h M-m" 'which-key-show-major-mode))
-(use-package which-key-posframe
+(use-package which-key-posframe         ; ... as a popup
   :hook (which-key-mode . which-key-posframe-mode))
 
-(use-package popper                     
+(use-package helpful                    ; improved help windows
+  :general
+  ([remap describe-command]  'helpful-command)
+  ([remap describe-function] 'helpful-callable)
+  ([remap describe-key]      'helpful-key)
+  ([remap describe-symbol]   'helpful-symbol)
+  ([remap describe-variable] 'helpful-variable))
+
+(use-package popper                     ; make ephemeral windows [...]
   :hook (elpaca-after-init
          (popper-mode . popper-echo-mode))  
   :general ("M-`"   'popper-toggle
@@ -42,7 +56,7 @@
   (setq-union popper-reference-buffers
               '("\\*.*Shell Command.*\\*"
                 help-mode
-                )))
+                helpful-mode)))
 
 
 (provide 'init-ui)

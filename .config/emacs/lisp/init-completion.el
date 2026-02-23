@@ -19,8 +19,7 @@
   :config
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'vertico-repeat-history)))
-
-(use-package vertico-posframe
+(use-package vertico-posframe           ; Vertico in a posframe popup
   :demand t
   :after vertico
   :config
@@ -32,11 +31,13 @@
             (consult-ripgrep             (:not posframe))
             (t                                 posframe))))
 
-(use-package marginalia :hook elpaca-after-init)
+(use-package marginalia                 ; annotations for minibuffer completions
+  :hook elpaca-after-init)
 
-(use-package orderless :custom (completion-styles '(orderless basic)))
+(use-package orderless                  ; space-separated completion style
+  :custom (completion-styles '(orderless basic)))
 
-(use-package consult                    
+(use-package consult                    ; enhanced search and nav commands
   :general                              
   ("C-x C-b"   'consult-buffer
    "C-x p b"   'consult-project-buffer
@@ -79,36 +80,32 @@
    :preview-key '(:debounce 0.1 any)))  ; TODO: consult-narrow-*
 (use-package consult-dir
   :after vertico
-  :general
-  ("C-x C-d" 'consult-dir)
+  :general ("C-x C-d" 'consult-dir)
+  :custom (consult-dir-jump-file-command 'consult-fd)
   (:keymaps 'vertico-map
             "C-x C-d" 'consult-dir
-            "C-x C-j" 'consult-dir-jump-file))
+            "C-x C-j" 'consult-dir-jump-file)) ; jump into consult-fd
 
-(use-package embark
-  :general
-  ("C-." 'embark-act)
+(use-package embark                     ; act on thing at point
+  :general ("C-." 'embark-act)
   (:keymaps 'minibuffer-local-map
             "C-c C-c" 'embark-collect
             "C-c C-e" 'embark-export))
 (use-package embark-consult)
-(use-package wgrep
+(use-package wgrep                      ; editable grep buffers
   :after grep
   :general
   (:keymaps 'grep-mode-map
             "e"       'wgrep-change-to-wgrep-mode   ; occur-style
             "C-x C-q" 'wgrep-change-to-wgrep-mode)) ; dired-style
 
-;; Inline completions
-(use-package corfu
+(use-package corfu                      ; inline completions
   :hook ((elpaca-after-init . global-corfu-mode)
          (elpaca-after-init . global-completion-preview-mode)
          (global-corfu-mode . corfu-popupinfo-mode))
-  :custom
-  (corfu-auto t))
-(use-package cape
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  :custom (corfu-auto t))
+(use-package cape                       ; capf extensions
+  :init (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 
 
 (provide 'init-completion)

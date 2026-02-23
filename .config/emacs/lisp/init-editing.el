@@ -16,7 +16,6 @@
 
 (general-def
   "s-r"   'revert-buffer-quick
-  "C-S-k" 'kill-whole-line
   "M-z"   'toggle-truncate-lines
   "C-M-z" 'visual-line-mode
   "M-Z"   'zap-up-to-char
@@ -47,9 +46,8 @@
 (use-package vundo                      ; visual undo
   :general ("C-z"   'vundo
             "C-x u" 'vundo))
-(use-package goto-chg
-  :general
-  ("C-," 'goto-last-change))
+(use-package goto-chg                   ; goto last edit position
+  :general ("C-," 'goto-last-change))
 
 (use-package treemacs                   ; side panel file tree
   :defer 1
@@ -83,13 +81,12 @@
   ([remap query-replace-regexp] 'vr/query-replace)
   ([remap query-replace]        'vr/query-replace))
 
-(use-package pcre2el
-  :hook (elpaca-after-init . pcre-mode))
+(use-package pcre2el :hook (elpaca-after-init . pcre-mode))
 (use-package ialign                     ; interactive align regexp
   :general ("C-x l" 'ialign))           
 
 (use-package ws-butler                  ; automatically trim whitespace
-  :hook   elpaca-after-init
+  :hook   (elpaca-after-init . ws-butler-global-mode)
   :custom (ws-butler-keep-whitespace-before-point nil))
 
 (use-package hungry-delete              ; delete consecutive whitespace
@@ -101,11 +98,10 @@
   :config
   (add-to-list 'fancy-fill-paragraph-dot-point-prefix "* "))
 
-(use-package so-long-mode :hook elpaca-after-init) ; help with huge files
+(use-package so-long-mode :ensure nil   ; huge file support
+  :hook (elpaca-after-init . global-so-long-mode))
 
-;; hmm
-;; (use-package visual-fill-column
-;;   :hook (visual-line-mode . visual-fill-column-for-vline))
+(use-package visual-fill-column)        ; wrap lines at fill-column
 
 
 (provide 'init-editing)
