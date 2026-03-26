@@ -15,6 +15,7 @@
                                       (thing-at-point 'symbol) nil nil
                                       'my/gh-web-searches)))))
 
+;;; AI
 (use-package track-changes)
 (use-package copilot                    ; GitHub Copilot
   :after (track-changes corfu)
@@ -29,7 +30,22 @@
             "C-g"   'copilot-clear-overlay)
   :config (add-hook 'prog-mode-hook #'copilot-mode))
 (use-package agent-shell
-  :general ("s-l" 'agent-shell))        ; like in vscode
+  :ensure-system-package
+  ((gemini . gemini-cli)
+   (claude . claude-code)
+   (claude-agent-acp . "pnpm install -g @zed-industries/claude-agent-acp"))
+  :general ("s-l" 'agent-shell)         ; like in vscode
+  :config
+  (defun my/agent-shell-dot-subdir (subdir)
+    (let ((cwd (agent-shell-cwd)))
+      (if (string-prefix-p (expand-file-name "~/.dots/dotfiles") (expand-file-name cwd))
+          (let* ((cwd (string-remove-suffix "/" cwd))
+                 (sanitized (replace-regexp-in-string "/" "-" (string-remove-prefix "/" cwd))))
+            (no-littering-expand-var-file-name (file-name-concat "agent-shell" sanitized subdir)))
+        (agent-shell--dot-subdir-in-repo subdir)))) ; fallback to default behavior if not in ~/.dots/dotfiles
+
+  (setopt agent-shell-dot-subdir-function #'my/agent-shell-dot-subdir))
+;;;
 
 (use-package string-inflection        ; toggle underscore -> UPCASE -> CamelCase
   :general (:keymaps '(prog-mode-map c-mode-base-map sh-mode-map)

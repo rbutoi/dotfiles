@@ -1,7 +1,7 @@
 {
     "python.languageServer": "Default",
-    "editor.fontFamily": "SF Mono, Iosevka, Menlo, Monaco, 'Courier New', monospace",
-    "editor.fontSize": 13,
+    "editor.fontFamily": "Iosevka, SF Mono, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 14,
     "explorer.excludeGitIgnore": true,
     "emacs-mcx.killWholeLine": true,
     "editor.tabSize": 2,

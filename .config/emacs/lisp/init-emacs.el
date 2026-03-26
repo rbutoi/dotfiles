@@ -1,6 +1,6 @@
 ;;; init-emacs.el --- Better defaults  -*- lexical-binding: t; -*-
 
-(use-package server :ensure nil         ; for emacsclient
+(use-package server :ensure nil :demand t ; for emacsclient
   :config (unless (server-running-p) (server-start)))
 
 (use-package no-littering :demand t     ; clean up emacs config dir

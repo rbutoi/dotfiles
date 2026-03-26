@@ -18,6 +18,7 @@
             "<f7>"   'eglot-momentary-inlay-hints))
 
 (use-package eglot-python-preset
+  :defer 1
   :ensure-system-package ty
   :after eglot
   :custom (eglot-python-preset-lsp-server 'ty)
