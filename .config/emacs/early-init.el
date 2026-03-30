@@ -39,5 +39,6 @@
         (ns-transparent-titlebar . t)   ; macOS: dark titlebar
         (ns-appearance . dark)
         (font . "Iosevka-15")))         ; font
-(use-package doom-themes                ; theme
-  :init (load-theme 'doom-dark+ t))     
+(use-package batppuccin-mocha-theme     ; theme
+  :ensure (:host github :repo "bbatsov/batppuccin-emacs")
+  :init (load-theme 'batppuccin-macchiato t))

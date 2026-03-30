@@ -4,6 +4,7 @@
 tap 'homebrew/core'
 brew 'aichat' # All-in-one AI-Powered CLI Chat & Copilot
 brew 'astroterm' # Planetarium for your terminal
+brew 'babelfish' # Translate bash scripts to fish
 brew 'bacon' # Background rust code check
 brew 'bat' # Clone of cat(1) with syntax highlighting and Git integration
 brew 'bear' # Generate compilation database for clang tooling
@@ -21,6 +22,7 @@ brew 'coreutils' # GNU File, Shell, and Text utilities
 brew 'cowsay' # Apjanke's fork of the classic cowsay project
 brew 'csvkit' # Suite of command-line tools for converting to and working with CSV
 brew 'csvlens' # Command-line csv viewer
+brew 'dasel' # JSON, YAML, TOML, XML, and CSV query and modification tool
 brew 'datasette' # Open source multi-tool for exploring and publishing data
 brew 'docker' # Pack, ship and run any application as a lightweight container
 brew 'doggo' # Command-line DNS Client for Humans
@@ -36,7 +38,9 @@ brew 'fish' # User-friendly command-line shell for UNIX-like operating systems
 brew 'fish-lsp' # LSP implementation for the fish shell language
 brew 'fisher' # Plugin manager for the Fish shell
 brew 'fsevents-tools' # Command-line utilities for the FSEvents API
+brew 'fswatch' # Monitor a directory for changes and run a shell command
 brew 'fzf' # Command-line fuzzy finder written in Go
+brew 'gcc' # GNU compiler collection
 brew 'gemini-cli' # Interact with Google Gemini AI models from the command-line
 brew 'gh' # GitHub command-line tool
 brew 'git' # Distributed revision control system
@@ -55,6 +59,7 @@ brew 'lnav' # Curses-based tool for viewing and analyzing log files
 brew 'lua-language-server' # Language Server for the Lua language
 brew 'make' # Utility for directing compilation
 brew 'man-db' # Unix documentation system
+brew 'markdown' # Text-to-HTML conversion tool
 brew 'mas' # Mac App Store command-line interface
 brew 'media-info' # Unified display of technical and tag data for audio/video
 brew 'mpv' # Media player based on MPlayer and mplayer2
@@ -79,8 +84,8 @@ brew 'sdl3' # Low-level access to audio, keyboard, mouse, joystick, and graphics
 brew 'speedtest-cli' # Command-line interface for https://speedtest.net bandwidth tests
 brew 'starship' # Cross-shell prompt for astronauts
 brew 'swiftly' # Swift toolchain installer and manager
-brew 'tealdeer' # Very fast implementation of tldr in Rust
 brew 'timg' # Terminal image and video viewer
+brew 'tlrc' # Official tldr client written in Rust
 brew 'tmux' # Terminal multiplexer
 brew 'tokei' # Program that allows you to count code, quickly
 brew 'topgrade' # Upgrade all the things
@@ -105,9 +110,12 @@ cask '1password' # Password manager that keeps all passwords secure behind one p
 cask 'activitywatch' # Time tracker
 cask 'alt-tab' # Enable Windows-like alt-tab
 cask 'antigravity' # AI Coding Agent IDE
+cask 'bartender' # Menu bar icon organiser
 cask 'chatgpt' # OpenAI's official ChatGPT desktop app
 cask 'claude' # Anthropic's official Claude AI desktop app
+cask 'claude-code' # Terminal-based AI coding assistant
 cask 'codex' # OpenAI's coding agent that runs in your terminal
+cask 'codexbar' # Menu bar usage monitor for Codex and Claude
 cask 'copilot-cli' # Brings the power of Copilot coding agent directly to your terminal
 cask 'darktable' # Photography workflow application and raw developer
 cask 'discord' # Voice and text chat software
@@ -135,12 +143,12 @@ cask 'rectangle-pro' # Window snapping tool
 cask 'scroll-reverser' # Tool to reverse the direction of scrolling
 cask 'signal' # Instant messaging application focusing on security
 cask 'steam' # Video game digital distribution service
+cask 'thorium' # Epub reader
 cask 'transmission' # Open-source BitTorrent client
 cask 'visual-studio-code' # Open-source code editor
 cask 'vlc' # Multimedia player
 cask 'wispr-flow' # Voice-to-text dictation with AI-powered auto-editing
 cask 'zed' # Multiplayer code editor
-cask 'zoom' # Video communication and virtual meeting platform
 
 tap 'anomalyco/tap'
 brew 'opencode' # The AI coding agent built for the terminal.
@@ -158,6 +166,8 @@ tap 'dmmulroy/tap'
 brew 'jj-starship' # Unified Starship prompt module for Git and Jujutsu repositories
 
 tap 'felixkratz/formulae'
+
+tap 'guilhermeprokisch/see'
 
 tap 'jackielii/tap'
 brew 'skhd-zig' # Simple hotkey daemon for macOS, written in Zig
@@ -187,17 +197,17 @@ tap 'riscv/riscv'
 brew 'riscv-tools' # RISC-V toolchain including gcc (with newlib), simulator (spike), and pk
 
 tap 'steipete/tap'
-brew 'gogcli' # Google CLI for Gmail, Calendar, Drive, and Contacts
+brew 'gogcli' # Google CLI for Gmail, Calendar, Drive, Docs, Sheets, and more
 
 tap 'terror/tap'
 brew 'just-lsp' # Language server for just
 
 # App Store applications
-mas '1Password for Safari (8.12.2)', id: 1569813296
-mas 'Amazon Kindle (7.52)', id: 302584613
+mas '1Password for Safari (8.12.8)', id: 1569813296
+mas 'Amazon Kindle (7.54)', id: 302584613
 mas 'Amphetamine (5.3.2)', id: 937984704
 mas 'CrystalFetch (2.2.0)', id: 6454431289
-mas 'DaisyDisk (4.33.2)', id: 411643860
+mas 'DaisyDisk (4.33.3)', id: 411643860
 mas 'Final Cut Pro (12.0)', id: 424389933
 mas 'GarageBand (10.4.13)', id: 682658836
 mas 'iMovie (10.4.4)', id: 408981434
@@ -206,9 +216,9 @@ mas 'Maccy (2.6.1)', id: 1527619437
 mas 'Numbers (14.5)', id: 409203825
 mas 'Pages (14.5)', id: 409201541
 mas 'Scrobbles for Last.fm (9.4.1)', id: 1344679160
-mas 'Tim (9.6.0)', id: 1449619230
+mas 'Tim (9.8.2)', id: 1449619230
 mas 'Time Out (2.9.7)', id: 402592703
 mas 'UTM (4.7.5)', id: 1538878817
-mas 'WhatsApp (26.5.77)', id: 310633997
-mas 'Xcode (26.2)', id: 497799835
+mas 'WhatsApp (26.11.74)', id: 310633997
+mas 'Xcode (26.4)', id: 497799835
 mas 'YamaCast (2.0.7)', id: 1415107621
