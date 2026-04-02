@@ -96,7 +96,7 @@ alias psg procs
 alias psgl 'procs --use-config large'
 
 alias g rg
-alias fd 'command fd --no-ignore-vcs'
+alias fd 'fd --no-ignore-vcs'
 
 ###
 

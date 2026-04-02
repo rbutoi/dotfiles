@@ -7,7 +7,7 @@
             (setq gc-cons-threshold my/original-gc-cons-threshold)))
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp/"))
-(setq load-prefer-newer noninteractive)
+(setq load-prefer-newer t)
 
 ;; package manager: Elpaca (https://github.com/progfolio/elpaca)
 (setq package-enable-at-startup        nil
@@ -17,6 +17,12 @@
       use-package-enable-imenu-support t)
 (load "init-elpaca.el" nil :nomessage)
 (elpaca elpaca-use-package (elpaca-use-package-mode))
+
+(use-package auto-compile
+  :config
+  ;; (setq auto-compile-display-buffer nil)
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode))
 
 ;; https://github.com/emacscollective/no-littering#native-compilation-cache
 (when (and (fboundp 'startup-redirect-eln-cache)
@@ -38,7 +44,7 @@
         (vertical-scroll-bars)
         (ns-transparent-titlebar . t)   ; macOS: dark titlebar
         (ns-appearance . dark)
-        (font . "Iosevka-15")))         ; font
+        (font . "Iosevka-14")))         ; font
 (use-package batppuccin-mocha-theme     ; theme
   :ensure (:host github :repo "bbatsov/batppuccin-emacs")
   :init (load-theme 'batppuccin-macchiato t))

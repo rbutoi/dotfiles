@@ -81,10 +81,10 @@
 (use-package consult-dir
   :after vertico
   :general ("C-x C-d" 'consult-dir)
-  :custom (consult-dir-jump-file-command 'consult-fd)
   (:keymaps 'vertico-map
             "C-x C-d" 'consult-dir
-            "C-x C-j" 'consult-dir-jump-file)) ; jump into consult-fd
+            "C-x C-j" 'consult-dir-jump-file) ; jump into consult-fd
+  :custom (consult-dir-jump-file-command 'consult-fd))
 
 (use-package embark                     ; act on thing at point
   :general ("C-." 'embark-act)

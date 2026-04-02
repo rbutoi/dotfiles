@@ -3,3 +3,5 @@
 
 # man fd(1): Tips and Tricks
 .git/
+
+**/.claude/settings.local.json
