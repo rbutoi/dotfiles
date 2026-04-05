@@ -24,8 +24,10 @@ brew 'csvkit' # Suite of command-line tools for converting to and working with C
 brew 'csvlens' # Command-line csv viewer
 brew 'dasel' # JSON, YAML, TOML, XML, and CSV query and modification tool
 brew 'datasette' # Open source multi-tool for exploring and publishing data
+brew 'difftastic' # Diff that understands syntax
 brew 'docker' # Pack, ship and run any application as a lightweight container
 brew 'doggo' # Command-line DNS Client for Humans
+brew 'duckdb' # Embeddable SQL OLAP Database Management System
 brew 'duf' # Disk Usage/Free Utility - a better 'df' alternative
 brew 'dust' # More intuitive version of du in rust
 brew 'duti' # Select default apps for documents and URL schemes on macOS

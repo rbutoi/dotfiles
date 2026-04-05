@@ -55,6 +55,7 @@
   colorMoved = plain
   mnemonicPrefix = true
   renames = true
+	external = difft
 [push]
   default = simple
   autoSetupRemote = true

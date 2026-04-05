@@ -10,26 +10,12 @@
     "security.workspace.trust.untrustedFiles": "open",
     "svelte.enable-ts-plugin": true,
     "json.schemaDownload.enable": true,
-    "amp.url": "https://ampcode.com/",
     "editor.wordBasedSuggestions": "off",
-    "amp.tab.enabled": false,
-    "amp.experimental.modes": [
-        "deep"
-    ],
-    "amp.mcpServers": {
-        "playwright": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "@playwright/mcp@latest",
-                "--headless",
-                "--isolated"
-            ]
-        }
-    },
     "workbench.auxiliaryActivityBar.location": "default",
-    "amp.dangerouslyAllowAll": true,
     "editor.accessibilitySupport": "off",
     "window.systemColorTheme": "auto",
-    "workbench.colorTheme": "Default Dark+"
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "workbench.preferredDarkColorTheme": "Catppuccin Macchiato",
+  "workbench.preferredLightColorTheme": "Catppuccin Latte",
+  "window.autoDetectColorScheme": true
 }

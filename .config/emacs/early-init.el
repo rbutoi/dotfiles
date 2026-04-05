@@ -7,11 +7,11 @@
             (setq gc-cons-threshold my/original-gc-cons-threshold)))
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp/"))
-(setq load-prefer-newer t)
 
 ;; package manager: Elpaca (https://github.com/progfolio/elpaca)
-(setq package-enable-at-startup        nil
-      use-package-verbose              t
+(setq load-prefer-newer                t
+      package-enable-at-startup        nil
+      use-package-verbose              nil
       use-package-always-ensure        t
       use-package-always-defer         t
       use-package-enable-imenu-support t)
@@ -19,18 +19,15 @@
 (elpaca elpaca-use-package (elpaca-use-package-mode))
 
 (use-package auto-compile
-  :config
-  ;; (setq auto-compile-display-buffer nil)
+  :custom (auto-compile-display-buffer nil)
+  :init
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
 ;; https://github.com/emacscollective/no-littering#native-compilation-cache
-(when (and (fboundp 'startup-redirect-eln-cache)
-           (fboundp 'native-comp-available-p)
-           (native-comp-available-p))
-  (startup-redirect-eln-cache
+(startup-redirect-eln-cache
    (convert-standard-filename
-    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+  (expand-file-name  "var/eln-cache/" user-emacs-directory)))
 
 ;; UI settings before initial frame is created
 (setq initial-frame-alist               ; frame size and position
@@ -45,6 +42,10 @@
         (ns-transparent-titlebar . t)   ; macOS: dark titlebar
         (ns-appearance . dark)
         (font . "Iosevka-14")))         ; font
-(use-package batppuccin-mocha-theme     ; theme
-  :ensure (:host github :repo "bbatsov/batppuccin-emacs")
-  :init (load-theme 'batppuccin-macchiato t))
+(setq custom-safe-themes t)             ; to be overwitten by custom.el
+(use-package batppuccin-themes
+  :vc (:url "https://github.com/bbatsov/batppuccin-emacs" :rev :newest)
+  :init (load-theme 'batppuccin-latte :no-confirm))
+(use-package auto-dark
+  :custom (auto-dark-themes '((batppuccin-macchiato) (batppuccin-latte)))
+  :init (auto-dark-mode))

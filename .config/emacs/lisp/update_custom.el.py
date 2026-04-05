@@ -8,10 +8,8 @@ from pathlib import Path
 # --- Configuration ---
 # Adjust these paths if your setup differs
 HOME = Path.home()
-REPO_DIR = HOME / ".config/emacs/elpaca/repos"
-CUSTOM_FILE = Path(
-    "custom.el"
-)  # Assumes script is run in same dir, or change to absolute path
+REPO_DIR = HOME / ".config/emacs/elpaca/sources"
+CUSTOM_FILE = HOME / ".config/emacs/lisp/custom.el"
 
 # The marker that separates the auto-generated code from your manual footer
 FOOTER_MARKER = ";;; Themes:"

@@ -36,7 +36,7 @@
 (use-package forge)                     ; github issues and PRs in magit
 
 (use-package vc-jj)                     ; jujutsu
-(use-package majutsu :ensure (:host github :repo "0WD0/majutsu"))
+(use-package majutsu :vc (:url "https://github.com/0WD0/majutsu" :rev :newest))
 
 (use-package diff-hl                    ; margin diff markers
   :hook (elpaca-after-init . global-diff-hl-mode)
