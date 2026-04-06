@@ -50,6 +50,7 @@ brew 'git' # Distributed revision control system
 brew 'git-delta' # Syntax-highlighting pager for git and diff output
 brew 'glow' # Render markdown on the CLI
 brew 'gnu-sed' # GNU implementation of the famous stream editor
+brew 'go' # Open source programming language to build simple/reliable/efficient software
 brew 'htop' # Improved top (interactive process viewer)
 brew 'hyperfine' # Command-line benchmarking tool
 brew 'imagemagick' # Tools and libraries to manipulate images in select formats
@@ -120,7 +121,6 @@ cask 'chatgpt' # OpenAI's official ChatGPT desktop app
 cask 'claude' # Anthropic's official Claude AI desktop app
 cask 'claude-code@latest' # Terminal-based AI coding assistant
 cask 'codex' # OpenAI's coding agent that runs in your terminal
-cask 'codexbar' # Menu bar usage monitor for Codex and Claude
 cask 'copilot-cli' # Brings the power of Copilot coding agent directly to your terminal
 cask 'darktable' # Photography workflow application and raw developer
 cask 'discord' # Voice and text chat software
@@ -230,6 +230,6 @@ mas 'Scrobbles for Last.fm (9.4.1)', id: 1344679160
 mas 'Tim (9.8.2)', id: 1449619230
 mas 'Time Out (2.9.7)', id: 402592703
 mas 'UTM (4.7.5)', id: 1538878817
-mas 'WhatsApp (26.11.74)', id: 310633997
+mas 'WhatsApp (26.12.78)', id: 310633997
 mas 'Xcode (26.4)', id: 497799835
 mas 'YamaCast (2.0.7)', id: 1415107621
