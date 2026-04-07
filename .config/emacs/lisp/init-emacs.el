@@ -5,15 +5,18 @@
 
 (use-package no-littering :demand t     ; clean up emacs config dir
   :init (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
-  :custom (create-lockfiles nil)
+  :custom
+  (create-lockfiles nil)
+  (elpaca-lock-file (no-littering-expand-etc-file-name "elpaca-lock.el"))
   :config
   (no-littering-theme-backups)
   (setopt custom-file (no-littering-expand-etc-file-name "custom.el"))
   (load custom-file nil :nomessage))
 
-(use-package async)
-(use-package elpaca-daily-update :ensure nil ; check for package updates
-  :hook (elpaca-after-init . elpaca-daily-update-init))
+;; TODO: fix
+;; (use-package async)
+;; (use-package elpaca-daily-update :ensure nil ; check for package updates
+;;   :hook (elpaca-after-init . elpaca-daily-update-init))
 
 (use-package system-packages)           ; installing system packages from Emacs
 

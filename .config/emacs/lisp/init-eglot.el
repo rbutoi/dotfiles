@@ -25,7 +25,8 @@
   :config (eglot-python-preset-setup))
 
 (use-package eldoc-mouse
-  :ensure (:host github :repo "huangfeiyu/eldoc-mouse")
+  :disabled                             ; TODO: slightly buggy
+  :vc (:url "https://github.com/huangfeiyu/eldoc-mouse" :rev :newest)
   :general
   (:keymaps 'eldoc-mouse-mode-map
             "<f1> <f1>" 'eldoc-mouse-pop-doc-at-cursor)

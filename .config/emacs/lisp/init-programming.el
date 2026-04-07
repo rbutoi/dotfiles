@@ -59,6 +59,8 @@
   (with-eval-after-load 'terraform-mode
     (add-to-list 'ahs-modes 'terraform-mode)))
 
+(use-package rainbow-mode :hook prog-mode) ; #ff7900
+
 (use-package apheleia                   ; auto format
   :hook (elpaca-after-init . apheleia-global-mode)
   :config

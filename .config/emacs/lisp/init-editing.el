@@ -13,7 +13,7 @@
         truncate-lines                      t
         fill-column                         80
         ediff-window-setup-function         'ediff-setup-windows-plain
-        save-silently                       nil) ; "Saving file $file... \n Wrote $file" is redundant
+        save-silently                       t) ; "Saving file $file... \n Wrote $file" is redundant
 
 (general-def
   "s-r"   'revert-buffer-quick

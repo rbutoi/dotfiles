@@ -1,6 +1,7 @@
 # -*- mode: conf-unix -*-
 
-cmd + ctrl - return : open -a Ghostty
+# cmd + ctrl - return : open -a Ghostty
+cmd + ctrl - return : open -a kitty
 cmd + ctrl - e      : open /Applications/Emacs.app
 cmd + ctrl - i      : open "/Applications/Google Chrome.app"
 

@@ -15,7 +15,7 @@
  '(safe-local-variable-values
    '((eval add-hook 'after-save-hook
            (lambda nil
-             (let ((message-log-max nil))
+             (let ((inhibit-message t) (message-log-max nil))
                (shell-command "pkill -USR1 -a kitty")))
            nil :local)
      (lisp-indent-local-overrides (cond . 0) (interactive . 0))

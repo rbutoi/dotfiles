@@ -66,17 +66,22 @@ brew 'make' # Utility for directing compilation
 brew 'man-db' # Unix documentation system
 brew 'markdown' # Text-to-HTML conversion tool
 brew 'mas' # Mac App Store command-line interface
+brew 'mdfried' # Terminal markdown viewer
 brew 'media-info' # Unified display of technical and tag data for audio/video
+brew 'moor' # Nice to use pager for humans
 brew 'mpv' # Media player based on MPlayer and mplayer2
 brew 'ncurses' # Text-based UI library
 brew 'ninja' # Small build system for use with gyp or CMake
 brew 'notmuch' # Thread-based email index, search, and tagging
+brew 'ov' # Feature-rich terminal-based text viewer
+brew 'p7zip' # 7-Zip (high compression file archiver) implementation
 brew 'pipx' # Execute binaries from Python packages in isolated environments
 brew 'pkgconf' # Package compiler and linker metadata toolkit
 brew 'pnpm' # Fast, disk space efficient package manager
 brew 'prek' # Pre-commit re-implemented in Rust
 brew 'prettier' # Code formatter for JavaScript, CSS, JSON, GraphQL, Markdown, YAML
 brew 'procs' # Modern replacement for ps written in Rust
+brew 'px' # Ps and top for human beings (px / ptop)
 brew 'python-lsp-server' # Python Language Server for the Language Server Protocol
 brew 'qemu' # Generic machine emulator and virtualizer
 brew 'qsv' # Ultra-fast CSV data-wrangling toolkit
@@ -184,6 +189,9 @@ tap 'jpe90/clp'
 brew 'clp' # command line syntax highlighter
 
 tap 'koekeishiya/formulae'
+
+tap 'neurosnap/tap'
+brew 'zmx' # Session persistence for terminal processes
 
 tap 'nikitabobko/tap'
 cask 'aerospace' # AeroSpace is an i3-like tiling window manager for macOS
