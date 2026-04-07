@@ -31,7 +31,12 @@
 (use-package magit-delta                ; nicer diffs
   :after magit
   :hook magit-mode
-  :config (setq-union magit-delta-delta-args '("--features" "magit-delta")))
+  :custom
+  (magit-delta-default-dark-theme "Catppuccin Mocha")
+  (magit-delta-default-light-theme "Catppuccin Frappe")
+  :config
+  (setq-union magit-delta-delta-args '("--features" "magit-delta")))
+
 (use-package git-modes)
 (use-package forge)                     ; github issues and PRs in magit
 

@@ -21,6 +21,7 @@
 (use-package dockerfile-mode)
 (use-package terraform-mode)
 (use-package i3wm-config-mode)
+(use-package nix-mode)
 
 ;; Systems programming
 (use-package rust-mode)
