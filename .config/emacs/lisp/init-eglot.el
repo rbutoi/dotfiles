@@ -9,7 +9,8 @@
          (terraform-mode  . eglot-ensure)
          (c++-mode        . eglot-ensure)
          (go-mode         . eglot-ensure)
-         (rust-mode       . eglot-ensure))
+         (rust-mode       . eglot-ensure)
+         (clojure-mode    . eglot-ensure))
   :custom (eglot-autoshutdown t)
   :general
   (:keymaps 'eglot-mode-map
@@ -18,9 +19,9 @@
             "<f7>"   'eglot-momentary-inlay-hints))
 
 (use-package eglot-python-preset
+  :disabled
   :defer 1
   :ensure-system-package ty
-  :after eglot
   :custom (eglot-python-preset-lsp-server 'ty)
   :config (eglot-python-preset-setup))
 

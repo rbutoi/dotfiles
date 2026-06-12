@@ -18,6 +18,7 @@
 ;;; AI
 (use-package track-changes)
 (use-package copilot                    ; GitHub Copilot
+  :disabled
   :after (track-changes corfu)
   :defer 1              ; can't use :hook without loading copilot immediately
   :custom (copilot-idle-delay corfu-auto-delay)

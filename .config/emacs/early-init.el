@@ -19,6 +19,7 @@
 (elpaca elpaca-use-package (elpaca-use-package-mode))
 
 (use-package auto-compile
+  :disabled                             ; hmm
   :custom (auto-compile-display-buffer nil)
   :init
   (auto-compile-on-load-mode)
@@ -26,7 +27,7 @@
 
 ;; https://github.com/emacscollective/no-littering#native-compilation-cache
 (startup-redirect-eln-cache
-   (convert-standard-filename
+ (convert-standard-filename
   (expand-file-name  "var/eln-cache/" user-emacs-directory)))
 
 ;; UI settings before initial frame is created

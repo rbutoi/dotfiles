@@ -38,6 +38,9 @@
     (add-to-list 'eglot-server-programs
                  '(fish-mode . ("fish-lsp" "start")))))
 
+;; Lisps
+(use-package clojure-mode)
+
 ;; Build systems
 (use-package just-mode)
 (use-package cmake-mode)
