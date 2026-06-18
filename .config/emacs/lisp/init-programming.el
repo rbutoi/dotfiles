@@ -1,9 +1,11 @@
 ;;; init-programming.el --- Programming  -*- lexical-binding: t; -*-
 
-(setopt indent-tabs-mode nil            ; never tabs to indent
-        tab-always-indent 'complete
-        tab-width 2
-        eldoc-idle-delay 0.2)
+(setopt
+ ;; indent-tabs-mode nil            ; never tabs to indent
+ ;; :o
+ tab-always-indent 'complete
+ tab-width 2
+ eldoc-idle-delay 0.2)
 
 (defun my/search-gh-web ()
   "Search GitHub repos in browser"

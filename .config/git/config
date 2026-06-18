@@ -1,6 +1,7 @@
-[core]
-## https://github.com/dandavison/delta
-  pager = delta
+# breaks magit C-RET:
+# [core]
+# ## https://github.com/dandavison/delta
+#   pager = delta
 
 [delta]
   navigate = true    # use n and N to move between diff sections
@@ -55,7 +56,7 @@
   colorMoved = plain
   mnemonicPrefix = true
   renames = true
-	external = difft
+	external = difft --display inline
 [push]
   default = simple
   autoSetupRemote = true

@@ -3,7 +3,8 @@
 (use-package server :ensure nil :demand t ; for emacsclient
   :config (unless (server-running-p) (server-start)))
 
-(use-package no-littering :demand t     ; clean up emacs config dir
+(use-package no-littering ;; :demand t
+					; clean up emacs config dir
   :init (setopt no-littering-etc-directory (file-name-concat user-emacs-directory "lisp/"))
   :custom
   (create-lockfiles nil)

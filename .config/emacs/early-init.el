@@ -1,5 +1,7 @@
 ;;; early-init.el --- Early Emacs config  -*- lexical-binding: t; -*-
 
+(load "early-init-work.el" :noerror :nomessage)
+
 (setq my/original-gc-cons-threshold  gc-cons-threshold
       gc-cons-threshold              most-positive-fixnum)
 (add-hook 'emacs-startup-hook
