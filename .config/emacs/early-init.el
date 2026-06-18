@@ -45,7 +45,6 @@
         (font . "Iosevka-14")))         ; font
 (setq custom-safe-themes t)             ; to be overwitten by custom.el
 (use-package batppuccin
-  :vc (:url "https://github.com/bbatsov/batppuccin-emacs" :rev :newest)
   :init (load-theme 'batppuccin-frappe :no-confirm))
 (use-package auto-dark
   :custom (auto-dark-themes '((batppuccin-mocha) (batppuccin-frappe)))

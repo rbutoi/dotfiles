@@ -10,15 +10,6 @@ fish_add_path -g $GOPATH/bin
 # Added by Antigravity
 fish_add_path ~/.antigravity/antigravity/bin
 
-# pnpm
-set -gx PNPM_HOME "$HOME/Library/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-    set -gx PATH "$PNPM_HOME" $PATH
-end
-# pnpm end
-
-###
-
 set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
 
 status is-interactive || exit
@@ -29,7 +20,8 @@ status is-interactive || exit
 
 set -g fish_greeting ''
 
-starship init fish | source # prompt
+### hmmmmmmmm
+# starship init fish | source # prompt
 
 bind alt-k backward-kill-line # standard readline, better than default C-u
 bind alt-shift-c capitalize-word # alt-c for new ghostty tab
@@ -100,7 +92,6 @@ alias fd 'fd --no-ignore-vcs'
 
 ###
 
-# TODO: OS specific?
 type -q paru && alias p paru
 
 test -d ~/.dots && alias dotup 'python3 ~/.dots/bin/dot update --skip-pull'

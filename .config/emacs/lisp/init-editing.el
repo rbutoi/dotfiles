@@ -12,6 +12,7 @@
         kill-do-not-save-duplicates         t
         truncate-lines                      t
         fill-column                         80
+				sentence-end-double-space           nil
         ediff-window-setup-function         'ediff-setup-windows-plain
         save-silently                       t) ; "Saving file $file... \n Wrote $file" is redundant
 

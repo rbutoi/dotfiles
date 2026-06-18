@@ -22,6 +22,7 @@
 (use-package terraform-mode)
 (use-package i3wm-config-mode)
 (use-package nix-mode)
+(use-package cue-mode)
 
 ;; Systems programming
 (use-package rust-mode)

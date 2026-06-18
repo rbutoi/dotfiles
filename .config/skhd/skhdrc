@@ -4,6 +4,7 @@
 cmd + ctrl - return : open -a kitty
 cmd + ctrl - e      : open /Applications/Emacs.app
 cmd + ctrl - i      : open "/Applications/Google Chrome.app"
+cmd + ctrl - s      : open /Applications/Slack.app
 
 f14         : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"
 f15         : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"
