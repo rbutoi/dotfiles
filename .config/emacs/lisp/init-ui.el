@@ -31,7 +31,8 @@
 (use-package zoom-window                ; temporarily show one window
   :general ("C-x C-z" 'zoom-window-zoom)) 
 (use-package transient-posframe         ; popups in middle of emacs
-  :hook elpaca-after-init) 
+	:disabled															; how to handle terminal frames?
+  :hook elpaca-after-init)
 
 (use-package which-key                  ; show available keybinds after a prefix
   :hook elpaca-after-init

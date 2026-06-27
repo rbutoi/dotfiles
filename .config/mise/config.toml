@@ -1,0 +1,30 @@
+[bootstrap.macos.keyboard]
+key_repeat = 2
+initial_key_repeat = 20
+
+[tools]
+"aqua:fish-shell/fish-shell" = "latest"
+aube = "latest"
+bat = "latest"
+"cargo:cloudflare-speed-cli" = "latest"
+cmake = "latest"
+delta = "latest"
+difftastic = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+go = "latest"
+hyperfine = "latest"
+kubectl = "latest"
+node = "latest"
+"npm:fish-lsp" = "latest"
+"pipx:grip" = "latest"
+python = "latest"
+ripgrep = "latest"
+rust = "stable"
+tmux = "latest"
+ty = "latest"
+uv = "latest"
+
+[settings]
+experimental = true
