@@ -20,9 +20,6 @@ status is-interactive || exit
 
 set -g fish_greeting ''
 
-### hmmmmmmmm
-# starship init fish | source # prompt
-
 bind alt-k backward-kill-line # standard readline, better than default C-u
 bind alt-shift-c capitalize-word # alt-c for new ghostty tab
 

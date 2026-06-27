@@ -6,10 +6,11 @@
 # Additionally, each config option is also explained in detail
 # on Ghostty's website, at https://ghostty.org/docs/config.
 
-background-opacity = 0.95
+background-opacity = 0.9
 background-blur = true
 font-family = Iosevka Term
 font-size = 14
+font-thicken = true
 
 confirm-close-surface = false
 macos-non-native-fullscreen = visible-menu
