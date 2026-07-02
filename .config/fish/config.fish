@@ -2,13 +2,12 @@
 # paths #
 #########
 
+mise activate fish | source
+
 fish_add_path -g ~/.local/bin
 
-set -gx GOPATH ~/.local/go
-fish_add_path -g $GOPATH/bin
-
-# Added by Antigravity
-fish_add_path ~/.antigravity/antigravity/bin
+# set -gx GOPATH ~/.local/go
+# fish_add_path -g $GOPATH/bin
 
 set -gx RIPGREP_CONFIG_PATH ~/.config/ripgreprc
 

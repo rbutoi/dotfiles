@@ -21,7 +21,6 @@
 (use-package eglot-python-preset
   :disabled
   :defer 1
-  :ensure-system-package ty
   :custom (eglot-python-preset-lsp-server 'ty)
   :config (eglot-python-preset-setup))
 

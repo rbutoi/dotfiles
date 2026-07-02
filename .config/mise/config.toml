@@ -8,8 +8,11 @@ aube = "latest"
 bat = "latest"
 "cargo:cloudflare-speed-cli" = "latest"
 cmake = "latest"
+colima = "latest"
 delta = "latest"
 difftastic = "latest"
+dua = "latest"
+duf = "latest"
 eza = "latest"
 fd = "latest"
 fzf = "latest"
@@ -25,6 +28,16 @@ rust = "stable"
 tmux = "latest"
 ty = "latest"
 uv = "latest"
+dust = "latest"
+gemini-cli = { version = "latest", allow_builds = ["@github/keytar", "node-pty"] }
+jaq = "latest"
+jj = "latest"
+jnv = "latest"
+prek = "latest"
+yt-dlp = { version = "latest", rename_exe = "yt-dlp" }
+shellcheck = "latest"
+"aqua:YS-L/csvlens" = "latest"
 
 [settings]
 experimental = true
+idiomatic_version_file_enable_tools = ["node"]

@@ -33,10 +33,6 @@
             "C-g"   'copilot-clear-overlay)
   :config (add-hook 'prog-mode-hook #'copilot-mode))
 (use-package agent-shell
-  :ensure-system-package
-  ((gemini . gemini-cli)
-   (claude . claude-code)
-   (claude-agent-acp . "pnpm install -g @zed-industries/claude-agent-acp"))
   :general ("s-l" 'agent-shell)         ; like in vscode
   :config
   (defun my/agent-shell-dot-subdir (subdir)

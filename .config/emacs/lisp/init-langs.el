@@ -33,7 +33,6 @@
 ;; Scripting
 (use-package lua-mode)
 (use-package fish-mode
-  :ensure-system-package fish-lsp
   :config
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs
