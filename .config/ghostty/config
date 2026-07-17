@@ -8,8 +8,9 @@
 
 background-opacity = 0.9
 background-blur = true
-font-family = Iosevka Term
-font-size = 14
+# font-family = Iosevka Term
+font-family = Ubuntu Mono
+font-size = 15
 font-thicken = true
 
 confirm-close-surface = false

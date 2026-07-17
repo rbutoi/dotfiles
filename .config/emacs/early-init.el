@@ -44,7 +44,8 @@
         (vertical-scroll-bars)
         (ns-transparent-titlebar . t)   ; macOS: dark titlebar
         (ns-appearance . dark)
-        (font . "Iosevka-14")))         ; font
+        ;; (font . "Iosevka-14")))         ; font
+        (font . "Ubuntu Mono-15")))         ; font
 (setq custom-safe-themes t)             ; to be overwitten by custom.el
 (use-package batppuccin
   :init (load-theme 'batppuccin-frappe :no-confirm))

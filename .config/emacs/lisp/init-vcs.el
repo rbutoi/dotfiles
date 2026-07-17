@@ -10,7 +10,7 @@
    "C-x C-M-g" 'magit-list-repositories)
   (:keymaps 'magit-mode-map
             "M-m" 'magit-toggle-margin
-            "@"   'endless/visit-pull-request-url)
+            "@"   'my/visit-pull-request-url)
   :custom
   (magit-repository-directories
    `(("~/dev" . 2)

@@ -37,6 +37,14 @@ prek = "latest"
 yt-dlp = { version = "latest", rename_exe = "yt-dlp" }
 shellcheck = "latest"
 "aqua:YS-L/csvlens" = "latest"
+dasel = "latest"
+duckdb = "latest"
+"aqua:tealdeer-rs/tealdeer" = "latest"
+jjui = "latest"
+pnpm = "latest"
+gitui = "latest"
+"aqua:boyter/scc" = "latest"
+crane = "latest"
 
 [settings]
 experimental = true
