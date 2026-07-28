@@ -45,6 +45,13 @@ pnpm = "latest"
 gitui = "latest"
 "aqua:boyter/scc" = "latest"
 crane = "latest"
+docker-cli = "latest"
+docker-compose = "latest"
+stern = "latest"
+qsv = "latest"
+"npm:typescript" = "latest"
+bazelisk = "latest"
+gitu = "latest"
 
 [settings]
 experimental = true

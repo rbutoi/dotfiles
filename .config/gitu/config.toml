@@ -1,0 +1,3 @@
+[bindings]
+root.move_up = ["k", "up", "ctrl+p"]
+root.move_down = ["j", "down", "ctrl+n"]
