@@ -1,0 +1,230 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.13"
+# dependencies = []
+# ///
+"""Walk a commit range oldest->newest and show how a branch's code grows.
+
+The tracked set is the files the range's net diff touches (optionally filtered
+to a PATH) — the branch's footprint, not the whole repo tree. For each commit:
+an scc snapshot of LOC + Complexity over just that set, the delta vs the
+previous commit, and the commit's rename-aware git churn (+/-). The first row's
+delta is measured against the parent of the range's first commit, so it
+reflects real growth rather than a from-zero baseline.
+
+The set is materialized per commit with `git archive` (tracked blobs only — scc
+never sees untracked or ignored files) and followed backwards across a whole-
+subtree directory rename, so a PATH moved mid-range stays continuous. Commits
+that don't touch the set are collapsed into a single "N commits skipped" line.
+"""
+
+import argparse
+import json
+import subprocess
+import tempfile
+from pathlib import Path
+
+
+def git(repo: Path, *args: str, check: bool = True) -> str:
+    """Run `git -C repo …` and return stdout; exit on failure unless check=False."""
+    r = subprocess.run(["git", "-C", str(repo), *args],
+                        capture_output=True, text=True)
+    if check and r.returncode:
+        raise SystemExit(f"loc-trend: git {' '.join(args)} failed:\n{r.stderr.strip()}")
+    return r.stdout
+
+
+def tracked(repo: Path, rev: str, specs: list[str]) -> list[str]:
+    """Tracked files at `rev` matching any of `specs`, NUL-safe.
+
+    Unlike `git archive`, ls-tree silently ignores pathspecs that match nothing,
+    so this is how we filter a set down to the files that actually exist at a
+    revision before archiving them.
+    """
+    if not specs:
+        return []
+    out = git(repo, "ls-tree", "-r", "--name-only", "-z", rev, "--", *specs,
+              check=False)
+    return [p for p in out.split("\0") if p]
+
+
+def measure(repo: Path, rev: str, files: list[str]) -> tuple[int, int]:
+    """Return (code, complexity) over `files` as they exist at `rev`.
+
+    scc counts files on disk, so materialize just this set with `git archive`
+    into a throwaway dir — no worktree, no checkout, only the tracked blobs
+    being measured. An empty set or unparseable scc output both give 0/0.
+    """
+    present = tracked(repo, rev, files)
+    if not present:
+        return 0, 0
+    with tempfile.TemporaryDirectory() as tmp:
+        arch = subprocess.run(["git", "-C", str(repo), "archive", rev, "--", *present],
+                              capture_output=True)
+        if arch.returncode:
+            return 0, 0
+        subprocess.run(["tar", "-x", "-C", tmp], input=arch.stdout, check=True)
+        out = subprocess.run(["scc", tmp, "--format", "json"],
+                             capture_output=True, text=True).stdout
+    try:
+        langs = json.loads(out)
+    except json.JSONDecodeError:
+        return 0, 0
+    return (sum(lang.get("Code", 0) for lang in langs),
+            sum(lang.get("Complexity", 0) for lang in langs))
+
+
+def rename_source(repo: Path, rev: str, cur: str) -> str | None:
+    """If `rev` renamed the subtree root into `cur`, return its pre-rename path.
+
+    Directory renames surface as many per-file rename lines sharing a prefix
+    transform, so the first `R` line landing inside `cur` pins down where the
+    subtree came from. Returns None when the commit didn't rename `cur`.
+    """
+    out = git(repo, "show", "-M", "--name-status", "--format=", rev, check=False)
+    for line in out.splitlines():
+        parts = line.split("\t")
+        if len(parts) < 3 or not parts[0].startswith("R"):
+            continue
+        old, new = parts[1], parts[2]
+        if new == cur:                              # `cur` is a file
+            return old
+        if (rel := new.removeprefix(cur + "/")) != new:  # `new` is under `cur`/
+            suf = "/" + rel
+            if len(old) > len(suf) and old.endswith(suf):
+                return old.removesuffix(suf)
+    return None
+
+
+def remap(files: list[str], old: str, new: str) -> list[str]:
+    """Translate `files` from subtree root `old` to `new` (identity at repo root)."""
+    if old == new or old == ".":
+        return files
+    out = []
+    for f in files:
+        if f == old:
+            out.append(new)
+        elif f.startswith(old + "/"):
+            out.append(new + f[len(old):])
+        else:
+            out.append(f)
+    return out
+
+
+def churn(repo: Path, rev: str, specs: list[str]) -> tuple[int, int]:
+    """Return (insertions, deletions) for `rev`, scoped to the given pathspecs.
+
+    Passing both the current and parent names lets -M pair a move instead of
+    reporting it as a bulk add + delete. Binary files (numstat '-') count as 0.
+    """
+    out = git(repo, "show", "-M", "--numstat", "--format=", rev, "--", *specs,
+              check=False)
+    ins = dele = 0
+    for line in out.splitlines():
+        fields = line.split("\t")
+        if len(fields) >= 2:
+            ins += int(fields[0]) if fields[0].isdigit() else 0
+            dele += int(fields[1]) if fields[1].isdigit() else 0
+    return ins, dele
+
+
+def skipped_line(n: int, subpath: str) -> str:
+    scope = "the range" if subpath == "." else subpath
+    word = "commit" if n == 1 else "commits"
+    return f"           … {n} {word} skipped (no change to {scope}) …"
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(
+        description="Trend the scc LOC of a branch's changed files across a range.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="examples:\n"
+               "  loc-trend                              # origin/main..HEAD, all changed files\n"
+               "  loc-trend HEAD~12..HEAD scripts/pr-activity\n"
+               "  loc-trend v1.0..HEAD",
+    )
+    p.add_argument("range", nargs="?", default="origin/main..HEAD",
+                   help="git revision range (default: origin/main..HEAD)")
+    p.add_argument("path", nargs="?", default=".",
+                   help="only count changed files under this path (default: all)")
+    return p.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    subpath = args.path.rstrip("/") or "."
+    repo_root = Path(git(Path.cwd(), "rev-parse", "--show-toplevel").strip())
+
+    shas = git(repo_root, "rev-list", "--reverse", args.range).split()
+    if not shas:
+        raise SystemExit(f"loc-trend: no commits in range: {args.range}")
+
+    tip = shas[-1]
+    base = subprocess.run(
+        ["git", "-C", str(repo_root), "rev-parse", "-q", "--verify", shas[0] + "^1"],
+        capture_output=True, text=True)
+    base_sha = base.stdout.strip() if not base.returncode else None
+
+    # The tracked set: files the range's net diff touches (under PATH), by their
+    # tip-side names. A root commit has no base, so everything at the tip counts.
+    spec = [] if subpath == "." else [subpath]
+    if base_sha:
+        out = git(repo_root, "diff", "--name-only", "-M", "-z", base_sha, tip,
+                  "--", *spec)
+        changed = [p for p in out.split("\0") if p]
+    else:
+        changed = tracked(repo_root, tip, spec or ["."])
+    if not changed:
+        raise SystemExit(f"loc-trend: range touches no files under {subpath}")
+
+    # Follow the subtree root backwards across renames: paths[i] is where it
+    # lived in shas[i]'s tree, so the tracked set can be remapped to each
+    # commit's historical names. (No-op when PATH is the repo root.)
+    paths = [""] * len(shas)
+    cur = subpath
+    for i in range(len(shas) - 1, -1, -1):
+        paths[i] = cur
+        if src := rename_source(repo_root, shas[i], cur):
+            cur = src
+    base_path = cur
+
+    print(f"{'commit':<9}  {'date':<16}  {'code':>6}  {'Δcode':>6}  "
+          f"{'cmplx':>5}  {'git+':>5}  {'git-':>6}   subject")
+    print("-" * 72)
+
+    # Seed prev from the parent of the first commit so its delta is real growth.
+    prev = measure(repo_root, base_sha, remap(changed, subpath, base_path))[0] if base_sha else 0
+
+    skipped = 0
+    for i, sha in enumerate(shas):
+        files = remap(changed, subpath, paths[i])
+        pfiles = remap(changed, subpath, base_path if i == 0 else paths[i - 1])
+
+        # Churn over the tracked set (current + parent names so -M pairs a move).
+        # A commit that doesn't touch the set can't change its size — skip the
+        # (expensive) scc snapshot, keep prev, and collapse the row.
+        ins, dele = churn(repo_root, sha, sorted(set(files) | set(pfiles)))
+        if ins == 0 and dele == 0:
+            skipped += 1
+            continue
+        if skipped:
+            print(skipped_line(skipped, subpath))
+            skipped = 0
+
+        code, cmplx = measure(repo_root, sha, files)
+        delta = code - prev
+        prev = code
+
+        cdate, subject = git(
+            repo_root, "show", "-s", "--date=format-local:%Y-%m-%d %H:%M",
+            "--format=%ad%x09%s", sha).rstrip("\n").split("\t", 1)
+
+        print(f"{sha[:9]:<9}  {cdate:<16}  {code:>6}  {delta:>+6}  "
+              f"{cmplx:>5}  {'+' + str(ins):>5}  {'-' + str(dele):>6}   {subject}")
+
+    if skipped:
+        print(skipped_line(skipped, subpath))
+
+
+if __name__ == "__main__":
+    main()
