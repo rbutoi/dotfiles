@@ -20,8 +20,10 @@ that don't touch the set are collapsed into a single "N commits skipped" line.
 
 import argparse
 import json
+import os
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 
@@ -74,19 +76,23 @@ def measure(repo: Path, rev: str, files: list[str]) -> tuple[int, int]:
             sum(lang.get("Complexity", 0) for lang in langs))
 
 
-def rename_source(repo: Path, rev: str, cur: str) -> str | None:
-    """If `rev` renamed the subtree root into `cur`, return its pre-rename path.
-
-    Directory renames surface as many per-file rename lines sharing a prefix
-    transform, so the first `R` line landing inside `cur` pins down where the
-    subtree came from. Returns None when the commit didn't rename `cur`.
-    """
+def commit_renames(repo: Path, rev: str) -> list[tuple[str, str]]:
+    """The (old, new) rename pairs a commit introduces. Independent per commit,
+    so these can be fetched in parallel and folded sequentially afterwards."""
     out = git(repo, "show", "-M", "--name-status", "--format=", rev, check=False)
+    pairs = []
     for line in out.splitlines():
         parts = line.split("\t")
-        if len(parts) < 3 or not parts[0].startswith("R"):
-            continue
-        old, new = parts[1], parts[2]
+        if len(parts) >= 3 and parts[0].startswith("R"):
+            pairs.append((parts[1], parts[2]))
+    return pairs
+
+
+def match_rename(pairs: list[tuple[str, str]], cur: str) -> str | None:
+    """If any pair renamed the subtree root into `cur`, return its pre-rename
+    path. Directory renames surface as many per-file rename lines sharing a
+    prefix transform, so the first pair landing inside `cur` pins it down."""
+    for old, new in pairs:
         if new == cur:                              # `cur` is a file
             return old
         if (rel := new.removeprefix(cur + "/")) != new:  # `new` is under `cur`/
@@ -147,6 +153,8 @@ def parse_args() -> argparse.Namespace:
                    help="git revision range (default: origin/main..HEAD)")
     p.add_argument("path", nargs="?", default=".",
                    help="only count changed files under this path (default: all)")
+    p.add_argument("-j", "--jobs", type=int, default=0,
+                   help="parallel workers (default: auto)")
     return p.parse_args()
 
 
@@ -177,48 +185,68 @@ def main() -> None:
     if not changed:
         raise SystemExit(f"loc-trend: range touches no files under {subpath}")
 
-    # Follow the subtree root backwards across renames: paths[i] is where it
-    # lived in shas[i]'s tree, so the tracked set can be remapped to each
-    # commit's historical names. (No-op when PATH is the repo root.)
-    paths = [""] * len(shas)
-    cur = subpath
-    for i in range(len(shas) - 1, -1, -1):
-        paths[i] = cur
-        if src := rename_source(repo_root, shas[i], cur):
-            cur = src
-    base_path = cur
+    # Every commit's work below (rename detection, churn, snapshot) is
+    # independent and read-only, so fan out across commits; the sequential
+    # delta/skip pass at the end is just arithmetic.
+    jobs = args.jobs or min(32, (os.cpu_count() or 4) * 4)
+    with ThreadPoolExecutor(max_workers=jobs) as ex:
+        # Follow the subtree root backwards across renames: paths[i] is where it
+        # lived in shas[i]'s tree, so the tracked set can be remapped to each
+        # commit's historical names. (No-op when PATH is the repo root.) Fetch
+        # each commit's renames in parallel, then fold sequentially.
+        renames = list(ex.map(lambda s: commit_renames(repo_root, s), shas))
+        paths = [""] * len(shas)
+        cur = subpath
+        for i in range(len(shas) - 1, -1, -1):
+            paths[i] = cur
+            if src := match_rename(renames[i], cur):
+                cur = src
+        base_path = cur
+
+        # Churn over the tracked set (current + parent names so -M pairs a move)
+        # for every commit; a commit that doesn't touch the set can't change its
+        # size, so those rows collapse and skip the (expensive) scc snapshot.
+        def churn_at(i: int) -> tuple[int, int]:
+            files = remap(changed, subpath, paths[i])
+            pfiles = remap(changed, subpath, base_path if i == 0 else paths[i - 1])
+            return churn(repo_root, shas[i], sorted(set(files) | set(pfiles)))
+
+        churns = list(ex.map(churn_at, range(len(shas))))
+        shown = [i for i, (ins, dele) in enumerate(churns) if ins or dele]
+
+        # Snapshot scc + metadata only for the commits we'll actually print.
+        def snapshot(i: int) -> tuple[int, int, str, str]:
+            code, cmplx = measure(repo_root, shas[i], remap(changed, subpath, paths[i]))
+            cdate, subject = git(
+                repo_root, "show", "-s", "--date=format-local:%Y-%m-%d %H:%M",
+                "--format=%ad%x09%s", shas[i]).rstrip("\n").split("\t", 1)
+            return code, cmplx, cdate, subject
+
+        base_fut = ex.submit(
+            lambda: measure(repo_root, base_sha, remap(changed, subpath, base_path))[0]
+        ) if base_sha else None
+        snaps = dict(zip(shown, ex.map(snapshot, shown)))
+        prev = base_fut.result() if base_fut else 0  # real-growth baseline
 
     print(f"{'commit':<9}  {'date':<16}  {'code':>6}  {'Δcode':>6}  "
           f"{'cmplx':>5}  {'git+':>5}  {'git-':>6}   subject")
     print("-" * 72)
 
-    # Seed prev from the parent of the first commit so its delta is real growth.
-    prev = measure(repo_root, base_sha, remap(changed, subpath, base_path))[0] if base_sha else 0
-
+    # Skipped commits leave the tracked set byte-identical, so code == prev
+    # across a skip run; only shown commits move the baseline.
     skipped = 0
     for i, sha in enumerate(shas):
-        files = remap(changed, subpath, paths[i])
-        pfiles = remap(changed, subpath, base_path if i == 0 else paths[i - 1])
-
-        # Churn over the tracked set (current + parent names so -M pairs a move).
-        # A commit that doesn't touch the set can't change its size — skip the
-        # (expensive) scc snapshot, keep prev, and collapse the row.
-        ins, dele = churn(repo_root, sha, sorted(set(files) | set(pfiles)))
-        if ins == 0 and dele == 0:
+        ins, dele = churns[i]
+        if not (ins or dele):
             skipped += 1
             continue
         if skipped:
             print(skipped_line(skipped, subpath))
             skipped = 0
 
-        code, cmplx = measure(repo_root, sha, files)
+        code, cmplx, cdate, subject = snaps[i]
         delta = code - prev
         prev = code
-
-        cdate, subject = git(
-            repo_root, "show", "-s", "--date=format-local:%Y-%m-%d %H:%M",
-            "--format=%ad%x09%s", sha).rstrip("\n").split("\t", 1)
-
         print(f"{sha[:9]:<9}  {cdate:<16}  {code:>6}  {delta:>+6}  "
               f"{cmplx:>5}  {'+' + str(ins):>5}  {'-' + str(dele):>6}   {subject}")
 
