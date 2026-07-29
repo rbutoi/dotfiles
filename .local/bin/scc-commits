@@ -32,7 +32,7 @@ def git(repo: Path, *args: str, check: bool = True) -> str:
     r = subprocess.run(["git", "-C", str(repo), *args],
                         capture_output=True, text=True)
     if check and r.returncode:
-        raise SystemExit(f"loc-trend: git {' '.join(args)} failed:\n{r.stderr.strip()}")
+        raise SystemExit(f"scc-commits: git {' '.join(args)} failed:\n{r.stderr.strip()}")
     return r.stdout
 
 
@@ -145,9 +145,9 @@ def parse_args() -> argparse.Namespace:
         description="Trend the scc LOC of a branch's changed files across a range.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="examples:\n"
-               "  loc-trend                              # origin/main..HEAD, all changed files\n"
-               "  loc-trend HEAD~12..HEAD scripts/pr-activity\n"
-               "  loc-trend v1.0..HEAD",
+               "  scc-commits                            # origin/main..HEAD, all changed files\n"
+               "  scc-commits HEAD~12..HEAD scripts/pr-activity\n"
+               "  scc-commits v1.0..HEAD",
     )
     p.add_argument("range", nargs="?", default="origin/main..HEAD",
                    help="git revision range (default: origin/main..HEAD)")
@@ -165,7 +165,7 @@ def main() -> None:
 
     shas = git(repo_root, "rev-list", "--reverse", args.range).split()
     if not shas:
-        raise SystemExit(f"loc-trend: no commits in range: {args.range}")
+        raise SystemExit(f"scc-commits: no commits in range: {args.range}")
 
     tip = shas[-1]
     base = subprocess.run(
@@ -183,7 +183,7 @@ def main() -> None:
     else:
         changed = tracked(repo_root, tip, spec or ["."])
     if not changed:
-        raise SystemExit(f"loc-trend: range touches no files under {subpath}")
+        raise SystemExit(f"scc-commits: range touches no files under {subpath}")
 
     # Every commit's work below (rename detection, churn, snapshot) is
     # independent and read-only, so fan out across commits; the sequential
