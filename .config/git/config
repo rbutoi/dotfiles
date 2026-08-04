@@ -32,6 +32,10 @@
 
 [alias]
   root = rev-parse --show-toplevel
+  # syntax-aware diffs (difftastic) on demand. NOT set as diff.external globally:
+  # that rewrites every `git diff`/`show`/`log -p` into a format nothing else can
+  # parse (`git apply`, --stat, agents, tooling). Reach for it explicitly instead.
+  difft = -c diff.external='difft --display inline' diff
 
 ## url short forms
 [url "git@github.com:"]
@@ -56,7 +60,6 @@
   colorMoved = plain
   mnemonicPrefix = true
   renames = true
-	external = difft --display inline
 [push]
   default = simple
   autoSetupRemote = true
