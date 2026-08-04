@@ -1,96 +1,93 @@
-# breaks magit C-RET:
-# [core]
-# ## https://github.com/dandavison/delta
-#   pager = delta
+# much of this comes from
+# https://blog.gitbutler.com/how-git-core-devs-configure-git/
 
-[delta]
-  navigate = true    # use n and N to move between diff sections
-  hyperlinks = true
-  features = line-numbers decorations
-[delta "magit-delta"]
-  # magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
-  line-numbers = false
-[delta "decorations"]
-  commit-decoration-style = bold yellow box ul
-  file-style = bold yellow ul
-  file-decoration-style = none
+[include]
+  path = ~/.config/git/config.local   # personal, untracked
 
-[include]                       # personal config
-  path = ~/.config/git/config.local
+## core behavior
 
-[icdiff]                        # TODO: if used??
-  options = --line-numbers
-
-[protocol "file"]               # TODO: needed?
-  allow = always
-
-[filter "lfs"]                  # TODO: auto-added, needed?
-  process = git-lfs filter-process
-  required = true
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-
-[alias]
-  root = rev-parse --show-toplevel
-  # syntax-aware diffs (difftastic) on demand. NOT set as diff.external globally:
-  # that rewrites every `git diff`/`show`/`log -p` into a format nothing else can
-  # parse (`git apply`, --stat, agents, tooling). Reach for it explicitly instead.
-  difft = -c diff.external='difft --display inline' diff
-
-## url short forms
-[url "git@github.com:"]
-  insteadOf = @gh:
-[url "https://github.com/"]
-  insteadOf = gh://
-
-### https://blog.gitbutler.com/how-git-core-devs-configure-git/
-
-# clearly makes git better
-
+[core]
+  excludesfile = ~/.gitignore
+  fsmonitor = true
+  # untrackedCache = true
+  # pager = delta  # breaks magit C-RET; https://github.com/dandavison/delta
+[init]
+  defaultBranch = main
 [column]
   ui = auto
 [branch]
   sort = -committerdate
 [tag]
   sort = version:refname
-[init]
-  defaultBranch = main
+[help]
+  autocorrect = prompt
+
+## diffing and merging
+
 [diff]
   algorithm = histogram
   colorMoved = plain
   mnemonicPrefix = true
   renames = true
-[push]
-  default = simple
-  autoSetupRemote = true
-  followTags = true
+[merge]
+  conflictstyle = zdiff3
+[rerere]
+  enabled = true
+  autoupdate = true
+
+## talking to remotes
+
 [fetch]
   prune = true
   pruneTags = true
   all = true
+[push]
+  default = simple
+  autoSetupRemote = true
+  followTags = true
+[pull]
+  rebase = true
 
-# why the hell not?
+## committing and rewriting
 
-[help]
-  autocorrect = prompt
 [commit]
   verbose = true
-[rerere]
-  enabled = true
-  autoupdate = true
-[core]
-  excludesfile = ~/.gitignore
 [rebase]
   autoSquash = true
   autoStash = true
   updateRefs = true
 
-# a matter of taste (uncomment if you dare)
+## aliases and url short forms
 
-[core]
-  fsmonitor = true
-  # untrackedCache = true
-[merge]
-  conflictstyle = zdiff3
-[pull]
-  rebase = true
+[alias]
+  root = rev-parse --show-toplevel
+  # opt-in difftastic: as diff.external it breaks everything that parses unified diffs
+  difft = -c diff.external='difft --display inline' diff
+[url "git@github.com:"]
+  insteadOf = @gh:
+[url "https://github.com/"]
+  insteadOf = gh://
+
+## third-party tools
+
+[delta]
+  navigate = true    # use n and N to move between diff sections
+  hyperlinks = true
+  features = line-numbers decorations
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
+[delta "magit-delta"]
+  # magit doesn't like line numbers: https://github.com/dandavison/magit-delta/issues/13
+  line-numbers = false
+
+[icdiff]                        # TODO: if used??
+  options = --line-numbers
+[filter "lfs"]                  # TODO: auto-added, needed?
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+[protocol "file"]               # TODO: needed?
+  allow = always
