@@ -1,0 +1,12 @@
+[Unit]
+Description=Tick background git maintenance every 15 minutes
+
+[Timer]
+# test with `systemd-analyze calendar '*:0/15'`
+OnCalendar=*:0/15
+# unlike the neighbouring timers: a sleeping laptop should catch up once on
+# resume rather than silently skip the window
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Background git fetch + maintenance. Ticks every 15 min; the driver decides
+  what is actually due (see ~/.config/git-maintenance/config.toml).
+
+    launchctl bootstrap gui/(id -u) ~/Library/LaunchAgents/dev.radu.git-maintenance.plist
+    launchctl kickstart -p gui/(id -u)/dev.radu.git-maintenance    # force a tick
+    launchctl bootout gui/(id -u)/dev.radu.git-maintenance         # disable
+
+  EnvironmentVariables adds to the gui/$UID domain environment rather than
+  replacing it, so SSH_AUTH_SOCK is still inherited and ssh remotes authenticate.
+  PATH has to be set explicitly: launchd jobs get a bare one, and the
+  `#!/usr/bin/env -S uv run --script` shebang has to find uv. mise's shims dir is
+  used rather than a pinned install path so it survives uv upgrades.
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>dev.radu.git-maintenance</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/radu/.local/bin/git_maintenance_tick.py</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/Users/radu/.local/share/mise/shims:/Users/radu/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
+	<key>StartInterval</key>
+	<integer>900</integer>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>LowPriorityIO</key>
+	<true/>
+	<key>Nice</key>
+	<integer>5</integer>
+	<key>StandardOutPath</key>
+	<string>/Users/radu/Library/Logs/git-maintenance/tick.out.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/radu/Library/Logs/git-maintenance/tick.err.log</string>
+</dict>
+</plist>

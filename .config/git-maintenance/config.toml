@@ -1,0 +1,68 @@
+# Background git fetch + maintenance schedule.
+#
+# Driven by ~/.local/bin/git_maintenance_tick.py, which a scheduler wakes every
+# 15 minutes; the script decides what is actually due. Each repo gets a fetch
+# interval for business hours and a relaxed one for everything else (relaxed,
+# never off), plus daily and weekly `git maintenance` housekeeping.
+#
+#   git_maintenance_tick.py --status                # what's scheduled, what's stale
+#   git_maintenance_tick.py --dry-run               # what the next tick would do
+#   git_maintenance_tick.py --force --repo ~/dev/x  # run one repo right now
+#   git_maintenance_tick.py --status --at 2026-08-04T22:00   # simulate a clock
+#
+# Enable the scheduler (once per machine, after `dotup`):
+#
+#   macOS   launchctl bootstrap gui/(id -u) ~/Library/LaunchAgents/dev.radu.git-maintenance.plist
+#           launchctl kickstart -p gui/(id -u)/dev.radu.git-maintenance   # force a tick
+#           logs: ~/Library/Logs/git-maintenance/tick.{out,err}.log
+#
+#   Linux   systemctl --user enable --now git-maintenance.timer
+#           systemctl --user list-timers git-maintenance
+#           logs: journalctl --user -u git-maintenance
+#
+# Machine-specific repos belong in config.local.toml, which is merged over this
+# file ([defaults] and [business_hours] keys override; [[repo]] entries add).
+# Keep it in the private-dots env so `dot` links it in beside this one, exactly
+# like .config/git/config + config.local:
+#
+#   ~/.dots/private-dots/.config/git-maintenance/config.local.toml
+#
+# Intervals take a unit suffix: s, m, h, d, w. Anything shorter than the 15m
+# scheduler tick is effectively 15m.
+
+[defaults]
+business = "1h"
+off      = "8h"
+daily    = "24h"    # loose-objects + incremental-repack
+weekly   = "7d"     # pack-refs
+
+# Anything outside this window — nights, weekends — uses the `off` interval.
+[business_hours]
+days  = "mon-fri"
+start = "09:00"
+end   = "18:00"
+
+# `path` is a literal path or a glob. `*` does not cross a directory separator,
+# so ~/dev/* and ~/dev/oss/* are separate entries. The most specific match wins:
+# a literal path beats a glob, and a longer glob beats a shorter one.
+
+[[repo]]
+path     = "~/.dots/dotfiles"
+business = "30m"
+off      = "6h"
+
+[[repo]]
+path     = "~/.dots/private-dots"
+business = "30m"
+off      = "6h"
+
+[[repo]]                        # work repos, same root git_fetch_status.py scans
+path = "~/dev/*"
+
+[[repo]]                        # third-party clones: upstreams I read, not repos I push
+path     = "~/dev/oss/*"
+business = "6h"
+off      = "24h"
+
+[[repo]]
+path = "~/dev/jj/*"

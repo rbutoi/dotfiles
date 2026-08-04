@@ -1,0 +1,11 @@
+[Unit]
+Description=Background git fetch + maintenance for configured repos
+
+[Service]
+Type=oneshot
+# PATH is explicit so the `env -S uv run --script` shebang can find uv
+Environment=PATH=/home/radu/.local/share/mise/shims:/home/radu/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/radu/.local/bin/git_maintenance_tick.py
+TimeoutSec=1800
+Nice=5
+IOSchedulingClass=idle
