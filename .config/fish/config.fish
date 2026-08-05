@@ -60,6 +60,29 @@ function waitpid --description "Wait for a specific PID to finish"
     gtail --pid=$argv[1] -f /dev/null
 end
 
+function prs-restale --description "My open PRs whose approvals were dismissed (need re-approval)"
+    begin
+        printf 'PR\tLOST APPROVALS FROM\tTITLE\n'
+        # $E/$B are ESC and BEL, built via implode to dodge shell/jq escaping.
+        # Title is an OSC-8 hyperlink; it must stay the last column so the
+        # non-printing bytes don't throw off column(1)'s width math.
+        gh api graphql -f query='{viewer{pullRequests(states:OPEN,first:50,orderBy:{field:UPDATED_AT,direction:DESC}){nodes{
+            url title number reviewDecision repository{nameWithOwner}
+            timelineItems(itemTypes:[REVIEW_DISMISSED_EVENT],first:20){
+              nodes{...on ReviewDismissedEvent{previousReviewState review{author{login}}}}}}}}}' \
+            --jq '([27]|implode) as $E | ([7]|implode) as $B
+                | .data.viewer.pullRequests.nodes[]
+                | select(.reviewDecision != "APPROVED")
+                | [.timelineItems.nodes[]
+                   | select(.previousReviewState == "APPROVED")
+                   | .review.author.login // "?"] as $who
+                | select(($who | length) > 0)
+                | ["\(.repository.nameWithOwner)#\(.number)",
+                   ($who | unique | join(", ")),
+                   "\($E)]8;;\(.url)\($B)\(.title)\($E)]8;;\($B)"] | @tsv'
+    end | column -ts \t
+end
+
 alias clipcp fish_clipboard_copy
 
 #####################
