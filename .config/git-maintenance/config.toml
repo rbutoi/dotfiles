@@ -39,30 +39,39 @@ weekly   = "7d"     # pack-refs
 # Anything outside this window — nights, weekends — uses the `off` interval.
 [business_hours]
 days  = "mon-fri"
-start = "09:00"
-end   = "18:00"
+start = "07:00"
+end   = "19:00"
 
-# `path` is a literal path or a glob. `*` does not cross a directory separator,
-# so ~/dev/* and ~/dev/oss/* are separate entries. The most specific match wins:
-# a literal path beats a glob, and a longer glob beats a shorter one.
+# `path` names repos in one of three ways. `depth` is a separate key on its own
+# line — TOML has no `path = "~/dev", depth = 1` form:
+#
+#   path = "~/dev/repo"        one repo
+#
+#   path = "~/dev/*"           a glob; `*` does not cross a `/`, so this is
+#                              exactly the direct children, never ~/dev/*/*
+#
+#   path  = "~/dev"            a root to scan below: 1 = direct children,
+#   depth = 2                  2 = children and grandchildren, 0 = unlimited
+#
+# A scan stops at each repo it finds and never looks inside it, so vendored
+# checkouts and submodules stay out. `~/dev/*` and `~/dev` + depth 1 are the
+# same set; depth 2 also pulls in ~/dev/oss/*, ~/dev/jj/* and so on.
+#
+# Two traps worth knowing:
+#
+#   - Combining them scans below *each* glob match, so `~/dev/*` with depth 1
+#     means ~/dev/*/* too. For direct children only, use one or the other.
+#   - A root that is itself a repo is taken as-is and not descended into. That
+#     is why ~/.dots below is a glob: ~/.dots is a repo, so scanning it would
+#     match only ~/.dots and miss dotfiles and private-dots.
+#
+# When several entries match one repo the most specific wins: an exact path
+# beats a glob or a scan, then the longer pattern, then the later entry — so a
+# broad scan can be overridden for one subtree or one repo.
 
-[[repo]]
-path     = "~/.dots/dotfiles"
-business = "30m"
-off      = "6h"
+[[repo]]                        # dotfiles + private-dots (see the note above)
+path     = "~/.dots/*"
 
-[[repo]]
-path     = "~/.dots/private-dots"
-business = "30m"
-off      = "6h"
-
-[[repo]]                        # work repos, same root git_fetch_status.py scans
-path = "~/dev/*"
-
-[[repo]]                        # third-party clones: upstreams I read, not repos I push
-path     = "~/dev/oss/*"
-business = "6h"
-off      = "24h"
-
-[[repo]]
-path = "~/dev/jj/*"
+[[repo]]                        # direct children only, no ~/dev/*/*
+path     = "~/dev/*"
+business = "15m"

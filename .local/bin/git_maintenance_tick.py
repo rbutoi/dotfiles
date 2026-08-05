@@ -43,6 +43,19 @@ Config, later file winning (the .local one is machine-specific, usually untracke
     ${XDG_CONFIG_HOME:-~/.config}/git-maintenance/config.toml
     ${XDG_CONFIG_HOME:-~/.config}/git-maintenance/config.local.toml
 
+A [[repo]] entry names repos three ways. Without `depth`, `path` is a literal
+path or a glob, and each match is itself a repo (`*` does not cross a `/`, so
+~/dev/* is exactly the direct children). With `depth`, `path` is a root to scan
+below: 1 = direct children, 2 = children and grandchildren, 0 = unlimited. A
+scan never descends into a repo, so vendored checkouts inside one stay out.
+
+    path = "~/dev/*"                # depth-1 equivalent, spelled as a glob
+    path = "~/dev", depth = 1       # the same set
+    path = "~/dev", depth = 2       # also ~/dev/oss/*, ~/dev/jj/*, ...
+
+When several entries match one repo the most specific wins: an exact path beats
+a glob or a scan, then the longer pattern, then the later entry.
+
 Usage:
     git_maintenance_tick.py                 # a tick: run what's due; silent if nothing is
     git_maintenance_tick.py --status        # table: interval in effect, last run, next due
@@ -200,7 +213,10 @@ class BusinessHours:
 
 @dataclass
 class Rule:
-    """One [[repo]] entry: a literal path or a glob, plus its intervals."""
+    """
+    One [[repo]] entry: a literal path, a glob, or (with `depth`) a root to
+    scan, plus its intervals.
+    """
 
     pattern: str
     business: int
@@ -209,10 +225,19 @@ class Rule:
     weekly: int
     order: int  # position across the merged config files; later wins ties
     source: str
+    depth: int | None = None  # None = pattern names repos; else scan beneath it
 
     @property
     def is_glob(self) -> bool:
         return any(ch in self.pattern for ch in GLOB_CHARS)
+
+    @property
+    def matches_many(self) -> bool:
+        """
+        A glob or a depth scan stands in for a whole set of repos; a bare path
+        names exactly one, and so should win over either when both match.
+        """
+        return self.is_glob or self.depth is not None
 
     def fetch_interval(self, business: bool) -> int:
         return self.business if business else self.off
@@ -222,8 +247,12 @@ class Rule:
 
     @property
     def specificity(self) -> tuple[int, int, int]:
-        """Literal paths beat globs; longer patterns beat shorter; later beats earlier."""
-        return (0 if self.is_glob else 1, len(self.pattern), self.order)
+        """
+        Exact paths beat globs and scans; longer patterns beat shorter; later
+        beats earlier. So `~/dev` depth 2 loses to `~/dev/oss/*`, which in turn
+        loses to a bare `~/dev/oss/gitui`.
+        """
+        return (0 if self.matches_many else 1, len(self.pattern), self.order)
 
 
 @dataclass
@@ -314,9 +343,17 @@ def load_config(paths: list[Path]) -> Config:
         if "path" not in entry:
             raise ValueError(f"{source}: a [[repo]] entry is missing `path`")
         pattern = str(entry["path"])
+        depth = entry.get("depth")
+        if depth is not None:
+            if not isinstance(depth, int) or isinstance(depth, bool) or depth < 0:
+                raise ValueError(
+                    f"{pattern}.depth: expected a non-negative integer "
+                    f"(1 = direct children, 0 = unlimited), got {depth!r}"
+                )
         rules.append(
             Rule(
                 pattern=pattern,
+                depth=depth,
                 business=parse_interval(
                     entry.get("business", defaults["business"]), f"{pattern}.business"
                 ),
@@ -350,6 +387,38 @@ def is_git_repo(path: Path) -> bool:
     return (path / "HEAD").is_file() and (path / "objects").is_dir()
 
 
+def find_repos_under(root: Path, max_depth: int, skipped_jj: list[Path]) -> list[Path]:
+    """
+    Repos at most `max_depth` levels below `root` — 1 = direct children,
+    0 = unlimited. Mirrors find_repos() in git_fetch_status.py, including the
+    important part: a repo is never descended into, so vendored checkouts and
+    submodules inside one stay out of the list.
+    """
+    found: list[Path] = []
+
+    def walk(directory: Path, depth: int) -> None:
+        try:
+            entries = sorted(
+                (e for e in os.scandir(directory) if e.is_dir(follow_symlinks=False)),
+                key=lambda e: e.name,
+            )
+        except (PermissionError, FileNotFoundError, NotADirectoryError, OSError):
+            return
+        for entry in entries:
+            path = Path(entry.path)
+            if is_git_repo(path):
+                found.append(path)
+                continue  # don't descend into a repo
+            if (path / ".jj").is_dir():
+                skipped_jj.append(path)
+                continue
+            if max_depth == 0 or depth < max_depth:
+                walk(path, depth + 1)
+
+    walk(root, 1)
+    return found
+
+
 def resolve_repos(config: Config) -> tuple[dict[Path, Rule], list[Path]]:
     """
     Expand every rule's pattern and pick the most specific rule per repo.
@@ -360,23 +429,33 @@ def resolve_repos(config: Config) -> tuple[dict[Path, Rule], list[Path]]:
 
     for rule in config.rules:
         pattern = os.path.expanduser(rule.pattern)
-        matches = (
-            sorted(glob.glob(pattern)) if rule.is_glob else [pattern]
-        )
-        for match in matches:
-            path = Path(match)
-            if not path.is_dir():
-                continue
-            path = path.resolve()
-            if not is_git_repo(path):
-                # A jj repo without a colocated .git can't be fetched with git.
-                if (path / ".jj").is_dir() and path not in skipped_jj:
-                    skipped_jj.append(path)
-                continue
-            if path not in best or rule.specificity > best[path].specificity:
-                best[path] = rule
+        starts = sorted(glob.glob(pattern)) if rule.is_glob else [pattern]
 
-    return best, skipped_jj
+        for start in starts:
+            root = Path(start)
+            if not root.is_dir():
+                continue
+            root = root.resolve()
+
+            if rule.depth is None or is_git_repo(root):
+                # Either the pattern names repos directly, or a scanned root
+                # turned out to be one itself — take it rather than looking
+                # inside it, which is what `~/dev/*` with a depth wants.
+                candidates = [root]
+            else:
+                candidates = find_repos_under(root, rule.depth, skipped_jj)
+
+            for path in candidates:
+                if not is_git_repo(path):
+                    # A jj repo without a colocated .git can't be fetched with git.
+                    if (path / ".jj").is_dir():
+                        skipped_jj.append(path)
+                    continue
+                if path not in best or rule.specificity > best[path].specificity:
+                    best[path] = rule
+
+    # dedup while keeping the order they were found in
+    return best, list(dict.fromkeys(skipped_jj))
 
 
 # ---- state -----------------------------------------------------------------
