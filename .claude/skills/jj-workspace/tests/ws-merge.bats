@@ -438,8 +438,9 @@ load 'helper'
   ( cd "$repo" && printf 'm\n' >m.txt && jj commit -m 'main work' >/dev/null 2>&1 )
   root=$(env -C "$ws" jj log --no-pager --no-graph -r "$STACK_ROOT" -T 'change_id.short()')
   env -C "$repo" "$scripts/ws-merge.sh" --root "$root" -m 'Merge feat' --yes >/dev/null 2>&1
-  # Standing on the merge makes `default@-` mean both parents. Resolving that to the merge is
-  # what lets this reach the real answer instead of dying on the ambiguity.
+  # No --no-advance, so the merge was sealed and `default@-` is a single commit — this exercises
+  # the plain already-joined path, NOT resolve_onto's fallback. That one is covered by the two
+  # --no-advance tests below; don't read this as duplicating them.
   run env -C "$repo" "$scripts/ws-merge.sh" --root "$root"
   [[ "$output" == *'nothing to do'* ]]
 }

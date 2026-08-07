@@ -28,9 +28,9 @@
 #   put forks the mainline instead of extending it. --no-advance skips that; an @ with
 #   uncommitted changes is never rewritten, only reported, and neither is another workspace's.
 #
-# Default destination is `default@-` — the main workspace's newest *committed* revision. When
-# that workspace is standing on an EMPTY merge — the state a merge here leaves behind — `@-`
-# means both parents, and the destination is the merge itself; see resolve_onto.
+# Default destination is `default@-` — the main workspace's newest *committed* revision. If that
+# workspace is standing on an empty merge, `@-` means both parents and the destination is the
+# merge itself; see resolve_onto and is_empty_merge in _common.sh.
 # Prints the plan and stops; pass --yes to execute.
 set -euo pipefail
 . "$(dirname "$0")/_common.sh"
@@ -42,7 +42,6 @@ msg=''
 yes=''
 no_advance=''
 ws_arg=''
-mode_arg=''
 while [ $# -gt 0 ]; do
   case "$1" in
     --root)
@@ -59,7 +58,6 @@ while [ $# -gt 0 ]; do
       ;;
     --merge | --rebase)
       mode="${1#--}"
-      mode_arg="$1" # kept verbatim: the re-run line should say what was asked for, not what auto picked
       shift
       ;;
     --yes)
@@ -85,32 +83,30 @@ done
 
 here_root=$(require_repo)
 
-# `--onto` needs its own error path rather than plain `one()`: the default `default@-` turns
-# AMBIGUOUS the moment that workspace is standing on a merge commit, because `@-` then means
-# both of its parents. That reads as a nonsense error unless it's explained.
-#
-# Explained isn't enough, though — standing on a merge is precisely the state THIS script's
-# merge mode leaves behind, so whoever integrated last is sitting on the join and every
-# subsequent run hits it. When that @ is EMPTY the ambiguity has an answer: the merge itself.
-# It carries no work of its own, only the join, and it is the single commit that has both
-# parents' lines in it — landing on either parent alone would drop the other side from the
-# result. A NON-empty @ there is somebody's conflict resolution or WIP, and then there is
-# genuinely nothing to pick, so that still fails.
+# `--onto` needs its own error path rather than plain `one()`: `default@-` turns AMBIGUOUS the
+# moment that workspace stands on a merge, because `@-` then means both of its parents. That
+# reads as a nonsense error unless it's explained — and when the merge is EMPTY it has an answer
+# (is_empty_merge in _common.sh makes the case), which this substitutes without touching the
+# other workspace. A NON-empty @ there is somebody's conflict resolution or WIP, so there is
+# genuinely nothing to pick and it still fails.
 resolve_onto() {
-  local ids target
+  local ids target target_id
   ids=$(jjq "$1" 'change_id.shortest() ++ "\n"') || die "could not resolve --onto: $1"
   [ -n "$ids" ] || die "--onto \"$1\" matched no commit"
   if [[ $ids == *$'\n'* ]]; then
     # `${1%@-}@` turns `default@-` into `default@`, and a bare `@-` into `@` — the commit whose
-    # two parents are what the revset just matched.
+    # two parents are what the revset just matched. The predicate rides *in* the revset rather
+    # than in a separate is_empty_merge call, because this site needs the id as well: asking
+    # once for "the id, if it is an empty merge" answers both in one jj invocation.
     case "$1" in
       *@-)
         target="${1%@-}@"
-        if has "$target & merges() & empty()"; then
+        target_id=$(jjq "$target & merges() & empty()" 'change_id.shortest()')
+        if [ -n "$target_id" ]; then
           printf 'note: "%s" means both parents — %s is an empty merge commit.\n' "$1" "$target" >&2
           printf '      Using that merge itself as the destination: it holds no work of its own, and\n' >&2
           printf '      building on either parent alone would drop the other side of the join.\n' >&2
-          jjq "$target" 'change_id.shortest()'
+          printf '%s' "$target_id"
           return 0
         fi
         ;;
@@ -139,8 +135,11 @@ ws_at() { jj workspace list --no-pager -T 'if(target.contained_in("'"$1"'"), nam
 # work itself, so there is nothing there to lose. Anything else is reported for them to move —
 # this script still never rewrites somebody's uncommitted state.
 advance_ws() {
-  local ws=$1 tip=$2 path
-  path=$(jj workspace root --name "$ws" 2>/dev/null) || return 0
+  local ws=$1 tip=$2 path=${3:-}
+  local -a cmd
+  # $3 is the workspace root when the caller already looked it up — every caller had to, to decide
+  # this workspace wasn't the one we're standing in.
+  [ -n "$path" ] || path=$(jj workspace root --name "$ws" 2>/dev/null) || return 0
   # Another workspace's edits are not in the graph until something runs jj THERE: jj snapshots
   # the working copy it is standing in, and only that one. So asking "is their @ empty?" from
   # here answers about the last time they ran a command — which is precisely backwards for the
@@ -159,14 +158,15 @@ advance_ws() {
   fi
   # An @ that is an ANCESTOR of the tip can't be rebased onto its own descendant — and shouldn't
   # be. That's the empty-merge destination: part of the history now, not a spare tip. A fresh
-  # empty @ above it is what continues the line there.
+  # empty @ above it is what continues the line there. Pick the command, then run it once, so the
+  # failure advice is written in one place and can't drift from what was actually attempted.
   if has "${ws}@ & ::${tip}"; then
-    run_cmd env -C "$path" jj new "$tip" ||
-      { warn "workspace $ws: could not advance its @ — cd $path; jj new $tip"; return 0; }
+    cmd=(jj new "$tip")
   else
-    run_cmd env -C "$path" jj rebase -r @ -d "$tip" ||
-      { warn "workspace $ws: could not advance its @ — cd $path; jj rebase -r @ -d $tip"; return 0; }
+    cmd=(jj rebase -r @ -d "$tip")
   fi
+  run_cmd env -C "$path" "${cmd[@]}" ||
+    { warn "workspace $ws: could not advance its @ — cd $path; ${cmd[*]}"; return 0; }
   printf 'workspace %s now sits on %s, and its checkout was updated with it — anything watching those files reloads.\n' \
     "$ws" "$tip"
 }
@@ -182,13 +182,16 @@ onto_id=$(resolve_onto "$onto")
 # uncommitted content, and an empty commit has none; the same reasoning holds when someone
 # names such an @ outright, so this tests the commit rather than how we got to it.
 owner=$(ws_at "$onto_id")
+owner_path=''
 if [ -n "$owner" ]; then
   owner="${owner%%$'\n'*}"
-  has "$onto_id & merges() & empty()" ||
+  is_empty_merge "$onto_id" ||
     die "--onto resolves to the working-copy commit of workspace '$owner'. Wait for it to be committed, then use '${owner}@-'."
   # Allowed, but not silently: that @ is never rewritten, it just stops being the tip once the
-  # integration lands as its child. Whoever is in there catches up with `jj new`.
-  [ "$(jj workspace root --name "$owner" 2>/dev/null)" = "$here_root" ] ||
+  # integration lands as its child. Whoever is in there catches up with `jj new`. The path is kept
+  # because the `beside` block below and advance_ws both need it, and it can't change under us.
+  owner_path=$(jj workspace root --name "$owner" 2>/dev/null) || owner_path=''
+  [ "$owner_path" = "$here_root" ] ||
     warn "destination is workspace '$owner's own @ (an empty merge). It isn't touched, but it stops being the tip — that workspace continues the line with \`jj new\`."
 fi
 
@@ -201,7 +204,13 @@ line_from() { printf 'roots(%s..%s)' "$onto_id" "$1"; }
 # ...and "does that line hold anything worth integrating". Committed changes only: a workspace's
 # @ is uncommitted state, so counting it would make every dirty working copy look like a stack —
 # including this one, which would then be integrated into itself.
-has_work() { has "(${onto_id}..${1}) ~ empty() ~ working_copies()"; }
+COMMITTED='~ empty() ~ working_copies()' # the same exclusion committed_tip applies, named once
+has_work() { has "(${onto_id}..${1}) $COMMITTED"; }
+# The newest COMMITTED change on a stack: the merge parent, and the destination every @ move
+# builds on. Never the trailing empty @ a workspace leaves at its tip, never another workspace's
+# WIP. One derivation, so the merge path and the rebase path cannot drift about which commit the
+# tip is — they used to spell the same set two ways (`X::` vs `descendants(X)`).
+committed_tip() { jjq "heads(descendants($1) $COMMITTED)" 'change_id.shortest() ++ "\n"'; }
 
 [ -z "$root" ] || [ -z "$ws_arg" ] || die "name a workspace or pass --root, not both"
 ws_name='' # the stack's workspace, where one is known: some advice only makes sense with a name
@@ -248,12 +257,24 @@ printf 'stack: %s (%s), onto %s\n' "$root_id" "$from" "$onto_id"
 # A workspace whose @ merely sits under <onto> is only *based* there — which every freshly
 # created one is, since ws-create.sh bases on @- — and moving those would be wrong, so a bare
 # `children($onto_id)` set would be mostly noise.
+#
+# --no-advance is tested FIRST because it voids the whole answer: checked last, the two queries
+# below run only to have their result thrown away.
 beside=''
-case "$onto" in ?*@-) beside="${onto%@-}" ;; esac
-[ -z "$owner" ] || beside="$owner"
-[ -z "$beside" ] || has "(${beside}@ & ($onto_id | children($onto_id))) ~ descendants($root_id)" || beside=''
-[ -z "$beside" ] || [ "$(jj workspace root --name "$beside" 2>/dev/null)" != "$here_root" ] || beside=''
-[ -z "$no_advance" ] || beside=''
+beside_path=''
+if [ -z "$no_advance" ]; then
+  if [ -n "$owner" ]; then
+    beside="$owner" # the empty-merge fallback: the destination IS that workspace's @
+    beside_path="$owner_path"
+  else
+    case "$onto" in ?*@-) beside="${onto%@-}" ;; esac
+  fi
+  [ -z "$beside" ] || has "(${beside}@ & ($onto_id | children($onto_id))) ~ descendants($root_id)" || beside=''
+  if [ -n "$beside" ]; then
+    [ -n "$beside_path" ] || beside_path=$(jj workspace root --name "$beside" 2>/dev/null) || beside_path=''
+    [ "$beside_path" != "$here_root" ] || beside=''
+  fi
+fi
 
 # The dry run has to end in a line worth pasting, so echo back the invocation actually made
 # rather than the fully-resolved one. Every id it would spell out is already printed above, and
@@ -262,15 +283,16 @@ rerun="$0"
 [ -z "$ws_arg" ] || rerun="$rerun $ws_arg"
 [ "$from" != '--root' ] || rerun="$rerun --root $root_id"
 [ "$onto" = 'default@-' ] || rerun="$rerun --onto $onto"
-[ -z "$mode_arg" ] || rerun="$rerun $mode_arg"
+# Read before the auto-resolution below, so `$mode` is still what was *asked for* rather than
+# what auto picked — which is what makes a separate "as typed" copy of it unnecessary.
+[ "$mode" = auto ] || rerun="$rerun --$mode"
 [ -z "$no_advance" ] || rerun="$rerun --no-advance"
 
 # Measure the stack before choosing a shape. Also the merge path's own inputs, so it happens
 # once, here, rather than twice.
 if [ "$mode" != rebase ]; then
-  # The merge parent is the newest *committed* commit of the stack — not the trailing empty @ the
-  # workspace leaves at its tip, and not any workspace @ holding WIP.
-  tip_set=$(jjq "heads(${root_id}:: ~ empty() ~ working_copies())" 'change_id.shortest() ++ "\n"' || true)
+  # The merge parent is the newest *committed* commit of the stack (see committed_tip).
+  tip_set=$(committed_tip "$root_id" || true)
   if [ -z "$tip_set" ]; then
     # The same empty set, two situations. Once the root descends from the destination the graph
     # can no longer tell "never committed anything" from "all of it already landed" — integrating
@@ -358,10 +380,10 @@ if [ "$mode" = rebase ]; then
     printf '\nrebased.\n'
   fi
 
-  # The tip to build on, by the same rule the merge path picks a merge parent: the newest
-  # *committed* change of the stack — never the trailing empty @ a workspace leaves behind, and
-  # never another workspace's WIP. Read after the move, since that's what it has to describe.
-  new_tip=$(jjq "heads(descendants($root_id) ~ empty() ~ working_copies())" 'change_id.shortest() ++ "\n"' || true)
+  # The tip to build on, by literally the same rule the merge path picks a merge parent — same
+  # helper, so "the same rule" is code rather than a claim in a comment. Read AFTER the move,
+  # since that's the shape it has to describe.
+  new_tip=$(committed_tip "$root_id" || true)
   # As in _common.sh's one(): $() strips trailing newlines, so an embedded one means 2+ heads —
   # and then there is no single tip to build on, only a choice for a human to make.
   if [ -z "$new_tip" ] || [[ $new_tip == *$'\n'* ]]; then
@@ -399,7 +421,7 @@ if [ "$mode" = rebase ]; then
   # The mainline @ when the rebase was run from the feature workspace — the usual --rebase flow.
   # It was continuing <onto> and the stack has now landed on top of it, so it is beside the work
   # rather than above it, and its checkout shows the tree from before the integration.
-  [ -z "$beside" ] || advance_ws "$beside" "$new_tip"
+  [ -z "$beside" ] || advance_ws "$beside" "$new_tip" "$beside_path"
   exit 0
 fi
 
@@ -465,18 +487,18 @@ jj log --no-pager -r "@ | parents(@)" || true
 # broken together — the only way a *clean* merge fails a gate) lands as its own commit above the
 # merge, which is a truer description of it than an amended merge. --no-advance opts out, same
 # as for the @ moves: it is the same "leave a trailing empty @" decision.
-merge_id=$(jjq '@' 'change_id.shortest()')
-if [ -z "$no_advance" ]; then
-  run_cmd jj new
-  printf 'sealed the merge as %s; this workspace continues on a fresh empty @ above it.\n' "$merge_id"
+merge_id=$(jjq '@' 'change_id.shortest()') # read before `jj new` moves @
+if [ -n "$no_advance" ]; then
+  # The one path that still leaves an @ on a merge, so it is also the one that has to say so.
+  printf '\nRun the project gate here, then `jj new` to leave a fresh empty @ on top (--no-advance\nskipped that, so `@-` here means both parents until you do).\nTo undo: jj undo\n'
+  exit 0
 fi
+
+run_cmd jj new
+printf 'sealed the merge as %s; this workspace continues on a fresh empty @ above it.\n' "$merge_id"
 
 # The other workspace, if one was continuing this line: now safe to hang off the merge, since
 # the step above turned it into a commit rather than a working copy.
-[ -z "$beside" ] || advance_ws "$beside" "$merge_id"
+[ -z "$beside" ] || advance_ws "$beside" "$merge_id" "$beside_path"
 
-if [ -z "$no_advance" ]; then
-  printf '\nRun the project gate here — same tree as the merge. To undo the whole operation: jj undo\n'
-else
-  printf '\nRun the project gate here, then `jj new` to leave a fresh empty @ on top (--no-advance\nskipped that, so `@-` here means both parents until you do).\nTo undo: jj undo\n'
-fi
+printf '\nRun the project gate here — same tree as the merge. To undo the whole operation: jj undo\n'

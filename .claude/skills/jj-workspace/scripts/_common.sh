@@ -57,6 +57,19 @@ jjq() { jj log --no-pager --no-graph -r "$1" -T "$2" 2>/dev/null; }
 # template emits one '1' per match and a 2-match revset must still count as a match.
 has() { [ -n "$(jjq "$1" '1')" ]; }
 
+# Is this commit an EMPTY MERGE — and here is the argument, once, that both scripts key off:
+#
+# `<rev>-` on a merge means BOTH of its parents, so any revset built that way turns ambiguous.
+# Neither parent is the answer, because building on one drops the other side of the join. The
+# merge itself is: it holds no work of its own — that is what `empty()` establishes — and it is
+# the single commit that has both parents' lines in it. So each caller substitutes it, seals it,
+# or relaxes a guard for it, and the reason is the same reason every time.
+#
+# Reachable by a hand-rolled `jj new A B`, by `ws-merge.sh --no-advance`, or from a merge made
+# before ws-merge.sh started sealing its own — NOT by integrating normally, which seals. The
+# call sites say which of those they are coping with; they don't re-derive this.
+is_empty_merge() { has "$1 & merges() & empty()"; }
+
 # The single change id a revset matches, or die. Worth pre-checking: `jj workspace add` and
 # `jj rebase` given an ambiguous revset fail late, with an error about something else.
 one() {

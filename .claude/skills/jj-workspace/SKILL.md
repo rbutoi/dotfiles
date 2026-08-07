@@ -1,9 +1,22 @@
 ---
 name: jj-workspace
-description: Create and work in an isolated jj workspace (jj's equivalent of a git worktree) so a task can proceed without disturbing the main working copy — typically because another agent, a long build, or a dev server holds it. Use when asked to "make a jj workspace/worktree", to work on something "in parallel", or when a task needs its own checkout of a jj repo. Takes the workspace name as its argument.
+description: Create and work in an isolated jj workspace (jj's equivalent of a git worktree) so a task can proceed without disturbing the main working copy — typically because another agent, a long build, or a dev server holds it. Invoke as /jj-workspace <name>; the workspace is created before Claude reads anything. With no name it creates nothing and just loads the guidance.
+disable-model-invocation: true
+allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/ws-create.sh *)
 ---
 
+!`${CLAUDE_SKILL_DIR}/scripts/ws-create.sh $ARGUMENTS 2>&1`
+
 # jj workspace (parallel checkout)
+
+**The block above is `ws-create.sh`'s real output — it already ran.** Claude Code executes it while
+expanding this file, before any of this text reaches the model, so creating the workspace is not a
+step to decide on or a command to re-run. Read that output for the path, the stack root, and the
+dependency-install line, and relay them. If it reports an error instead (no name given, name taken,
+ambiguous base), nothing was created; say what it said.
+
+(Why that line reads `$ARGUMENTS … 2>&1` and not `$0`, and why `allowed-tools` grants the script:
+`tests/skill-md.bats`, which fails if any of it is undone. Nothing there is actionable mid-task.)
 
 A jj workspace is jj's version of a git worktree: **its own working copy on disk, attached to the
 same repo**. Use one when the main working copy is occupied and shouldn't be touched.
@@ -19,9 +32,22 @@ queries behind each decision stay quiet. Relay those `+` lines when reporting wh
 
 ## The argument is the workspace name
 
-`/jj-workspace <name>` — a short kebab-case slug for the work (`filetree-width`, `flaky-e2e`). If no
-name was given, derive one from the task and say which you picked; only ask if the task is too vague
-to name.
+`/jj-workspace <name>` — a short kebab-case slug for the work (`filetree-width`, `flaky-e2e`).
+Anything after the name goes to the script too, so `/jj-workspace flaky-e2e --base xyz` works.
+
+**Claude cannot derive the name any more, and that is the trade for determinism** — there is
+nothing to derive from yet when the script runs. With no argument it creates nothing and exits with
+"a workspace name is required", which is also **how you read this file on purpose**, for the
+integrate or remove steps below. That path has to stay harmless, because there is no way to load
+this guidance *and* not run the create script. So if the user did mean to create one, propose a slug
+and ask them to re-run `/jj-workspace <slug>` rather than reaching for `ws-create.sh` yourself:
+running it by hand is not wrong, but it splits one thing across two mechanisms, and the next person
+reading the transcript can't tell which one made the workspace.
+
+Claude can no longer load this skill on its own (`disable-model-invocation: true`) — creating a
+workspace is a side effect, and an auto-invoke would be a directory appearing on disk because a task
+merely sounded parallel. The cost is that the integrate and remove guidance is also unreachable
+unless the user invokes it, so it can't be consulted mid-task the way a reference normally would be.
 
 ## Mental model: what is and isn't isolated
 
@@ -42,19 +68,19 @@ not a private branch:
   Reading `<name>@` from elsewhere can show a stale, empty-looking working copy that in fact has
   uncommitted edits. Snapshot first (`cd <ws>; jj status`) before believing it.
 
-## 1. Create
+## 1. Create — already done, above
 
-```fish
-~/.claude/skills/jj-workspace/scripts/ws-create.sh <name>
-```
+What follows is how to read that output, and the one judgement it made on your behalf.
 
 It bases on `@-` — the newest real commit, since the tip `@` is conventionally empty. If `@` is an
-*empty merge* — the state you're in right after integrating anything — `@-` would mean both of its
-parents, so it seals the merge with `jj new` first and bases on that. The tree is unchanged; the
-merge just becomes a real commit instead of a working copy, which is where the new stack belongs.
-The judgement
-call is whether that's the base you want: pass `--base <rev>` to start from somewhere else, and read
-the warnings it prints (an empty base, or uncommitted work in `@` that won't come along). It puts the
+*empty merge*, `@-` would mean both of its parents, so it seals the merge with `jj new` first and
+bases on that: the tree is unchanged, the merge just becomes a real commit instead of a working
+copy, which is where the new stack belongs. The judgement
+call is whether that's the base you want — and since the script has already run, that check is now
+*after the fact*: read the `base:` line and the warnings it printed (an empty base, or uncommitted
+work in `@` that won't come along), and if the base is wrong say so rather than carrying on. Fixing
+it is `ws-remove.sh <name>` then `/jj-workspace <name> --base <rev>`; nothing is committed yet, so
+that costs nothing. It puts the
 workspace in a sibling directory and refuses to nest one inside the repo, where formatters, watchers
 and test runners would scan it. `--help` covers the remaining flags.
 
