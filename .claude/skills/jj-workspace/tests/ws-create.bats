@@ -64,6 +64,41 @@ load 'helper'
   [[ "$output" == *plan* ]]
 }
 
+@test "the primary next step is starting a session in the workspace" {
+  # Claude resets the shell cwd after every call unless the directory is in the session's allowed
+  # set, and a workspace is a SIBLING of the repo, so it never is. Nothing in a skill can call
+  # /add-dir. A session started in the workspace has it as its own cwd, so nothing needs prefixing.
+  repo=$(new_repo)
+  # The script canonicalizes with `pwd -P`, and $BATS_TEST_TMPDIR sits under a symlinked
+  # /var/folders on macOS — so compare against the resolved path, not the one new_repo returned.
+  ws="$(cd "${repo%/*}" && pwd -P)/${repo##*/}-feat"
+  run env -C "$repo" "$scripts/ws-create.sh" feat
+  [[ "$output" == *"cd $ws; claude"* ]]
+  [[ "$output" == *'start a session in it'* ]]
+}
+
+@test "a root lockfile is folded into the launch line, a subproject one is not" {
+  repo=$(new_repo)
+  ( cd "$repo" && mkdir -p sub && : >pnpm-lock.yaml && : >sub/uv.lock &&
+    jj commit -m 'locks' >/dev/null 2>&1 )
+  ws="$(cd "${repo%/*}" && pwd -P)/${repo##*/}-feat"
+  run env -C "$repo" "$scripts/ws-create.sh" feat
+  [[ "$output" == *"cd $ws; pnpm install; claude"* ]]
+  # The subproject one still gets listed, just not inlined — it would need a cd back.
+  [[ "$output" == *'uv sync'* ]]
+  [[ "$output" != *'uv sync; claude'* ]]
+}
+
+@test "the output tells you to commit as you go" {
+  # Observed failure, twice: an agent works in the workspace for a whole task and lands 2-3 logical
+  # changes in one nameless @, because jj auto-snapshots and so nothing ever reads as uncommitted.
+  # SKILL.md says it too, but this output is what's in front of you when work starts.
+  repo=$(new_repo)
+  run env -C "$repo" "$scripts/ws-create.sh" feat
+  [[ "$output" == *'commit after each logical change'* ]]
+  [[ "$output" == *'jj commit -m'* ]]
+}
+
 @test "a duplicate workspace name is refused" {
   repo=$(new_repo)
   env -C "$repo" "$scripts/ws-create.sh" feat >/dev/null 2>&1

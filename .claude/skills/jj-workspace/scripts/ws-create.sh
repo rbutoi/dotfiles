@@ -104,6 +104,7 @@ printf 'stack root:  %s\n' "$stack_root"
 # Detect, suggest, do NOT run: the right command is project-specific and may need a flag.
 printf '\ndependencies (NOT installed — ignored files are not copied):\n'
 found=''
+root_install=''
 while IFS= read -r lock; do
   case "${lock##*/}" in
     pnpm-lock.yaml) cmd='pnpm install' ;;
@@ -114,6 +115,9 @@ while IFS= read -r lock; do
   esac
   printf '  %s -> (cd %s; %s)\n' "$lock" "${lock%/*}" "$cmd"
   found=1
+  # Only a lockfile at the workspace root can be folded into the one-liner below; a subproject
+  # one would need its own cd and back again, which is worse than leaving it listed here.
+  [ "${lock%/*}" != "$path" ] || [ -n "$root_install" ] || root_install="$cmd"
   # Nothing ignored is materialized yet, so node_modules/target/.venv cannot exist — .jj is
   # the only directory here big enough to be worth pruning.
 done < <(find "$path" -maxdepth 3 -name .jj -prune -o \
@@ -121,8 +125,33 @@ done < <(find "$path" -maxdepth 3 -name .jj -prune -o \
 [ -n "$found" ] ||
   printf '  no pnpm/uv/cargo/go lockfile found — check the project'\''s own setup steps\n'
 
-printf '\nwork in it by prefixing every command (the shell cwd resets between tool calls):\n'
+# THE intended next step. A session started in the workspace has it as its own working directory,
+# so `cd` sticks and nothing needs prefixing — the equivalent of `claude --worktree`. Driving the
+# workspace from the session that created it cannot get there: Claude resets the shell cwd after
+# every command unless the directory is in the session's allowed set, and a workspace is created
+# as a SIBLING of the repo, i.e. outside it. `/add-dir` fixes that but has to be typed by the
+# user, and nothing in a skill can call it (no SlashCommand tool; a subprocess can't reach the
+# in-memory set; command hooks can't emit permission updates). So: new session.
+printf '\nstart a session in it — this is how the workspace is meant to be driven:\n'
+if [ -n "$root_install" ]; then
+  printf '  cd %s; %s; claude\n' "$path" "$root_install"
+else
+  printf '  cd %s; claude\n' "$path"
+fi
+printf '  # that session has the workspace as its cwd, so no command needs a cd prefix\n'
+
+# The fallback, deliberately second: it works, it is just worse. Kept because the user may want
+# a small change made from here rather than a whole session moved.
+printf '\nor drive it from THIS session, prefixing every command (cwd is reset between calls,\n'
+printf 'because the workspace is outside this session'\''s allowed directories):\n'
 printf '  cd %s; jj st\n' "$path"
+
+# Said here as well as in SKILL.md because this is the output in front of you when work actually
+# starts. jj auto-snapshots @, so there is no staging, no dirty tree, and nothing that ever fails
+# because you forgot — a whole task piles into one nameless change and everything keeps working.
+# The only fix afterwards is `jj split`, which is strictly more work than having committed twice.
+printf '\ncommit after each logical change — jj never nags, @ just silently grows:\n'
+printf "  cd %s; jj commit -m 'area: what changed'\n" "$path"
 # Integrating is the user's call, so print the command rather than implying it's a step to take
 # once the work looks done. The name is what identifies the stack (ws-merge.sh derives the root
 # from it), and a merge commit lands as the *integration* workspace's @, so the line runs from
