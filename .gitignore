@@ -5,6 +5,11 @@
 # as a whole, so a stray one here would land in the working tree
 .config/git-maintenance/config.local.toml
 
+# zsh completion cache. Belongs in $HOME, never here — but something wrote one
+# into this dir once, and `dot` then tried to symlink it over the real ~/.zcompdump
+.zcompdump
+.zcompdump-*
+
 ############################################################################################################
 # https://github.com/github/gitignore/blob/96a44720e8422b56fc195f442316a381bfc6db39/Global/macOS.gitignore #
 ############################################################################################################
