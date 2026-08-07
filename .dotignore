@@ -1,0 +1,15 @@
+# Files in this repo that must never be symlinked into $HOME.
+#
+# Merged over dotfiler's built-in defaults (readme.*, .gitignore, changelog.*,
+# and friends). Each line is a case-insensitive regex matched against the
+# basename, anchored at both ends — not a glob, so '.' matches any character.
+#
+# Being ignored does not unlink anything that is already linked: the file still
+# exists here, so nothing dangles and it simply drops out of the tree. Run
+# `dot prune` after adding a pattern.
+
+# Agent instructions belong to this repo, not to $HOME. A CLAUDE.md at the $HOME
+# root is read as project instructions by any agent session started there, which
+# would silently apply this repo's conventions to unrelated work.
+AGENTS\.md
+CLAUDE\.md
