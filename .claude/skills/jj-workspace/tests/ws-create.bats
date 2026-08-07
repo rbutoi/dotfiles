@@ -79,3 +79,18 @@ load 'helper'
   run env -C "$repo" "$scripts/ws-create.sh" nolock
   [[ "$output" == *'no pnpm/uv/cargo/go lockfile found'* ]]
 }
+
+@test "a workspace can still be created while standing on an empty merge" {
+  # `@-` means both parents there. ws-merge.sh seals its own merges now, so this reaches the state
+  # the way it still survives in the wild: `--no-advance`, a merge made before sealing existed, or
+  # a hand-rolled `jj new A B`.
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 2)
+  root=$(env -C "$ws" jj log --no-pager --no-graph -r "$STACK_ROOT" -T 'change_id.short()')
+  env -C "$repo" "$scripts/ws-merge.sh" --root "$root" --no-advance -m 'Merge feat' --yes >/dev/null 2>&1
+  run env -C "$repo" "$scripts/ws-create.sh" next
+  [ "$status" -eq 0 ]
+  [[ "$output" == *'sealing it into a commit first'* ]]
+  # Based on the merge, so both sides of the join are in the new workspace's tree.
+  [ -f "$repo-next/w2.txt" ]
+}

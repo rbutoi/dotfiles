@@ -63,12 +63,30 @@ case "$path" in
   "$root" | "$root"/*) die "refusing to nest a workspace inside the repo ($path); use a sibling directory" ;;
 esac
 
+# Standing on an empty merge — the state ws-merge.sh leaves behind, so the state you are in
+# right after integrating anything — makes the default base `@-` mean BOTH of that merge's
+# parents, and every workspace created from here would otherwise fail on the ambiguity. Neither
+# parent is the answer: basing on one drops the other side of the join from the new stack's
+# history. The merge is the answer, and sealing it is what makes it nameable — `jj new` leaves
+# it behind as a real commit and costs nothing, since the tree is identical and `@-` is then
+# exactly the tip we wanted. It also restores the "tip @ is empty" shape everything else here
+# assumes. Do it before resolving, so the resolution below sees the fixed graph.
+if [ "$base" = '@-' ] && has '@ & merges() & empty()'; then
+  warn "@ is an empty merge, so '@-' would mean both of its parents; sealing it into a commit first (undo with \`jj undo\`)"
+  run_cmd jj new
+fi
+
 # Resolve the base and ask whether it's empty in one query. A revset matching 0 or 2+ commits
 # would make `jj workspace add` create the directory and *then* fail about something else.
 resolved=$(jjq "$base" 'change_id.shortest() ++ " " ++ if(empty,"empty","nonempty") ++ "\n"') ||
   die "could not resolve base revision: $base"
-[ -n "$resolved" ] && [[ $resolved != *$'\n'* ]] ||
-  die "base revision '$base' must resolve to exactly one commit, got: ${resolved//$'\n'/ }"
+# `${resolved//...}` would spell out the internal "<id> empty|nonempty" pairs, which reads as
+# noise; the ids on their own are what you'd take back to `jj log`.
+[ -n "$resolved" ] && [[ $resolved != *$'\n'* ]] || {
+  ids=''
+  while IFS= read -r line; do [ -z "$line" ] || ids="${ids:+$ids }${line%% *}"; done <<<"$resolved"
+  die "base revision '$base' must resolve to exactly one commit, got: ${ids:-nothing}"
+}
 base_id="${resolved%% *}"
 
 # Two things worth saying out loud rather than silently baking in:

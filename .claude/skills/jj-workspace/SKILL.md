@@ -36,6 +36,8 @@ not a private branch:
   and `<name>@-` its parent — so `default@-` is the main workspace's last *committed* revision.
 - **Never** `jj abandon`, `jj rebase`, `jj describe`, or `jj edit` another workspace's `@` or commits,
   and don't move bookmarks someone else may be building on. That's the one way to actually break them.
+  The single exception `ws-merge.sh` takes is an *empty, childless* `@` after an integration, and it
+  takes it by running jj **in that workspace's own directory** — see step 3.
 - A workspace's `@` in the repo only reflects the last jj command run **with that workspace as cwd**.
   Reading `<name>@` from elsewhere can show a stale, empty-looking working copy that in fact has
   uncommitted edits. Snapshot first (`cd <ws>; jj status`) before believing it.
@@ -46,7 +48,11 @@ not a private branch:
 ~/.claude/skills/jj-workspace/scripts/ws-create.sh <name>
 ```
 
-It bases on `@-` — the newest real commit, since the tip `@` is conventionally empty. The judgement
+It bases on `@-` — the newest real commit, since the tip `@` is conventionally empty. If `@` is an
+*empty merge* — the state you're in right after integrating anything — `@-` would mean both of its
+parents, so it seals the merge with `jj new` first and bases on that. The tree is unchanged; the
+merge just becomes a real commit instead of a working copy, which is where the new stack belongs.
+The judgement
 call is whether that's the base you want: pass `--base <rev>` to start from somewhere else, and read
 the warnings it prints (an empty base, or uncommitted work in `@` that won't come along). It puts the
 workspace in a sibling directory and refuses to nest one inside the repo, where formatters, watchers
@@ -123,33 +129,52 @@ stack no workspace names any more. It prints the stack it chose, and the shape i
 touching anything, and its `--yes` line repeats what you typed rather than the ids it resolved.
 
 **Run it from the integration workspace** (normally the main checkout). That's the right cwd for a
-merge, which lands as *that* workspace's `@` — where conflicts get resolved and the gate gets run —
-and it's the safer default for a rebase too: the feature workspace goes stale, and the script prints
-the exact `jj workspace update-stale` line for it. Getting it the other way round misfiles the merge
+merge, which lands in *that* workspace — its tree is the merged one, which is where the gate runs
+— and it's the safer default for a rebase too: the feature workspace goes stale, and the script
+re-syncs it. Getting it the other way round misfiles the merge
 commit into a workspace you're about to delete. (If you know it's a rebase, running from inside the
 feature workspace avoids the staleness entirely, since jj updates that working copy as it goes.)
+
+**A clean merge is then sealed with `jj new`,** so `@` ends up empty *above* the merge rather than
+on it. That's deliberate and it's free — same tree, so the gate still runs on the merged content —
+and it's what stops `@-` meaning both parents for everything you run here next. A **conflicting**
+merge can't be sealed (the resolution has to happen in `@`, which is the merge), so the script says
+to `jj new` once you've resolved and gated. `--no-advance` opts out of the seal.
 
 **A rebase is two moves, and the second one is easy to miss.** The stack goes *onto* the
 destination — which means it lands *beside* the trailing empty `@` that was sitting on it, not under
 it. Leave that `@` there and the mainline has forked: the integrated commit and your next commit are
 siblings. So the script also moves the `@` of the workspace it runs in on top of the integrated tip,
 and re-running it on an already-joined stack fixes exactly that stranded-`@` state rather than
-reporting "nothing to do". `--no-advance` opts out. Two `@`s it will never rewrite, and instead
-prints a `jj rebase -r @ -d <tip>` line for:
+reporting "nothing to do". `--no-advance` opts out.
 
-- **one with uncommitted changes** — that's work in progress, and moving it can conflict;
-- **another workspace's** — specifically the one `--onto` was derived from (`default@-` → `default`),
-  which is the usual `--rebase`-from-the-feature-workspace case. Hand that line to the human along
-  with the rest. Other siblings go unmentioned deliberately: every fresh workspace is based on
-  `default@-` as well, and none of them was continuing that line.
+**It moves the other workspace's `@` too — and that is about files, not history.** The workspace
+that was continuing the destination's line (the one `--onto` was derived from: `default@-` →
+`default`) ends up beside the work, so its *checkout* still holds the pre-integration tree and any
+dev server watching it goes on serving the old build. So the script moves that `@` as well, by
+running jj **in that workspace's own directory** — which is the whole trick: a `jj rebase -r
+default@` issued from here rewrites the commit but cannot touch the other checkout, leaving it
+stale. In merge mode the merge is *this* workspace's `@`, i.e. uncommitted state, so it seals it
+with `jj new` first rather than hanging another checkout off a working copy still being edited.
+Other siblings are left alone deliberately: every fresh workspace is based on `default@-` too, and
+none of them was continuing that line. Workspaces the rebase moved *under* get
+`jj workspace update-stale` run for them, same reasoning — a sync is not a rewrite.
+
+Two `@`s it still won't rewrite, printing a `jj rebase -r @ -d <tip>` line instead:
+
+- **one with uncommitted changes** — that's work in progress, and moving it can conflict. It
+  snapshots the other workspace first (`jj status` in its directory) before believing it's empty,
+  for the staleness reason above;
+- **one with children of its own** — not a trailing tip, so moving it would drag them along.
 
 Either way the first run only prints a plan. Hand the echoed `--yes` line to the user; don't run it
 yourself (see above).
 
 Destination defaults to `default@-` — the mainline's newest committed revision, and what the stack
-inference above measures "not integrated yet" against; override with `--onto`. It refuses either operation onto a
-workspace's `@` — that's somebody's uncommitted working copy — and no-ops with a clear message when
-the stack is already joined. `jj op undo` reverses the whole thing.
+inference above measures "not integrated yet" against; override with `--onto`. It refuses either
+operation onto a workspace's `@` — that's somebody's uncommitted working copy — unless that `@` is
+an empty merge, which holds no work to lose (below). It no-ops with a clear message when
+the stack is already joined. `jj undo` reverses the whole thing.
 
 Three jj behaviours that don't match git intuitions, all of which the script handles but you'll see:
 
@@ -159,8 +184,13 @@ Three jj behaviours that don't match git intuitions, all of which the script han
   side applied, `+++++++` the other side's content), then any jj command re-snapshots and clears it.
 - **A clean merge commit shows as `(empty)`.** That's correct for a merge, not a failure. A merge you
   resolved conflicts in is non-empty, because the resolution is its own change.
-- **Standing on a merge makes `@-` ambiguous** — it means both parents, so `--onto default@-` starts
-  failing until you `jj new` to leave a fresh empty `@` on top. The script explains this if it hits it.
+- **Standing on a merge makes `@-` ambiguous** — it means both parents. The scripts no longer put
+  you there (see the seal above), but a merge made by hand, or with `--no-advance`, or before that
+  sealing existed, still does — and when the merge is *empty* it has an answer: the merge
+  itself, which holds no work of its own and is the only commit with both parents' lines in it
+  (landing on either parent alone would drop the other side). `ws-merge.sh` resolves to it,
+  `ws-create.sh` seals it into a commit first. A merge that still holds changes is somebody's
+  resolution or WIP, so that one is refused with the reason.
 
 **When another agent holds the main workspace, don't merge for them.** You can't tell whether they're
 finished — there's no way to ask an agent in another directory. Finish your side, then hand the human

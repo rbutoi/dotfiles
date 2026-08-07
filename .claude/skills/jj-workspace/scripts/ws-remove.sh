@@ -93,4 +93,4 @@ fi
 run_cmd jj workspace forget "$name"
 run_cmd rm -rf "$path"
 printf 'forgot workspace %s and deleted %s\n' "$name" "$path"
-printf 'To undo: jj op undo (restores the tracking; the directory stays deleted)\n'
+printf 'To undo: jj undo (restores the tracking; the directory stays deleted)\n'
