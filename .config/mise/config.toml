@@ -2,6 +2,80 @@
 key_repeat = 2
 initial_key_repeat = 20
 
+# System packages, machine-wide and unshimmed — distinct from [tools], which is
+# per-project and version-managed. This supersedes .config/brewfile/Brewfile as
+# the live declaration; that file is a stale June-2025 `brew bundle dump` kept
+# only for history (121 of its 125 formulae aren't installed, having migrated to
+# [tools] without a re-dump). mise pours bottles into /opt/homebrew itself and
+# writes brew-compatible INSTALL_RECEIPT.json, so `brew list/upgrade/uninstall`
+# keep working on everything here and Homebrew stays optional, not required.
+#
+# Work-specific entries live in private-dots conf.d/materia.toml; [bootstrap.packages]
+# merges additively across the config hierarchy, so both repos contribute.
+#
+# Values are "latest" throughout: brew has no version pinning (an "@" in a name
+# like postgresql@17 is part of the formula name, not a pin), so `upgrade` and
+# "install current bottle" are the same operation.
+[bootstrap.packages]
+# shell & core unix
+"brew:bash" = "latest"           # /bin/bash is 3.2; this is 5.x, for scripts that need it
+"brew:coreutils" = "latest"
+"brew:watch" = "latest"
+"brew:zoxide" = "latest"
+
+# git & forge
+"brew:gh" = "latest"
+"brew:git-lfs" = "latest"
+
+# self-management — lets `brew bundle`-less machines bootstrap from mise alone
+"brew:mise" = "latest"
+# needed by the mas: manager below; without it those entries are written but skipped
+"brew:mas" = "latest"
+
+# text, docs, misc CLI
+"brew:aria2" = "latest"
+"brew:gnupg" = "latest"
+"brew:ispell" = "latest"         # emacs spellchecking
+"brew:markdown" = "latest"
+"brew:procs" = "latest"
+"brew:qman" = "latest"
+
+# macOS-specific
+"brew:terminal-notifier" = "latest"
+"brew:xcodes" = "latest"
+
+# Mac App Store, by ADAM ID (no pinning; needs the mas CLI, hence brew:mas above)
+"mas:411643860" = "latest"       # DaisyDisk
+"mas:1527619437" = "latest"      # Maccy
+"mas:1489816366" = "latest"      # Mic Drop
+"mas:1449619230" = "latest"      # Tim
+"mas:1344679160" = "latest"      # Scrobbles for Last.fm
+"mas:497799835" = "latest"       # Xcode
+"mas:409183694" = "latest"       # Keynote
+"mas:409203825" = "latest"       # Numbers
+"mas:409201541" = "latest"       # Pages
+"mas:682658836" = "latest"       # GarageBand
+"mas:408981434" = "latest"       # iMovie
+
+# CASKS STAY WITH HOMEBREW (.config/brewfile/Brewfile) — deliberately, for two
+# unrelated reasons, neither of which applies to the formulae above:
+#
+#  1. mise won't adopt a cask Homebrew already owns. Unlike formulae, where it
+#     reads the Cellar and counts brew-installed kegs as installed, cask state is
+#     mise-private (.mise-cask.toml) and it refuses to seize brew's lifecycle
+#     records: "Homebrew owns this cask; remove it with Homebrew before
+#     installing it with mise". Adopting one means `brew uninstall --cask <x>`
+#     then `mise bootstrap packages apply` — an uninstall/reinstall per app,
+#     which isn't worth it for anything holding local state (1Password, Chrome,
+#     Zed, Cursor). Worse, one unadoptable cask aborts the whole `apply`, so
+#     declaring them here would break formula/mas convergence too.
+#  2. Three are from taps that publish no API metadata at api/cask/<token>.json
+#     (d12frosted/emacs-plus, jurplel/tap, jackielii/tap all 404), so mise can
+#     never manage emacs-plus-app, instant-space-switcher or skhd-zig.
+#
+# Revisit (1) when replacing a Mac, where the apps are absent and mise can pour
+# them directly — there's no adoption problem on a clean machine.
+
 [tools]
 "aqua:fish-shell/fish-shell" = "latest"
 aube = "latest"
