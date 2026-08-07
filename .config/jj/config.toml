@@ -10,7 +10,57 @@ email = "rbutoi@gmail.com"
 
 [template-aliases]
 # # 'format_timestamp(timestamp)' = 'timestamp.format("%a %Y-%m-%d %H:%M:%S")' # add weekdays
-'format_timestamp(timestamp)' = 'timestamp.ago()'
+#
+# Relative times, tinted by recency: the `recency()` helper below sorts a
+# timestamp into a band and hands back a label, which the [colors] rules at the
+# bottom paint warm (minutes old) through cool to grey (ancient). The colour is
+# what you read while scanning the graph; the words underneath stay exact for
+# when the answer matters.
+'format_timestamp(timestamp)' = 'label(recency(timestamp), timestamp.ago())'
+
+# `jj op log` never goes through format_timestamp — it renders a TimestampRange
+# via format_time_range — so it needs the same treatment separately. Only the
+# "when" end gets a band; ", lasted 27ms" keeps jj's own `time` label.
+'format_time_range(time_range)' = '''
+label(recency(time_range.end()), time_range.end().ago())
+++ label("time", ", lasted ") ++ time_range.duration()
+'''
+
+# The bands are a geometric ladder, not evenly spaced: each one covers roughly
+# five times the span of the one before it, which is the only spacing that gives
+# equal visual weight to "minutes" and "months" on the same screen. Evenly spaced
+# bands would spend every colour on the last day; a ladder spends one colour per
+# order of magnitude of staleness, which is how the question actually scales.
+#
+#   t(k) = 10 min × 5^k        k = 0 … 6, rounded to something sayable
+#
+#   k     exact        rounded to
+#   0        10 min    10 minutes
+#   1        50 min    1 hour
+#   2      4.2 hours   4 hours
+#   3     20.8 hours   1 day
+#   4      4.3 days    4 days
+#   5     21.7 days    3 weeks
+#   6    108.5 days    3 months  (≈ a quarter; past here it's all "old")
+#
+# Rounding keeps every step in the 4×–6× range, so the ladder survives being
+# made pronounceable. `.after()` takes revset date patterns, hence the English.
+#
+# `coalesce` returns its first non-empty argument and `if` with no else yields
+# empty, so this reads top-down as a cascade: the first band that matches wins.
+# That beats nesting eight ifs and closing them all on one line.
+'recency(timestamp)' = '''
+coalesce(
+  if(timestamp.after("10 minutes ago"), "recency_10m"),
+  if(timestamp.after("1 hour ago"), "recency_1h"),
+  if(timestamp.after("4 hours ago"), "recency_4h"),
+  if(timestamp.after("1 day ago"), "recency_1d"),
+  if(timestamp.after("4 days ago"), "recency_4d"),
+  if(timestamp.after("3 weeks ago"), "recency_3w"),
+  if(timestamp.after("3 months ago"), "recency_1q"),
+  "recency_older",
+)
+'''
 
 # Show only the local part of author emails in the log graph. Everyone in the org
 # shares the @domain, so it's pure noise at graph width. `.local()` is jj's own
@@ -31,3 +81,25 @@ email = "rbutoi@gmail.com"
 
 # # Explicitly locks the full inspection text (jj show / describe) to absolute
 # 'format_timestamp(timestamp)' = 'timestamp'
+
+# Recency bands for the labels `recency()` emits above: hot amber for the last
+# hour, cooling through gold/green/cyan/slate, then grey for anything over a
+# year. Truecolor hexes — fine in Ghostty, and jj falls back gracefully.
+#
+# Each key ends in `ago` for a reason. jj picks a colour rule by where the
+# rule's *last* label sits in the active label path, so a rule that stops short
+# of the end loses to a builtin one that reaches further: `"recency_hour
+# timestamp"` wins in `jj log` (path `… recency_hour committer timestamp ago`)
+# but silently loses to the builtin `colors.timestamp` in `jj op log`, whose
+# path is `… recency_hour timestamp time end ago`. `ago` is the one label both
+# paths end on — and it's there because the templates above always call
+# `.ago()` — so a single set of six rules covers log, show, and op log.
+[colors]
+"recency_10m ago" = "#ff4d6d" # 10 min — just now
+"recency_1h ago" = "#ff8a3d"  # 1 hour
+"recency_4h ago" = "#ffc247"  # 4 hours
+"recency_1d ago" = "#e3dd5f"  # 1 day — today
+"recency_4d ago" = "#9ece6a"  # 4 days — this week
+"recency_3w ago" = "#46b8bd"  # 3 weeks — this month
+"recency_1q ago" = "#5a8fc0"  # 3 months — this quarter
+"recency_older ago" = "bright black"
