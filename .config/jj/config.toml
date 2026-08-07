@@ -1,0 +1,33 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "Radu Butoi"
+email = "rbutoi@gmail.com"
+
+# [templates]
+# # Use relative time exclusively for the log graph view
+# log = 'builtin_log_compact(format_timestamp(commit.committer().timestamp()).ago())'
+
+[template-aliases]
+# # 'format_timestamp(timestamp)' = 'timestamp.format("%a %Y-%m-%d %H:%M:%S")' # add weekdays
+'format_timestamp(timestamp)' = 'timestamp.ago()'
+
+# Show only the local part of author emails in the log graph. Everyone in the org
+# shares the @domain, so it's pure noise at graph width. `.local()` is jj's own
+# built-in "everything before the @" accessor — no domain is hardcoded here, so
+# this stays correct for commits authored under any other address too.
+#
+# The upstream default is `coalesce(signature.email(), email_placeholder)`. jj
+# already defines `format_short_signature_oneline` as the .local() variant, but
+# `builtin_log_compact` (via format_short_commit_header) reaches for the full
+# `format_short_signature`, hence this override rather than a template swap.
+# `jj show` / `jj describe` are unaffected — those use format_detailed_signature,
+# which keeps the full `Name <email>`.
+'format_short_signature(signature)' = 'coalesce(signature.email().local(), email_placeholder)'
+
+# [template-aliases]
+# # Overrides only the short layout used inside compact graphs (jj log)
+# 'format_short_timestamp(timestamp)' = 'timestamp.ago()'
+
+# # Explicitly locks the full inspection text (jj show / describe) to absolute
+# 'format_timestamp(timestamp)' = 'timestamp'
