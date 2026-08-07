@@ -27,3 +27,7 @@ cmd + shift + ctrl - u : skhd -t '*u'; skhd -k 'shift - i'; skhd -t '*n'
 cmd + ctrl + alt - t : osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to not dark mode'
 
 cmd + ctrl - c : osascript ~/.config/skhd/clear-notifications.applescript
+
+# bug:
+# .load "~/.config/skhd/work.skhdrc"
+.load "/Users/radu/.config/skhd/work.skhdrc"
