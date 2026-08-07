@@ -125,7 +125,12 @@ stern = "latest"
 qsv = "latest"
 "npm:typescript" = "latest"
 bazelisk = "latest"
-gitu = "latest"
+tokei = "latest"
+bats = "latest"
+
+[hooks]
+# tools often ship man pages outside any manN/ dir, where man can't find them
+postinstall = "if test -x $HOME/.local/bin/mise-man-sync; then $HOME/.local/bin/mise-man-sync; fi"
 
 [settings]
 experimental = true

@@ -6,6 +6,12 @@ mise activate fish | source
 
 fish_add_path -g ~/.local/bin
 
+# where mise-man-sync mirrors man pages that mise ships outside any manN/ dir
+if not contains ~/.local/share/man $MANPATH
+    set -gx MANPATH ~/.local/share/man $MANPATH
+end
+contains -- '' $MANPATH; or set -gax MANPATH '' # empty entry = splice in the defaults
+
 # set -gx GOPATH ~/.local/go
 # fish_add_path -g $GOPATH/bin
 

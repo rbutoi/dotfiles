@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Mirror mise-installed man pages into ~/.local/share/man so `man <tool>` works.
+#
+# mise puts each tool's install dir straight on PATH, and man builds its search
+# path from PATH by probing <dir>/man and <dir>/../share/man. That covers tools
+# shipping a real man tree (node, python, cmake, fish), but most release tarballs
+# just drop a bare page next to the binary — ripgrep's lives at doc/rg.1 — and man
+# only ever reads manN/ subdirectories, so no MANPATH entry can reach a loose .1.
+#
+# Hence the mirror: symlink every stray page into a real manN/ tree that MANPATH
+# does point at (see MANPATH in fish/config.fish). Idempotent, so it can run any
+# time; the postinstall hook in mise/config.toml runs it after every install.
+
+set -euo pipefail
+
+installs="${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs"
+mandir="${XDG_DATA_HOME:-$HOME/.local/share}/man"
+
+if [ ! -d "$installs" ]; then
+    echo "mise-man-sync: no such directory: $installs" >&2
+    exit 1
+fi
+
+linked=0
+pruned=0
+
+# Only the versions mise considers current: it keeps a symlink per requested
+# version spec (latest, 1, 1.7, ...) pointing at the concrete install dir, so
+# resolving and deduping those skips leftover older versions.
+while IFS= read -r version_dir; do
+    while IFS= read -r page; do
+        base=${page##*/}    # rg.1
+        section=${base##*.} # 1
+        dest="$mandir/man$section/$base"
+        if [ "$(readlink "$dest" 2>/dev/null)" = "$page" ]; then
+            continue
+        fi
+        mkdir -p "$mandir/man$section"
+        ln -sfn "$page" "$dest"
+        linked=$((linked + 1))
+    done < <(find "$version_dir" -maxdepth 3 -type f -name '*.[1-9]' \
+        -not -path '*/man[1-9]/*' -not -path '*/node_modules/*' 2>/dev/null)
+done < <(
+    for link in "$installs"/*/*; do
+        [ -L "$link" ] || continue
+        (cd "$link" 2>/dev/null && pwd -P) || true
+    done | sort -u
+)
+
+# Drop links to tools mise no longer has. Upgrades need no pruning — the pass
+# above repoints the link at the new version, replacing the old target.
+for link in "$mandir"/man*/*; do
+    [ -L "$link" ] || continue
+    case "$(readlink "$link")" in
+        "$installs"/*) ;;
+        *) continue ;; # not ours to manage
+    esac
+    if [ -e "$link" ]; then
+        continue
+    fi
+    rm -f "$link"
+    pruned=$((pruned + 1))
+done
+
+# Quiet when there was nothing to do, so the mise hook stays out of the way.
+if [ "$linked" -gt 0 ] || [ "$pruned" -gt 0 ]; then
+    echo "mise-man-sync: linked $linked, pruned $pruned under $mandir"
+fi
