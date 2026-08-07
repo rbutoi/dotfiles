@@ -58,20 +58,10 @@
     "minimap": {
         "show": "auto"
     },
-    "file_types": {},
-    "indent_guides": {
-        "enabled": false
-    },
     "icon_theme": {
         "mode": "dark",
         "light": "Zed (Default)",
         "dark": "Zed (Default)"
-    },
-    "agent": {
-        "default_model": {
-            "provider": "google",
-            "model": "gemini-2.0-flash"
-        },
     },
     "vim_mode": false,
     "base_keymap": "Emacs",
