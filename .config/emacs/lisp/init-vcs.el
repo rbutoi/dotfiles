@@ -13,8 +13,9 @@
             "@"   'my/visit-pull-request-url)
   :custom
   (magit-repository-directories
-   `(("~/dev" . 2)
-     ("~/.dots/dotfiles" . 0)))
+   ;; dotfiles, private-dots and dotfiler all live under ~/dev now, so the
+   ;; depth-2 scan already finds them.
+   `(("~/dev" . 2)))
   (magit-log-auto-more t)
   (magit-pull-or-fetch t)
   :config

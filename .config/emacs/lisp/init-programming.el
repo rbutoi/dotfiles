@@ -37,11 +37,11 @@
   :config
   (defun my/agent-shell-dot-subdir (subdir)
     (let ((cwd (agent-shell-cwd)))
-      (if (string-prefix-p (expand-file-name "~/.dots/dotfiles") (expand-file-name cwd))
+      (if (string-prefix-p (expand-file-name "~/dev/dotfiles") (expand-file-name cwd))
           (let* ((cwd (string-remove-suffix "/" cwd))
                  (sanitized (replace-regexp-in-string "/" "-" (string-remove-prefix "/" cwd))))
             (no-littering-expand-var-file-name (file-name-concat "agent-shell" sanitized subdir)))
-        (agent-shell--dot-subdir-in-repo subdir)))) ; fallback to default behavior if not in ~/.dots/dotfiles
+        (agent-shell--dot-subdir-in-repo subdir)))) ; fallback to default behavior if not in ~/dev/dotfiles
 
   (setopt agent-shell-dot-subdir-function #'my/agent-shell-dot-subdir))
 ;;;

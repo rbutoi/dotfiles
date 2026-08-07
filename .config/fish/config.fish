@@ -96,4 +96,6 @@ alias fd 'fd --no-ignore-vcs'
 
 type -q paru && alias p paru
 
-test -d ~/.dots && alias dotup 'python3 ~/.dots/bin/dot update --skip-pull'
+# dotfiler lives in ~/dev/dotfiler like any other repo; the environments it
+# links from are declared in ~/.config/dotfiler/config.toml
+test -d ~/dev/dotfiler && alias dotup '~/dev/dotfiler/bin/dot update --skip-pull'

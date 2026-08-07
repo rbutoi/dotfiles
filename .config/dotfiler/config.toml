@@ -1,0 +1,21 @@
+# Which repositories dotfiler links into $HOME.
+#
+# Self-hosting: this file is itself tracked in the dotfiles environment below,
+# so `dot` links it to ~/.config/dotfiler/config.toml and then reads it from
+# there on every subsequent run. On a fresh machine, clone the repos and
+# bootstrap once with explicit paths:
+#
+#   dot update --env ~/dev/dotfiles --env ~/dev/private-dots
+#
+# That first run creates this symlink; after it, plain `dot update` works.
+#
+# Machine- or work-specific environments belong in conf.d/*.toml, contributed by
+# the private repository, so its path never appears in the public one. Same split
+# as ~/.config/mise/{config.toml,conf.d/} and ~/.config/git/{config,config.local}.
+#
+# Paths must be absolute (~ and $VAR are expanded) and are resolved through
+# symlinks before use. `label` defaults to the basename and only has to be set
+# if two environments would otherwise collide.
+
+[[env]]
+path = "~/dev/dotfiles"

@@ -6,15 +6,20 @@
 """
 dot adopt — bring an existing ~/ file or directory under dotfiles management
 ============================================================================
-Move a real file/directory that currently lives under $HOME into the dotfiles
-repo (an environment dir under ~/.dots), then run `dot update` so the original
-location becomes a symlink into the repo. This is the "I just made a new config
-in ~/.config, now track it" workflow, done safely.
+Move a real file/directory that currently lives under $HOME into one of the
+dotfiles repos, then run `dot update` so the original location becomes a symlink
+into it. This is the "I just made a new config in ~/.config, now track it"
+workflow, done safely.
+
+Which repos are environments, where they are, and what each one ignores all come
+from `dot envs --json`, so there is exactly one implementation of that logic.
+This script used to reimplement both the environment discovery and the
+.dotignore regex.
 
 Given e.g. a fresh ~/.config/gitu/, this:
   1. validates the move is safe (many checks — see below),
-  2. moves ~/.config/gitu  ->  ~/.dots/dotfiles/.config/gitu,
-  3. runs `python3 ~/.dots/bin/dot update --skip-pull`,
+  2. moves ~/.config/gitu  ->  ~/dev/dotfiles/.config/gitu,
+  3. runs `dot update --skip-pull`,
   4. verifies ~/.config/gitu is now a symlink resolving into the repo,
   5. stages the new files in the repo (git add) unless --no-stage.
 
@@ -26,13 +31,15 @@ Usage:
     dot_adopt.py --env private-dots ~/.config/x # adopt into the private env
     dot_adopt.py --no-stage ~/.config/gitu      # skip the `git add` afterwards
 
+The `dot` executable is found on $PATH, or via $DOTFILER_BIN.
+
 It refuses (touching nothing) when a move would be unsafe:
-  - the path is already a symlink into the repo (already adopted — no-op),
-  - the path already lives in the repo via a symlinked parent (just commit it),
-  - it is a symlink pointing *outside* the repo (remove it yourself first),
+  - the path is already a symlink into an environment (already adopted — no-op),
+  - the path already lives in a repo via a symlinked parent (just commit it),
+  - it is a symlink pointing outside every environment (remove it yourself),
   - the repo already has a file at that relative path (would clobber),
   - the same relative path exists in another environment (`dot` would error),
-  - the name matches ~/.dots/.dotignore (`dot` would skip it, orphaning it).
+  - the target environment's .dotignore would make `dot` skip it, orphaning it.
 
 Nothing is ever deleted: the original bytes are *moved* into the repo, so even
 if `dot update` were to fail, your content is safe at the reported repo path
@@ -43,6 +50,7 @@ from __future__ import annotations
 
 import argparse
 import errno
+import json
 import os
 import re
 import shutil
@@ -52,9 +60,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 HOME = Path(os.path.abspath(os.path.expanduser("~")))
-
-# environment dirs under base-dir that are not dotfile environments
-NON_ENV_DIRS = {".git", "bin"}
 
 # ---- terminal colors (only when writing to a tty) --------------------------
 
@@ -117,22 +122,55 @@ def within(child: Path, parent: Path) -> bool:
         return False
 
 
-# ---- .dotignore (mirror of dot/core.create_tree_from_filesystem) -----------
+# ---- asking `dot` what it thinks -------------------------------------------
 
 
-def load_dotignore_re(base_dir: Path) -> re.Pattern | None:
-    """Compile ~/.dots/.dotignore into the same regex `dot` uses on filenames."""
-    cfg = base_dir / ".dotignore"
-    if not cfg.is_file():
-        return None
-    patterns = []
-    for line in cfg.read_text().splitlines():
-        name = line.rstrip()
-        if name and not name.startswith("#"):
-            patterns.append(name)
-    if not patterns:
-        return None
-    return re.compile("(" + "|".join(patterns) + ")$", re.I)
+def dot_bin() -> str:
+    """The `dot` executable. $DOTFILER_BIN, else off $PATH.
+
+    Deliberately not derived from a base dir: environments no longer have to
+    live inside the tool's checkout, so there is no fixed relationship between
+    the two.
+    """
+    override = os.environ.get("DOTFILER_BIN")
+    if override:
+        return override
+    found = shutil.which("dot")
+    if found:
+        return found
+    guess = HOME / "dev" / "dotfiler" / "bin" / "dot"
+    if guess.is_file():
+        return str(guess)
+    raise AdoptError(
+        "cannot find the `dot` executable; put it on $PATH or set $DOTFILER_BIN")
+
+
+def load_envs(env_paths: list[str]) -> list[dict]:
+    """Resolved environments straight from `dot envs --json`.
+
+    This used to reimplement `dot`'s environment discovery and its .dotignore
+    regex assembly, which meant two copies of both. Now `dot` exports the
+    already-compiled regex and there is exactly one implementation. It also
+    matters for correctness: ignore patterns are per-environment now, and this
+    tool was applying one global regex to whichever environment you adopted into.
+    """
+    cmd = [dot_bin(), "envs", "--json"]
+    for path in env_paths:
+        cmd += ["--env", path]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise AdoptError(
+            "`{0}` failed:\n{1}".format(" ".join(cmd), proc.stderr.strip()))
+    data = json.loads(proc.stdout)
+
+    envs = []
+    for env in data["envs"]:
+        envs.append({
+            "label": env["label"],
+            "root": Path(env["root"]),
+            "ignore_re": re.compile(env["ignore_regex"], re.I),
+        })
+    return envs
 
 
 def dir_has_linkable_file(path: Path, ignore_re: re.Pattern | None) -> bool:
@@ -164,15 +202,25 @@ class Item:
 
 @dataclass
 class Config:
-    base_dir: Path
-    env: str
-    env_dir: Path
-    all_envs: list[str]
-    ignore_re: re.Pattern | None = None
-    dot_script: Path = field(init=False)
+    env: str                  # label of the environment being adopted into
+    env_dir: Path             # its root
+    all_envs: list[dict]      # every configured environment, from `dot envs --json`
+    ignore_re: re.Pattern     # *this* environment's patterns, not a global set
+    env_paths: list[str]      # --env overrides, passed through to `dot`
+    dot_script: str = field(init=False)
 
     def __post_init__(self) -> None:
-        self.dot_script = self.base_dir / "bin" / "dot"
+        self.dot_script = dot_bin()
+
+    @property
+    def env_roots(self) -> list[Path]:
+        return [env["root"] for env in self.all_envs]
+
+    def containing_env(self, path: Path) -> dict | None:
+        for env in self.all_envs:
+            if within(path, env["root"]):
+                return env
+        return None
 
 
 def classify(raw: str, cfg: Config) -> Item:
@@ -191,8 +239,10 @@ def classify(raw: str, cfg: Config) -> Item:
     if not within(target, HOME):
         raise AdoptError(f"{target}: is not under {HOME}")
 
-    if within(target, cfg.base_dir):
-        raise AdoptError(f"{target}: is already inside the dotfiles repo {cfg.base_dir}")
+    inside = cfg.containing_env(target)
+    if inside is not None:
+        raise AdoptError(
+            f"{target}: is already inside the '{inside['label']}' repo {inside['root']}")
 
     relpath = target.relative_to(HOME)
     source = cfg.env_dir / relpath
@@ -200,15 +250,17 @@ def classify(raw: str, cfg: Config) -> Item:
     # (a) the leaf itself is a symlink
     if target.is_symlink():
         tgt = real(target)
-        if within(tgt, cfg.base_dir):
+        owner = cfg.containing_env(tgt)
+        if owner is not None:
             return Item(target, relpath, real_source_for(target, cfg),
-                        skip=True, note="already a symlink into the repo — nothing to do")
+                        skip=True,
+                        note=f"already a symlink into '{owner['label']}' — nothing to do")
         raise AdoptError(
-            f"{target}: is a symlink to {tgt} (outside the repo); "
+            f"{target}: is a symlink to {tgt} (outside every environment); "
             "remove it yourself if you really mean to replace it")
 
-    # (b) a parent is a symlink into the repo → already lives in the repo
-    linked_parent = managed_via_parent(target, cfg.base_dir)
+    # (b) a parent is a symlink into an environment → already lives in a repo
+    linked_parent = managed_via_parent(target, cfg.env_roots)
     if linked_parent is not None:
         return Item(target, relpath, real(target), skip=True,
                     note=f"already inside the repo via symlinked parent {linked_parent} "
@@ -222,25 +274,28 @@ def classify(raw: str, cfg: Config) -> Item:
 
     # (d) same relpath present in another environment → `dot` would error
     for other in cfg.all_envs:
-        if other == cfg.env:
+        if other["label"] == cfg.env:
             continue
-        rival = cfg.base_dir / other / relpath
+        rival = other["root"] / relpath
         if os.path.lexists(rival):
             raise AdoptError(
-                f"{relpath}: also exists in environment '{other}' ({rival}); "
+                f"{relpath}: also exists in environment '{other['label']}' ({rival}); "
                 "`dot` cannot link a path that lives in two environments")
 
-    # (e) .dotignore would make `dot` skip it → it'd be orphaned
+    # (e) .dotignore would make `dot` skip it → it'd be orphaned.
+    # cfg.ignore_re is the target environment's own regex; this check used to
+    # apply one global regex regardless of where the file was going.
+    ignore_file = cfg.env_dir / ".dotignore"
     if target.is_dir():
         if not dir_has_linkable_file(target, cfg.ignore_re):
             raise AdoptError(
-                f"{relpath}: every file under it matches ~/.dots/.dotignore, so "
-                "`dot` would create no symlink — it would be orphaned")
+                f"{relpath}: every file under it is ignored by '{cfg.env}', so "
+                f"`dot` would create no symlink — it would be orphaned. See {ignore_file}")
     else:
-        if cfg.ignore_re is not None and cfg.ignore_re.match(target.name) is not None:
+        if cfg.ignore_re.match(target.name) is not None:
             raise AdoptError(
-                f"{relpath}: name matches ~/.dots/.dotignore, so `dot` would not "
-                "link it — it would be orphaned. Rename it or edit .dotignore.")
+                f"{relpath}: the name is ignored by '{cfg.env}', so `dot` would not "
+                f"link it — it would be orphaned. Rename it, or edit {ignore_file}.")
 
     return Item(target, relpath, source)
 
@@ -250,16 +305,16 @@ def real_source_for(target: Path, cfg: Config) -> Path:
     return real(target)
 
 
-def managed_via_parent(target: Path, base_dir: Path) -> Path | None:
-    """Return the nearest ancestor of `target` that is a symlink into the repo.
+def managed_via_parent(target: Path, env_roots: list[Path]) -> Path | None:
+    """Nearest ancestor of `target` that is a symlink into an environment.
 
-    If such an ancestor exists, `target` physically already lives inside the
-    repo (it was written through the symlinked directory), so no move is needed.
+    If such an ancestor exists, `target` physically already lives inside a repo
+    (it was written through the symlinked directory), so no move is needed.
     """
     for anc in target.parents:
         if anc == HOME or not within(anc, HOME):
             break
-        if anc.is_symlink() and within(real(anc), base_dir):
+        if anc.is_symlink() and any(within(real(anc), root) for root in env_roots):
             return anc
     return None
 
@@ -280,10 +335,12 @@ def move(src: Path, dst: Path) -> None:
 
 
 def run_dot_update(cfg: Config) -> int:
-    """Invoke the repo's own `dot update --skip-pull`, streaming its output."""
-    cmd = ["python3", str(cfg.dot_script), "update", "--skip-pull"]
+    """Invoke `dot update --skip-pull`, streaming its output."""
+    cmd = [cfg.dot_script, "update", "--skip-pull"]
+    for path in cfg.env_paths:
+        cmd += ["--env", path]
     info(f"{DIM}$ {' '.join(cmd)}{RESET}")
-    return subprocess.run(cmd, cwd=str(cfg.base_dir)).returncode
+    return subprocess.run(cmd).returncode
 
 
 def verify(item: Item) -> bool:
@@ -309,30 +366,24 @@ def git_add(cfg: Config, paths: list[Path]) -> None:
 
 
 def build_config(args: argparse.Namespace) -> Config:
-    base_dir = norm(args.base_dir)
-    if not base_dir.is_dir():
-        raise AdoptError(f"base-dir {base_dir} does not exist")
+    all_envs = load_envs(args.env_path)
+    labels = [env["label"] for env in all_envs]
 
-    all_envs = sorted(
-        p.name for p in base_dir.iterdir()
-        if p.is_dir() and p.name not in NON_ENV_DIRS
-    )
-    if args.env not in all_envs:
+    chosen = next((env for env in all_envs if env["label"] == args.env), None)
+    if chosen is None:
         raise AdoptError(
-            f"environment '{args.env}' not found under {base_dir}. "
-            f"Available: {', '.join(all_envs) or '(none)'}")
+            f"environment '{args.env}' is not configured. "
+            f"Available: {', '.join(labels) or '(none)'}")
 
-    env_dir = base_dir / args.env
-    dot_script = base_dir / "bin" / "dot"
-    if not dot_script.is_file():
-        raise AdoptError(f"cannot find the dot tool at {dot_script}")
+    if not chosen["root"].is_dir():
+        raise AdoptError(f"environment root {chosen['root']} does not exist")
 
     return Config(
-        base_dir=base_dir,
-        env=args.env,
-        env_dir=env_dir,
+        env=chosen["label"],
+        env_dir=chosen["root"],
         all_envs=all_envs,
-        ignore_re=load_dotignore_re(base_dir),
+        ignore_re=chosen["ignore_re"],
+        env_paths=list(args.env_path),
     )
 
 
@@ -352,9 +403,10 @@ def main() -> int:
     )
     ap.add_argument("paths", nargs="+", help="file(s)/dir(s) under $HOME to adopt")
     ap.add_argument("--env", default="dotfiles",
-                    help="target environment under base-dir (default: dotfiles)")
-    ap.add_argument("--base-dir", default=str(HOME / ".dots"),
-                    help="dotfiles base dir (default: ~/.dots)")
+                    help="label of the environment to adopt into (default: dotfiles)")
+    ap.add_argument("--env-path", action="append", default=[], metavar="PATH",
+                    help="environment root, repeatable; passed through to `dot` "
+                         "and overrides its config file")
     ap.add_argument("-n", "--dry-run", action="store_true",
                     help="show the plan and exit without moving anything")
     ap.add_argument("-y", "--yes", action="store_true",
@@ -414,7 +466,7 @@ def main() -> int:
     for i in to_move:
         kind = "dir " if i.target.is_dir() else "file"
         info(f"  {DIM}move {kind}{RESET} {str(i.target).ljust(width)}  ->  {i.source}")
-    info(f"  {DIM}then{RESET} python3 {cfg.dot_script} update --skip-pull\n")
+    info(f"  {DIM}then{RESET} {cfg.dot_script} update --skip-pull\n")
 
     if args.dry_run:
         info(f"{DIM}dry run — nothing changed.{RESET}")

@@ -25,7 +25,7 @@
 # Keep it in the private-dots env so `dot` links it in beside this one, exactly
 # like .config/git/config + config.local:
 #
-#   ~/.dots/private-dots/.config/git-maintenance/config.local.toml
+#   ~/dev/private-dots/.config/git-maintenance/config.local.toml
 #
 # Intervals take a unit suffix: s, m, h, d, w. Anything shorter than the 15m
 # scheduler tick is effectively 15m.
@@ -61,16 +61,22 @@ end   = "19:00"
 #
 #   - Combining them scans below *each* glob match, so `~/dev/*` with depth 1
 #     means ~/dev/*/* too. For direct children only, use one or the other.
-#   - A root that is itself a repo is taken as-is and not descended into. That
-#     is why ~/.dots below is a glob: ~/.dots is a repo, so scanning it would
-#     match only ~/.dots and miss dotfiles and private-dots.
+#   - A root that is itself a repo is taken as-is and not descended into.
 #
 # When several entries match one repo the most specific wins: an exact path
 # beats a glob or a scan, then the longer pattern, then the later entry — so a
 # broad scan can be overridden for one subtree or one repo.
 
-[[repo]]                        # dotfiles + private-dots (see the note above)
-path     = "~/.dots/*"
+# dotfiles, private-dots and dotfiler used to be covered by a separate
+# `~/.dots/*` entry at the default 1h business-hours interval. They live under
+# ~/dev now, so the entry below already covers them — which does mean they are
+# fetched every 15m rather than hourly. They are tiny, so this is cheap; to put
+# them back on the old cadence, add before the ~/dev/* entry (a longer pattern
+# wins over a glob):
+#
+#   [[repo]]
+#   path     = "~/dev/{dotfiles,private-dots,dotfiler}"   # one entry each
+#   business = "1h"
 
 [[repo]]                        # direct children only, no ~/dev/*/*
 path     = "~/dev/*"

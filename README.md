@@ -1,21 +1,30 @@
 ### Install
 
-With [`dotfiler`](https://github.com/svetlyak40wt/dotfiler) (https://github.com/svetlyak40wt/dotfiler):
+Managed by [my fork of `dotfiler`](https://github.com/svetlyak40wt/dotfiler),
+which lives in `~/dev/dotfiler` alongside everything else. Environments are
+declared in config rather than having to sit inside the tool's own checkout, so
+this repo is just a repo:
 
-```bash
-git clone https://github.com/svetlyak40wt/dotfiler ~/.dots
+```fish
+git clone <this repo>         ~/dev/dotfiles
+git clone <the private one>   ~/dev/private-dots
+git clone <the dotfiler fork> ~/dev/dotfiler
 
-# make sure automatically-written files aren't in source control
-for dir in \
-    ~/.config/{emacs,fish/{conf.d,functions},zed}; do
-
-    if [[ -L $dir ]]; then
-        rm -i $dir
-    fi
+# Directories that Emacs, fisher and Zed write into must be real directories, so
+# that `dot` links individual files into them instead of symlinking the whole
+# directory. Without this it symlinks the directory and those tools then write
+# into the repo.
+for dir in ~/.config/{emacs,fish/{conf.d,functions},zed}
+    test -L $dir && rm -i $dir
     mkdir -p $dir
-done
+end
 
-python3 ~/.dots/bin/dot add git@github.com:rbutoi/dotfiles.git
-python3 ~/.dots/bin/dot add git@gitlab.com:rbutoi/private-dots.git
-python3 ~/.dots/bin/dot update
+# One bootstrap run with explicit paths: it creates ~/.config/dotfiler/config.toml
+# (tracked here), after which plain `dot update` reads the config itself.
+~/dev/dotfiler/bin/dot update --env ~/dev/dotfiles --env ~/dev/private-dots
 ```
+
+Afterwards, `dotup` (see `.config/fish/config.fish`) is `dot update --skip-pull`.
+
+Background git fetch and maintenance is a separate opt-in per machine; see the
+header of `.config/git-maintenance/config.toml`.
