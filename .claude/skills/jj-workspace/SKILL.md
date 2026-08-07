@@ -208,9 +208,11 @@ the removal command.
 ~/.claude/skills/jj-workspace/scripts/ws-remove.sh <name>
 ```
 
-Run it from outside the workspace. It refuses while uncommitted changes exist (`--force` discards
-them) — the only genuinely lossy case, because **committed work always survives removal**. An
-unmerged stack is therefore a note, not a blocker: it stays reachable by change ID.
+Runs from anywhere, **including inside the workspace it deletes** — it steps out to the main
+checkout itself, then prints the `cd` your shell needs, which is the one thing it can't fix for you.
+It refuses while uncommitted changes exist (`--force` discards them) — the only genuinely lossy
+case, because **committed work always survives removal**. An unmerged stack is therefore a note, not
+a blocker: it stays reachable by change ID.
 
 ## When the scripts aren't the answer
 

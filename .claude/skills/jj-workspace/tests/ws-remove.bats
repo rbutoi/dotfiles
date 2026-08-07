@@ -16,13 +16,40 @@ load 'helper'
   [[ "$output" == *'cannot locate'* ]]
 }
 
-@test "refuses to run from inside the workspace it would delete" {
-  # rm -rf of the directory you're standing in leaves the shell somewhere that no longer exists.
+@test "run from inside the workspace it deletes, it steps out and says where to cd" {
+  # Finishing a workspace is the normal reason to be standing in it, so this is a supported call
+  # and not a refusal (it used to be one). The rm still leaves the CALLER's shell in a directory
+  # that no longer exists — cd in a child process can't fix that — so the fix has to be printed.
   repo=$(new_repo)
   ws=$(new_ws "$repo" feat 1)
+  # Physical paths for the string matches below: jj answers with the canonical form, and on macOS
+  # $BATS_TEST_TMPDIR lives under /var -> /private/var, so the raw fixture paths never match.
+  repo_p=$(cd "$repo" && pwd -P)
+  ws_p=$(cd "$ws" && pwd -P)
   run env -C "$ws" "$scripts/ws-remove.sh" feat
-  [ "$status" -ne 0 ]
-  [[ "$output" == *'from outside'* ]]
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+  # The jj commands after the cd have to have found the repo through it: a cd to somewhere outside
+  # this repo would still delete the directory, while leaving the workspace tracked.
+  [[ "$output" == *'forgot workspace feat'* ]]
+  [ -z "$(env -C "$repo" jj workspace list --no-pager -T 'if(name == "feat", name)')" ]
+  # Both halves of the note: the dead directory, and the absolute path out of it (that shell can
+  # no longer tab-complete, so a bare "cd elsewhere" would be useless).
+  [[ "$output" == *"$ws_p"* ]]
+  [[ "$output" == *"cd $repo_p"* ]]
+}
+
+@test "stepping out lands in the main checkout even for a --path workspace" {
+  # The landing place is asked of jj, not derived from ws-create's sibling convention — which a
+  # --path workspace does not follow, so a derived path would be wrong exactly here.
+  repo=$(new_repo)
+  custom="$BATS_TEST_TMPDIR/faraway"
+  env -C "$repo" "$scripts/ws-create.sh" odd --path "$custom" >/dev/null 2>&1
+  repo_p=$(cd "$repo" && pwd -P)
+  run env -C "$custom" "$scripts/ws-remove.sh" odd
+  [ "$status" -eq 0 ]
+  [ ! -d "$custom" ]
+  [[ "$output" == *"cd $repo_p"* ]]
 }
 
 @test "uncommitted changes block the delete, and survive the refusal" {

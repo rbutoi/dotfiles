@@ -9,6 +9,10 @@
 # work is never at risk: `jj workspace forget` leaves every real commit visible in the repo
 # and only auto-abandons the trailing empty working-copy commit — so an unmerged stack is
 # reported as a note, not a blocker.
+#
+# Runs fine from INSIDE the workspace it deletes — finishing one is the normal reason you're in
+# there. It steps out to another workspace of the repo first (`default`, normally) and prints the
+# `cd` you need afterwards, since your shell is left in a directory that no longer exists.
 set -euo pipefail
 . "$(dirname "$0")/_common.sh"
 
@@ -47,10 +51,40 @@ if ! path=$(jj workspace root --name "$name" 2>&1); then
   die "cannot locate workspace '$name' (jj workspace list). If its directory is already gone: jj workspace forget $name"
 fi
 
-# rm -rf of the directory you're standing in leaves the shell somewhere that no longer exists.
-# Comparing physical paths also catches being in a *subdirectory* of the doomed workspace.
+# Standing inside the workspace being deleted is the normal way to finish one — you were working
+# in it — so step out rather than refusing. This used to be a hard error telling you to re-run from
+# elsewhere, which is a rule the script can follow on its own.
+#
+# What it can't do is fix the SHELL that invoked it: cd here is this process's, so the caller is
+# left in a deleted directory whatever we do, and the only honest answer is to say so and print the
+# path (see the note at the end). What the cd does buy is that everything *after* it — the forget,
+# the rm, any jj command — runs from a directory that still exists. Comparing physical paths also
+# catches being in a *subdirectory* of the doomed workspace.
+#
+# Where it steps TO has to be another workspace of this repo, not just any surviving directory:
+# every jj command below finds the repo through the cwd, so `/` or `$TMPDIR` would trade the
+# "directory is gone" failure for a "not inside a jj repo" one. Asks jj for the path rather than
+# assuming ws-create.sh's sibling convention, which a `--path` workspace doesn't follow.
+inside=''
 case "$(pwd -P)/" in
-  "$path"/*) die "run this from outside the workspace you're removing (you are in $(pwd -P))" ;;
+  "$path"/*)
+    # `default` is the main checkout and the obvious landing place; the loop covers a repo whose
+    # workspaces were renamed. If there is genuinely nowhere else to stand, the old refusal is
+    # still the right answer — there is no cd that would help.
+    outside=$(jj workspace root --name default 2>/dev/null) || {
+      outside=''
+      while IFS= read -r ws; do
+        [ -n "$ws" ] && [ "$ws" != "$name" ] || continue
+        outside=$(jj workspace root --name "$ws" 2>/dev/null) && break
+        outside=''
+      done < <(jj workspace list --no-pager -T 'name ++ "\n"')
+    }
+    [ -n "$outside" ] ||
+      die "run this from outside the workspace you're removing (you are in $(pwd -P)): '$name' is the only workspace left, so there is nowhere in this repo to step to"
+    inside=$(pwd -P)
+    cd "$outside" || die "cannot step out of $inside into $outside"
+    printf 'you are inside %s, so this ran from %s instead.\n' "$name" "$outside"
+    ;;
 esac
 
 # Guard: the working-copy commit still holds changes nobody described or committed.
@@ -100,4 +134,9 @@ fi
 run_cmd jj workspace forget "$name"
 run_cmd rm -rf "$path"
 printf 'forgot workspace %s and deleted %s\n' "$name" "$path"
+# The one thing the cd above could not fix: the caller's shell is still in the deleted directory,
+# and only the caller can leave it. Said last, where it is the next thing to act on — and with the
+# path spelled out, because that shell can no longer tab-complete anything.
+[ -z "$inside" ] ||
+  printf 'your shell is still in %s, which no longer exists:\n  cd %s\n' "$inside" "$outside"
 printf 'To undo: jj undo (restores the tracking; the directory stays deleted)\n'
