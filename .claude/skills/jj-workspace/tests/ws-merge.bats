@@ -136,6 +136,30 @@ load 'helper'
   [ "$(history_of "$repo")" = "$before" ]
 }
 
+@test "the dry run says whose decision --yes is" {
+  # The rule SKILL.md §3 states, echoed where it actually comes up: the plan is printed, the work
+  # looks finished, and one flag stands between that and a rewrite of shared history. Nobody has
+  # to have chosen to read this copy of it.
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  ( cd "$repo" && printf 'm\n' >m.txt && jj commit -m 'main work' >/dev/null 2>&1 )
+  run env -C "$ws" "$scripts/ws-merge.sh" --root "$STACK_ROOT"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *'rebase / linear'* ]]
+  [[ "$output" == *"--yes is the user's decision, not the agent's"* ]]
+}
+
+@test "the merge shape's dry run says it too" {
+  # Two footers, one `not_executed` — this is what keeps the second from drifting off the first.
+  repo=$(new_repo)
+  new_ws "$repo" feat 2 >/dev/null
+  ( cd "$repo" && printf 'm\n' >m.txt && jj commit -m 'main work' >/dev/null 2>&1 )
+  run env -C "$repo" "$scripts/ws-merge.sh" feat
+  [ "$status" -eq 0 ]
+  [[ "$output" == *'plan (merge commit)'* ]]
+  [[ "$output" == *"--yes is the user's decision, not the agent's"* ]]
+}
+
 # --- the shape is chosen by stack size ---
 
 @test "one commit is rebased straight on, with no merge node" {

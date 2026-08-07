@@ -31,7 +31,8 @@
 # Default destination is `default@-` — the main workspace's newest *committed* revision. If that
 # workspace is standing on an empty merge, `@-` means both parents and the destination is the
 # merge itself; see resolve_onto and is_empty_merge in _common.sh.
-# Prints the plan and stops; pass --yes to execute.
+# Prints the plan and stops. Passing --yes is the user's call to make, not an agent's — see the
+# footer of any dry run, which says so at the point it comes up.
 set -euo pipefail
 . "$(dirname "$0")/_common.sh"
 
@@ -169,6 +170,22 @@ advance_ws() {
     { warn "workspace $ws: could not advance its @ — cd $path; ${cmd[*]}"; return 0; }
   printf 'workspace %s now sits on %s, and its checkout was updated with it — anything watching those files reloads.\n' \
     "$ws" "$tip"
+}
+
+# How every dry run ends: the re-run line, then whose call that flag is.
+#
+# Two call sites, one definition — which is the point rather than tidiness, since a rule kept in
+# two copies gets edited in one. And it is said HERE, not only in SKILL.md, because this is where
+# the decision actually presents itself: the plan is printed, the work looks finished, and a single
+# flag stands between that and a rewrite of history the whole repo shares. Nobody has to have
+# chosen to read this copy. ws-create.sh says the same thing at its own point of temptation ("when
+# the USER asks you to integrate it"), and ws-remove.sh at its --force refusal.
+not_executed() {
+  printf '\nnot executed. Re-run with --yes:\n  %s\n' "$1"
+  printf '\n--yes is the user'\''s decision, not the agent'\''s. Integrating rewrites shared history,\n'
+  printf 'so it takes them asking for this merge, in the conversation you are in — finishing the work\n'
+  printf 'is not authorisation, and neither is a green gate. If you are an agent: this plan is the\n'
+  printf 'deliverable. Show it and stop.\n'
 }
 
 # The destination is resolved FIRST because the stack is derived relative to it: the question
@@ -365,7 +382,7 @@ if [ "$mode" = rebase ]; then
   printf '\n'
   jj log --no-pager -r "${root_id}:: | $onto_id | @" || true
   if [ -z "$yes" ]; then
-    printf '\nnot executed. Re-run with --yes:\n  %s --yes\n' "$rerun"
+    not_executed "$rerun --yes"
     exit 0
   fi
 
@@ -448,7 +465,7 @@ printf '\n'
 jj log --no-pager -r "${root_id}::${tip_id}" || true
 printf '\nmessage: %s\n' "$msg"
 if [ -z "$yes" ]; then
-  printf '\nnot executed. Re-run with --yes:\n  %s -m %s --yes\n' "$rerun" "'$msg'"
+  not_executed "$rerun -m '$msg' --yes"
   exit 0
 fi
 

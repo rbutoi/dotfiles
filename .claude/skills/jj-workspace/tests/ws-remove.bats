@@ -34,6 +34,10 @@ load 'helper'
   run env -C "$repo" "$scripts/ws-remove.sh" feat
   [ "$status" -ne 0 ]
   [[ "$output" == *'refusing to delete'* ]]
+  # Same rule as ws-merge.sh's dry-run footer, at this script's own point of temptation: the
+  # refusal names the flag that overrides it, and that flag is an irreversible rm of work the
+  # user has never seen.
+  [[ "$output" == *"--force is the user's decision, not the agent's"* ]]
   [ -d "$ws" ]
   [ -f "$ws/dirty.txt" ]
 }

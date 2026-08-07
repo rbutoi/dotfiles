@@ -5,9 +5,10 @@
 #   ws-remove.sh <name> [--force]
 #
 # Refuses when the workspace still has UNCOMMITTED changes, which the rm would destroy;
-# --force overrides. Committed work is never at risk: `jj workspace forget` leaves every
-# real commit visible in the repo and only auto-abandons the trailing empty working-copy
-# commit — so an unmerged stack is reported as a note, not a blocker.
+# --force overrides, and supplying it is the user's call to make, not an agent's. Committed
+# work is never at risk: `jj workspace forget` leaves every real commit visible in the repo
+# and only auto-abandons the trailing empty working-copy commit — so an unmerged stack is
+# reported as a note, not a blocker.
 set -euo pipefail
 . "$(dirname "$0")/_common.sh"
 
@@ -66,7 +67,9 @@ if [ -z "$force" ]; then
   # stale. Sync it and the dirty check below becomes meaningful again.
   if ! probe=$(cd "$path" && jj status --no-pager 2>&1); then
     case "$probe" in
-      *stale*) die "workspace '$name' has a stale working copy, so its uncommitted changes can't be checked. Sync it first (cd $path; jj workspace update-stale), or --force to delete regardless." ;;
+      # Short form of the rule spelled out at the dirty refusal below: --force here deletes work
+      # nobody has even been able to *list*, so syncing is the answer and the flag is not yours.
+      *stale*) die "workspace '$name' has a stale working copy, so its uncommitted changes can't be checked. Sync it first (cd $path; jj workspace update-stale), or --force to delete regardless — the user's call, not the agent's." ;;
       *) die "could not read workspace '$name': ${probe%%$'\n'*}" ;;
     esac
   fi
@@ -74,7 +77,11 @@ if [ -z "$force" ]; then
   if [ -n "$dirty" ]; then
     printf 'uncommitted changes in workspace %s:\n' "$name" >&2
     (cd "$path" && jj status --no-pager) >&2 || true
-    die "refusing to delete. Commit them, or pass --force to discard."
+    # The rule at the point it comes up, as in ws-merge.sh's dry-run footer: this is the one
+    # irreversible thing in the skill, and the flag that does it is right there in the refusal.
+    die "refusing to delete. Commit them, or pass --force to discard.
+       --force is the user's decision, not the agent's: it destroys work they have not seen.
+       Report what is uncommitted and let them choose — committing it loses nothing."
   fi
 fi
 
