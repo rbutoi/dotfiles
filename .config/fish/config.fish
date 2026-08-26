@@ -2,7 +2,7 @@
 # paths #
 #########
 
-mise activate fish | source
+mise activate fish --shims | source
 
 fish_add_path -g ~/.local/bin
 
