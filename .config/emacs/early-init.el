@@ -37,7 +37,10 @@
       (or (ignore-errors
             (with-temp-buffer
               (insert-file-contents (locate-user-emacs-file "var/frame-geometry.el"))
-              (read (current-buffer))))
+              ;; drop nil-valued params (e.g. a file saved from a
+              ;; terminal frame, which has no left/top/fullscreen) so
+              ;; they can't be applied as bogus GUI frame geometry
+              (seq-filter #'cdr (read (current-buffer)))))
           '((width . 130) (height . 50))))
 (setq default-frame-alist
       '((tool-bar-lines . 0)            ; speedups
