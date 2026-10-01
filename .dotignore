@@ -13,3 +13,6 @@
 # would silently apply this repo's conventions to unrelated work.
 AGENTS\.md
 CLAUDE\.md
+
+# macOS system file
+\.DS_Store
