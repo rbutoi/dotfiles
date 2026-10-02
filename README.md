@@ -14,7 +14,13 @@ git clone <the dotfiler fork> ~/dev/dotfiler
 # that `dot` links individual files into them instead of symlinking the whole
 # directory. Without this it symlinks the directory and those tools then write
 # into the repo.
-for dir in ~/.config/{emacs,fish/{conf.d,functions},zed}
+#
+# ~/.claude/skills is here for a different reason: both environments contribute
+# skills to it, and a whole-directory symlink can only point at one of them. As a
+# real directory it gets per-entry links, so the public generic skills and the
+# private work-specific ones (which name internal channels and repos) merge in
+# ~/.claude/skills without the private ones landing in this public repo.
+for dir in ~/.config/{emacs,fish/{conf.d,functions},zed} ~/.claude/skills
     test -L $dir && rm -i $dir
     mkdir -p $dir
 end
