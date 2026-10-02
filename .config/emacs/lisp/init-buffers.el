@@ -31,8 +31,5 @@
                 search-ring
                 regexp-search-ring)))
 
-(use-package bufler                     ; a butler for your buffers
-  :general ("C-x b" 'bufler))
-
 
 (provide 'init-buffers)

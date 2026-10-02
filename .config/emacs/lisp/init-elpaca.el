@@ -1,3 +1,4 @@
+;;; init-elpaca.el --- Elpaca initialization -*- lexical-binding: t; -*-
 ;; https://github.com/progfolio/elpaca?tab=readme-ov-file#installer
 
 (defvar elpaca-installer-version 0.12)

@@ -23,6 +23,7 @@
 (use-package i3wm-config-mode)
 (use-package nix-mode)
 (use-package cue-mode)
+(add-to-list 'auto-mode-alist '("CODEOWNERS" . gitignore-mode))
 
 ;; Systems programming
 (use-package rust-mode)

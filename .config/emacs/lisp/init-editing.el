@@ -104,6 +104,7 @@
   :hook (elpaca-after-init . global-so-long-mode))
 
 (use-package visual-fill-column)        ; wrap lines at fill-column
+(use-package olivetti)									; this, but also centered
 
 
 (provide 'init-editing)
