@@ -68,6 +68,9 @@ end
 
 alias clipcp fish_clipboard_copy
 
+# git
+abbr pr-sha gh-pr-commit
+
 #####################
 # modern UNIX tools #
 #####################
