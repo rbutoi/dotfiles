@@ -127,6 +127,9 @@ qsv = "latest"
 bazelisk = "latest"
 tokei = "latest"
 bats = "latest"
+1password-cli = "latest"
+act = "latest"
+lima = "latest"
 
 [hooks]
 # tools often ship man pages outside any manN/ dir, where man can't find them

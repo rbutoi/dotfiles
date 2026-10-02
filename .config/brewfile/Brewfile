@@ -183,6 +183,9 @@ tap 'guilhermeprokisch/see'
 tap 'jackielii/tap'
 brew 'skhd-zig' # Simple hotkey daemon for macOS, written in Zig
 
+tap 'jazzyalex/agent-sessions'
+cask 'agent-sessions' # Unified session browser for Codex CLI, Claude Code, Gemini CLI, and OpenCode (read-only)
+
 tap 'jimeh/emacs-builds'
 
 tap 'jpe90/clp'
