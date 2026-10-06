@@ -5,8 +5,9 @@
 #   ws-create.sh <name> [--base <rev>] [--path <dir>]
 #
 # Defaults: base = @- (the newest real commit, since the tip @ is conventionally empty),
-# path = a SIBLING of the repo root named <repo-dir>-<name> (never nested inside the repo,
-# where formatters/watchers/test runners would scan it).
+# path = a SIBLING of the repo's main checkout named <repo-dir>-<name>, however deep in other
+# workspaces this runs from (never nested inside the repo, where formatters/watchers/test runners
+# would scan it).
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd -P)
 . "$here/_common.sh"
@@ -43,15 +44,20 @@ done
   die "workspace name '$name' must be alphanumeric plus . _ - (and start alphanumeric)"
 
 root=$(require_repo)
+# Sibling names hang off the MAIN checkout, not off whichever workspace this ran in: from `app-foo`,
+# a new `bar` would otherwise come out as `app-foo-bar` rather than a flat `app-bar` beside it.
+# `default` is the main checkout; a repo whose workspaces were renamed has none, so the current
+# one anchors.
+main=$(jj workspace root --name default 2>/dev/null) || main=$root
 
 # One `jj workspace add` per name; a collision would otherwise fail after the path checks
 # with a message about the wrong thing.
 ! jj workspace root --name "$name" >/dev/null 2>&1 ||
   die "a workspace named '$name' already exists (jj workspace list)"
 
-# This is the ONLY place the sibling naming convention is defined. ws-remove.sh asks jj for
-# the path rather than re-deriving it, so a workspace made with --path is still removable.
-[ -n "$path" ] || path="${root%/*}/${root##*/}-$name"
+# This is the ONLY place the sibling naming convention is defined. Removal asks jj for the
+# path rather than re-deriving it, so a workspace made with --path is still removable.
+[ -n "$path" ] || path="${main%/*}/${main##*/}-$name"
 [ ! -e "$path" ] || die "path already exists: $path"
 # Canonicalize via the parent (which must exist anyway) so the nesting check below compares
 # physical paths. Without this, /tmp/x vs /private/tmp/x on macOS silently defeats it — and a
@@ -60,7 +66,7 @@ parent=$(cd "${path%/*}" 2>/dev/null && pwd -P) ||
   die "parent directory does not exist: ${path%/*}"
 path="$parent/${path##*/}"
 case "$path" in
-  "$root" | "$root"/*) die "refusing to nest a workspace inside the repo ($path); use a sibling directory" ;;
+  "$root" | "$root"/* | "$main" | "$main"/*) die "refusing to nest a workspace inside the repo ($path); use a sibling directory" ;;
 esac
 
 # The default base `@-` is ambiguous when @ is an empty merge (see is_empty_merge in _common.sh
@@ -89,9 +95,8 @@ fi
 run_cmd jj workspace add --name "$name" -r "$base" "$path"
 
 # The workspace's initial (empty) change BECOMES the first commit when you `jj commit`, so
-# this is the stack root — the stable handle for the later rebase, since change ids survive
-# rebases and commit hashes don't. ws-merge.sh can re-derive it, but printing it here means
-# there is something to pass to --root if the stack ever grows a second root.
+# this is the stack root — the stable handle for a later `jj rebase -s`, since change ids
+# survive rebases and commit hashes don't.
 stack_root=$(jjq "${name}@" 'change_id.shortest()')
 
 printf '\n=== workspace ready ===\n'
@@ -152,12 +157,3 @@ printf '  cd %s; jj st\n' "$path"
 # The only fix afterwards is `jj split`, which is strictly more work than having committed twice.
 printf '\ncommit after each logical change — jj never nags, @ just silently grows:\n'
 printf "  cd %s; jj commit -m 'area: what changed'\n" "$path"
-# Integrating is the user's call, so print the command rather than implying it's a step to take
-# once the work looks done. The name is what identifies the stack (ws-merge.sh derives the root
-# from it), and a merge commit lands as the *integration* workspace's @, so the line runs from
-# here — not from inside the feature workspace (that's the --rebase case).
-printf '\nwhen the USER asks you to integrate it (never on your own initiative):\n'
-printf '  cd %s; %s/ws-merge.sh %s -m %s\n' "$root" "$here" "$name" "'Merge $name'"
-printf '  # dry run. Add --yes only when asked; --rebase linearizes instead, from inside %s\n' "$path"
-printf 'then remove the workspace:\n'
-printf '  %s/ws-remove.sh %s\n' "$here" "$name"

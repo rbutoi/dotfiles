@@ -62,10 +62,10 @@ error, not a fall-through. So outside jj the script has to make the git worktree
 settings and `worktree.symlinkDirectories` are not reproduced, so a repo that leans on those is
 worse off with the hook registered.
 
-Inside jj it delegates to `ws-create.sh` / `ws-remove.sh`, so naming, base, and the refusal to
-delete uncommitted work have one definition. `ExitWorktree`'s own dirty check is git-based and
-refuses a jj workspace unless `discard_changes: true` is passed; the real guard is `ws-remove.sh`,
-which the hook never runs with `--force`.
+Inside jj it creates through `ws-create.sh`, so naming and base have one definition, and removes
+with `jj workspace forget` plus `rm -rf` after refusing a workspace with uncommitted changes or the
+main checkout. `ExitWorktree`'s own dirty check is git-based and refuses a jj workspace unless
+`discard_changes: true` is passed; the real guard is the hook's own.
 
 Like the SessionStart hook, **the registration lives in `~/.claude/settings.json`, which this repo
 does not track**, so on a new machine the script arrives and the hook doesn't.
@@ -87,58 +87,26 @@ and subdirectories included.
 machine the skill arrives and the hook doesn't. If a workspace session seems unaware it's in one,
 check that registration first.
 
-## What `ws-merge.sh` does to working copies, and why
-
-Integration is about two things at once — history, and the *files* other checkouts are looking at.
-
-**Sealing a clean merge with `jj new`.** It leaves `@` empty *above* the merge rather than on it.
-Free (same tree, so a gate still runs on the merged content), and it stops `@-` meaning both parents
-for everything run next. A conflicting merge can't be sealed — the resolution has to happen in `@`,
-which *is* the merge — so the script says to `jj new` once you've resolved and gated.
-
-**A rebase is two moves, and the second is easy to miss.** The stack goes *onto* the destination,
-which lands it *beside* the trailing empty `@` that was sitting there, not under it. Leave that `@`
-and the mainline has forked: the integrated commit and your next commit are siblings. So the script
-advances the `@` of the workspace it runs in, and re-running on an already-joined stack fixes exactly
-that stranded state rather than reporting "nothing to do".
-
-**Moving the other workspace's `@` is about files, not history.** The workspace continuing the
-destination's line (the one `--onto` came from: `default@-` → `default`) ends up beside the work, so
-its checkout still holds the pre-integration tree and any dev server watching it serves the old
-build. The script moves it by running jj **in that workspace's own directory** — that's the whole
-trick, since a `jj rebase -r default@` issued from elsewhere rewrites the commit but cannot touch
-the other checkout, leaving it stale. In merge mode it seals first, rather than hanging another
-checkout off a working copy still being edited. Other siblings are left alone deliberately: every
-fresh workspace is based on `default@-` too, and none of them was continuing that line. Workspaces
-the rebase moved *under* get `jj workspace update-stale` — a sync is not a rewrite.
-
-Two `@`s it won't rewrite, printing a `jj rebase -r @ -d <tip>` line instead: one with uncommitted
-changes (work in progress; moving it can conflict), and one with children of its own (not a trailing
-tip, so moving it would drag them along). It snapshots the other workspace first — `jj status` in
-its directory — before believing an `@` is empty, for the staleness reason above.
-
 ## jj behaviours that don't match git intuitions
 
 - **A conflicting merge succeeds and exits 0.** jj records the conflict *in the commit*, so exit
-  status tells you nothing; the scripts check the `conflicts()` revset. Conflict markers are jj's own
+  status tells you nothing; check the `conflicts()` revset. Conflict markers are jj's own
   format: `%%%%%%%` is the diff one side applied, `+++++++` the other side's content. Any jj command
   re-snapshots and clears the conflict once the files are edited.
 - **A clean merge commit shows as `(empty)`.** Correct for a merge. One you resolved conflicts in is
   non-empty, because the resolution is its own change.
 - **Standing on a merge makes `@-` ambiguous** — it means both parents. When the merge is *empty* it
   has an answer: the merge itself, which holds no work of its own and is the only commit carrying
-  both parents' lines (landing on either parent alone would drop the other side). `ws-merge.sh`
-  resolves to it; `ws-create.sh` seals it into a commit first. A merge that still holds changes is
+  both parents' lines (landing on either parent alone would drop the other side). `ws-create.sh`
+  seals it into a commit first. A merge that still holds changes is
   somebody's resolution or WIP, and is refused with the reason.
 
 ## Tests
 
 `bats tests/` (bats-core, installed globally via mise). They drive a real throwaway jj repo per test
 — no mocks, since everything worth testing here is an interaction with jj — and assert on the
-refusals, both shapes of integration, and the conflict path. Two traps they encode, both of which
-once produced tests that passed while checking nothing:
+refusals, paths and output of `ws-create.sh` and the worktree hook, for jj and plain git alike. One
+trap they encode once produced a test that passed while checking nothing:
 
 - `description("x")` defaults to an **exact** match and jj stores a trailing newline, so the
   unqualified form silently matches nothing. Use `description(substring:"x")`.
-- A stack branched off the mainline tip already descends from it, so integrating without first
-  moving the mainline is correctly a no-op — a fixture that skips that tests the wrong branch.

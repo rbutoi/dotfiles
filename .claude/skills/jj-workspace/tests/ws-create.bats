@@ -33,37 +33,6 @@ load 'helper'
   [ -d "$repo-feat" ]
 }
 
-@test "the printed next-step paths point at the scripts that actually ran" {
-  # Not a hard-coded ~/.claude path: this skill has to work from any install location, and the
-  # user's ~/.claude is itself a symlink into a dotfiles repo.
-  repo=$(new_repo)
-  run env -C "$repo" "$scripts/ws-create.sh" feat
-  [[ "$output" == *"$scripts/ws-merge.sh"* ]]
-  [[ "$output" == *"$scripts/ws-remove.sh"* ]]
-}
-
-@test "the integrate hint says whose call it is" {
-  repo=$(new_repo)
-  run env -C "$repo" "$scripts/ws-create.sh" feat
-  [[ "$output" == *'ws-merge.sh feat'* ]]
-  [[ "$output" == *'never on your own initiative'* ]]
-}
-
-@test "the integrate hint is a command that actually runs" {
-  # It once printed `ws-merge.sh` with nothing identifying the stack, which the merge script then
-  # required — so the suggested line failed outright. Asserting on its text would not have caught
-  # that; running it does.
-  repo=$(new_repo)
-  out=$(env -C "$repo" "$scripts/ws-create.sh" feat)
-  ( cd "$repo-feat" && printf 'w\n' >w.txt && jj commit -m 'ws work 1' >/dev/null 2>&1 )
-  ( cd "$repo" && printf 'm\n' >m.txt && jj commit -m 'main work' >/dev/null 2>&1 )
-  line=$(printf '%s\n' "$out" | grep -o "$scripts/ws-merge.sh.*" | head -1)
-  [ -n "$line" ]
-  run bash -c "cd '$repo' && $line"
-  [ "$status" -eq 0 ]
-  [[ "$output" == *plan* ]]
-}
-
 @test "the primary next step is starting a session in the workspace" {
   # Claude resets the shell cwd after every call unless the directory is in the session's allowed
   # set, and a workspace is a SIBLING of the repo, so it never is. Nothing in a skill can call
@@ -116,16 +85,36 @@ load 'helper'
 }
 
 @test "a workspace can still be created while standing on an empty merge" {
-  # `@-` means both parents there. ws-merge.sh seals its own merges now, so this reaches the state
-  # the way it still survives in the wild: `--no-advance`, a merge made before sealing existed, or
-  # a hand-rolled `jj new A B`.
+  # `@-` means both parents there, which is how a hand-rolled `jj new A B` (or a merge another
+  # tool left unsealed) leaves the main workspace.
   repo=$(new_repo)
-  ws=$(new_ws "$repo" feat 2)
-  root=$(env -C "$ws" jj log --no-pager --no-graph -r "$STACK_ROOT" -T 'change_id.short()')
-  env -C "$repo" "$scripts/ws-merge.sh" --root "$root" --no-advance -m 'Merge feat' --yes >/dev/null 2>&1
+  new_ws "$repo" feat 2 >/dev/null
+  env -C "$repo" jj new 'default@-' 'feat@-' >/dev/null 2>&1
   run env -C "$repo" "$scripts/ws-create.sh" next
   [ "$status" -eq 0 ]
   [[ "$output" == *'sealing it into a commit first'* ]]
   # Based on the merge, so both sides of the join are in the new workspace's tree.
   [ -f "$repo-next/w2.txt" ]
+}
+
+@test "created from inside another workspace, the new one is a sibling of the main checkout" {
+  # The name hangs off the main checkout, not the workspace it ran in: `foo-bar` inside `foo` would
+  # make the list of workspaces a chain instead of a flat set.
+  repo=$(new_repo)
+  foo=$(new_ws "$repo" foo)
+  run env -C "$foo" "$scripts/ws-create.sh" bar
+  [ "$status" -eq 0 ]
+  [ -d "$repo-bar" ]
+  [ ! -e "$repo-foo-bar" ]
+  [[ "$output" == *"path:        $(cd "$repo-bar" && pwd -P)"* ]]
+}
+
+@test "the sibling name still anchors on the current workspace when there is no 'default'" {
+  # A repo whose main workspace was renamed has nothing to anchor on, so it falls back rather than
+  # failing.
+  repo=$(new_repo)
+  env -C "$repo" jj workspace rename main >/dev/null 2>&1
+  run env -C "$repo" "$scripts/ws-create.sh" bar
+  [ "$status" -eq 0 ]
+  [ -d "$repo-bar" ]
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Claude Code WorktreeCreate / WorktreeRemove hook: makes `claude --worktree <name>`,
-# EnterWorktree and worktree-isolated subagents create jj workspaces in a jj repo, via
-# ws-create.sh / ws-remove.sh, so the naming, base and uncommitted-work guards live in those
-# scripts only. Reads the hook's JSON on stdin; WorktreeCreate prints the new path on stdout.
+# EnterWorktree and worktree-isolated subagents create jj workspaces in a jj repo: creation goes
+# through ws-create.sh, so naming and base are defined there only, and removal refuses to delete
+# uncommitted work. Reads the hook's JSON on stdin; WorktreeCreate prints the new path on stdout.
 # Outside jj it makes the git worktree itself. DESIGN.md ("The WorktreeCreate / WorktreeRemove
 # hook") says why that is necessary and why this is a settings hook rather than a plugin.
 #
@@ -120,13 +120,12 @@ create_git() {
 }
 
 remove() {
-  local root branch name='' candidate physical
+  local root branch name='' candidate physical probe
   [ -d "$worktree_path" ] || return 0
 
   if in_jj "$worktree_path"; then
     # The workspace's name isn't its directory's (ws-create.sh appends it to the repo's), so ask
-    # jj which workspace lives here. ws-remove.sh refusing to delete uncommitted work is the
-    # guard; its --force is the user's call and is never passed from here.
+    # jj which workspace lives here.
     physical=$(cd "$worktree_path" && pwd -P)
     while IFS= read -r candidate; do
       if [ "$(env -C "$worktree_path" jj workspace root --name "$candidate" 2>/dev/null)" = "$physical" ]; then
@@ -135,7 +134,17 @@ remove() {
       fi
     done < <(env -C "$worktree_path" jj workspace list --no-pager -T 'name ++ "\n"')
     [ -n "$name" ] || die "no jj workspace is rooted at $worktree_path"
-    env -C "$worktree_path" "$here/ws-remove.sh" "$name" >&2
+    [ "$name" != default ] || die "refusing to remove the main checkout ($worktree_path)"
+    # Uncommitted changes are the one lossy case: `forget` leaves every commit in the repo, so
+    # committed work survives the rm. jj only records a working copy when a command runs with that
+    # workspace as its cwd, so probe from inside it — that snapshots first, and a stale working copy
+    # (its commits were rebased underneath it) fails here instead of reading as clean.
+    probe=$(env -C "$worktree_path" jj status --no-pager 2>&1) ||
+      die "could not read workspace '$name' (stale? run \`jj workspace update-stale\` in it): ${probe%%$'\n'*}"
+    [ -z "$(env -C "$worktree_path" jj log --no-pager --no-graph -r '@ & ~empty()' -T '1' 2>/dev/null)" ] ||
+      die "refusing to delete workspace '$name': it has uncommitted changes ($worktree_path). Commit or abandon them first."
+    env -C "$worktree_path" jj workspace forget "$name" >&2
+    rm -rf "$worktree_path"
     return
   fi
 

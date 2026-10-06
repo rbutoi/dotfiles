@@ -108,6 +108,24 @@ new_repo_behind_origin() {
   [ -f "$ws/new.txt" ]
 }
 
+@test "jj repo: refuses to remove the main checkout" {
+  repo=$(new_repo)
+  run remove_at "$repo"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"main checkout"* ]]
+  [ -d "$repo/.jj" ]
+}
+
+@test "jj repo: removing keeps the workspace's committed work reachable" {
+  repo=$(new_repo)
+  ws=$(create_in "$repo" feat)
+  (cd "$ws" && printf 'w\n' >w.txt && jj commit -m 'kept' >/dev/null 2>&1)
+  run remove_at "$ws"
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+  [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'description(exact:"kept\n")' -T 'change_id')" ]
+}
+
 @test "jj repo: a repo path containing spaces" {
   repo=$(new_repo 'my repo')
   ws=$(create_in "$repo" feat)
@@ -130,7 +148,9 @@ new_repo_behind_origin() {
   first=$(create_in "$repo" one)
   run create_in "$first" two
   [ "$status" -eq 0 ]
-  [ -d "${lines[-1]}" ]
+  # Flat: a sibling of the main checkout, not `<repo>-one-two`.
+  [ "${lines[-1]}" = "$(phys "$repo-two")" ]
+  [ ! -e "$repo-one-two" ]
 }
 
 @test "jj repo: removing with a trailing slash on the path" {

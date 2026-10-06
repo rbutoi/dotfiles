@@ -26,7 +26,7 @@ new_repo() {
 }
 
 # new_ws <repo> <name> [commits] -> echoes the workspace path.
-# The commit count is the interesting knob: it's what ws-merge.sh's shape rule reads.
+# The commit count says how much committed work the workspace already holds.
 new_ws() {
   local repo=$1 name=$2 n=${3:-1} i
   env -C "$repo" "$scripts/ws-create.sh" "$name" >/dev/null 2>&1 || return 1

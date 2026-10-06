@@ -48,6 +48,9 @@ what they can't decide for you; why the skill is *shaped* this way is [DESIGN.md
 goes to the script too, so `/jj-workspace flaky-e2e --base xyz` works. With **no argument** it
 creates nothing, which is how you load this file on purpose for the integrate and remove steps.
 
+The workspace is always `<main-checkout>-<name>`, beside the main checkout. Creating one from
+inside another workspace gives a second sibling (`app-bar` next to `app-foo`), never `app-foo-bar`.
+
 Claude can't derive the name (nothing to derive from yet when the script runs) and can't invoke this
 skill on its own. If the user meant to create one, propose a slug and ask them to re-run
 `/jj-workspace <slug>` rather than reaching for `ws-create.sh` yourself — running it by hand works,
@@ -66,8 +69,6 @@ not a private branch:
   and `<name>@-` its parent — so `default@-` is the main workspace's last *committed* revision.
 - **Never** `jj abandon`, `jj rebase`, `jj describe`, or `jj edit` another workspace's `@` or commits,
   and don't move bookmarks someone else may be building on. That's the one way to actually break them.
-  The single exception `ws-merge.sh` takes is an *empty, childless* `@` after an integration, and it
-  takes it by running jj **in that workspace's own directory**.
 - A workspace's `@` in the repo only reflects the last jj command run **with that workspace as cwd**.
   Reading `<name>@` from elsewhere can show a stale, empty-looking working copy that in fact has
   uncommitted edits. Snapshot first (`cd <ws>; jj status`) before believing it.
@@ -83,12 +84,11 @@ a run that starts a server, check that the port belongs to this checkout.
 It bases on `@-`, the newest real commit, since the tip `@` is conventionally empty. Your check is
 after the fact: read the `base:` line and any warning (empty base, uncommitted work in `@` that
 won't come along), and if the base is wrong, say so rather than carrying on. Fixing it costs nothing
-yet — `ws-remove.sh <name>`, then `/jj-workspace <name> --base <rev>`. `--help` covers the flags.
+yet — remove it (§4), then `/jj-workspace <name> --base <rev>`. `--help` covers the flags.
 
 The **stack root** it prints is the stable handle for the work — that initial empty change becomes
-your first commit, and change IDs survive rebases where hashes don't. You rarely need it, since
-`ws-merge.sh` derives it from the workspace name; it's the fallback for a stack whose workspace is
-gone, or one that grew a second root.
+your first commit, and change IDs survive rebases where hashes don't. It's what `jj rebase -s`
+takes when you integrate (§3).
 
 `EnterWorktree`, `claude --worktree` and worktree-isolated subagents make a jj workspace too, **when
 `scripts/ws-worktree-hook.sh` is registered** as the `WorktreeCreate` and `WorktreeRemove` hook (its
@@ -99,8 +99,8 @@ workspace itself, so no second session has to be started.
 
 `ExitWorktree` with `remove` needs `discard_changes: true` in a jj repo: the tool's own
 uncommitted-work check reads git and can't see a jj workspace, so it refuses without the flag. That
-flag is not what protects your work — the hook runs `ws-remove.sh`, which still refuses a workspace
-with uncommitted changes and never gets `--force`. Check `jj st` in it first anyway.
+flag is not what protects your work — the hook itself refuses to delete a workspace with
+uncommitted changes, and committed work always survives removal. Check `jj st` in it first anyway.
 
 ## 2. Work in it — from a session started inside it
 
@@ -159,9 +159,9 @@ unit's worth in `@`, or an `@` still undescribed after real edits, is the smell.
 
 **Integrating is the user's call, every time.** It rewrites shared history in a repo other people and
 agents are using. Finishing the work is not authorisation. A green test run is not authorisation.
-Neither is "they asked me to build it". What you may do unasked: run the dry run, show the plan, stop.
-What needs the user asking for *that* merge, in the conversation you're in: passing `--yes`. Same
-rule for `ws-remove.sh --force` and any `jj abandon` — propose, don't perform.
+Neither is "they asked me to build it". What you may do unasked: work out the plan (the `jj log` below), show it, stop.
+What needs the user asking for *that* merge, in the conversation you're in: running it. Same rule
+for discarding uncommitted work and any `jj abandon` — propose, don't perform.
 
 **First, check the other side didn't build the same thing.** `jj log`, then `jj diff -r <rev> --stat`
 on anything that sounds related. Parallel agents on related briefs converge more than you'd expect,
@@ -175,60 +175,53 @@ apologising for the commit before it. (Style only — `/code-review` is the one 
 Its fixes land in the working copy, so commit them like any other unit before merging.
 
 Nothing moves between directories — the commits are already in the shared repo. All that's left is
-how the two lines of history join, and the script picks that by size, announcing which it chose:
+how the two lines of history join, and that is plain jj, run from the integration checkout (where a
+merge lands, and where you'd gate the merged tree):
 
-| Stack | What happens | Why |
-| ----- | ------------ | --- |
-| More than one commit | Merge commit (`jj new <onto> <tip>`) | Several commits are a branch, worth keeping visible as one |
-| Exactly one commit | Rebased straight on | A two-parent node whose side is one change records nothing the commit doesn't |
+| Stack | Command | Why |
+| ----- | ------- | --- |
+| More than one commit | `jj new <onto> <name>@- -m 'Merge <name>'` | Several commits are a branch, worth keeping visible as one |
+| Exactly one commit | `jj rebase -s <stack-root> -d <onto>` | A two-parent node whose side is one change records nothing the commit doesn't |
 
-`--merge` / `--rebase` force either shape; `-m` sets the merge message.
+`<onto>` is normally `default@-`, the main workspace's last committed revision. Show the user the
+plan — `jj log -r '<onto> | <name>@-'` — before running anything.
 
-```fish
-cd /path/to/repo                     # the integration checkout, NOT the feature workspace
-~/.claude/skills/jj-workspace/scripts/ws-merge.sh <name> -m "Merge <name>"
-```
+Two jj behaviours look like failure and aren't: a **conflicting merge exits 0** (jj records conflicts
+in the commit, so check `jj log -r 'conflicts()'`), and a clean **merge commit shows as `(empty)`**,
+which is correct. `jj undo` reverses the whole operation.
 
-**Say as little as possible; the rest is inferred.** The name identifies the stack and the script
-derives its root, the destination (`default@-`, override with `--onto`), and the shape. Drop the name
-too and it takes the stack this workspace is building; several candidates gets you their names, not a
-guess. `--root <change-id>` is for a stack no workspace names any more.
-
-**Run it from the integration checkout** — that's where a merge lands, and where you'd gate the
-merged tree. (For a known rebase, running from *inside* the feature workspace is better still: jj
-updates that working copy as it goes, so it can't go stale.) The first run only prints a plan.
-
-It then advances the working copies so no checkout is left beside the work or standing on a merge,
-skipping any `@` that has uncommitted changes or children of its own and printing a `jj rebase` line
-for that instead. It says which; [DESIGN.md](DESIGN.md) says why. Two jj behaviours it papers over
-but you'll still see: a **conflicting merge exits 0** (jj records conflicts in the commit, so the
-script checks the `conflicts()` revset), and a clean **merge commit shows as `(empty)`**, which is
-correct. `jj undo` reverses the whole operation.
+Then tidy the working copies. A rebase lands the stack *beside* the trailing empty `@` that was
+sitting there, not under it, so `jj rebase -r @ -d <tip>` in that workspace — otherwise the mainline
+has forked and your next commit is a sibling of the integrated one. Skip any `@` with uncommitted
+changes or children of its own. A workspace whose commits were rebased under it is stale: `jj
+workspace update-stale` in it. Run every one of these **in that workspace's own directory**; from
+elsewhere the rewrite happens but the other checkout isn't touched.
 
 Afterwards the destination has moved under you: **re-run the project's install if the other side
 touched a lockfile**, then the gate.
 
 **When another agent holds the main workspace, don't merge for them.** You can't tell whether they're
-finished. Finish your side, then hand the human the exact `ws-merge.sh` line with the real IDs, plus
-the removal command.
+finished. Finish your side, then hand the human the exact commands with the real IDs, plus how to
+remove the workspace.
 
 ## 4. Remove (once merged, or abandoned)
 
 ```fish
-~/.claude/skills/jj-workspace/scripts/ws-remove.sh <name>
+cd /path/to/<repo-dir>-<name>; jj st     # uncommitted changes are the one lossy case
+cd /path/to/<repo-dir>; jj workspace forget <name>; rm -rf /path/to/<repo-dir>-<name>
 ```
 
-Runs from anywhere, **including inside the workspace it deletes** — it steps out to the main
-checkout itself, then prints the `cd` your shell needs, which is the one thing it can't fix for you.
-It refuses while uncommitted changes exist (`--force` discards them) — the only genuinely lossy
-case, because **committed work always survives removal**. An unmerged stack is therefore a note, not
-a blocker: it stays reachable by change ID.
+**Committed work always survives removal:** `forget` leaves every commit in the repo, reachable by
+change ID, and `jj undo` restores the tracking (the directory stays deleted). An unmerged stack is a
+note, not a blocker. `cd` out of the directory first, or your shell is left in one that no longer
+exists. `ExitWorktree` with `remove` does this for a workspace the hook made, and refuses while
+uncommitted changes exist.
 
-## When the scripts aren't the answer
+## When the script isn't the answer
 
-They cover the common shape (one sibling workspace, join onto another's tip, delete). For anything
-else — merging into a bookmark, adopting a workspace someone else made, a stack that needs splitting
-— drive jj directly:
+`ws-create.sh` covers the common shape (one sibling workspace off the newest commit). For anything
+else — a different path, merging into a bookmark, adopting a workspace someone else made, a stack
+that needs splitting — drive jj directly:
 
 ```fish
 jj workspace add --name <name> -r <rev> <path>
@@ -237,6 +230,5 @@ jj workspace forget <name>          # then rm -rf the directory yourself
 jj workspace update-stale           # in a workspace whose commits were rebased under it
 ```
 
-The scripts are short and their errors say what they checked; read the relevant one rather than
-working around a refusal you don't understand. If you change one, [DESIGN.md](DESIGN.md) says how
-they're tested.
+The script is short and its errors say what it checked; read it rather than working around a refusal
+you don't understand. If you change it, [DESIGN.md](DESIGN.md) says how it's tested.

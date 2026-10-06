@@ -5,7 +5,7 @@
 
 load 'helper'
 
-for_each_script() { printf 'ws-create.sh\nws-merge.sh\nws-remove.sh\n'; }
+for_each_script() { printf 'ws-create.sh\n'; }
 
 @test "--help stops before the code" {
   while IFS= read -r s; do
