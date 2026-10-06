@@ -35,10 +35,12 @@ sanitize() { printf '%s' "$1" | sed -E 's/[^A-Za-z0-9._-]/-/g; s/^[^A-Za-z0-9]+/
 # punctuation goes, which also stops `..` climbing out. git itself judges what is left.
 git_name() { printf '%s' "$1" | tr '/' '+' | sed -E 's/[^A-Za-z0-9._+-]/-/g; s/^[^A-Za-z0-9]+//'; }
 
+git_common_dir() { git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null; }
+
 # The repo's main worktree root, also when standing in a linked worktree.
 git_root() {
   local common
-  common=$(git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || return 1
+  common=$(git_common_dir "$1") || return 1
   case "$common" in
     */.git) printf '%s' "${common%/.git}" ;;
     *) git -C "$1" rev-parse --show-toplevel ;;
@@ -87,6 +89,32 @@ create_jj() {
   printf '%s\n' "$path"
 }
 
+# Make $2 (the worktree path for name $3) free to `git worktree add` into; $4 is the repo's
+# `worktree list --porcelain`. Two things can occupy it without being a worktree.
+free_path() {
+  local root=$1 path=$2 name=$3 registered=$4 aside
+  # A worktree deleted by hand leaves its registration behind, and git then refuses both the path
+  # and the branch until it is pruned. Prune only for that case: it also forgets every other
+  # missing worktree (an unmounted drive's, say), which is not ours to touch otherwise. (`add -f`
+  # would avoid the prune, but also overrides "branch is checked out elsewhere".)
+  if [ ! -e "$path" ]; then
+    grep -qxF "worktree $path" <<<"$registered" && git -C "$root" worktree prune >&2
+    return 0
+  fi
+  # Debris: a tool whose cwd was a removed worktree (a package install, say) recreated the
+  # directory. Git refuses to add over it. A tree of empty directories is removed; anything holding
+  # a file is moved into the repo's .git, where nothing scans or commits it and no file is lost.
+  # The pid keeps two runs within the same second from landing in one directory.
+  if [ -z "$(find "$path" ! -type d -print -quit)" ]; then
+    rm -rf "$path"
+  else
+    aside="$(git_common_dir "$root")/orphaned-worktrees/$name-$(date +%s)-$$"
+    mkdir -p "${aside%/*}"
+    mv "$path" "$aside"
+    warn "moved the leftover directory at $path to $aside"
+  fi
+}
+
 create_git() {
   local root name path branch registered
   root=$(git_root "$cwd") || die "not a jj or git repository: $cwd"
@@ -103,18 +131,17 @@ create_git() {
     printf '%s\n' "$path"
     return
   fi
-  # A worktree deleted by hand leaves its registration behind, and git then refuses both the path
-  # and the branch until it is pruned. Prune only for that case: it also forgets every other
-  # missing worktree (an unmounted drive's, say), which is not ours to touch otherwise. (`add -f`
-  # would avoid the prune, but also overrides "branch is checked out elsewhere".)
-  if [ ! -e "$path" ] && grep -qxF "worktree $path" <<<"$registered"; then
-    git -C "$root" worktree prune >&2
-  fi
+  free_path "$root" "$path" "$name" "$registered"
   # A surviving branch keeps its commits: check it out again, since `-b` refuses to reuse a name.
   if git -C "$root" show-ref --verify --quiet "refs/heads/$branch"; then
     git -C "$root" worktree add "$path" "$branch" >&2
   else
-    git -C "$root" worktree add -b "$branch" "$path" "$(resolve_base "$root")" >&2
+    # `add -b` makes the branch before anything else can fail (an unwritable parent, a full disk),
+    # so a failure must not strand a branch with no worktree for the next attempt to trip over.
+    git -C "$root" worktree add -b "$branch" "$path" "$(resolve_base "$root")" >&2 || {
+      git -C "$root" branch -D "$branch" >/dev/null 2>&1
+      exit 1
+    }
   fi
   printf '%s\n' "$path"
 }

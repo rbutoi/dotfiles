@@ -29,6 +29,15 @@ mk_wt() { create_in "$@" | tail -1; }
 # Physical path: git and jj report /private/var where the fixture says /var (macOS tmp).
 phys() { (cd "$1" && pwd -P); }
 
+# The branch checked out in a worktree.
+branch_of() { git -C "$1" rev-parse --abbrev-ref HEAD; }
+
+# plant_debris <path> [content]: a directory holding a file, as a package install leaves behind.
+plant_debris() {
+  mkdir -p "$1/common/temp"
+  printf '%s\n' "${2:-x}" >"$1/common/temp/f.txt"
+}
+
 # git with identity and signing pinned: the machine-wide config signs commits, which would block
 # on a key prompt here.
 gc() { git -c user.name=t -c user.email=t@t -c commit.gpgsign=false "$@"; }
@@ -169,7 +178,7 @@ new_repo_behind_origin() {
   [ "$status" -eq 0 ]
   path=${lines[-1]}
   [ "$path" = "$(phys "$repo")/.claude/worktrees/feat" ]
-  [ "$(git -C "$path" rev-parse --abbrev-ref HEAD)" = worktree-feat ]
+  [ "$(branch_of "$path")" = worktree-feat ]
 }
 
 @test "git repo: re-entering an existing worktree resumes it instead of failing" {
@@ -191,7 +200,7 @@ new_repo_behind_origin() {
   run create_in "$repo" topic
   [ "$status" -eq 0 ]
   [ "${lines[-1]}" = "$path" ]
-  [ "$(git -C "$path" rev-parse --abbrev-ref HEAD)" = feat/ABC-1 ]
+  [ "$(branch_of "$path")" = feat/ABC-1 ]
 }
 
 @test "git repo: reuses the branch when only the directory is gone" {
@@ -229,7 +238,7 @@ new_repo_behind_origin() {
   repo=$(new_git_repo)
   run create_in "$repo" '-my topic'
   [ "$status" -eq 0 ]
-  git -C "${lines[-1]}" check-ref-format --branch "$(git -C "${lines[-1]}" rev-parse --abbrev-ref HEAD)"
+  git -C "${lines[-1]}" check-ref-format --branch "$(branch_of "${lines[-1]}")"
 }
 
 @test "git repo: names git cannot use fail instead of making a worktree" {
@@ -267,13 +276,53 @@ new_repo_behind_origin() {
   [ -d "${lines[-1]}" ]
 }
 
-@test "git repo: a leftover directory that is not a worktree is refused, not clobbered" {
+@test "git repo: a non-worktree directory holding files at the path is moved aside intact" {
+  # Debris must neither block the name nor lose anything.
   repo=$(new_git_repo)
-  mkdir -p "$repo/.claude/worktrees/feat"
-  printf 'mine\n' >"$repo/.claude/worktrees/feat/keep.txt"
+  plant_debris "$repo/.claude/worktrees/feat" mine
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/feat" ]
+  [ "$(branch_of "${lines[-1]}")" = worktree-feat ]
+  [ "$(cat "$repo"/.git/orphaned-worktrees/feat-*/common/temp/f.txt)" = mine ]
+}
+
+@test "git repo: a non-worktree tree of empty directories at the path is just removed" {
+  repo=$(new_git_repo)
+  mkdir -p "$repo/.claude/worktrees/feat/a/b"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ ! -e "$repo/.git/orphaned-worktrees" ]
+}
+
+@test "git repo: a name can be re-entered after removal even if debris took its place" {
+  repo=$(new_git_repo)
+  path=$(mk_wt "$repo" feat)
+  run remove_at "$path"
+  [ "$status" -eq 0 ]
+  plant_debris "$path"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(branch_of "${lines[-1]}")" = worktree-feat ]
+}
+
+@test "git repo: a branch with no worktree and an occupied path still yields a worktree" {
+  repo=$(new_git_repo)
+  git -C "$repo" branch worktree-feat
+  plant_debris "$repo/.claude/worktrees/feat"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(branch_of "${lines[-1]}")" = worktree-feat ]
+}
+
+@test "git repo: a creation that fails leaves no branch behind" {
+  # `git worktree add -b` makes the branch before the rest can fail; here `.claude` is a file, so
+  # the worktrees directory cannot be made.
+  repo=$(new_git_repo)
+  printf 'not a directory\n' >"$repo/.claude"
   run create_in "$repo" feat
   [ "$status" -ne 0 ]
-  [ "$(cat "$repo/.claude/worktrees/feat/keep.txt")" = mine ]
+  [ -z "$(git -C "$repo" branch --list worktree-feat)" ]
 }
 
 @test "git repo: a repo with no commits fails rather than printing a path" {

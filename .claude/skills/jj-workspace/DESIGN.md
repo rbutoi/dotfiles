@@ -62,6 +62,13 @@ error, not a fall-through. So outside jj the script has to make the git worktree
 settings and `worktree.symlinkDirectories` are not reproduced, so a repo that leans on those is
 worse off with the hook registered.
 
+Re-entering a name resumes its worktree. A path occupied by something that is *not* a worktree —
+debris from a tool whose cwd was a removed worktree, such as a package install — is cleared so the
+name stays usable: a tree of empty directories is removed, and anything holding a file is moved to
+`.git/orphaned-worktrees/`, where nothing scans or commits it, so no file is ever deleted. Those
+directories are never pruned automatically. A failed creation leaves no branch behind, because
+`git worktree add -b` makes the branch before the rest of the work can fail.
+
 Inside jj it creates through `ws-create.sh`, so naming and base have one definition, and removes
 with `jj workspace forget` plus `rm -rf` after refusing a workspace with uncommitted changes or the
 main checkout. `ExitWorktree`'s own dirty check is git-based and refuses a jj workspace unless
