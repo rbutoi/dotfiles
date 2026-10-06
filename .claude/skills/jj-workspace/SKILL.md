@@ -90,7 +90,17 @@ your first commit, and change IDs survive rebases where hashes don't. You rarely
 `ws-merge.sh` derives it from the workspace name; it's the fallback for a stack whose workspace is
 gone, or one that grew a second root.
 
-Do **not** use `EnterWorktree`: it makes a *git* worktree, which jj doesn't track.
+`EnterWorktree`, `claude --worktree` and worktree-isolated subagents make a jj workspace too, **when
+`scripts/ws-worktree-hook.sh` is registered** as the `WorktreeCreate` and `WorktreeRemove` hook (its
+header has the settings entry; `~/.claude/settings.json` isn't tracked by this repo). Without it they
+make a *git* worktree, which jj doesn't track — so a workspace missing from `jj workspace list` after
+`EnterWorktree` means the hook isn't registered. Through the hook the session moves into the
+workspace itself, which is what the launch line below otherwise gets by hand.
+
+`ExitWorktree` with `remove` needs `discard_changes: true` in a jj repo: the tool's own
+uncommitted-work check reads git and can't see a jj workspace, so it refuses without the flag. That
+flag is not what protects your work — the hook runs `ws-remove.sh`, which still refuses a workspace
+with uncommitted changes and never gets `--force`. Check `jj st` in it first anyway.
 
 ## 2. Work in it — from a session started inside it
 

@@ -42,9 +42,33 @@ subprocess that can't reach the in-memory set, and command hooks can only return
 update that would do it.
 
 `EnterWorktree` *does* perform exactly that update, which is why `claude --worktree` feels seamless.
-It's a built-in, and it refuses a jj workspace because the path must appear in `git worktree list` —
-which a jj workspace never does, even in a colocated repo. So this isn't a bug to work around: start
-the session in the workspace, or prefix every command.
+Left alone it makes a git worktree, and its `path` form refuses a jj workspace because the path must
+appear in `git worktree list` — which a jj workspace never does, even in a colocated repo. With
+`ws-worktree-hook.sh` registered (next section) the creation path is ours instead, and the session
+moves into the workspace with its directory allowed. Without the hook: start the session in the
+workspace, or prefix every command.
+
+## The WorktreeCreate / WorktreeRemove hook
+
+`scripts/ws-worktree-hook.sh` is what makes the built-ins create jj workspaces. It is a settings
+command hook rather than a plugin hooks module (a "mod"), for two reasons that both fail silently
+if forgotten: the engine bypasses user-tier module hooks on these events, and `--worktree` creates
+its worktree before plugin modules load.
+
+A configured hook *replaces* Claude's worktree handling in every repo, and printing nothing is an
+error, not a fall-through. So outside jj the script has to make the git worktree itself
+(`.claude/worktrees/<name>`, branch `worktree-<name>`, from origin's default branch per
+`worktree.baseRef`). That is a reimplementation of the built-in's core only: copying local
+settings and `worktree.symlinkDirectories` are not reproduced, so a repo that leans on those is
+worse off with the hook registered.
+
+Inside jj it delegates to `ws-create.sh` / `ws-remove.sh`, so naming, base, and the refusal to
+delete uncommitted work have one definition. `ExitWorktree`'s own dirty check is git-based and
+refuses a jj workspace unless `discard_changes: true` is passed; the real guard is `ws-remove.sh`,
+which the hook never runs with `--force`.
+
+Like the SessionStart hook, **the registration lives in `~/.claude/settings.json`, which this repo
+does not track**, so on a new machine the script arrives and the hook doesn't.
 
 ## The SessionStart hook
 
