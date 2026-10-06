@@ -6,26 +6,63 @@
 
 load 'helper'
 
+# The machine-wide git config may enable fsmonitor, whose per-repo daemon is spawned detached with
+# bats' output pipe inherited and outlives the test, so a run never reaches EOF and hangs. Tests
+# don't need it, and the hook under test inherits this too.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.fsmonitor GIT_CONFIG_VALUE_0=false
+
 hook="$scripts/ws-worktree-hook.sh"
 
-# create_in <cwd> <name>: the hook as Claude calls it, JSON on stdin.
-create_in() { jq -n --arg cwd "$1" --arg name "$2" '{hook_event_name:"WorktreeCreate",cwd:$cwd,name:$name}' | env HOME="$BATS_TEST_TMPDIR/home" "$hook"; }
-remove_at() { jq -n --arg p "$1" '{hook_event_name:"WorktreeRemove",worktree_path:$p}' | env HOME="$BATS_TEST_TMPDIR/home" "$hook"; }
+# The hook gets its own HOME (where it reads settings.json); fixtures keep the real one.
+setup() {
+  home="$BATS_TEST_TMPDIR/home"
+  mkdir -p "$home"
+}
 
+# create_in <cwd> <name>: the hook as Claude calls it, JSON on stdin.
+create_in() { jq -n --arg cwd "$1" --arg name "$2" '{hook_event_name:"WorktreeCreate",cwd:$cwd,name:$name}' | env HOME="$home" "$hook"; }
+remove_at() { jq -n --arg p "$1" '{hook_event_name:"WorktreeRemove",worktree_path:$p}' | env HOME="$home" "$hook"; }
+
+# The path create_in printed: stdout is its last line, and `run` merges git's progress on stderr in.
+mk_wt() { create_in "$@" | tail -1; }
+
+# Physical path: git and jj report /private/var where the fixture says /var (macOS tmp).
+phys() { (cd "$1" && pwd -P); }
+
+# git with identity and signing pinned: the machine-wide config signs commits, which would block
+# on a key prompt here.
+gc() { git -c user.name=t -c user.email=t@t -c commit.gpgsign=false "$@"; }
+
+# new_git_repo [dir]: a repo with one empty commit.
 new_git_repo() {
-  local d="$BATS_TEST_TMPDIR/gitrepo"
-  mkdir -p "$d" "$BATS_TEST_TMPDIR/home"
-  # gpgsign off: the machine-wide config signs commits, which would block on a key prompt here.
-  (cd "$d" && git init -q && git -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q --allow-empty -m init) || return 1
+  local d="$BATS_TEST_TMPDIR/${1:-gitrepo}"
+  mkdir -p "$d"
+  (cd "$d" && git init -q && gc commit -q --allow-empty -m init) || return 1
   printf '%s' "$d"
 }
+
+# A repo whose origin/main is one commit AHEAD of its local main, with origin/HEAD set.
+new_repo_behind_origin() {
+  local r o="$BATS_TEST_TMPDIR/origin.git" other="$BATS_TEST_TMPDIR/other"
+  r=$(new_git_repo)
+  git -C "$r" branch -M main
+  git init -q --bare -b main "$o"
+  git -C "$r" remote add origin "$o"
+  git -C "$r" push -q origin main 2>/dev/null
+  git -C "$r" remote set-head origin main >/dev/null
+  git clone -q "$o" "$other" 2>/dev/null
+  gc -C "$other" commit -q --allow-empty -m "ahead on origin"
+  git -C "$other" push -q origin main 2>/dev/null
+  printf '%s' "$r"
+}
+
+# ---- jj repos -------------------------------------------------------------------------------
 
 @test "jj repo: creates a workspace through ws-create.sh and prints only its path" {
   repo=$(new_repo)
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  ws=$(cd "$repo-feat" && pwd -P)
-  [ "$output" = "$ws" ]
+  [ "$output" = "$(phys "$repo-feat")" ]
   [ -n "$(env -C "$repo" jj workspace list --no-pager -T 'if(name == "feat", name)')" ]
 }
 
@@ -71,20 +108,53 @@ new_git_repo() {
   [ -f "$ws/new.txt" ]
 }
 
+@test "jj repo: a repo path containing spaces" {
+  repo=$(new_repo 'my repo')
+  ws=$(create_in "$repo" feat)
+  [ -d "$ws" ]
+  run remove_at "$ws"
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+}
+
+@test "jj repo: asked from a subdirectory" {
+  repo=$(new_repo)
+  mkdir -p "$repo/deep/sub"
+  run create_in "$repo/deep/sub" feat
+  [ "$status" -eq 0 ]
+  [ -d "$repo-feat" ]
+}
+
+@test "jj repo: asked from inside a secondary workspace" {
+  repo=$(new_repo)
+  first=$(create_in "$repo" one)
+  run create_in "$first" two
+  [ "$status" -eq 0 ]
+  [ -d "${lines[-1]}" ]
+}
+
+@test "jj repo: removing with a trailing slash on the path" {
+  repo=$(new_repo)
+  ws=$(create_in "$repo" feat)
+  run remove_at "$ws/"
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+}
+
+# ---- git repos: creating --------------------------------------------------------------------
+
 @test "git repo: still makes a git worktree on worktree-<name>" {
   repo=$(new_git_repo)
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  # Physical path: git reports /private/var where the fixture says /var (macOS tmp). `run` merges
-  # stderr (git's progress lines) into $output; stdout, which Claude reads, is the last line.
   path=${lines[-1]}
-  [ "$path" = "$(cd "$repo" && pwd -P)/.claude/worktrees/feat" ]
+  [ "$path" = "$(phys "$repo")/.claude/worktrees/feat" ]
   [ "$(git -C "$path" rev-parse --abbrev-ref HEAD)" = worktree-feat ]
 }
 
 @test "git repo: re-entering an existing worktree resumes it instead of failing" {
   repo=$(new_git_repo)
-  first=$(create_in "$repo" feat | tail -1)
+  first=$(mk_wt "$repo" feat)
   printf 'work\n' >"$first/wip.txt"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
@@ -96,7 +166,7 @@ new_git_repo() {
   # A worktree's branch is often renamed to a ticket-style name after it is made, so the directory
   # name alone has to identify it.
   repo=$(new_git_repo)
-  path=$(create_in "$repo" topic | tail -1)
+  path=$(mk_wt "$repo" topic)
   git -C "$path" branch -m feat/ABC-1
   run create_in "$repo" topic
   [ "$status" -eq 0 ]
@@ -106,14 +176,145 @@ new_git_repo() {
 
 @test "git repo: reuses the branch when only the directory is gone" {
   repo=$(new_git_repo)
-  path=$(create_in "$repo" feat | tail -1)
-  git -C "$path" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q --allow-empty -m kept
+  path=$(mk_wt "$repo" feat)
+  gc -C "$path" commit -q --allow-empty -m kept
   tip=$(git -C "$path" rev-parse HEAD)
   git -C "$repo" worktree remove "$path"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
   [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$tip" ]
 }
+
+@test "git repo: a name with a slash is flattened, not nested inside another worktree" {
+  # `feat/x` as a path would land inside the `feat` worktree. Claude flattens '/' to '+'.
+  repo=$(new_git_repo)
+  outer=$(mk_wt "$repo" feat)
+  run create_in "$repo" feat/x
+  [ "$status" -eq 0 ]
+  inner=${lines[-1]}
+  [ "$inner" = "$(phys "$repo")/.claude/worktrees/feat+x" ]
+  [[ "$inner" != "$outer"/* ]]
+  [ -d "$inner" ]
+}
+
+@test "git repo: a name cannot escape .claude/worktrees" {
+  repo=$(new_git_repo)
+  run create_in "$repo" '../escape'
+  [ "$status" -eq 0 ]
+  [[ "${lines[-1]}" == "$(phys "$repo")/.claude/worktrees/"* ]]
+  [ ! -e "$repo/.claude/escape" ]
+}
+
+@test "git repo: a name with spaces or a leading dash makes a valid branch" {
+  repo=$(new_git_repo)
+  run create_in "$repo" '-my topic'
+  [ "$status" -eq 0 ]
+  git -C "${lines[-1]}" check-ref-format --branch "$(git -C "${lines[-1]}" rev-parse --abbrev-ref HEAD)"
+}
+
+@test "git repo: names git cannot use fail instead of making a worktree" {
+  repo=$(new_git_repo)
+  for bad in '..' '' 'trailing.' 'a..b' 'x.lock'; do
+    run create_in "$repo" "$bad"
+    [ "$status" -ne 0 ]
+  done
+  [ "$(git -C "$repo" worktree list | wc -l)" -eq 1 ]
+}
+
+@test "git repo: asked from inside a linked worktree, the new one still lands under the main repo" {
+  repo=$(new_git_repo)
+  first=$(mk_wt "$repo" one)
+  run create_in "$first" two
+  [ "$status" -eq 0 ]
+  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/two" ]
+}
+
+@test "git repo: asked from a subdirectory of the repo" {
+  repo=$(new_git_repo)
+  mkdir -p "$repo/deep/sub"
+  run create_in "$repo/deep/sub" feat
+  [ "$status" -eq 0 ]
+  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/feat" ]
+}
+
+@test "git repo: a worktree whose directory was deleted by hand can be created again" {
+  # rm -rf leaves a registration behind; git then refuses the branch and the path until pruned.
+  repo=$(new_git_repo)
+  path=$(mk_wt "$repo" feat)
+  rm -rf "$path"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ -d "${lines[-1]}" ]
+}
+
+@test "git repo: a leftover directory that is not a worktree is refused, not clobbered" {
+  repo=$(new_git_repo)
+  mkdir -p "$repo/.claude/worktrees/feat"
+  printf 'mine\n' >"$repo/.claude/worktrees/feat/keep.txt"
+  run create_in "$repo" feat
+  [ "$status" -ne 0 ]
+  [ "$(cat "$repo/.claude/worktrees/feat/keep.txt")" = mine ]
+}
+
+@test "git repo: a repo with no commits fails rather than printing a path" {
+  d="$BATS_TEST_TMPDIR/empty"
+  mkdir -p "$d"
+  git -C "$d" init -q
+  run create_in "$d" feat
+  [ "$status" -ne 0 ]
+}
+
+@test "git repo: a repo path containing spaces" {
+  repo=$(new_git_repo 'my repo')
+  path=$(mk_wt "$repo" feat)
+  [ -d "$path" ]
+  run remove_at "$path"
+  [ "$status" -eq 0 ]
+}
+
+@test "neither jj nor git: fails with a message instead of printing nothing" {
+  mkdir -p "$BATS_TEST_TMPDIR/plain"
+  run create_in "$BATS_TEST_TMPDIR/plain" feat
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"not a jj or git repository"* ]]
+}
+
+# ---- git repos: where a new worktree starts -------------------------------------------------
+
+@test "git repo: baseRef fresh branches from origin's tip, not the local checkout" {
+  repo=$(new_repo_behind_origin)
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse origin/main)" ]
+  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" != "$(git -C "$repo" rev-parse main)" ]
+}
+
+@test "git repo: baseRef head branches from the local checkout" {
+  repo=$(new_repo_behind_origin)
+  mkdir -p "$home/.claude"
+  printf '{"worktree":{"baseRef":"head"}}\n' >"$home/.claude/settings.json"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse main)" ]
+}
+
+@test "git repo: an unreachable origin falls back to the local checkout" {
+  repo=$(new_repo_behind_origin)
+  git -C "$repo" remote set-url origin "$BATS_TEST_TMPDIR/nonexistent.git"
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse main)" ]
+}
+
+@test "git repo: origin/HEAD unset but origin/main present still bases on origin" {
+  repo=$(new_repo_behind_origin)
+  git -C "$repo" remote set-head origin -d >/dev/null
+  run create_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse origin/main)" ]
+}
+
+# ---- git repos: removing --------------------------------------------------------------------
 
 @test "git repo: removes the worktree and its branch" {
   repo=$(new_git_repo)
@@ -128,16 +329,36 @@ new_git_repo() {
   repo=$(new_git_repo)
   ws=$(create_in "$repo" feat)
   printf 'x\n' >"$ws/new.txt"
-  tracked() { git -C "$ws" add new.txt; }
-  tracked
+  git -C "$ws" add new.txt
   run remove_at "$ws"
   [ "$status" -ne 0 ]
   [ -f "$ws/new.txt" ]
 }
 
-@test "neither jj nor git: fails with a message instead of printing nothing" {
-  mkdir -p "$BATS_TEST_TMPDIR/plain" "$BATS_TEST_TMPDIR/home"
-  run create_in "$BATS_TEST_TMPDIR/plain" feat
-  [ "$status" -ne 0 ]
-  [[ "$output" == *"not a jj or git repository"* ]]
+@test "remove: a git worktree on a branch the hook did not name keeps that branch" {
+  repo=$(new_git_repo)
+  path=$(mk_wt "$repo" topic)
+  git -C "$path" branch -m feat/ABC-1
+  run remove_at "$path"
+  [ "$status" -eq 0 ]
+  [ ! -d "$path" ]
+  [ -n "$(git -C "$repo" branch --list feat/ABC-1)" ]
+}
+
+@test "remove: unmerged commits on the hook's branch are not lost with the worktree" {
+  repo=$(new_git_repo)
+  path=$(mk_wt "$repo" feat)
+  gc -C "$path" commit -q --allow-empty -m "unmerged work"
+  tip=$(git -C "$path" rev-parse HEAD)
+  run remove_at "$path"
+  [ "$status" -eq 0 ]
+  [ ! -d "$path" ]
+  git -C "$repo" cat-file -e "$tip"
+  [ -n "$(git -C "$repo" branch --list worktree-feat)" ]
+}
+
+@test "remove: a path that is already gone succeeds" {
+  repo=$(new_git_repo)
+  run remove_at "$repo/.claude/worktrees/never-existed"
+  [ "$status" -eq 0 ]
 }

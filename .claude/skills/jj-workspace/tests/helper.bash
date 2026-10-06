@@ -11,9 +11,10 @@
 
 scripts="$(cd "$BATS_TEST_DIRNAME/../scripts" && pwd -P)"
 
-# A fresh repo with two commits and the conventional trailing empty @.
+# A fresh repo with two commits and the conventional trailing empty @. The optional argument
+# names its directory under $BATS_TEST_TMPDIR (a name with a space is a useful one to try).
 new_repo() {
-  local d="$BATS_TEST_TMPDIR/repo"
+  local d="$BATS_TEST_TMPDIR/${1:-repo}"
   mkdir -p "$d"
   (
     cd "$d" &&

@@ -95,7 +95,7 @@ gone, or one that grew a second root.
 header has the settings entry; `~/.claude/settings.json` isn't tracked by this repo). Without it they
 make a *git* worktree, which jj doesn't track — so a workspace missing from `jj workspace list` after
 `EnterWorktree` means the hook isn't registered. Through the hook the session moves into the
-workspace itself, which is what the launch line below otherwise gets by hand.
+workspace itself, so no second session has to be started.
 
 `ExitWorktree` with `remove` needs `discard_changes: true` in a jj repo: the tool's own
 uncommitted-work check reads git and can't see a jj workspace, so it refuses without the flag. That
