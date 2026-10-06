@@ -19,6 +19,7 @@
   (magit-log-auto-more t)
   (magit-pull-or-fetch t)
   :config
+  (require 'hi-lock)
   (dotimes (i 4)
     (let ((n (1+ i)))
       (general-define-key
