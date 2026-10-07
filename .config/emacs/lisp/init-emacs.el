@@ -1,7 +1,9 @@
 ;;; init-emacs.el --- Better defaults  -*- lexical-binding: t; -*-
 
 (use-package server :ensure nil :demand t ; for emacsclient
-  :config (unless (server-running-p) (server-start)))
+  ;; not from a batch Emacs (.local/bin/elpaca_update.py): it would claim the
+  ;; socket for as long as it runs whenever the interactive Emacs isn't up
+  :config (unless (or noninteractive (server-running-p)) (server-start)))
 
 (use-package no-littering ;; :demand t
 					; clean up emacs config dir
@@ -13,11 +15,6 @@
   (no-littering-theme-backups)
   (setopt custom-file (no-littering-expand-etc-file-name "custom.el"))
   (load custom-file nil :nomessage))
-
-;; TODO: fix
-;; (use-package async)
-;; (use-package elpaca-daily-update :ensure nil ; check for package updates
-;;   :hook (elpaca-after-init . elpaca-daily-update-init))
 
 (use-package system-packages)           ; installing system packages from Emacs
 

@@ -54,4 +54,6 @@
   :init (load-theme 'batppuccin-frappe :no-confirm))
 (use-package auto-dark
   :custom (auto-dark-themes '((batppuccin-mocha) (batppuccin-frappe)))
-  :init (auto-dark-mode))
+  ;; needs a GUI to poll the appearance; errors out in the batch Emacs that
+  ;; .local/bin/elpaca_update.py runs
+  :init (unless noninteractive (auto-dark-mode)))

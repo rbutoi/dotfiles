@@ -38,6 +38,9 @@ dot_adopt.py -n ~/.config/foo  # dry run; --env private-dots for the private rep
 
 update_cached_confs.fish       # regenerate cached `brew shellenv` / `zoxide init` in fish conf.d
 
+elpaca_update.py               # update all Elpaca packages in a headless Emacs, then offer to restart the live one
+elpaca_update.py --restart now|never   # restart without asking / don't touch the running Emacs
+
 git_maintenance_tick.py --status       # background fetch/maintenance: what's scheduled, what's stale
 git_maintenance_tick.py --dry-run
 git_maintenance_tick.py --force --repo ~/dev/x
