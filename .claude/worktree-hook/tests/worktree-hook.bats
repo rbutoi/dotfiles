@@ -11,45 +11,6 @@ load 'helper'
 # don't need it, and the hook under test inherits this too.
 export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.fsmonitor GIT_CONFIG_VALUE_0=false
 
-hook="$scripts/ws-worktree-hook.sh"
-
-# The hook gets its own HOME (where it reads settings.json); fixtures keep the real one.
-setup() {
-  home="$BATS_TEST_TMPDIR/home"
-  mkdir -p "$home"
-}
-
-# create_in <cwd> <name>: the hook as Claude calls it, JSON on stdin.
-create_in() { jq -n --arg cwd "$1" --arg name "$2" '{hook_event_name:"WorktreeCreate",cwd:$cwd,name:$name}' | env HOME="$home" "$hook"; }
-remove_at() { jq -n --arg p "$1" '{hook_event_name:"WorktreeRemove",worktree_path:$p}' | env HOME="$home" "$hook"; }
-
-# The path create_in printed: stdout is its last line, and `run` merges git's progress on stderr in.
-mk_wt() { create_in "$@" | tail -1; }
-
-# Physical path: git and jj report /private/var where the fixture says /var (macOS tmp).
-phys() { (cd "$1" && pwd -P); }
-
-# The branch checked out in a worktree.
-branch_of() { git -C "$1" rev-parse --abbrev-ref HEAD; }
-
-# plant_debris <path> [content]: a directory holding a file, as a package install leaves behind.
-plant_debris() {
-  mkdir -p "$1/common/temp"
-  printf '%s\n' "${2:-x}" >"$1/common/temp/f.txt"
-}
-
-# git with identity and signing pinned: the machine-wide config signs commits, which would block
-# on a key prompt here.
-gc() { git -c user.name=t -c user.email=t@t -c commit.gpgsign=false "$@"; }
-
-# new_git_repo [dir]: a repo with one empty commit.
-new_git_repo() {
-  local d="$BATS_TEST_TMPDIR/${1:-gitrepo}"
-  mkdir -p "$d"
-  (cd "$d" && git init -q && gc commit -q --allow-empty -m init) || return 1
-  printf '%s' "$d"
-}
-
 # A repo whose origin/main is one commit AHEAD of its local main, with origin/HEAD set.
 new_repo_behind_origin() {
   local r o="$BATS_TEST_TMPDIR/origin.git" other="$BATS_TEST_TMPDIR/other"
@@ -67,12 +28,12 @@ new_repo_behind_origin() {
 
 # ---- jj repos -------------------------------------------------------------------------------
 
-@test "jj repo: creates a workspace through ws-create.sh and prints only its path" {
+@test "jj repo: creates a workspace and prints only its path" {
   repo=$(new_repo)
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
   [ "$output" = "$(phys "$repo-feat")" ]
-  [ -n "$(env -C "$repo" jj workspace list --no-pager -T 'if(name == "feat", name)')" ]
+  [ -n "$(ws_named "$repo" feat)" ]
 }
 
 @test "jj repo: a name with slashes becomes a valid workspace name" {
@@ -90,7 +51,7 @@ new_repo_behind_origin() {
   [ "$output" = "$first" ]
 }
 
-@test "jj repo: ws-create.sh's refusal is passed through for 'default'" {
+@test "jj repo: refuses the name 'default'" {
   # `default` is the main checkout; handing it back as a worktree would let a remove target it.
   repo=$(new_repo)
   run create_in "$repo" default
@@ -104,7 +65,7 @@ new_repo_behind_origin() {
   run remove_at "$ws"
   [ "$status" -eq 0 ]
   [ ! -d "$ws" ]
-  [ -z "$(env -C "$repo" jj workspace list --no-pager -T 'if(name == "feat", name)')" ]
+  [ -z "$(ws_named "$repo" feat)" ]
 }
 
 @test "jj repo: refuses to remove a workspace with uncommitted changes" {
@@ -125,14 +86,25 @@ new_repo_behind_origin() {
   [ -d "$repo/.jj" ]
 }
 
+@test "jj repo: refuses to remove a workspace whose working copy is stale" {
+  # Rebasing a workspace's stack from another workspace leaves its files behind the repo; jj then
+  # refuses to read it, which must not be mistaken for "nothing uncommitted".
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  env -C "$repo" jj rebase -s 'roots(default@-..feat@)' -d 'default@--' >/dev/null 2>&1
+  run remove_at "$ws"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"stale"* ]]
+  [ -d "$ws" ]
+}
+
 @test "jj repo: removing keeps the workspace's committed work reachable" {
   repo=$(new_repo)
-  ws=$(create_in "$repo" feat)
-  (cd "$ws" && printf 'w\n' >w.txt && jj commit -m 'kept' >/dev/null 2>&1)
+  ws=$(new_ws "$repo" feat 1)
   run remove_at "$ws"
   [ "$status" -eq 0 ]
   [ ! -d "$ws" ]
-  [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'description(exact:"kept\n")' -T 'change_id')" ]
+  [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'description(substring:"ws work 1")' -T 'change_id')" ]
 }
 
 @test "jj repo: a repo path containing spaces" {
@@ -150,6 +122,32 @@ new_repo_behind_origin() {
   run create_in "$repo/deep/sub" feat
   [ "$status" -eq 0 ]
   [ -d "$repo-feat" ]
+}
+
+@test "jj repo: creating while standing on an empty merge seals it first" {
+  # `@-` means both parents there, which is how a hand-rolled `jj new A B` (or a merge another tool
+  # left unsealed) leaves the main workspace.
+  repo=$(new_repo)
+  new_ws "$repo" feat 2 >/dev/null
+  env -C "$repo" jj new 'default@-' 'feat@-' >/dev/null 2>&1
+  ws=$(create_in "$repo" next)
+  # Based on the merge, so both sides of the join are in the new workspace's tree.
+  [ -f "$ws/w2.txt" ]
+}
+
+@test "jj repo: a repo whose main workspace was renamed anchors on the current one" {
+  repo=$(new_repo)
+  env -C "$repo" jj workspace rename main >/dev/null 2>&1
+  run create_in "$repo" bar
+  [ "$status" -eq 0 ]
+  [ -d "$repo-bar" ]
+}
+
+@test "jj repo: a name that is not a valid workspace name is made into one" {
+  repo=$(new_repo)
+  run create_in "$repo" 'bad name!'
+  [ "$status" -eq 0 ]
+  [ -d "$repo-bad-name-" ]
 }
 
 @test "jj repo: asked from inside a secondary workspace" {
@@ -172,18 +170,18 @@ new_repo_behind_origin() {
 
 # ---- git repos: creating --------------------------------------------------------------------
 
-@test "git repo: still makes a git worktree on worktree-<name>" {
+@test "git repo: makes a git worktree on worktree-<name>" {
   repo=$(new_git_repo)
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
   path=${lines[-1]}
-  [ "$path" = "$(phys "$repo")/.claude/worktrees/feat" ]
+  [ "$path" = "$(git_wt "$repo" feat)" ]
   [ "$(branch_of "$path")" = worktree-feat ]
 }
 
 @test "git repo: re-entering an existing worktree resumes it instead of failing" {
   repo=$(new_git_repo)
-  first=$(mk_wt "$repo" feat)
+  first=$(create_in "$repo" feat)
   printf 'work\n' >"$first/wip.txt"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
@@ -195,7 +193,7 @@ new_repo_behind_origin() {
   # A worktree's branch is often renamed to a ticket-style name after it is made, so the directory
   # name alone has to identify it.
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" topic)
+  path=$(create_in "$repo" topic)
   git -C "$path" branch -m feat/ABC-1
   run create_in "$repo" topic
   [ "$status" -eq 0 ]
@@ -205,23 +203,23 @@ new_repo_behind_origin() {
 
 @test "git repo: reuses the branch when only the directory is gone" {
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" feat)
+  path=$(create_in "$repo" feat)
   gc -C "$path" commit -q --allow-empty -m kept
   tip=$(git -C "$path" rev-parse HEAD)
   git -C "$repo" worktree remove "$path"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$tip" ]
+  [ "$(head_of "${lines[-1]}")" = "$tip" ]
 }
 
 @test "git repo: a name with a slash is flattened, not nested inside another worktree" {
   # `feat/x` as a path would land inside the `feat` worktree. Claude flattens '/' to '+'.
   repo=$(new_git_repo)
-  outer=$(mk_wt "$repo" feat)
+  outer=$(create_in "$repo" feat)
   run create_in "$repo" feat/x
   [ "$status" -eq 0 ]
   inner=${lines[-1]}
-  [ "$inner" = "$(phys "$repo")/.claude/worktrees/feat+x" ]
+  [ "$inner" = "$(git_wt "$repo" feat+x)" ]
   [[ "$inner" != "$outer"/* ]]
   [ -d "$inner" ]
 }
@@ -252,10 +250,10 @@ new_repo_behind_origin() {
 
 @test "git repo: asked from inside a linked worktree, the new one still lands under the main repo" {
   repo=$(new_git_repo)
-  first=$(mk_wt "$repo" one)
+  first=$(create_in "$repo" one)
   run create_in "$first" two
   [ "$status" -eq 0 ]
-  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/two" ]
+  [ "${lines[-1]}" = "$(git_wt "$repo" two)" ]
 }
 
 @test "git repo: asked from a subdirectory of the repo" {
@@ -263,13 +261,13 @@ new_repo_behind_origin() {
   mkdir -p "$repo/deep/sub"
   run create_in "$repo/deep/sub" feat
   [ "$status" -eq 0 ]
-  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/feat" ]
+  [ "${lines[-1]}" = "$(git_wt "$repo" feat)" ]
 }
 
 @test "git repo: a worktree whose directory was deleted by hand can be created again" {
   # rm -rf leaves a registration behind; git then refuses the branch and the path until pruned.
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" feat)
+  path=$(create_in "$repo" feat)
   rm -rf "$path"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
@@ -282,7 +280,7 @@ new_repo_behind_origin() {
   plant_debris "$repo/.claude/worktrees/feat" mine
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "${lines[-1]}" = "$(phys "$repo")/.claude/worktrees/feat" ]
+  [ "${lines[-1]}" = "$(git_wt "$repo" feat)" ]
   [ "$(branch_of "${lines[-1]}")" = worktree-feat ]
   [ "$(cat "$repo"/.git/orphaned-worktrees/feat-*/common/temp/f.txt)" = mine ]
 }
@@ -297,7 +295,7 @@ new_repo_behind_origin() {
 
 @test "git repo: a name can be re-entered after removal even if debris took its place" {
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" feat)
+  path=$(create_in "$repo" feat)
   run remove_at "$path"
   [ "$status" -eq 0 ]
   plant_debris "$path"
@@ -335,7 +333,7 @@ new_repo_behind_origin() {
 
 @test "git repo: a repo path containing spaces" {
   repo=$(new_git_repo 'my repo')
-  path=$(mk_wt "$repo" feat)
+  path=$(create_in "$repo" feat)
   [ -d "$path" ]
   run remove_at "$path"
   [ "$status" -eq 0 ]
@@ -354,8 +352,8 @@ new_repo_behind_origin() {
   repo=$(new_repo_behind_origin)
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse origin/main)" ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" != "$(git -C "$repo" rev-parse main)" ]
+  [ "$(head_of "${lines[-1]}")" = "$(git -C "$repo" rev-parse origin/main)" ]
+  [ "$(head_of "${lines[-1]}")" != "$(git -C "$repo" rev-parse main)" ]
 }
 
 @test "git repo: baseRef head branches from the local checkout" {
@@ -364,7 +362,7 @@ new_repo_behind_origin() {
   printf '{"worktree":{"baseRef":"head"}}\n' >"$home/.claude/settings.json"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse main)" ]
+  [ "$(head_of "${lines[-1]}")" = "$(git -C "$repo" rev-parse main)" ]
 }
 
 @test "git repo: an unreachable origin falls back to the local checkout" {
@@ -372,7 +370,7 @@ new_repo_behind_origin() {
   git -C "$repo" remote set-url origin "$BATS_TEST_TMPDIR/nonexistent.git"
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse main)" ]
+  [ "$(head_of "${lines[-1]}")" = "$(git -C "$repo" rev-parse main)" ]
 }
 
 @test "git repo: origin/HEAD unset but origin/main present still bases on origin" {
@@ -380,7 +378,7 @@ new_repo_behind_origin() {
   git -C "$repo" remote set-head origin -d >/dev/null
   run create_in "$repo" feat
   [ "$status" -eq 0 ]
-  [ "$(git -C "${lines[-1]}" rev-parse HEAD)" = "$(git -C "$repo" rev-parse origin/main)" ]
+  [ "$(head_of "${lines[-1]}")" = "$(git -C "$repo" rev-parse origin/main)" ]
 }
 
 # ---- git repos: removing --------------------------------------------------------------------
@@ -406,7 +404,7 @@ new_repo_behind_origin() {
 
 @test "remove: a git worktree on a branch the hook did not name keeps that branch" {
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" topic)
+  path=$(create_in "$repo" topic)
   git -C "$path" branch -m feat/ABC-1
   run remove_at "$path"
   [ "$status" -eq 0 ]
@@ -416,7 +414,7 @@ new_repo_behind_origin() {
 
 @test "remove: unmerged commits on the hook's branch are not lost with the worktree" {
   repo=$(new_git_repo)
-  path=$(mk_wt "$repo" feat)
+  path=$(create_in "$repo" feat)
   gc -C "$path" commit -q --allow-empty -m "unmerged work"
   tip=$(git -C "$path" rev-parse HEAD)
   run remove_at "$path"
