@@ -46,14 +46,16 @@ git_maintenance_tick.py --force --repo ~/dev/x
 `dot` is `~/dev/dotfiler/bin/dot`; the tests for it are `uv run --with pytest pytest`
 in that repo.
 
-There is no CI, test suite, or pre-commit config here — check changed files by hand
-with the tools mise already installs:
+There is no CI or pre-commit config here, and one test suite: the worktree hook's
+(`bats tests/` in `.claude/worktree-hook/`; real throwaway jj and git repos, about 30 seconds).
+Everything else is checked by hand with the tools mise already installs:
 
 | Language | Check |
 | --- | --- |
 | fish | `fish -n file.fish`, format with `fish_indent -w` |
 | bash/sh | `shellcheck path` |
 | Python (`.local/bin/*`) | `ty check path` — they're PEP 723 `uv run --script` files, run them directly |
+| Python (`.claude/worktree-hook/`) | standard library only and 3.9-compatible — a hook runs with whichever `python3` is first on PATH, which can be the system one; test with `bats tests/` |
 | Emacs Lisp | no batch harness; reload in a running Emacs |
 
 ## Live vs. dormant
