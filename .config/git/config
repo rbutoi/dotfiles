@@ -7,7 +7,6 @@
 ## core behavior
 
 [core]
-  excludesfile = ~/.gitignore
   fsmonitor = true
   # untrackedCache = true
   # pager = delta  # breaks magit C-RET; https://github.com/dandavison/delta
