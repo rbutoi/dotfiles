@@ -11,6 +11,10 @@ load 'helper'
 # don't need it, and the hook under test inherits this too.
 export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.fsmonitor GIT_CONFIG_VALUE_0=false
 
+# `prune` and the nudge skip a workspace changed in the last quarter hour, so the tests that make and
+# judge one in the same second turn that off, and the one test about the filter turns it back on.
+export WORKTREE_HOOK_IDLE_SECONDS=0
+
 # A repo whose origin/main is one commit AHEAD of its local main, with origin/HEAD set.
 new_repo_behind_origin() {
   local r o="$BATS_TEST_TMPDIR/origin.git" other="$BATS_TEST_TMPDIR/other"
@@ -91,7 +95,7 @@ new_repo_behind_origin() {
   # refuses to read it, which must not be mistaken for "nothing uncommitted".
   repo=$(new_repo)
   ws=$(new_ws "$repo" feat 1)
-  env -C "$repo" jj rebase -s 'roots(default@-..feat@)' -d 'default@--' >/dev/null 2>&1
+  make_stale "$repo" feat
   run remove_at "$ws"
   [ "$status" -ne 0 ]
   [[ "$output" == *"stale"* ]]
@@ -428,4 +432,183 @@ new_repo_behind_origin() {
   repo=$(new_git_repo)
   run remove_at "$repo/.claude/worktrees/never-existed"
   [ "$status" -eq 0 ]
+}
+
+# ---- finished workspaces: prune and the session-start nudge ---------------------------------
+
+@test "prune: lists a workspace whose commits are already in the main line" {
+  repo=$(new_repo)
+  finished_ws "$repo" feat >/dev/null
+  run prune_in "$repo" --dry-run
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"feat"* ]]
+  [[ "$output" == *"already in the main line"* ]]
+}
+
+@test "prune: does not list a workspace with unmerged commits, though its @ is empty" {
+  # An empty @ proves nothing: `jj commit` leaves one on top of work that is nowhere else.
+  repo=$(new_repo)
+  new_ws "$repo" feat 2 >/dev/null
+  run prune_in "$repo" --dry-run
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"no finished workspaces"* ]]
+}
+
+@test "prune: lists a workspace whose @ is a real commit that is already in the main line" {
+  repo=$(new_repo)
+  ws=$(create_in "$repo" feat)
+  (cd "$ws" && printf 'x\n' >hot.txt && jj describe -m 'described, not committed' >/dev/null 2>&1)
+  integrate "$repo" 'feat@'
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"feat"* ]]
+}
+
+@test "remove: a non-empty @ that is already in the main line loses nothing, so it goes" {
+  repo=$(new_repo)
+  ws=$(create_in "$repo" feat)
+  (cd "$ws" && printf 'x\n' >hot.txt && jj describe -m 'described, not committed' >/dev/null 2>&1)
+  integrate "$repo" 'feat@'
+  run remove_at "$ws"
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+}
+
+@test "prune: judges a stale workspace from its recorded state, and brings it up to date before removing" {
+  # Integrating a workspace is exactly what makes it stale, so finished ones usually are.
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  make_stale "$repo" feat
+  integrate "$repo" 'feat@-'
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"feat"* ]]
+  run prune_in "$repo" --yes
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"removed feat"* ]]
+  [ ! -d "$ws" ]
+  [ -z "$(ws_named "$repo" feat)" ]
+}
+
+@test "prune: sees a squash-merge, where the commits are new and ancestry cannot tell" {
+  repo=$(new_repo_with_trunk)
+  new_ws "$repo" feat 2 >/dev/null
+  (cd "$repo" && printf 'w1\n' >w1.txt && printf 'w2\n' >w2.txt && jj commit -m 'squash of feat' >/dev/null 2>&1 &&
+    jj bookmark set main -r @- >/dev/null 2>&1 && jj git push --bookmark main >/dev/null 2>&1)
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"feat"* ]]
+  [[ "$output" == *"already in trunk"* ]]
+}
+
+@test "prune: a workspace with work trunk does not contain stays" {
+  repo=$(new_repo_with_trunk)
+  new_ws "$repo" feat 2 >/dev/null
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"no finished workspaces"* ]]
+}
+
+@test "prune: leaves a workspace alone that changed within the idle window" {
+  repo=$(new_repo)
+  finished_ws "$repo" feat >/dev/null
+  export WORKTREE_HOOK_IDLE_SECONDS=3600
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"no finished workspaces"* ]]
+}
+
+@test "prune: leaves a workspace alone that a process is running in" {
+  repo=$(new_repo)
+  ws=$(finished_ws "$repo" feat)
+  (cd "$ws" && exec sleep 60 >/dev/null 2>&1) &
+  pid=$!
+  run prune_in "$repo" --dry-run
+  kill "$pid" 2>/dev/null
+  [[ "$output" == *"no finished workspaces"* ]]
+}
+
+@test "prune: without a terminal or --yes it removes nothing" {
+  repo=$(new_repo)
+  ws=$(finished_ws "$repo" feat)
+  run prune_in "$repo"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"no terminal"* ]]
+  [ -d "$ws" ]
+}
+
+@test "prune --yes removes the finished ones and keeps the rest" {
+  repo=$(new_repo)
+  keep_ws=$(new_ws "$repo" keep 1)
+  done_ws=$(finished_ws "$repo" done)
+  run prune_in "$repo" --yes
+  [ "$status" -eq 0 ]
+  [ ! -d "$done_ws" ]
+  [ -d "$keep_ws" ]
+}
+
+@test "prune: outside a jj repo it says so" {
+  run prune_in "$(new_plain_dir)"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"not inside a jj repo"* ]]
+}
+
+@test "nudge: one line naming the finished workspaces, as the user-visible message" {
+  repo=$(new_repo)
+  finished_ws "$repo" feat >/dev/null
+  run nudge_in "$repo"
+  [ "$status" -eq 0 ]
+  [[ "$(jq -r .systemMessage <<<"$output")" == *"1 finished workspace (feat)"* ]]
+}
+
+@test "nudge: silent when nothing is finished, outside jj, and on garbage input" {
+  repo=$(new_repo)
+  new_ws "$repo" feat 2 >/dev/null
+  run nudge_in "$repo"
+  [ "$status" -eq 0 ] && [ -z "$output" ]
+  run nudge_in "$(new_plain_dir)"
+  [ "$status" -eq 0 ] && [ -z "$output" ]
+  run bash -c "echo 'not json' | '$hook' nudge"
+  [ "$status" -eq 0 ] && [ -z "$output" ]
+}
+
+@test "prune: a mistyped flag is refused, never read as 'remove everything'" {
+  repo=$(new_repo)
+  ws=$(finished_ws "$repo" feat)
+  run prune_in "$repo" --dryrun --yes
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"unknown option --dryrun"* ]]
+  [ -d "$ws" ]
+}
+
+@test "prune --yes: two workspaces that only protect each other are not both removed" {
+  # Both hold the same unmerged commit under an empty @, so each looks finished while the other
+  # exists. Removing one must leave the other, and so the commit, standing.
+  repo=$(new_repo)
+  a=$(new_ws "$repo" a 1)
+  b=$(create_in "$repo" b)
+  (cd "$b" && jj new 'a@-' >/dev/null 2>&1)
+  run prune_in "$repo" --dry-run
+  [[ "$output" == *"a  "* && "$output" == *"b  "* ]]
+  run prune_in "$repo" --yes
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"kept "* ]]
+  [ $([ -d "$a" ] && echo 1 || echo 0) -ne $([ -d "$b" ] && echo 1 || echo 0) ]
+  [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'description(substring:"ws work 1") & ~hidden()' -T 'change_id')" ]
+}
+
+@test "prune --yes: keeps a stale workspace whose unsnapshotted edits update-stale had to save" {
+  # jj saves such edits in a commit of their own that nothing points at; removing the directory
+  # afterwards would strand it without a word.
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  make_stale "$repo" feat
+  integrate "$repo" 'feat@-'
+  printf 'precious\n' >"$ws/precious.txt"
+  run prune_in "$repo" --yes
+  [[ "$output" == *"kept feat"* ]]
+  [[ "$output" == *"unsnapshotted edits were saved"* ]]
+  [ -d "$ws" ]
+  [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'files("precious.txt")' -T 'change_id')" ]
+}
+
+@test "an unknown command is refused with the usage line" {
+  run "$hook" frobnicate
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"usage"* ]]
 }

@@ -80,3 +80,37 @@ new_git_repo() {
   (cd "$d" && git init -q && gc commit -q --allow-empty -m init) || return 1
   printf '%s' "$d"
 }
+
+# A directory that is not a repo of any kind.
+new_plain_dir() { mkdir -p "$BATS_TEST_TMPDIR/plain" && printf '%s' "$BATS_TEST_TMPDIR/plain"; }
+
+# `prune` and the nudge as the user and SessionStart run them.
+prune_in() { (cd "$1" && env HOME="$home" "$hook" prune "${@:2}"); }
+nudge_in() { jq -n --arg cwd "$1" '{cwd:$cwd}' | env HOME="$home" "$hook" nudge; }
+
+# Put work into the main line the way a rebase integration does: main's working copy is rebased on
+# top of `<rev>`.
+integrate() { env -C "$1" jj rebase -s 'default@' -d "$2" >/dev/null 2>&1; }
+
+# new_ws <repo> <name> [commits], then integrated into the main line: a finished workspace.
+finished_ws() {
+  local ws
+  ws=$(new_ws "$1" "$2" "${3:-1}") || return 1
+  integrate "$1" "$2@-"
+  printf '%s' "$ws"
+}
+
+# Rebase a workspace's stack from the main checkout, which leaves the workspace stale.
+make_stale() { env -C "$1" jj rebase -s "roots(default@-..$2@)" -d 'default@--' >/dev/null 2>&1; }
+
+# A jj repo whose trunk is a real remote's main: `trunk()` resolves to main@origin on its own, so no
+# config is written (jj keeps a repo's own config outside the repo, under the real HOME).
+new_repo_with_trunk() {
+  local repo origin="$BATS_TEST_TMPDIR/origin.git"
+  repo=$(new_repo) || return 1
+  git init -q --bare -b main "$origin"
+  env -C "$repo" jj git remote add origin "$origin" >/dev/null 2>&1
+  env -C "$repo" jj bookmark create main -r 'default@-' >/dev/null 2>&1
+  env -C "$repo" jj git push --bookmark main >/dev/null 2>&1
+  printf '%s' "$repo"
+}

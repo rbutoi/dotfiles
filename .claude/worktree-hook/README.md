@@ -13,9 +13,12 @@ In `~/.claude/settings.json`, one entry per event:
 ```json
 "hooks": {
   "WorktreeCreate": [{"hooks": [{"type": "command", "command": "$HOME/.claude/worktree-hook/worktree-hook.py"}]}],
-  "WorktreeRemove": [{"hooks": [{"type": "command", "command": "$HOME/.claude/worktree-hook/worktree-hook.py"}]}]
+  "WorktreeRemove": [{"hooks": [{"type": "command", "command": "$HOME/.claude/worktree-hook/worktree-hook.py"}]}],
+  "SessionStart":   [{"hooks": [{"type": "command", "command": "$HOME/.claude/worktree-hook/worktree-hook.py nudge", "timeout": 10}]}]
 }
 ```
+
+The `SessionStart` entry is optional: it is the nudge about finished workspaces (below).
 
 ## Why a settings hook, and why it covers git too
 
@@ -53,6 +56,52 @@ In `~/.claude/settings.json`, one entry per event:
   that isn't a repo, succeeds quietly. git: no `--force`, and only a branch the
   hook or Claude named is deleted, with `-d`. `ExitWorktree`'s own check is git-based and refuses a
   jj workspace unless `discard_changes: true` is passed; the hook's guard is the real one.
+
+## Finished workspaces
+
+Nothing removes a jj workspace when its work is done, so they pile up. Claude only checks git
+worktrees it made itself when a session ends, and a hook cannot tell it a workspace is clean, so this
+is a separate command:
+
+- `worktree-hook.py prune [--dry-run] [--yes]` lists this repo's finished workspaces and the reason
+  for each, then removes them on `y` (or all of them with `--yes`; with no terminal and no `--yes` it
+  only lists). An unknown option is refused, so a mistyped `--dryrun --yes` cannot become "remove
+  everything". Just before each removal it asks again whether that workspace is still finished,
+  because removing one changes what the others hang on: two workspaces that hold the same unmerged
+  commit each look finished while the other exists, and only one of them may go.
+- `worktree-hook.py nudge` is a SessionStart hook: one line to the user, `jj: 2 finished workspaces
+  (a, b) can be removed: … prune`, only when there is something to say, and it never fails a session.
+
+**What "finished" means** is that nothing in the workspace exists nowhere else. Emptiness is neither
+necessary nor sufficient: an empty `@` can sit on unmerged commits, and a merged workspace's `@` can
+be a real commit. Concretely, the workspace's non-empty commits that are not reachable from trunk,
+any bookmark, or another workspace's working copy must be none, or:
+
+- **Already in the main line:** none left at all (a fast-forward, rebase or merge).
+- **Already in trunk by content:** merging each remaining commit into trunk changes nothing
+  (`git merge-tree --write-tree`), as after a squash or rebase merge, where the commits are new and
+  ancestry can't tell. A merge that conflicts counts as not contained, so doubt keeps the workspace.
+
+A workspace is also left alone if it changed in the last 15 minutes (`WORKTREE_HOOK_IDLE_SECONDS`), so
+one you just made, which has nothing unique either, is never offered, or if any process is running in
+it (and if that can't be told, it counts as in use).
+
+**Stale workspaces are judged too**, from the working copy the repo records for them, because
+integrating a workspace is what makes it stale, so finished ones usually are. That reading can miss
+edits made since, so it only suggests. Before removing, `prune` runs `jj workspace update-stale` in
+it (a no-op on a current one), which saves edits jj never snapshotted in a commit of their own, a
+stray head nothing points at. If a new one appears, `prune` keeps the workspace and says where the
+edits went, instead of removing the directory and stranding them.
+
+Removal itself (`ExitWorktree`) asks a narrower question than `prune`: whether `@` would be lost,
+since committed work stays reachable after `forget`. A non-empty `@` that is already in the main line,
+or already in trunk, loses nothing, so it may go; a stale workspace is refused with jj's own hint.
+`prune` asks whether anything is left to come back for, which is stricter.
+
+Not covered: git worktrees (Claude cleans those itself), a workspace whose directory is already gone,
+and telling a merged PR from GitHub, which would need the network. The content check needs git 2.38
+or later (`merge-tree --write-tree`); on an older one nothing counts as contained, so squash-merged
+workspaces are simply never offered.
 
 ## Tests
 

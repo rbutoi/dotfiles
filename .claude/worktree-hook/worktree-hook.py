@@ -6,7 +6,12 @@ in a jj repo, and git worktrees elsewhere. Reads the hook's JSON on stdin; Workt
 new path on stdout. README.md has the registration entry, why a configured hook has to cover git too,
 and why this is a settings hook rather than a plugin. Standard library only and 3.9-compatible: a
 hook runs with whatever python3 is first on PATH, which can be the system one.
+
+Two more commands, for jj workspaces that are finished but still on disk (README.md, "Finished
+workspaces"): `prune [--dry-run] [--yes]` lists and removes them, and `nudge` is a SessionStart hook
+that says in one line when there are any.
 """
+import functools
 import json
 import os
 import re
@@ -17,6 +22,10 @@ import time
 
 # Matches Claude's own worktree branches, so the hook's and the built-in's are interchangeable.
 BRANCH_PREFIX = "worktree-"
+
+# `prune` and the session-start nudge leave a workspace alone this long after its last change, so one
+# just made (which has nothing unique either) is never offered for removal. Seconds; tests set it to 0.
+IDLE_SECONDS = int(os.environ.get("WORKTREE_HOOK_IDLE_SECONDS", "900"))
 
 
 class Fail(Exception):
@@ -68,8 +77,115 @@ def jj_root(cwd, name=None):
     return out(jj(cwd, "workspace", "root", *(["--name", name] if name else [])))
 
 
+def jj_log(cwd, revset, template):
+    """`jj log` for a revset, stripped, or None if jj fails: in a stale workspace, say."""
+    return out(jj(cwd, "log", "--no-graph", "-r", revset, "-T", template))
+
+
 def jj_has(cwd, revset):
-    return bool(out(jj(cwd, "log", "--no-graph", "-r", revset, "-T", "1")))
+    return bool(jj_log(cwd, revset, "1"))
+
+
+def jj_ids(cwd, revset):
+    ids = jj_log(cwd, revset, 'commit_id ++ "\n"')
+    return None if ids is None else ids.split()
+
+
+def anchors(at):
+    """What keeps a commit alive without workspace `at`: trunk, any bookmark, and every other
+    workspace's working copy. Two questions are asked of it and differ on purpose. Removing a
+    workspace asks only whether its `@` would be lost, since committed work stays reachable after
+    `forget`. `prune` asks whether anything is left to come back for, which is stricter."""
+    return "trunk() | bookmarks() | remote_bookmarks() | (working_copies() ~ %s)" % at
+
+
+def unique_revset(at):
+    """The non-empty commits of workspace `at` that exist nowhere else."""
+    return "heads((::%s ~ ::(%s)) & ~empty())" % (at, anchors(at))
+
+
+def as_workspace(cwd, name, path, query):
+    """`query(dir, at)` asked from inside workspace `name`, which snapshots it so edits since count.
+    A stale workspace can't be asked, but the repo still records its working copy, so ask from `cwd`
+    about `name@`. That can miss edits made since, so it may suggest a removal but never justifies
+    one: `prune` brings the workspace up to date and asks from inside again before it removes."""
+    result = query(path, "@")
+    return result if result is not None else query(cwd, name + "@")
+
+
+@functools.lru_cache(maxsize=None)
+def trunk_context(cwd):
+    """(git dir, trunk commit, trunk's tree), or None when there is no trunk (it then resolves to the
+    root commit) or no git store to ask."""
+    trunk = jj_ids(cwd, "trunk() ~ root()")
+    gitdir = out(jj(cwd, "git", "root"))
+    if not trunk or not gitdir:
+        return None
+    tree = out(run(["git", "--git-dir", gitdir, "rev-parse", trunk[0] + "^{tree}"]))
+    return (gitdir, trunk[0], tree) if tree else None
+
+
+def in_trunk_by_content(cwd, ids):
+    """Whether merging each commit into trunk changes nothing: its work is already there under other
+    commit ids, as after a squash or rebase merge, where ancestry can't tell. A merge that conflicts
+    counts as not contained, so doubt keeps the workspace."""
+    context = trunk_context(cwd)
+    return context is not None and all(
+        out(run(["git", "--git-dir", context[0], "merge-tree", "--write-tree", context[1], i])) == context[2]
+        for i in ids)
+
+
+def finished(cwd, name, path):
+    """Why workspace `name` can go without losing anything, or None if that can't be shown. Emptiness
+    proves nothing: an empty `@` can sit on unmerged commits, and a merged workspace's `@` can be a
+    real commit. What matters is whether any non-empty commit of it exists nowhere else."""
+    unique = as_workspace(cwd, name, path, lambda d, at: jj_ids(d, unique_revset(at)))
+    if unique is None:
+        return None
+    if not unique:
+        return "everything in it is already in the main line"
+    if in_trunk_by_content(cwd, unique):
+        return "its work is already in trunk"
+    return None
+
+
+def workspaces(cwd):
+    """(name, root, last change as recorded) for each workspace of the repo at `cwd`, or None if jj
+    can't list them. One call, so a recent change rules a workspace out without asking it anything:
+    the recorded time can only be older than the real one."""
+    template = 'name ++ "\t" ++ root ++ "\t" ++ target.committer().timestamp().format("%s") ++ "\n"'
+    listing = out(jj(cwd, "workspace", "list", "-T", template))
+    if listing is None:
+        return None
+    return [(n, r, int(t)) for n, r, t in (line.split("\t") for line in listing.splitlines())]
+
+
+def busy_dirs():
+    """The working directory of every running process, or None if lsof can't say."""
+    listing = run(["lsof", "-d", "cwd", "-Fn"]).stdout
+    return [line[1:] for line in listing.splitlines() if line.startswith("n")] or None
+
+
+def finished_workspaces(cwd):
+    """(name, path, reason) for each secondary workspace of the repo at `cwd` that is finished, has
+    not changed within IDLE_SECONDS and is not in use by any process."""
+    found = []
+    busy, looked = None, False
+    for name, path, changed in workspaces(cwd) or []:
+        if name == "default" or time.time() - changed < IDLE_SECONDS:
+            continue
+        reason = finished(cwd, name, path)
+        if not reason:
+            continue
+        if not looked:  # a scan of every process, so only once something looks finished
+            busy, looked = busy_dirs(), True
+        real = os.path.realpath(path)
+        # Unknown use counts as in use: removing a directory under a live session is the one thing
+        # worse than leaving a finished workspace around.
+        if busy is None or any(d == real or d.startswith(real + os.sep) for d in busy):
+            continue
+        found.append((name, path, reason))
+    return found
 
 
 def jj_name(raw):
@@ -120,24 +236,25 @@ def unreadable(path, proc):
 def remove_jj(path):
     """Forget and delete the jj workspace rooted at `path`, unless that would lose work."""
     # The workspace's name isn't its directory's (the sibling name is the repo's plus the name's), so
-    # ask jj which workspace lives here.
+    # find it by root.
+    rows = workspaces(path)
+    if rows is None:
+        die(unreadable(path, jj(path, "status")))
     physical = os.path.realpath(path)
-    listed = jj(path, "workspace", "list", "-T", 'name ++ "\\n"')
-    if listed.returncode:
-        die(unreadable(path, listed))
-    name = next((n for n in listed.stdout.splitlines() if jj_root(path, n) == physical), None)
+    name = next((n for n, root, _ in rows if root == physical), None)
     if name is None:
         die("no jj workspace is rooted at " + path)
     if name == "default":
         die("refusing to remove the main checkout (%s)" % path)
     # Uncommitted changes are the one lossy case: `forget` leaves every commit in the repo, so
     # committed work survives the delete. jj only records a working copy when a command runs with
-    # that workspace as its cwd, so ask from inside it — that snapshots first, and a stale working
-    # copy (its commits were rebased underneath it) fails here instead of reading as clean.
-    dirty = jj(path, "log", "--no-graph", "-r", "@ & ~empty()", "-T", "1")
-    if dirty.returncode:
-        die(unreadable(path, dirty))
-    if dirty.stdout.strip():
+    # that workspace as its cwd, so ask from inside it, which snapshots first, and a stale one fails
+    # here instead of reading as clean. `@` counts only if it exists nowhere else: a non-empty `@`
+    # already in the main line, or whose work is already in trunk, loses nothing.
+    dirty = jj_ids(path, "(@ & ~empty()) ~ ::(%s)" % anchors("@"))
+    if dirty is None:
+        die(unreadable(path, jj(path, "status")))
+    if dirty and not in_trunk_by_content(path, dirty):
         die("refusing to delete workspace '%s': it has uncommitted changes (%s). "
             "Commit or abandon them first." % (name, path))
     must(jj(path, "workspace", "forget", name), "jj workspace forget")
@@ -290,9 +407,77 @@ def hook(event):
         die("unsupported hook event: %r" % kind)
 
 
-def main():
+def update_stale(cwd, path):
+    """Bring the workspace at `path` up to date, or fail if that saved edits jj never snapshotted. jj
+    keeps those in a commit of their own, a stray head that nothing else points at, so removing the
+    directory afterwards would strand them unannounced."""
+    before = set(jj_ids(cwd, "heads(all())") or [])
+    must(jj(path, "workspace", "update-stale"), "jj workspace update-stale")
+    saved = [i for i in jj_ids(cwd, "heads(all()) & ~empty()") or [] if i not in before]
+    if saved:
+        die("its unsnapshotted edits were saved as %s (`jj log -r %s`); look them over, then run prune again"
+            % (", ".join(i[:12] for i in saved), saved[0][:12]))
+
+
+def prune(args):
+    """List the finished jj workspaces of this repo and remove them on request."""
+    unknown = [a for a in args if a not in ("--dry-run", "--yes")]
+    if unknown:  # a mistyped safety flag must not become "remove everything"
+        die("unknown option %s (prune takes --dry-run and --yes)" % unknown[0])
+    dry, yes = "--dry-run" in args, "--yes" in args
+    cwd = os.getcwd()
+    if not jj_root(cwd):
+        die("not inside a jj repo")
+    found = finished_workspaces(cwd)
+    if not found:
+        print("no finished workspaces")
+        return
+    for name, path, reason in found:
+        print("%s  %s\n    %s" % (name, path, reason))
+    if dry:
+        return
+    if not yes and not sys.stdin.isatty():
+        print("not removing anything: there is no terminal to ask on (pass --yes to remove them all)")
+        return
+    for name, path, _ in found:
+        if not yes and input("remove %s? [y/N] " % name).strip().lower() != "y":
+            continue
+        try:
+            # Listed a moment ago, but removing one changes what the others hang on (two workspaces
+            # that only protected each other), and a session may have started since: ask again.
+            if not any(f[0] == name for f in finished_workspaces(cwd)):
+                die("it is no longer finished")
+            update_stale(cwd, path)  # a no-op on a current workspace
+            remove_jj(path)
+            print("removed " + name)
+        except Fail as e:
+            print("kept %s: %s" % (name, e))
+
+
+def nudge():
+    """SessionStart: one line to the user, only when there is something to say, and never a failure."""
     try:
-        hook(json.load(sys.stdin))
+        cwd = json.load(sys.stdin).get("cwd") or os.getcwd()
+        found = finished_workspaces(cwd)
+        if found:
+            script = os.path.abspath(__file__).replace(os.path.expanduser("~"), "~")
+            print(json.dumps({"systemMessage": "jj: %d finished workspace%s (%s) can be removed: %s prune" % (
+                len(found), "" if len(found) == 1 else "s", ", ".join(f[0] for f in found), script)}))
+    except Exception:  # a nudge must never cost anyone a session
+        pass
+
+
+def main(args):
+    try:
+        if not args:  # a WorktreeCreate / WorktreeRemove hook
+            hook(json.load(sys.stdin))
+        elif args[0] == "prune":
+            prune(args[1:])
+        elif args[0] == "nudge":
+            nudge()
+        else:
+            die("usage: worktree-hook.py [prune [--dry-run] [--yes] | nudge]; with no arguments it "
+                "is the worktree hook and reads its JSON on stdin")
     except Fail as e:
         print("error: %s" % e, file=sys.stderr)
         return 1
@@ -303,4 +488,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
