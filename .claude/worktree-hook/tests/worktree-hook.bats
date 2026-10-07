@@ -111,6 +111,22 @@ new_repo_behind_origin() {
   [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'description(substring:"ws work 1")' -T 'change_id')" ]
 }
 
+@test "jj repo: removing renames the directory away at once and finishes deleting it in the background" {
+  repo=$(new_repo)
+  (cd "$repo" && printf 'node_modules\n' >.gitignore && jj commit -m 'ignore node_modules' >/dev/null 2>&1)
+  ws=$(create_in "$repo" feat)
+  mkdir -p "$ws/node_modules/pkg" && for i in $(seq 1 300); do printf 'x' >"$ws/node_modules/pkg/f$i.js"; done
+  run remove_at "$ws"
+  [ "$status" -eq 0 ]
+  [ ! -e "$ws" ]
+  # The leftover is `.<name>.removing-<pid>` beside the repo, and it goes by itself.
+  for _ in $(seq 1 100); do
+    [ -z "$(ls -A "$BATS_TEST_TMPDIR" | grep '\.removing-')" ] && break
+    sleep 0.1
+  done
+  [ -z "$(ls -A "$BATS_TEST_TMPDIR" | grep '\.removing-')" ]
+}
+
 @test "jj repo: a repo path containing spaces" {
   repo=$(new_repo 'my repo')
   ws=$(create_in "$repo" feat)

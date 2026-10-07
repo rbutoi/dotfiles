@@ -93,6 +93,10 @@ it (a no-op on a current one), which saves edits jj never snapshotted in a commi
 stray head nothing points at. If a new one appears, `prune` keeps the workspace and says where the
 edits went, instead of removing the directory and stranding them.
 
+Deleting the directory is instant from the caller's side: it is renamed out of the way and `rm -rf`
+finishes in the background, because a workspace with `node_modules` can take tens of seconds to delete.
+If that background delete is killed, a `.<name>.removing-<pid>` directory is left beside the repo.
+
 Removal itself (`ExitWorktree`) asks a narrower question than `prune`: whether `@` would be lost,
 since committed work stays reachable after `forget`. A non-empty `@` that is already in the main line,
 or already in trunk, loses nothing, so it may go; a stale workspace is refused with jj's own hint.

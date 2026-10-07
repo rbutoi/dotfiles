@@ -143,9 +143,9 @@ def finished(cwd, name, path):
     if unique is None:
         return None
     if not unique:
-        return "everything in it is already in the main line"
+        return "already in the main line"
     if in_trunk_by_content(cwd, unique):
-        return "its work is already in trunk"
+        return "already in trunk (same content)"
     return None
 
 
@@ -166,6 +166,13 @@ def busy_dirs():
     return [line[1:] for line in listing.splitlines() if line.startswith("n")] or None
 
 
+def in_use(path, busy):
+    """Whether a running process is inside `path`. Unknown use counts as in use: removing a directory
+    under a live session is the one thing worse than leaving a finished workspace around."""
+    real = os.path.realpath(path)
+    return busy is None or any(d == real or d.startswith(real + os.sep) for d in busy)
+
+
 def finished_workspaces(cwd):
     """(name, path, reason) for each secondary workspace of the repo at `cwd` that is finished, has
     not changed within IDLE_SECONDS and is not in use by any process."""
@@ -179,12 +186,8 @@ def finished_workspaces(cwd):
             continue
         if not looked:  # a scan of every process, so only once something looks finished
             busy, looked = busy_dirs(), True
-        real = os.path.realpath(path)
-        # Unknown use counts as in use: removing a directory under a live session is the one thing
-        # worse than leaving a finished workspace around.
-        if busy is None or any(d == real or d.startswith(real + os.sep) for d in busy):
-            continue
-        found.append((name, path, reason))
+        if not in_use(path, busy):
+            found.append((name, path, reason))
     return found
 
 
@@ -226,6 +229,17 @@ def create_jj(cwd, root, raw_name):
     return path
 
 
+def discard(path):
+    """Delete a directory without making anyone wait for it: rename it out of the way, which is
+    instant, and let `rm -rf` finish in the background. A workspace with node_modules can take tens of
+    seconds to delete, and nothing needs its files again."""
+    parent, base = os.path.split(path.rstrip(os.sep))
+    trash = os.path.join(parent, ".%s.removing-%d" % (base, os.getpid()))
+    os.rename(path, trash)
+    subprocess.Popen(["rm", "-rf", trash], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+
+
 def unreadable(path, proc):
     """Why jj can't read the workspace at `path`: in practice it is stale (its commits were rebased
     from another workspace), and the fix is in jj's own hint."""
@@ -258,7 +272,7 @@ def remove_jj(path):
         die("refusing to delete workspace '%s': it has uncommitted changes (%s). "
             "Commit or abandon them first." % (name, path))
     must(jj(path, "workspace", "forget", name), "jj workspace forget")
-    shutil.rmtree(path)
+    discard(path)
 
 
 # ---- git ------------------------------------------------------------------------------------
@@ -419,6 +433,13 @@ def update_stale(cwd, path):
             % (", ".join(i[:12] for i in saved), saved[0][:12]))
 
 
+def still_finished(cwd, name, path):
+    """Asked again just before removal: removing one workspace changes what the others hang on (two
+    that hold the same unmerged commit each look finished while the other exists), and a session may
+    have started since. Only this workspace is looked at, not the whole repo."""
+    return bool(finished(cwd, name, path)) and not in_use(path, busy_dirs())
+
+
 def prune(args):
     """List the finished jj workspaces of this repo and remove them on request."""
     unknown = [a for a in args if a not in ("--dry-run", "--yes")]
@@ -432,26 +453,32 @@ def prune(args):
     if not found:
         print("no finished workspaces")
         return
+    width = max(len(name) for name, _, _ in found)
+    print("%d finished workspace%s:" % (len(found), "" if len(found) == 1 else "s"))
     for name, path, reason in found:
-        print("%s  %s\n    %s" % (name, path, reason))
+        print("  %-*s  %s  (%s)" % (width, name, path.replace(os.path.expanduser("~"), "~"), reason))
     if dry:
         return
-    if not yes and not sys.stdin.isatty():
-        print("not removing anything: there is no terminal to ask on (pass --yes to remove them all)")
-        return
+    each = False
+    if not yes:
+        if not sys.stdin.isatty():
+            print("not removing anything: there is no terminal to ask on (pass --yes to remove them all)")
+            return
+        answer = input("Remove %s? [y/N/s(elect)] " % ("it" if len(found) == 1 else "them all")).strip().lower()
+        if answer not in ("y", "s"):
+            return
+        each = answer == "s"
     for name, path, _ in found:
-        if not yes and input("remove %s? [y/N] " % name).strip().lower() != "y":
+        if each and input("  remove %s? [y/N] " % name).strip().lower() != "y":
             continue
         try:
-            # Listed a moment ago, but removing one changes what the others hang on (two workspaces
-            # that only protected each other), and a session may have started since: ask again.
-            if not any(f[0] == name for f in finished_workspaces(cwd)):
+            if not still_finished(cwd, name, path):
                 die("it is no longer finished")
             update_stale(cwd, path)  # a no-op on a current workspace
             remove_jj(path)
-            print("removed " + name)
+            print("  removed " + name)
         except Fail as e:
-            print("kept %s: %s" % (name, e))
+            print("  kept %s: %s" % (name, e))
 
 
 def nudge():
