@@ -88,6 +88,18 @@ new_plain_dir() { mkdir -p "$BATS_TEST_TMPDIR/plain" && printf '%s' "$BATS_TEST_
 prune_in() { (cd "$1" && env HOME="$home" "$hook" prune "${@:2}"); }
 nudge_in() { jq -n --arg cwd "$1" '{cwd:$cwd}' | env HOME="$home" "$hook" nudge; }
 
+# `land` as the user runs it: <dir> <workspace?>.
+land_in() { (cd "$1" && env HOME="$home" "$hook" land "${@:2}"); }
+
+# jj reads <dir> without complaint, which it does not for a stale workspace.
+assert_not_stale() {
+  run env -C "$1" jj --no-pager st
+  [ "$status" -eq 0 ]
+}
+
+# The descriptions of default's parent and grandparent, nearest first.
+below_main() { env -C "$1" jj log --no-pager --no-graph -r 'default@- | default@--' -T 'description.first_line() ++ "\n"'; }
+
 # Put work into the main line the way a rebase integration does: main's working copy is rebased on
 # top of `<rev>`.
 integrate() { env -C "$1" jj rebase -s 'default@' -d "$2" >/dev/null 2>&1; }

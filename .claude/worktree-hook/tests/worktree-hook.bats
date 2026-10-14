@@ -643,6 +643,116 @@ new_repo_behind_origin() {
   [ -n "$(env -C "$repo" jj log --no-pager --no-graph -r 'files("precious.txt")' -T 'change_id')" ]
 }
 
+# ---- land: fold a workspace into default and remove it ---------------------------------------
+
+@test "land: puts the workspace's commits under default's working copy and removes the workspace" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 2)
+  run land_in "$ws"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"landed 2 commits from 'feat'"* ]]
+  [ ! -d "$ws" ]
+  [ -z "$(ws_named "$repo" feat)" ]
+  [ "$(below_main "$repo" | head -1)" = "ws work 2" ]
+  # default's own files are the landed ones, and jj does not call it stale.
+  [ -f "$repo/w2.txt" ]
+  assert_not_stale "$repo"
+}
+
+@test "land: a default that moved on since the workspace forked gets the work on top of its own" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  (cd "$repo" && printf 'c\n' >c.txt && jj commit -m third >/dev/null 2>&1)
+  run land_in "$ws"
+  [ "$status" -eq 0 ]
+  [ "$(below_main "$repo" | tr '\n' ',')" = "ws work 1,third," ]
+}
+
+@test "land: a workspace already in the main line is just removed" {
+  repo=$(new_repo)
+  ws=$(finished_ws "$repo" feat 1)
+  run land_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"landed 0 commits"* ]]
+  [ ! -d "$ws" ]
+  [ -z "$(ws_named "$repo" feat)" ]
+}
+
+@test "land: a workspace can be named from default" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  run land_in "$repo" feat
+  [ "$status" -eq 0 ]
+  [ ! -d "$ws" ]
+  [ "$(below_main "$repo" | head -1)" = "ws work 1" ]
+}
+
+@test "land: a default that an earlier rebase left stale is brought up to date first" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  # Not `integrate`: that rewrites from default, and the point here is a rewrite from the workspace,
+  # which leaves default stale.
+  (cd "$ws" && jj rebase -s 'default@' -d 'feat@-' >/dev/null 2>&1)
+  run land_in "$ws"
+  [ "$status" -eq 0 ]
+  assert_not_stale "$repo"
+}
+
+@test "land: refuses a workspace with uncommitted changes, and changes nothing" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  printf 'x\n' >"$ws/loose.txt"
+  run land_in "$ws"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"uncommitted changes"* ]]
+  [ -d "$ws" ]
+  [ -n "$(ws_named "$repo" feat)" ]
+}
+
+@test "land: refuses when default has uncommitted changes" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  printf 'x\n' >"$repo/loose.txt"
+  run land_in "$ws"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"default has uncommitted changes"* ]]
+  [ -d "$ws" ]
+}
+
+@test "land: a conflicting landing is undone and the workspace kept" {
+  repo=$(new_repo)
+  ws=$(new_ws "$repo" feat 1)
+  (cd "$ws" && printf 'theirs\n' >a.txt && jj commit -m 'ws edits a' >/dev/null 2>&1)
+  (cd "$repo" && printf 'mine\n' >a.txt && jj commit -m 'default edits a' >/dev/null 2>&1)
+  run land_in "$ws"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"conflicts"* ]]
+  [ -d "$ws" ]
+  [ -n "$(ws_named "$repo" feat)" ]
+  [ -z "$(env -C "$repo" jj log --no-pager --no-graph -r 'conflicts()' -T 'change_id')" ]
+  # and the workspace can still be used: the attempt did not leave it stale.
+  assert_not_stale "$ws"
+}
+
+@test "land: refuses default, an unknown workspace and a stray flag" {
+  repo=$(new_repo)
+  run land_in "$repo"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"where work lands"* ]]
+  run land_in "$repo" nosuch
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"no workspace named 'nosuch'"* ]]
+  run land_in "$repo" --yes
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"usage"* ]]
+}
+
+@test "land: outside a jj repo it says so" {
+  run land_in "$(new_plain_dir)"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"not inside a jj repo"* ]]
+}
+
 @test "an unknown command is refused with the usage line" {
   run "$hook" frobnicate
   [ "$status" -ne 0 ]

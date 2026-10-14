@@ -7,9 +7,10 @@ new path on stdout. README.md has the registration entry, why a configured hook 
 and why this is a settings hook rather than a plugin. Standard library only and 3.9-compatible: a
 hook runs with whatever python3 is first on PATH, which can be the system one.
 
-Two more commands, for jj workspaces that are finished but still on disk (README.md, "Finished
-workspaces"): `prune [--dry-run] [--yes]` lists and removes them, and `nudge` is a SessionStart hook
-that says in one line when there are any.
+Three more commands, for ending a jj workspace's life (README.md, "Finished workspaces" and "Landing
+a workspace"): `prune [--dry-run] [--yes]` lists and removes workspaces whose work is already
+elsewhere, `land [<workspace>]` folds one's work into `default` and removes it, and `nudge` is a
+SessionStart hook that says in one line when there are any finished ones.
 """
 import functools
 import json
@@ -240,11 +241,24 @@ def discard(path):
                      start_new_session=True)
 
 
-def unreadable(path, proc):
+def unreadable(path):
     """Why jj can't read the workspace at `path`: in practice it is stale (its commits were rebased
     from another workspace), and the fix is in jj's own hint."""
+    proc = jj(path, "status")
     return "could not read the jj workspace at %s (stale? run `jj workspace update-stale` in it): %s" % (
         path, (proc.stderr.strip().splitlines() or [""])[0])
+
+
+def tilde(path):
+    """`path` with the home directory shortened, for messages."""
+    return path.replace(os.path.expanduser("~"), "~")
+
+
+def forget_and_discard(cwd, name, path):
+    """Forget workspace `name` and delete its directory. `cwd` is the workspace to run `forget` from:
+    the one being removed, or `default` when removing it has just made it stale."""
+    must(jj(cwd, "workspace", "forget", name), "jj workspace forget")
+    discard(path)
 
 
 def remove_jj(path):
@@ -253,7 +267,7 @@ def remove_jj(path):
     # find it by root.
     rows = workspaces(path)
     if rows is None:
-        die(unreadable(path, jj(path, "status")))
+        die(unreadable(path))
     physical = os.path.realpath(path)
     name = next((n for n, root, _ in rows if root == physical), None)
     if name is None:
@@ -267,12 +281,11 @@ def remove_jj(path):
     # already in the main line, or whose work is already in trunk, loses nothing.
     dirty = jj_ids(path, "(@ & ~empty()) ~ ::(%s)" % anchors("@"))
     if dirty is None:
-        die(unreadable(path, jj(path, "status")))
+        die(unreadable(path))
     if dirty and not in_trunk_by_content(path, dirty):
         die("refusing to delete workspace '%s': it has uncommitted changes (%s). "
             "Commit or abandon them first." % (name, path))
-    must(jj(path, "workspace", "forget", name), "jj workspace forget")
-    discard(path)
+    forget_and_discard(path, name, path)
 
 
 # ---- git ------------------------------------------------------------------------------------
@@ -428,12 +441,15 @@ def hook(event):
 def update_stale(cwd, path):
     """Bring the workspace at `path` up to date, or fail if that saved edits jj never snapshotted. jj
     keeps those in a commit of their own, a stray head that nothing else points at, so removing the
-    directory afterwards would strand them unannounced."""
+    directory afterwards would strand them unannounced. A current workspace is left alone: asking
+    it anything snapshots its edits, and those would otherwise read as saved by the update."""
+    if jj_has(path, "@"):
+        return
     before = set(jj_ids(cwd, "heads(all())") or [])
     must(jj(path, "workspace", "update-stale"), "jj workspace update-stale")
     saved = [i for i in jj_ids(cwd, "heads(all()) & ~empty()") or [] if i not in before]
     if saved:
-        die("its unsnapshotted edits were saved as %s (`jj log -r %s`); look them over, then run prune again"
+        die("its unsnapshotted edits were saved as %s (`jj log -r %s`); look them over, then try again"
             % (", ".join(i[:12] for i in saved), saved[0][:12]))
 
 
@@ -460,7 +476,7 @@ def prune(args):
     width = max(len(name) for name, _, _ in found)
     print("%d finished workspace%s:" % (len(found), "" if len(found) == 1 else "s"))
     for name, path, reason in found:
-        print("  %-*s  %s  (%s)" % (width, name, path.replace(os.path.expanduser("~"), "~"), reason))
+        print("  %-*s  %s  (%s)" % (width, name, tilde(path), reason))
     if dry:
         return
     each = False
@@ -485,13 +501,72 @@ def prune(args):
             print("  kept %s: %s" % (name, e))
 
 
+def land(args):
+    """Fold a workspace's work into `default` and remove the workspace: the end of being parallel.
+
+    Everything that rewrites commits runs from inside `default`, because a rewrite is what makes a
+    workspace stale and the only working copy that may move is the one it runs in. The workspace is
+    forgotten afterwards, so nothing is left stale. Its stack goes onto `default`'s parent, then
+    `default`'s own `@` moves on top. Nothing is changed until everything that could refuse has been
+    asked, and a landing that conflicts is undone."""
+    if len(args) > 1 or any(a.startswith("-") for a in args):
+        die("usage: worktree-hook.py land [<workspace>] (the workspace you are in, by default)")
+    cwd = os.getcwd()
+    here = jj_root(cwd)
+    if not here:
+        die("not inside a jj repo")
+    main = jj_root(cwd, "default") or die("this repo has no 'default' workspace to land into")
+    # A rewritten workspace is stale, and default's may be the one: bring it up to date first.
+    update_stale(main, main)
+    rows = workspaces(main) or die(unreadable(main))
+    here = os.path.realpath(here)
+    name = args[0] if args else next((n for n, root, _ in rows if root == here), None)
+    path = next((root for n, root, _ in rows if n == name), None)
+    if path is None:
+        die("no workspace named '%s'" % name if name else "no jj workspace is rooted at " + here)
+    if name == "default":
+        die("'default' is where work lands; run this from a secondary workspace, or name one")
+
+    # Both `@`s must be empty: a non-empty one holds work that landing would have to carry or drop,
+    # and that is for a person to decide.
+    update_stale(main, path)
+    for who, where in (("workspace '%s'" % name, path), ("default", main)):
+        held = jj_ids(where, "@ & ~empty()")
+        if held is None:
+            die(unreadable(where))
+        if held:
+            die("%s has uncommitted changes; commit or abandon them first" % who)
+    theirs = '"%s"@' % name
+    unique = "parents(default@)..parents(%s)" % theirs
+    conflicted = "conflicts() & (%s)" % unique
+    landing = jj_ids(main, unique)
+    if landing is None:  # not "nothing to land": that would go on to delete the workspace
+        die(unreadable(main))
+    if landing:
+        base = jj_ids(main, "parents(default@)")
+        if len(base) != 1:
+            die("default's '@-' must be exactly one commit to land onto, got %d" % len(base))
+        if jj_has(main, conflicted):
+            die("workspace '%s' already has conflicts; resolve them in it first" % name)
+        must(jj(main, "rebase", "-s", "roots(%s)" % unique, "-d", base[0]), "jj rebase")
+        # A conflicted rebase is still a rebase to jj, and landing it would hide the conflict in `default`.
+        if jj_has(main, conflicted):
+            must(jj(main, "undo"), "jj undo")
+            die("landing '%s' on default's parent conflicts; rebase it in the workspace and resolve it there" % name)
+        must(jj(main, "rebase", "-r", "@", "-d", "parents(%s)" % theirs), "jj rebase")
+    forget_and_discard(main, name, path)
+    print("landed %d commit%s from '%s' on default; removed %s" % (
+        len(landing), "" if len(landing) == 1 else "s", name, tilde(path)))
+    print("default is at %s; cd there, since the directory you may be in is gone" % tilde(main))
+
+
 def nudge():
     """SessionStart: one line to the user, only when there is something to say, and never a failure."""
     try:
         cwd = json.load(sys.stdin).get("cwd") or os.getcwd()
         found = finished_workspaces(cwd)
         if found:
-            script = os.path.abspath(__file__).replace(os.path.expanduser("~"), "~")
+            script = tilde(os.path.abspath(__file__))
             print(json.dumps({"systemMessage": "jj: %d finished workspace%s (%s) can be removed: %s prune" % (
                 len(found), "" if len(found) == 1 else "s", ", ".join(f[0] for f in found), script)}))
     except Exception:  # a nudge must never cost anyone a session
@@ -504,10 +579,12 @@ def main(args):
             hook(json.load(sys.stdin))
         elif args[0] == "prune":
             prune(args[1:])
+        elif args[0] == "land":
+            land(args[1:])
         elif args[0] == "nudge":
             nudge()
         else:
-            die("usage: worktree-hook.py [prune [--dry-run] [--yes] | nudge]; with no arguments it "
+            die("usage: worktree-hook.py [prune [--dry-run] [--yes] | land [<workspace>] | nudge]; with no arguments it "
                 "is the worktree hook and reads its JSON on stdin")
     except Fail as e:
         print("error: %s" % e, file=sys.stderr)

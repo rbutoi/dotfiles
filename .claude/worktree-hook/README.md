@@ -61,9 +61,9 @@ The `SessionStart` entry is optional: it is the nudge about finished workspaces 
 
 ## Finished workspaces
 
-Nothing removes a jj workspace when its work is done, so they pile up. Claude only checks git
-worktrees it made itself when a session ends, and a hook cannot tell it a workspace is clean, so this
-is a separate command:
+Nothing removes a jj workspace when its work is done, so they pile up (`land`, below, is the way to
+end one deliberately). Claude only checks git worktrees it made itself when a session ends, and a hook
+cannot tell it a workspace is clean, so this is a separate command:
 
 - `worktree-hook.py prune [--dry-run] [--yes]` lists this repo's finished workspaces and the reason
   for each, then removes them on `y` (or all of them with `--yes`; with no terminal and no `--yes` it
@@ -108,6 +108,30 @@ Not covered: git worktrees (Claude cleans those itself), a workspace whose direc
 and telling a merged PR from GitHub, which would need the network. The content check needs git 2.38
 or later (`merge-tree --write-tree`); on an older one nothing counts as contained, so squash-merged
 workspaces are simply never offered.
+
+## Landing a workspace
+
+`worktree-hook.py land [<workspace>]` is how parallel work ends: it folds a workspace into `default`
+and removes it, so no workspace is left behind to go stale. With no name it lands the one you are in.
+
+Every command that rewrites commits runs from inside `default`: a rewrite is what makes a workspace
+stale, and the only working copy that may move is the one the command runs in. The workspace's
+commits go onto `default`'s parent and `default`'s `@` moves on top of them; then the workspace is
+forgotten and its directory deleted as `prune` does. If the work is already under `default`, the
+workspace is just removed.
+
+What it refuses, before changing anything:
+
+- an `@` with uncommitted changes, in the workspace or in `default` (commit or abandon them first);
+- a workspace whose own commits already hold conflicts;
+- a `default` whose `@-` is a merge, when there is work to carry.
+
+A landing that conflicts with what `default` has gained is undone (`jj undo`) and the workspace left
+exactly as it was: rebase it in the workspace, resolve the conflicts there, and land again.
+
+Unlike `prune`, it does not check for processes running in the workspace. Landing is deliberate and
+usually run from inside the workspace being removed, so the shell's own directory is gone afterwards;
+it prints where `default` is.
 
 ## Tests
 
