@@ -392,11 +392,15 @@ def remove_git(path):
     if root is None:
         return
     branch = out(git(path, "rev-parse", "--abbrev-ref", "HEAD")) or ""
+    # A worktree moved onto a branch this hook did not name (a feature branch, or a detached HEAD)
+    # holds work someone comes back to, even when it is all committed and pushed, so it stays.
+    if not branch.startswith(BRANCH_PREFIX):
+        die("left in place: it is on %s, not a branch this hook created; remove it yourself with "
+            "`git worktree remove %s` when it is finished" % (branch or "no branch", path))
     # No --force: a worktree with uncommitted files is refused, mirroring the jj side.
     must(git(root, "worktree", "remove", path), "git worktree remove")
-    # Only a branch this hook (or Claude) named is deleted, and `-d` keeps one with unmerged commits.
-    if branch.startswith(BRANCH_PREFIX):
-        git(root, "branch", "-d", branch)
+    # `-d` keeps the branch if it has unmerged commits.
+    git(root, "branch", "-d", branch)
 
 
 # ---- hook -----------------------------------------------------------------------------------

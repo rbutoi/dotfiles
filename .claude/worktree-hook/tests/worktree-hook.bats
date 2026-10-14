@@ -422,14 +422,34 @@ new_repo_behind_origin() {
   [ -f "$ws/new.txt" ]
 }
 
-@test "remove: a git worktree on a branch the hook did not name keeps that branch" {
+@test "remove: a git worktree moved onto a branch the hook did not name is left in place" {
   repo=$(new_git_repo)
   path=$(create_in "$repo" topic)
   git -C "$path" branch -m feat/ABC-1
   run remove_at "$path"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"left in place"* ]]
+  [ -d "$path" ]
+  [ "$(branch_of "$path")" = "feat/ABC-1" ]
+}
+
+@test "remove: a git worktree with a detached HEAD is left in place" {
+  repo=$(new_git_repo)
+  path=$(create_in "$repo" topic)
+  git -C "$path" checkout -q --detach
+  run remove_at "$path"
+  [ "$status" -ne 0 ]
+  [ -d "$path" ]
+}
+
+@test "remove: a worktree that moved onto a feature branch and back is cleaned up again" {
+  repo=$(new_git_repo)
+  path=$(create_in "$repo" topic)
+  git -C "$path" switch -q -c feat/ABC-1
+  git -C "$path" switch -q worktree-topic
+  run remove_at "$path"
   [ "$status" -eq 0 ]
   [ ! -d "$path" ]
-  [ -n "$(git -C "$repo" branch --list feat/ABC-1)" ]
 }
 
 @test "remove: unmerged commits on the hook's branch are not lost with the worktree" {

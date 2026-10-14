@@ -53,8 +53,10 @@ The `SessionStart` entry is optional: it is the nudge about finished workspaces 
   makes the branch before the rest can fail.
 - **Removal refuses to lose work.** jj: uncommitted changes, a stale working copy and the main
   checkout are refused; committed work survives `forget`. Removing a path that no longer exists, or
-  that isn't a repo, succeeds quietly. git: no `--force`, and only a branch the
-  hook or Claude named is deleted, with `-d`. `ExitWorktree`'s own check is git-based and refuses a
+  that isn't a repo, succeeds quietly. git: no `--force`, and a worktree that is not on a
+  `worktree-*` branch the hook named (it was moved onto a feature branch, or detached) is left in place
+  with a message saying how to remove it by hand, since that is where the real work lives. The branch
+  it did name is deleted with `-d`, which keeps one with unmerged commits. `ExitWorktree`'s own check is git-based and refuses a
   jj workspace unless `discard_changes: true` is passed; the hook's guard is the real one.
 
 ## Finished workspaces
