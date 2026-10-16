@@ -130,6 +130,7 @@ bats = "latest"
 1password-cli = "latest"
 act = "latest"
 lima = "latest"
+"npm:@opencode/cli" = { version = "latest", allow_builds = true }
 
 [hooks]
 # tools often ship man pages outside any manN/ dir, where man can't find them
